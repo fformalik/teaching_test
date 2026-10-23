@@ -1,0 +1,1857 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Wahadło podwójne</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: dark-room bench. The pendulum stage and the flip-time map are always a dark "long exposure"
+   instrument; the page around them follows the viewer's theme. Control panel on the right,
+   live derivations, charts and the flip map below. */
+:root{
+  --bg:#EDEBF4; --surface:#F9F8FC; --paper:#FFFFFF; --sunk:#F0EEF6;
+  --ink:#16122A; --ink-2:#4A4466; --ink-3:#7F799B; --line:#D9D5E7; --grid:#EAE7F2;
+  --accent:#E41C55; --blue:#2F7FE0; --amber:#B8742A; --violet:#5560F0; --green:#3E9A55; --lime:#6E9A0A; --purple:#7A47FB;
+  --s0:#E41C55; --s1:#CE863A; --s2:#7FA80F; --s3:#4FA463; --s4:#3D8FF5; --s5:#6472FD; --s6:#7A47FB; --s7:#5931A6; --s8:#391B52;
+  --on-accent:#FFFFFF;
+  --st-bg:#0B0918; --st-bg2:#1A1434; --st-surface:#110E22; --st-paper:#0E0B1D; --st-sunk:#1C1736;
+  --st-ink:#EEEBFA; --st-ink2:#ADA6CB; --st-ink3:#716B94; --st-line:#2A2446; --st-grid:#211B3E;
+  --q0:#F0386A; --q1:#DE9446; --q2:#B8F11F; --q3:#83C78F; --q4:#4E9DFF; --q5:#7A86FF; --q6:#9466FF; --q7:#B08CF7; --q8:#D6B8FA;
+  --shadow:0 1px 0 rgba(22,18,42,.04), 0 10px 28px -14px rgba(22,18,42,.22);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#09070F; --surface:#12101D; --paper:#0E0C18; --sunk:#1A1729;
+    --ink:#ECE9F6; --ink-2:#ABA5C4; --ink-3:#736D8E; --line:#29253C; --grid:#1B1829;
+    --accent:#F0386A; --blue:#5AA6FF; --amber:#DE9A52; --violet:#8C95FF; --green:#8FD39B; --lime:#B8F11F; --purple:#A07BFF;
+    --s0:#F0386A; --s1:#DE9446; --s2:#B8F11F; --s3:#83C78F; --s4:#4E9DFF; --s5:#7A86FF; --s6:#9466FF; --s7:#B08CF7; --s8:#D6B8FA;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 12px 32px -14px rgba(0,0,0,.75);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#09070F; --surface:#12101D; --paper:#0E0C18; --sunk:#1A1729;
+  --ink:#ECE9F6; --ink-2:#ABA5C4; --ink-3:#736D8E; --line:#29253C; --grid:#1B1829;
+  --accent:#F0386A; --blue:#5AA6FF; --amber:#DE9A52; --violet:#8C95FF; --green:#8FD39B; --lime:#B8F11F; --purple:#A07BFF;
+  --s0:#F0386A; --s1:#DE9446; --s2:#B8F11F; --s3:#83C78F; --s4:#4E9DFF; --s5:#7A86FF; --s6:#9466FF; --s7:#B08CF7; --s8:#D6B8FA;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 12px 32px -14px rgba(0,0,0,.75);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1480px; margin:0 auto; padding-block:20px 40px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+kbd{font-family:var(--f-mono); font-size:11px; border:1px solid var(--line); border-radius:4px; padding:0 5px; background:var(--sunk); color:var(--ink-2)}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 58px); line-height:.95; letter-spacing:-.03em; text-wrap:balance; display:flex; align-items:center; gap:.22em}
+.brand h1 svg{width:.9em; height:.9em; flex:none}
+.brand h1 em{font-style:normal; color:var(--accent)}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 344px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Dark instrument cards: neutral tokens re-scoped to the stage palette */
+.stage, .fmap{
+  --surface:var(--st-surface); --paper:var(--st-paper); --sunk:var(--st-sunk);
+  --ink:var(--st-ink); --ink-2:var(--st-ink2); --ink-3:var(--st-ink3); --line:var(--st-line);
+  --accent:var(--q0); --blue:var(--q4);
+  background:var(--surface); color:var(--ink); border-color:var(--st-line); color-scheme:dark;
+}
+.stage{display:flex; flex-direction:column; overflow:hidden}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 16px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13px; min-width:7ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11px}
+.legend{display:flex; gap:6px 12px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2); font-family:var(--f-mono)}
+.legend .ramp{width:54px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--q0), var(--q1), var(--q2), var(--q3), var(--q4), var(--q5), var(--q6), var(--q7), var(--q8))}
+.legend span{display:inline-flex; align-items:center; gap:7px; white-space:nowrap}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="together"]{border-color:var(--q3); color:var(--q3)}
+.state[data-s="diverge"]{border-color:var(--q1); color:var(--q1)}
+.state[data-s="chaos"]{background:var(--q0); border-color:var(--q0); color:#fff}
+.canvas-box{position:relative; height:clamp(380px, 64vh, 720px); background:var(--st-bg)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.stage:fullscreen{border-radius:0; height:100vh}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--accent)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:14ch; text-align:right}
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--accent); color:var(--on-accent); padding:9px 18px 9px 14px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:16.5px; cursor:pointer; box-shadow:0 6px 20px -8px var(--accent); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{background:transparent; color:inherit; border-color:rgba(255,255,255,.5); opacity:.85}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:13px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn.sm{padding:3px 9px; font-family:var(--f-mono); font-size:12px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--accent); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+
+/* Results */
+.results{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:6px 12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.rgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:12px}
+.rblock{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:10px 12px 6px; min-width:0}
+.rblock h3{margin:0 0 4px; font-family:var(--f-mono); font-weight:500; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums}
+.res th, .res td{padding:6px 2px; border-bottom:1px solid var(--line); vertical-align:baseline}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+.res th{text-align:left; font-weight:500; font-size:13.5px; color:var(--ink-2)}
+.res th i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.res td{text-align:right; font-family:var(--f-mono); font-size:13.5px; white-space:nowrap; padding-left:10px}
+.res td.hi{color:var(--accent); font-weight:500}
+.res td.ok{color:var(--green)}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pill i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint, .ghint{font-size:11.5px; color:var(--ink-3); margin:0}
+.ctl .row{display:flex; align-items:center; gap:8px}
+.ctl .row input{flex:1; min-width:0}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:9px; padding:6px 9px; font-size:13px; cursor:pointer; color:var(--ink-2); display:flex; flex-direction:column; align-items:flex-start; line-height:1.2; min-width:0; text-align:left}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; max-width:100%}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.chip .k{font-family:var(--f-mono); font-size:10px; color:var(--ink-3); margin-left:4px}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill.hot span{color:var(--accent)}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:start}
+.rightcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:17.5px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:15.5px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--accent); font-family:var(--f-mono); font-size:14px; font-weight:500; font-style:normal}
+.eq .lv{font-family:var(--f-mono); font-size:13.5px; font-style:normal; color:var(--ink)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.3}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.mx{display:inline-grid; gap:0 .8em; padding:.05em .5em; border-left:1.5px solid currentColor; border-right:1.5px solid currentColor; border-radius:8px; vertical-align:middle; line-height:1.35; text-align:center; margin:0 .2em}
+.mx.c2{grid-template-columns:auto auto}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0; white-space:normal}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{display:inline-flex; flex-wrap:wrap; gap:2px; border:1px solid var(--line); border-radius:18px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{display:inline-block; width:20px; height:0; border-top:2.5px solid currentColor}
+.sw-dot{display:inline-block; width:8px; height:8px; border-radius:50%}
+.chart-box{position:relative; height:290px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+.fmap{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.fmap .sec-h p{color:var(--ink-2)}
+.map-box{position:relative; width:100%; max-width:520px; aspect-ratio:1 / 1.06; align-self:center}
+.map-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:crosshair; touch-action:manipulation}
+.mlegend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12px; color:var(--ink-2); font-family:var(--f-mono)}
+.mlegend span{display:inline-flex; align-items:center; gap:6px}
+.mlegend .grad{width:120px; height:9px; border-radius:3px; background:linear-gradient(90deg, #B8F11F, #83C78F, #4E9DFF, #6472FD, #7A47FB, #5931A6, #391B52)}
+.mlegend .box{width:12px; height:12px; border-radius:3px; border:1px solid var(--line)}
+.mstat{font-family:var(--f-mono); font-size:12px; color:var(--ink-3)}
+.keys{margin:0; font-size:12.5px; color:var(--ink-3); line-height:2}
+
+@media (max-width: 1100px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:1 / 1.08; max-width:100%}
+  .fgrid, .rgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.2ch; font-size:12px}
+  .bar .spacer{display:none}
+  .chips{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Mechanika · chaos deterministyczny</span>
+      <h1>
+        <svg viewBox="0 0 48 48" aria-hidden="true">
+          <path d="M33 42 C 44 34, 40 20, 30 24 C 22 27, 12 36, 6 30" fill="none" stroke="var(--accent)" stroke-width="2.2" stroke-linecap="round" stroke-dasharray="1.5 4"/>
+          <line x1="24" y1="5" x2="15" y2="21" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+          <line x1="15" y1="21" x2="31" y2="34" stroke="var(--ink)" stroke-width="2.4" stroke-linecap="round"/>
+          <circle cx="24" cy="5" r="3" fill="var(--paper)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="15" cy="21" r="4.5" fill="var(--blue)"/>
+          <circle cx="31" cy="34" r="5.5" fill="var(--accent)"/>
+        </svg>
+        <span data-i18n-html="title">Wahadło podwójne <em>i chaos</em></span>
+      </h1>
+      <p class="lede" data-i18n="lede">Wahadła startują z prawie identycznych położeń. Różnica rzędu dziesięciotysięcznej części radiana rośnie wykładniczo i po kilku sekundach każde z nich robi coś innego.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t">0,00 <span>s</span></dd></div>
+            <div><dt>θ<sub>1</sub></dt><dd id="hud-th1">0°</dd></div>
+            <div><dt>θ<sub>2</sub></dt><dd id="hud-th2">0°</dd></div>
+            <div><dt>ω<sub>1</sub></dt><dd id="hud-w1">0</dd></div>
+            <div><dt>ω<sub>2</sub></dt><dd id="hud-w2">0</dd></div>
+            <div><dt>E</dt><dd id="hud-e">0</dd></div>
+            <div><dt>|Δθ|</dt><dd id="hud-d">0</dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" aria-label="Animacja wahadła podwójnego"></canvas></div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="Krok wstecz"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="1000" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="Krok naprzód"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0,00 / 0,00 s</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="restart">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="restart">Puść od nowa</span><kbd>R</kbd>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-01" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-rods" aria-pressed="true" data-i18n="rods">Pręty</button>
+            <button type="button" class="tg" id="tg-trails" aria-pressed="true" data-i18n="trails">Ślady</button>
+            <button type="button" class="tg" id="tg-copies" aria-pressed="true" data-i18n="copies">Kopie</button>
+            <button type="button" class="tg" id="tg-linear" aria-pressed="false" data-i18n="linear">Przybliżenie liniowe</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p data-i18n="resSub">Kopia 0 (biała obwódka) jest trajektorią odniesienia.</p></div>
+        <div class="rgrid" id="rgrid"></div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gIC">Warunki początkowe</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" id="pr-inphase" data-preset="inphase" aria-pressed="false"><span><span data-i18n="pInphase">Mod w fazie</span><span class="k">1</span></span><small></small></button>
+          <button type="button" class="chip" id="pr-anti" data-preset="anti" aria-pressed="false"><span><span data-i18n="pAnti">W przeciwfazie</span><span class="k">2</span></span><small></small></button>
+          <button type="button" class="chip" id="pr-small" data-preset="small" aria-pressed="false"><span><span data-i18n="pSmall">Małe drgania</span><span class="k">3</span></span><small></small></button>
+          <button type="button" class="chip" id="pr-medium" data-preset="medium" aria-pressed="false"><span><span data-i18n="pMedium">Średnie</span><span class="k">4</span></span><small></small></button>
+          <button type="button" class="chip" id="pr-chaos" data-preset="chaos" aria-pressed="true"><span><span data-i18n="pChaos">Chaos</span><span class="k">5</span></span><small></small></button>
+          <button type="button" class="chip" id="pr-flip" data-preset="flip" aria-pressed="false"><span><span data-i18n="pFlip">Przewrót</span><span class="k">6</span></span><small></small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="th1" data-i18n-html="lth1">Kąt <i>θ</i><sub>10</sub></label><output id="th1-out" for="th1"></output></div>
+          <input type="range" id="th1" min="-180" max="180" step="0.01" value="120" style="--c:var(--accent)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="th2" data-i18n-html="lth2">Kąt <i>θ</i><sub>20</sub></label><output id="th2-out" for="th2"></output></div>
+          <input type="range" id="th2" min="-180" max="180" step="0.01" value="120" style="--c:var(--accent)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="w1" data-i18n-html="lw1">Prędkość kątowa <i>ω</i><sub>10</sub></label><output id="w1-out" for="w1"></output></div>
+          <input type="range" id="w1" min="-15" max="15" step="0.05" value="0">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="w2" data-i18n-html="lw2">Prędkość kątowa <i>ω</i><sub>20</sub></label><output id="w2-out" for="w2"></output></div>
+          <input type="range" id="w2" min="-15" max="15" step="0.05" value="0">
+        </div>
+        <p class="ghint" data-i18n="icHint">Kąty od pionu w dół. Kulkę na scenie można też chwycić i przeciągnąć.</p>
+      </fieldset>
+
+      <fieldset class="grp" style="--c:var(--accent)">
+        <h3 data-i18n="gSwarm">Efekt motyla</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="K" data-i18n-html="lK">Liczba kopii <i>K</i></label><output id="K-out" for="K"></output></div>
+          <input type="range" id="K" min="2" max="100" step="1" value="20">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="dlog" data-i18n-html="ldelta">Różnica startowa <i>δ</i></label><output id="dlog-out" for="dlog"></output></div>
+          <div class="row">
+            <button type="button" class="btn sm" id="d-down" aria-label="δ ÷ 10">÷10</button>
+            <input type="range" id="dlog" min="-9" max="-1" step="0.1" value="-4">
+            <button type="button" class="btn sm" id="d-up" aria-label="δ × 10">×10</button>
+          </div>
+          <span class="hint" data-i18n-html="deltaHint">Kopia <i>k</i> startuje z kątem <i>θ</i><sub>20</sub> + <i>k</i>·<i>δ</i>.</span>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="elog" data-i18n-html="leps">Tolerancja prognozy <i>ε</i></label><output id="elog-out" for="elog"></output></div>
+          <input type="range" id="elog" min="-3" max="0" step="0.1" value="-1">
+          <span class="hint" data-i18n="epsHint">Rozbieżność, przy której uznajemy prognozę za straconą.</span>
+        </div>
+        <div class="pills">
+          <div class="pill hot"><small data-i18n="pillHz">horyzont t*</small><span id="pill-hz">—</span></div>
+          <div class="pill"><small data-i18n="pillLam">wykładnik λ</small><span id="pill-lam">—</span></div>
+          <div class="pill"><small data-i18n="pillGain">δ ÷ 10 daje</small><span id="pill-gain">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gSys">Układ</h3>
+        <div class="seg" role="group" id="model" style="align-self:flex-start">
+          <button type="button" id="md-point" data-model="point" aria-pressed="true" data-i18n="mPoint">Masy punktowe</button>
+          <button type="button" id="md-rod" data-model="rod" aria-pressed="false" data-i18n="mRod">Pręty sztywne</button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m1" data-i18n-html="lm1">Masa <i>m</i><sub>1</sub></label><output id="m1-out" for="m1"></output></div>
+          <input type="range" id="m1" min="0.1" max="5" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m2" data-i18n-html="lm2">Masa <i>m</i><sub>2</sub></label><output id="m2-out" for="m2"></output></div>
+          <input type="range" id="m2" min="0.1" max="5" step="0.05" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="l1" data-i18n-html="ll1">Długość <i>l</i><sub>1</sub></label><output id="l1-out" for="l1"></output></div>
+          <input type="range" id="l1" min="0.2" max="2" step="0.01" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="l2" data-i18n-html="ll2">Długość <i>l</i><sub>2</sub></label><output id="l2-out" for="l2"></output></div>
+          <input type="range" id="l2" min="0.2" max="2" step="0.01" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="g" data-i18n-html="lg">Przyspieszenie <i>g</i></label><output id="g-out" for="g"></output></div>
+          <input type="range" id="g" min="0.5" max="30" step="0.01" value="9.81">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="damp" data-i18n-html="lb">Tłumienie <i>b</i></label><output id="damp-out" for="damp"></output></div>
+          <input type="range" id="damp" min="0" max="1" step="0.005" value="0">
+          <span class="hint" data-i18n="bHint">Moment oporu −bω w każdym przegubie. Przy 0 energia jest zachowana.</span>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gView">Widok</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="trail" data-i18n="ltrail">Długość śladu</label><output id="trail-out" for="trail"></output></div>
+          <input type="range" id="trail" min="0" max="10" step="0.1" value="2.5">
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącego stanu kopii 0 i ustawień (SI, kąty w radianach).</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <div class="rightcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+        <div class="tabs" role="tablist" id="tabs">
+          <button type="button" role="tab" id="tab-th" data-tab="th" aria-selected="false" data-i18n="tabTh">θ(t)</button>
+          <button type="button" role="tab" id="tab-ph" data-tab="ph" aria-selected="false" data-i18n="tabPh">Portret fazowy</button>
+          <button type="button" role="tab" id="tab-po" data-tab="po" aria-selected="false" data-i18n="tabPo">Przekrój Poincarégo</button>
+          <button type="button" role="tab" id="tab-div" data-tab="div" aria-selected="true" data-i18n="tabDiv">Rozbieżność</button>
+          <button type="button" role="tab" id="tab-en" data-tab="en" aria-selected="false" data-i18n="tabEn">Energia</button>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+      <section class="card fmap" id="fmap">
+        <div class="sec-h"><h2 data-i18n="fmapT">Mapa czasu przewrotu</h2><span class="mstat" id="mstat"></span></div>
+        <p class="cnote" data-i18n-html="fmapSub">Czas do pierwszego przewrotu dolnej kulki dla startu z kątami (<i>θ</i><sub>10</sub>, <i>θ</i><sub>20</sub>) i <i>ω</i> = 0. Kliknij punkt mapy, żeby wczytać ten start.</p>
+        <div class="map-box" id="map-box"><canvas id="map" aria-label="Mapa czasu przewrotu"></canvas><div class="tip" id="mtip" hidden></div></div>
+        <div class="mlegend" id="mlegend"></div>
+      </section>
+    </div>
+  </div>
+  <p class="keys" id="keys"></p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+
+/* PHYSICS-BEGIN */
+const TAU = 2 * Math.PI;
+// Wrap an angle into [-pi, pi).
+function wrapPi(a) { return a - TAU * Math.floor((a + Math.PI) / TAU); }
+// Mass-matrix coefficients of the Lagrangian T = 1/2 A w1^2 + 1/2 C w2^2 + B w1 w2 cos(t1 - t2),
+// V = G1 (1 - cos t1) + G2 (1 - cos t2). Point masses or uniform rods (compound pendulum).
+function coefs(p) {
+  const m1 = p.m1, m2 = p.m2, l1 = p.l1, l2 = p.l2, g = p.g;
+  if (p.compound) return { A: (m1 / 3 + m2) * l1 * l1, B: m2 * l1 * l2 / 2, C: m2 * l2 * l2 / 3, G1: (m1 / 2 + m2) * g * l1, G2: m2 * g * l2 / 2 };
+  return { A: (m1 + m2) * l1 * l1, B: m2 * l1 * l2, C: m2 * l2 * l2, G1: (m1 + m2) * g * l1, G2: m2 * g * l2 };
+}
+let _a1 = 0, _a2 = 0;
+// Angular accelerations from the Euler-Lagrange equations (2x2 linear solve), with joint damping -b*w.
+function accel(c, b, t1, t2, w1, w2) {
+  const d = t1 - t2, cd = Math.cos(d), sd = Math.sin(d), a12 = c.B * cd;
+  const r1 = -c.B * sd * w2 * w2 - c.G1 * Math.sin(t1) - b * w1;
+  const r2 = c.B * sd * w1 * w1 - c.G2 * Math.sin(t2) - b * w2;
+  const det = c.A * c.C - a12 * a12;
+  _a1 = (r1 * c.C - a12 * r2) / det;
+  _a2 = (c.A * r2 - a12 * r1) / det;
+}
+// One classical RK4 step, in place, on y[o..o+3] = (theta1, theta2, omega1, omega2).
+function rk4Step(y, o, c, b, h) {
+  const t1 = y[o], t2 = y[o + 1], w1 = y[o + 2], w2 = y[o + 3], hh = 0.5 * h;
+  accel(c, b, t1, t2, w1, w2); const k1a = _a1, k1b = _a2;
+  const t1b = t1 + hh * w1, t2b = t2 + hh * w2, w1b = w1 + hh * k1a, w2b = w2 + hh * k1b;
+  accel(c, b, t1b, t2b, w1b, w2b); const k2a = _a1, k2b = _a2;
+  const t1c = t1 + hh * w1b, t2c = t2 + hh * w2b, w1c = w1 + hh * k2a, w2c = w2 + hh * k2b;
+  accel(c, b, t1c, t2c, w1c, w2c); const k3a = _a1, k3b = _a2;
+  const t1d = t1 + h * w1c, t2d = t2 + h * w2c, w1d = w1 + h * k3a, w2d = w2 + h * k3b;
+  accel(c, b, t1d, t2d, w1d, w2d);
+  const h6 = h / 6;
+  y[o] = t1 + h6 * (w1 + 2 * w1b + 2 * w1c + w1d);
+  y[o + 1] = t2 + h6 * (w2 + 2 * w2b + 2 * w2c + w2d);
+  y[o + 2] = w1 + h6 * (k1a + 2 * k2a + 2 * k3a + _a1);
+  y[o + 3] = w2 + h6 * (k1b + 2 * k2b + 2 * k3b + _a2);
+}
+// Kinetic and potential energy (potential measured from the lowest configuration).
+function energy(c, y, o) {
+  const t1 = y[o], t2 = y[o + 1], w1 = y[o + 2], w2 = y[o + 3];
+  return [0.5 * c.A * w1 * w1 + 0.5 * c.C * w2 * w2 + c.B * w1 * w2 * Math.cos(t1 - t2),
+          c.G1 * (1 - Math.cos(t1)) + c.G2 * (1 - Math.cos(t2))];
+}
+// Explicit point-mass equations of motion (textbook form, no damping), for display and cross-check.
+function explicitAcc(p, t1, t2, w1, w2) {
+  const m1 = p.m1, m2 = p.m2, l1 = p.l1, l2 = p.l2, g = p.g, d = t1 - t2;
+  const den = 2 * m1 + m2 - m2 * Math.cos(2 * d);
+  const n1 = -g * (2 * m1 + m2) * Math.sin(t1) - m2 * g * Math.sin(t1 - 2 * t2) - 2 * Math.sin(d) * m2 * (w2 * w2 * l2 + w1 * w1 * l1 * Math.cos(d));
+  const n2 = 2 * Math.sin(d) * (w1 * w1 * l1 * (m1 + m2) + g * (m1 + m2) * Math.cos(t1) + w2 * w2 * l2 * m2 * Math.cos(d));
+  return { n1, d1: l1 * den, a1: n1 / (l1 * den), n2, d2: l2 * den, a2: n2 / (l2 * den) };
+}
+// Small-angle normal modes: det(K - w^2 M) = 0 with M = [[A, B], [B, C]], K = diag(G1, G2).
+function normalModes(c) {
+  const a = c.A * c.C - c.B * c.B, bq = c.G1 * c.C + c.G2 * c.A, cq = c.G1 * c.G2;
+  const disc = Math.sqrt(Math.max(0, bq * bq - 4 * a * cq));
+  const wp2 = (bq + disc) / (2 * a), wm2 = cq / (a * wp2);
+  const rm = (c.G1 - wm2 * c.A) / (wm2 * c.B), rp = (c.G1 - wp2 * c.A) / (wp2 * c.B);
+  return { wm: Math.sqrt(wm2), wp: Math.sqrt(wp2), rm, rp };
+}
+// Linearised solution theta(t) = sum over modes of v_k (a_k cos w_k t + b_k / w_k sin w_k t), v_k = (1, r_k).
+function linearAngles(nm, th10, th20, w10, w20, t) {
+  const det = nm.rp - nm.rm;
+  const am = (nm.rp * th10 - th20) / det, ap = (th20 - nm.rm * th10) / det;
+  const bm = (nm.rp * w10 - w20) / det, bp = (w20 - nm.rm * w10) / det;
+  const qm = am * Math.cos(nm.wm * t) + bm / nm.wm * Math.sin(nm.wm * t);
+  const qp = ap * Math.cos(nm.wp * t) + bp / nm.wp * Math.sin(nm.wp * t);
+  return [qm + qp, nm.rm * qm + nm.rp * qp];
+}
+// Angular distance between two pendulum states (wrapped angle differences).
+function angDist(y, o, q) {
+  const a = wrapPi(y[q] - y[o]), b = wrapPi(y[q + 1] - y[o + 1]);
+  return Math.sqrt(a * a + b * b);
+}
+// Least-squares fit of ln d = a + lam t over the exponential-growth window.
+function fitGrowth(ts, ds, n, tSkip, dSat) {
+  let sx = 0, sy = 0, sxx = 0, sxy = 0, m = 0, tA = null, tB = null, sat = false;
+  for (let i = 0; i < n; i++) {
+    const t = ts[i], d = ds[i];
+    if (d >= dSat) { sat = true; break; }
+    if (t < tSkip) continue;
+    const L = Math.log(Math.max(d, 1e-300));
+    sx += t; sy += L; sxx += t * t; sxy += t * L; m++;
+    if (tA === null) tA = t; tB = t;
+  }
+  if (m < 50 || tB - tA < 1) return { ok: false, sat };
+  const lam = (m * sxy - sx * sy) / (m * sxx - sx * sx);
+  return { ok: true, lam, a: (sy - lam * sx) / m, tA, tB, sat };
+}
+// Flip-time map: one row of initial conditions (theta10 along the row, fixed theta20), omega = 0.
+// Self-contained (it is also shipped to a Web Worker as source text).
+// out[i] = time of first |theta2| > pi, -1 = no flip before tmax, -2 = energy too low to flip.
+function flipMapRow(p, j, N, out) {
+  const A = p.A, B = p.B, C = p.C, G1 = p.G1, G2 = p.G2, bb = p.b, h = p.h, PI = Math.PI;
+  const nmax = Math.ceil(p.tmax / h), hh = 0.5 * h, h6 = h / 6;
+  const th2 = -PI + (j + 0.5) * 2 * PI / N;
+  let a1 = 0, a2 = 0;
+  const acc = (t1, t2, w1, w2) => {
+    const d = t1 - t2, cd = Math.cos(d), sd = Math.sin(d), a12 = B * cd;
+    const r1 = -B * sd * w2 * w2 - G1 * Math.sin(t1) - bb * w1, r2 = B * sd * w1 * w1 - G2 * Math.sin(t2) - bb * w2;
+    const det = A * C - a12 * a12; a1 = (r1 * C - a12 * r2) / det; a2 = (A * r2 - a12 * r1) / det;
+  };
+  for (let i = 0; i < N; i++) {
+    const th1 = -PI + (i + 0.5) * 2 * PI / N;
+    if (G1 * (1 - Math.cos(th1)) + G2 * (1 - Math.cos(th2)) < 2 * G2) { out[i] = -2; continue; }
+    let t1 = th1, t2 = th2, w1 = 0, w2 = 0, res = -1;
+    for (let n = 1; n <= nmax; n++) {
+      acc(t1, t2, w1, w2); const k1a = a1, k1b = a2;
+      const t1b = t1 + hh * w1, t2b = t2 + hh * w2, w1b = w1 + hh * k1a, w2b = w2 + hh * k1b;
+      acc(t1b, t2b, w1b, w2b); const k2a = a1, k2b = a2;
+      const t1c = t1 + hh * w1b, t2c = t2 + hh * w2b, w1c = w1 + hh * k2a, w2c = w2 + hh * k2b;
+      acc(t1c, t2c, w1c, w2c); const k3a = a1, k3b = a2;
+      const t1d = t1 + h * w1c, t2d = t2 + h * w2c, w1d = w1 + h * k3a, w2d = w2 + h * k3b;
+      acc(t1d, t2d, w1d, w2d);
+      t1 += h6 * (w1 + 2 * w1b + 2 * w1c + w1d); t2 += h6 * (w2 + 2 * w2b + 2 * w2c + w2d);
+      w1 += h6 * (k1a + 2 * k2a + 2 * k3a + a1); w2 += h6 * (k1b + 2 * k2b + 2 * k3b + a2);
+      if (t2 > PI || t2 < -PI) { res = n * h; break; }
+    }
+    out[i] = res;
+  }
+}
+/* PHYSICS-END */
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Mechanika · chaos deterministyczny', title:'Wahadło podwójne <em>i chaos</em>',
+    lede:'Wahadła startują z prawie identycznych położeń. Różnica rzędu dziesięciotysięcznej części radiana rośnie wykładniczo i po kilku sekundach każde z nich robi coś innego.',
+    restart:'Puść od nowa', speed:'Tempo', rods:'Pręty', trails:'Ślady', copies:'Kopie', linear:'Przybliżenie liniowe', fullscreen:'Pełny ekran',
+    pause:'Pauza', play:'Odtwórz', stepBack:'Krok wstecz', stepFwd:'Krok naprzód', timeline:'Oś czasu', sceneLabel:'Animacja wahadła podwójnego',
+    lgCopies:'kopii', sTogether:'razem', sDiverge:'rozchodzą się', sChaos:'rozproszone',
+    cvHorizon:'horyzont t*', cvBeyond:'poza horyzontem', cvRegular:'ruch regularny: brak wykładniczego wzrostu', cvDrag:'przeciągnij kulkę, żeby ustawić start', cvLin:'przybliżenie liniowe',
+    gIC:'Warunki początkowe', pInphase:'Mod w fazie', pAnti:'W przeciwfazie', pSmall:'Małe drgania', pMedium:'Średnie', pChaos:'Chaos', pFlip:'Przewrót',
+    lth1:'Kąt <i>θ</i><sub>10</sub>', lth2:'Kąt <i>θ</i><sub>20</sub>', lw1:'Prędkość kątowa <i>ω</i><sub>10</sub>', lw2:'Prędkość kątowa <i>ω</i><sub>20</sub>',
+    icHint:'Kąty od pionu w dół. Kulkę na scenie można też chwycić i przeciągnąć.',
+    gSwarm:'Efekt motyla', lK:'Liczba kopii <i>K</i>', ldelta:'Różnica startowa <i>δ</i>', deltaHint:'Kopia <i>k</i> startuje z kątem <i>θ</i><sub>20</sub> + <i>k</i>·<i>δ</i>.',
+    leps:'Tolerancja prognozy <i>ε</i>', epsHint:'Rozbieżność, przy której uznajemy prognozę za straconą.',
+    pillHz:'horyzont t*', pillLam:'wykładnik λ', pillGain:'δ ÷ 10 daje',
+    gSys:'Układ', mPoint:'Masy punktowe', mRod:'Pręty sztywne', lm1:'Masa <i>m</i><sub>1</sub>', lm2:'Masa <i>m</i><sub>2</sub>', ll1:'Długość <i>l</i><sub>1</sub>', ll2:'Długość <i>l</i><sub>2</sub>',
+    lg:'Przyspieszenie <i>g</i>', lb:'Tłumienie <i>b</i>', bHint:'Moment oporu −bω w każdym przegubie. Przy 0 energia jest zachowana.',
+    gView:'Widok', ltrail:'Długość śladu',
+    results:'Wyniki', resSub:'Kopia 0 (biała obwódka) jest trajektorią odniesienia.',
+    rgEnergy:'Energia', rgChaos:'Chaos', rgState:'Stan kopii 0', rgModes:'Mody normalne (małe drgania)',
+    rE:'energia całkowita <i>E</i>', rE0:'energia startowa <i>E</i><sub>0</sub>', rDrift:'dryf Δ<i>E</i>/<i>E</i><sub>0</sub>', rEk:'kinetyczna <i>E</i><sub>k</sub>', rEp:'potencjalna <i>E</i><sub>p</sub>',
+    rLam:'<i>λ</i> z dopasowania', rLamB:'<i>λ</i> metodą Benettina', rHz:'horyzont <i>t</i>* (prognoza)', rCross:'|Δ<i>θ</i>| ≥ <i>ε</i> (symulacja)', rDiv:'|Δ<i>θ</i>| kopii 0 i 1', rSpread:'rozrzut roju (maks.)',
+    rTh1:'kąt <i>θ</i><sub>1</sub>', rTh2:'kąt <i>θ</i><sub>2</sub>', rW1:'<i>ω</i><sub>1</sub>', rW2:'<i>ω</i><sub>2</sub>', rFlip:'pierwszy przewrót', rFlips:'liczba przewrotów',
+    rWm:'<i>ω</i><sub>−</sub> (w fazie)', rWp:'<i>ω</i><sub>+</sub> (w przeciwfazie)', rTm:'okres <i>T</i><sub>−</sub>', rTp:'okres <i>T</i><sub>+</sub>', rRm:'<i>A</i><sub>2</sub>/<i>A</i><sub>1</sub> w fazie', rRp:'<i>A</i><sub>2</sub>/<i>A</i><sub>1</sub> w przeciwfazie',
+    notYet:'jeszcze nie', none:'—', inf:'∞ (ruch regularny)', damped:'tłumienie',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego stanu kopii 0 i ustawień (SI, kąty w radianach).',
+    fLag:'Lagranżjan', fEom:'Równania ruchu, postać jawna', fMat:'Postać macierzowa całkowana metodą RK4', fE:'Energia całkowita', fModes:'Mody normalne', fDiv:'Rozbieżność trajektorii', fHz:'Horyzont przewidywalności',
+    noteLag:'<i>ω</i> = d<i>θ</i>/d<i>t</i>. Energię potencjalną liczymy od najniższego położenia.',
+    noteLagRod:'Pręty jednorodne: moment bezwładności ⅓<i>ml</i>² względem końca, środek masy w połowie długości.',
+    noteEom:'Wynika z równań Eulera–Lagrange’a dla mas punktowych bez tłumienia. Liczby: bieżący stan kopii 0.',
+    noteEomOff:'Ten wzór opisuje masy punktowe bez tłumienia. Przy prętach albo <i>b</i> > 0 obowiązuje postać macierzowa obok.',
+    noteMat:'Na każdym kroku rozwiązujemy ten układ 2×2, a potem robimy krok RK4 z <i>h</i> = 1 ms, czyli 1000 kroków na sekundę ruchu dla każdej kopii.',
+    noteE:'Bez tłumienia <i>E</i> jest stała, a dryf pokazuje błąd numeryczny RK4.', noteEDamp:'Z tłumieniem d<i>E</i>/d<i>t</i> = −<i>b</i>(<i>ω</i><sub>1</sub>² + <i>ω</i><sub>2</sub>²) < 0.',
+    noteModes:'Dla sin <i>θ</i> ≈ <i>θ</i> i cos <i>θ</i> ≈ 1 równania są liniowe, a każdy ruch jest sumą dwóch modów:',
+    noteModesEq:'Dla <i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> i <i>l</i><sub>1</sub> = <i>l</i><sub>2</sub> = <i>l</i>:', noteModesRod:'Dla prętów używamy ogólnego wzoru ze współczynnikami <i>A</i>, <i>B</i>, <i>C</i>, <i>G</i>.',
+    modeIn:'w fazie', modeAnti:'w przeciwfazie',
+    noteDiv:'Dopasowanie prostej do ln|Δ<i>θ</i>| od <i>t</i> = 0,5 s do chwili, gdy |Δ<i>θ</i>| dochodzi do 0,5 rad.', noteDivNone:'Za mało danych do dopasowania: potrzeba co najmniej 1 s wzrostu przed nasyceniem.',
+    noteHz:'Dziesięć razy dokładniejszy pomiar startu wydłuża prognozę tylko o', noteHzReg:'Ruch regularny: <i>λ</i> ≈ 0, rozbieżność rośnie liniowo, a horyzont jest bardzo daleki.',
+    lyapTime:'czas Lapunowa', doubling:'czas podwojenia',
+    charts:'Wykresy', tabTh:'θ(t)', tabPh:'Portret fazowy', tabPo:'Przekrój Poincarégo', tabDiv:'Rozbieżność', tabEn:'Energia',
+    cTh1:'θ₁ kopii 0', cTh2:'θ₂ kopii 0', cLin:'przybliżenie liniowe', cSwarm:'θ₂ pozostałych kopii', cDiv:'|Δθ| kopii 0 i 1', cFit:'dopasowanie δ·e^{λt}', cEps:'tolerancja ε', cHz:'horyzont t*',
+    cEk:'E kinetyczna', cEp:'E potencjalna', cEt:'E całkowita', cPath:'tor kopii 0', cNow:'kopie teraz', cPoin:'punkty przekroju',
+    noteTh:'Kąty kopii 0 w radianach, bez zawijania: przewrót to skok o 2π. Cienkie linie: θ₂ pozostałych kopii.', noteThLin:'Linia przerywana: rozwiązanie liniowe (suma dwóch modów).',
+    notePh:'Ruch kopii 0 w płaszczyźnie (<i>θ</i><sub>2</sub>, <i>ω</i><sub>2</sub>); starsze fragmenty bledną. Kropki: wszystkie kopie w bieżącej chwili.',
+    notePo:'Punkt (<i>θ</i><sub>2</sub>, <i>ω</i><sub>2</sub>) zapisujemy, gdy <i>θ</i><sub>1</sub> przechodzi przez 0 przy <i>ω</i><sub>1</sub> > 0. Ruch regularny rysuje krzywe, chaos rozrzuca punkty.',
+    notePoDamp:'Przy tłumieniu energia maleje, więc punkty nie leżą na jednej powierzchni stałej energii.', notePoCount:'Punktów',
+    noteDivC:'Skala logarytmiczna: wzrost wykładniczy jest linią prostą o nachyleniu <i>λ</i>.',
+    noteEn:'Energia kopii 0.', noteEnDrift:'Dryf Δ<i>E</i>/<i>E</i><sub>0</sub> =',
+    fmapT:'Mapa czasu przewrotu', fmapSub:'Czas do pierwszego przewrotu dolnej kulki dla startu z kątami (<i>θ</i><sub>10</sub>, <i>θ</i><sub>20</sub>) i <i>ω</i> = 0. Kliknij punkt mapy, żeby wczytać ten start.',
+    mComputing:'liczę', mDone:'gotowe', mForbidden:'za mało energii na przewrót', mNever:'brak przewrotu do 100τ', mFast:'szybko', mSlow:'późno', mNow:'bieżący start',
+    mTip:'przewrót po', mTipNever:'brak przewrotu do', mTipForb:'przewrót niemożliwy (energia)',
+    keys:'Skróty: <kbd>spacja</kbd> pauza · <kbd>R</kbd> od nowa · <kbd>←</kbd> <kbd>→</kbd> krok · <kbd>↑</kbd> <kbd>↓</kbd> δ ×10 / ÷10 · <kbd>1</kbd>–<kbd>6</kbd> warunki początkowe · <kbd>T</kbd> ślady · <kbd>L</kbd> przybliżenie liniowe · <kbd>F</kbd> pełny ekran'
+  },
+  en: {
+    eyebrow:'Mechanics · deterministic chaos', title:'Double pendulum <em>and chaos</em>',
+    lede:'The pendulums start from almost the same position. A difference of about a ten-thousandth of a radian grows exponentially, and within seconds each one is doing something different.',
+    restart:'Release again', speed:'Speed', rods:'Rods', trails:'Trails', copies:'Copies', linear:'Linear approximation', fullscreen:'Full screen',
+    pause:'Pause', play:'Play', stepBack:'Step back', stepFwd:'Step forward', timeline:'Timeline', sceneLabel:'Double pendulum animation',
+    lgCopies:'copies', sTogether:'together', sDiverge:'diverging', sChaos:'scattered',
+    cvHorizon:'horizon t*', cvBeyond:'beyond the horizon', cvRegular:'regular motion: no exponential growth', cvDrag:'drag a bob to set the start', cvLin:'linear approximation',
+    gIC:'Initial conditions', pInphase:'In-phase mode', pAnti:'Anti-phase', pSmall:'Small swings', pMedium:'Medium', pChaos:'Chaos', pFlip:'Flip',
+    lth1:'Angle <i>θ</i><sub>10</sub>', lth2:'Angle <i>θ</i><sub>20</sub>', lw1:'Angular velocity <i>ω</i><sub>10</sub>', lw2:'Angular velocity <i>ω</i><sub>20</sub>',
+    icHint:'Angles from the downward vertical. You can also grab a bob on the stage and drag it.',
+    gSwarm:'Butterfly effect', lK:'Number of copies <i>K</i>', ldelta:'Initial difference <i>δ</i>', deltaHint:'Copy <i>k</i> starts at angle <i>θ</i><sub>20</sub> + <i>k</i>·<i>δ</i>.',
+    leps:'Forecast tolerance <i>ε</i>', epsHint:'The divergence at which we call the forecast lost.',
+    pillHz:'horizon t*', pillLam:'exponent λ', pillGain:'δ ÷ 10 buys',
+    gSys:'System', mPoint:'Point masses', mRod:'Rigid rods', lm1:'Mass <i>m</i><sub>1</sub>', lm2:'Mass <i>m</i><sub>2</sub>', ll1:'Length <i>l</i><sub>1</sub>', ll2:'Length <i>l</i><sub>2</sub>',
+    lg:'Acceleration <i>g</i>', lb:'Damping <i>b</i>', bHint:'Friction torque −bω at each joint. At 0, energy is conserved.',
+    gView:'View', ltrail:'Trail length',
+    results:'Results', resSub:'Copy 0 (white outline) is the reference trajectory.',
+    rgEnergy:'Energy', rgChaos:'Chaos', rgState:'State of copy 0', rgModes:'Normal modes (small swings)',
+    rE:'total energy <i>E</i>', rE0:'initial energy <i>E</i><sub>0</sub>', rDrift:'drift Δ<i>E</i>/<i>E</i><sub>0</sub>', rEk:'kinetic <i>E</i><sub>k</sub>', rEp:'potential <i>E</i><sub>p</sub>',
+    rLam:'<i>λ</i> from the fit', rLamB:'<i>λ</i> by Benettin’s method', rHz:'horizon <i>t</i>* (forecast)', rCross:'|Δ<i>θ</i>| ≥ <i>ε</i> (simulation)', rDiv:'|Δ<i>θ</i>| of copies 0 and 1', rSpread:'swarm spread (max)',
+    rTh1:'angle <i>θ</i><sub>1</sub>', rTh2:'angle <i>θ</i><sub>2</sub>', rW1:'<i>ω</i><sub>1</sub>', rW2:'<i>ω</i><sub>2</sub>', rFlip:'first flip', rFlips:'number of flips',
+    rWm:'<i>ω</i><sub>−</sub> (in phase)', rWp:'<i>ω</i><sub>+</sub> (anti-phase)', rTm:'period <i>T</i><sub>−</sub>', rTp:'period <i>T</i><sub>+</sub>', rRm:'<i>A</i><sub>2</sub>/<i>A</i><sub>1</sub> in phase', rRp:'<i>A</i><sub>2</sub>/<i>A</i><sub>1</sub> anti-phase',
+    notYet:'not yet', none:'—', inf:'∞ (regular motion)', damped:'damping',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current state of copy 0 and the settings (SI units, angles in radians).',
+    fLag:'Lagrangian', fEom:'Equations of motion, explicit form', fMat:'Matrix form integrated with RK4', fE:'Total energy', fModes:'Normal modes', fDiv:'Divergence of trajectories', fHz:'Predictability horizon',
+    noteLag:'<i>ω</i> = d<i>θ</i>/d<i>t</i>. Potential energy is measured from the lowest position.',
+    noteLagRod:'Uniform rods: moment of inertia ⅓<i>ml</i>² about the end, centre of mass at mid-length.',
+    noteEom:'From the Euler–Lagrange equations for point masses without damping. Numbers: current state of copy 0.',
+    noteEomOff:'This form holds for point masses without damping. With rods or <i>b</i> > 0 the matrix form next to it applies.',
+    noteMat:'At every step we solve this 2×2 system and take an RK4 step with <i>h</i> = 1 ms, i.e. 1000 steps per second of motion for every copy.',
+    noteE:'Without damping <i>E</i> is constant; the drift shows the numerical error of RK4.', noteEDamp:'With damping d<i>E</i>/d<i>t</i> = −<i>b</i>(<i>ω</i><sub>1</sub>² + <i>ω</i><sub>2</sub>²) < 0.',
+    noteModes:'For sin <i>θ</i> ≈ <i>θ</i> and cos <i>θ</i> ≈ 1 the equations are linear and every motion is a sum of two modes:',
+    noteModesEq:'For <i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> and <i>l</i><sub>1</sub> = <i>l</i><sub>2</sub> = <i>l</i>:', noteModesRod:'For rods we use the general formula with the coefficients <i>A</i>, <i>B</i>, <i>C</i>, <i>G</i>.',
+    modeIn:'in phase', modeAnti:'anti-phase',
+    noteDiv:'Straight-line fit to ln|Δ<i>θ</i>| from <i>t</i> = 0.5 s until |Δ<i>θ</i>| reaches 0.5 rad.', noteDivNone:'Not enough data to fit: at least 1 s of growth before saturation is needed.',
+    noteHz:'A ten times more precise initial measurement extends the forecast by only', noteHzReg:'Regular motion: <i>λ</i> ≈ 0, the divergence grows linearly and the horizon is very far away.',
+    lyapTime:'Lyapunov time', doubling:'doubling time',
+    charts:'Charts', tabTh:'θ(t)', tabPh:'Phase portrait', tabPo:'Poincaré section', tabDiv:'Divergence', tabEn:'Energy',
+    cTh1:'θ₁ of copy 0', cTh2:'θ₂ of copy 0', cLin:'linear approximation', cSwarm:'θ₂ of the other copies', cDiv:'|Δθ| of copies 0 and 1', cFit:'fit δ·e^{λt}', cEps:'tolerance ε', cHz:'horizon t*',
+    cEk:'kinetic E', cEp:'potential E', cEt:'total E', cPath:'path of copy 0', cNow:'copies now', cPoin:'section points',
+    noteTh:'Angles of copy 0 in radians, unwrapped: a flip is a jump of 2π. Thin lines: θ₂ of the other copies.', noteThLin:'Dashed line: the linear solution (sum of the two modes).',
+    notePh:'Motion of copy 0 in the (<i>θ</i><sub>2</sub>, <i>ω</i><sub>2</sub>) plane; older parts fade. Dots: all copies right now.',
+    notePo:'A point (<i>θ</i><sub>2</sub>, <i>ω</i><sub>2</sub>) is recorded whenever <i>θ</i><sub>1</sub> crosses 0 with <i>ω</i><sub>1</sub> > 0. Regular motion draws curves, chaos scatters the points.',
+    notePoDamp:'With damping the energy decreases, so the points do not lie on one constant-energy surface.', notePoCount:'Points',
+    noteDivC:'Log scale: exponential growth is a straight line with slope <i>λ</i>.',
+    noteEn:'Energy of copy 0.', noteEnDrift:'Drift Δ<i>E</i>/<i>E</i><sub>0</sub> =',
+    fmapT:'Flip-time map', fmapSub:'Time until the lower bob first flips over, starting from angles (<i>θ</i><sub>10</sub>, <i>θ</i><sub>20</sub>) with <i>ω</i> = 0. Click a point on the map to load that start.',
+    mComputing:'computing', mDone:'done', mForbidden:'not enough energy to flip', mNever:'no flip within 100τ', mFast:'fast', mSlow:'late', mNow:'current start',
+    mTip:'flips after', mTipNever:'no flip within', mTipForb:'flip impossible (energy)',
+    keys:'Shortcuts: <kbd>space</kbd> pause · <kbd>R</kbd> release again · <kbd>←</kbd> <kbd>→</kbd> step · <kbd>↑</kbd> <kbd>↓</kbd> δ ×10 / ÷10 · <kbd>1</kbd>–<kbd>6</kbd> initial conditions · <kbd>T</kbd> trails · <kbd>L</kbd> linear approximation · <kbd>F</kbd> full screen'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('wahadlo-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function autoDec(x) { const a = Math.abs(x); return a >= 1000 ? 0 : a >= 100 ? 1 : a >= 1 ? 2 : 3; }
+const fa = (x) => fmt(x, autoDec(x));
+const SUPD = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+const sup = (n) => String(n).split('').map(ch => SUPD[ch] ?? ch).join('');
+// Scientific notation "3,2·10⁻⁵"; a bare power of ten is written as "10⁻⁴".
+function fsci(x, dec = 1) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const s = x < 0 ? '−' : '', a = Math.abs(x);
+  let e = Math.floor(Math.log10(a)), m = a / Math.pow(10, e);
+  if (+m.toFixed(dec) >= 10) { m /= 10; e += 1; }
+  if (Math.abs(m - 1) < 0.5 * Math.pow(10, -dec)) return `${s}10${sup(e)}`;
+  return `${s}${fmt(m, dec)}·10${sup(e)}`;
+}
+// Plain decimals for ordinary magnitudes, scientific otherwise.
+function fnum(x, dec) {
+  const a = Math.abs(x);
+  if (x === 0) return '0';
+  if (a >= 1e-3 && a < 1e5) return dec != null ? fmt(x, dec) : fa(x);
+  return fsci(x);
+}
+// Significant-digit formatting, e.g. 0,1 or 0,032.
+function fsig(x, d = 2) {
+  const a = Math.abs(x);
+  if (a > 0 && a < 1e-3) return fsci(x);
+  return new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { maximumSignificantDigits: d }).format(x).replace('-', '−');
+}
+// Distances: plain decimals above 0.01 rad, scientific below.
+const fdist = (x) => (x >= 0.01 ? fmt(x, x >= 1 ? 2 : 3) : fsci(x));
+const fdeg = (rad) => `${fmt(wrapPi(rad) * R2D, 1)}°`;
+
+/* ---------- parameters & state ---------- */
+const P = {};
+const S = {
+  playing: !reduceMotion, speed: 1, acc: 0, viewJ: null, dragging: 0, model: 'point',
+  rods: true, trails: true, copies: true, linear: false, tab: 'div', hover: null, hasDragged: false
+};
+function readParams() {
+  P.m1 = +$('#m1').value; P.m2 = +$('#m2').value; P.l1 = +$('#l1').value; P.l2 = +$('#l2').value;
+  P.g = +$('#g').value; P.b = +$('#damp').value; P.compound = S.model === 'rod';
+  P.th10 = +$('#th1').value * D2R; P.th20 = +$('#th2').value * D2R; P.w10 = +$('#w1').value; P.w20 = +$('#w2').value;
+  P.K = Math.round(+$('#K').value); P.delta = Math.pow(10, +$('#dlog').value); P.eps = Math.pow(10, +$('#elog').value);
+  P.trail = +$('#trail').value;
+}
+
+/* ---------- simulation of the swarm ---------- */
+const HSTEP = 0.001, SUB = 10, DTS = HSTEP * SUB, LY_EVERY = 500, LY_D0 = 1e-8, PMAX = 60000, DSAT = 0.5, TSKIP = 0.5;
+const SIM = {
+  K: 0, N: 0, y: null, step: 0, c: null, b: 0, hist: null, ly: null, cap: 0, hStart: 0, hLen: 0,
+  lySum: 0, lyScale: 1, E0: 0, prevW: null, ver: 0,
+  pth: new Float32Array(PMAX), pw: new Float32Array(PMAX), pt: new Float32Array(PMAX), pk: new Uint8Array(PMAX), pn: 0
+};
+let NM = null;   // normal modes of the current parameters
+
+function startRun() {
+  const K = P.K, N = K + 1, N4 = N * 4;
+  SIM.c = coefs(P); SIM.b = P.b; NM = normalModes(SIM.c);
+  if (SIM.N !== N || !SIM.y) { SIM.y = new Float64Array(N4); SIM.prevW = new Float64Array(K); }
+  SIM.K = K; SIM.N = N;
+  const y = SIM.y;
+  for (let k = 0; k < K; k++) { const o = 4 * k; y[o] = P.th10; y[o + 1] = P.th20 + k * P.delta; y[o + 2] = P.w10; y[o + 3] = P.w20; }
+  // hidden shadow trajectory for the Benettin estimate of the largest Lyapunov exponent
+  const os = 4 * K; y[os] = P.th10; y[os + 1] = P.th20 + LY_D0; y[os + 2] = P.w10; y[os + 3] = P.w20;
+  const cap = Math.max(1500, Math.min(12000, Math.floor(3.2e6 / N4)));
+  if (!SIM.hist || SIM.cap !== cap || SIM.hist.length !== cap * N4) { SIM.cap = cap; SIM.hist = new Float64Array(cap * N4); SIM.ly = new Float64Array(cap); }
+  SIM.hStart = 0; SIM.hLen = 0; SIM.step = 0; SIM.lySum = 0; SIM.pn = 0;
+  for (let k = 0; k < K; k++) SIM.prevW[k] = wrapPi(y[4 * k]);
+  SIM.lyScale = Math.sqrt((P.l1 + P.l2) / 2 / P.g);
+  const e = energy(SIM.c, y, 0); SIM.E0 = e[0] + e[1];
+  record();
+  SIM.ver++;
+  S.viewJ = null; S.acc = 0;
+  fitCache.key = '';
+}
+function record() {
+  const N4 = SIM.N * 4;
+  if (SIM.hLen === SIM.cap) {   // rolling window: drop the oldest quarter
+    const q = Math.floor(SIM.cap / 4);
+    SIM.hist.copyWithin(0, q * N4, SIM.hLen * N4); SIM.ly.copyWithin(0, q, SIM.hLen);
+    SIM.hStart += q; SIM.hLen -= q;
+  }
+  SIM.hist.set(SIM.y, SIM.hLen * N4); SIM.ly[SIM.hLen] = SIM.lySum; SIM.hLen++;
+}
+function pushPoin(th, w, t, k) {
+  if (SIM.pn >= PMAX) {
+    const q = PMAX / 2;
+    SIM.pth.copyWithin(0, q); SIM.pw.copyWithin(0, q); SIM.pt.copyWithin(0, q); SIM.pk.copyWithin(0, q); SIM.pn -= q;
+  }
+  const i = SIM.pn++; SIM.pth[i] = th; SIM.pw[i] = w; SIM.pt[i] = t; SIM.pk[i] = k;
+}
+function renorm() {
+  const y = SIM.y, o = 4 * SIM.K, sc = SIM.lyScale;
+  const d1 = y[o] - y[0], d2 = y[o + 1] - y[1], d3 = (y[o + 2] - y[2]) * sc, d4 = (y[o + 3] - y[3]) * sc;
+  const d = Math.sqrt(d1 * d1 + d2 * d2 + d3 * d3 + d4 * d4);
+  if (!(d > 0)) return;
+  SIM.lySum += Math.log(d / LY_D0);
+  const f = LY_D0 / d;
+  for (let i = 0; i < 4; i++) y[o + i] = y[i] + (y[o + i] - y[i]) * f;
+}
+function advance(n) {
+  const y = SIM.y, c = SIM.c, b = SIM.b, K = SIM.K, N = SIM.N, pw = SIM.prevW;
+  for (let s = 0; s < n; s++) {
+    for (let k = 0; k < K; k++) {
+      const o = 4 * k, t2p = y[o + 1], w2p = y[o + 3];
+      rk4Step(y, o, c, b, HSTEP);
+      // Poincare section: theta1 crosses 0 upwards (omega1 > 0)
+      const wa = pw[k], wb = wrapPi(y[o]);
+      pw[k] = wb;
+      if (wa < 0 && wb >= 0 && wb - wa < 1 && y[o + 2] > 0) {
+        const f = -wa / (wb - wa);
+        pushPoin(wrapPi(t2p + f * (y[o + 1] - t2p)), w2p + f * (y[o + 3] - w2p), (SIM.step + f) * HSTEP, k);
+      }
+    }
+    rk4Step(y, 4 * K, c, b, HSTEP);
+    SIM.step++;
+    if (SIM.step % LY_EVERY === 0) renorm();
+    if (SIM.step % SUB === 0) record();
+  }
+}
+// Rewind: continue the simulation from stored sample j (global index), discarding the future.
+function truncateTo(j) {
+  const N4 = SIM.N * 4, idx = j - SIM.hStart;
+  if (idx < 0 || idx >= SIM.hLen) return;
+  SIM.y.set(SIM.hist.subarray(idx * N4, (idx + 1) * N4));
+  SIM.step = j * SUB; SIM.hLen = idx + 1; SIM.lySum = SIM.ly[idx];
+  const tj = j * DTS;
+  let n = SIM.pn; while (n > 0 && SIM.pt[n - 1] > tj + 1e-9) n--; SIM.pn = n;
+  for (let k = 0; k < SIM.K; k++) SIM.prevW[k] = wrapPi(SIM.y[4 * k]);
+  SIM.ver++;
+}
+const lastJ = () => SIM.hStart + SIM.hLen - 1;
+// Displayed state: either the live state or a stored sample while scrubbing.
+function disp() {
+  if (S.viewJ === null) return { a: SIM.y, o: 0, t: SIM.step * HSTEP, j: lastJ() };
+  return { a: SIM.hist, o: (S.viewJ - SIM.hStart) * SIM.N * 4, t: S.viewJ * DTS, j: S.viewJ };
+}
+
+/* ---------- derived quantities ---------- */
+const fitCache = { key: '', v: null };
+function getFit() {
+  const key = `${SIM.ver}|${SIM.hStart}|${SIM.hLen}|${P.eps}`;
+  if (fitCache.key === key) return fitCache.v;
+  const n = SIM.hLen, N4 = SIM.N * 4, H = SIM.hist;
+  const ts = new Float64Array(n), ds = new Float64Array(n);
+  let crossT = null, flips = 0, firstFlip = null, prevK = null;
+  for (let i = 0; i < n; i++) {
+    const o = i * N4; ts[i] = (SIM.hStart + i) * DTS; ds[i] = angDist(H, o, o + 4);
+    if (crossT === null && ds[i] >= P.eps) crossT = ts[i];
+    const kk = Math.floor((H[o + 1] + Math.PI) / TAU);
+    if (prevK !== null && kk !== prevK) { flips++; if (firstFlip === null) firstFlip = ts[i]; }
+    prevK = kk;
+  }
+  const f = fitGrowth(ts, ds, n, TSKIP, DSAT);
+  f.ts = ts; f.ds = ds; f.crossT = crossT; f.flips = flips; f.firstFlip = firstFlip;
+  f.regular = f.ok && f.lam < 0.08;
+  f.hz = f.ok && !f.regular ? Math.log(P.eps / P.delta) / f.lam : null;
+  fitCache.key = key; fitCache.v = f;
+  return f;
+}
+function benettin(dp) {
+  const t = dp.j * DTS, idx = dp.j - SIM.hStart;
+  if (t < 2 || idx < 0) return null;
+  return SIM.ly[idx] / t;
+}
+function swarmSpread(dp) {
+  let m = 0;
+  for (let k = 1; k < SIM.K; k++) { const d = angDist(dp.a, dp.o, dp.o + 4 * k); if (d > m) m = d; }
+  return m;
+}
+
+/* ---------- colours ---------- */
+let col = {}, QST = [], QCH = [];
+function hexRgb(h) {
+  h = h.trim().replace('#', '');
+  if (h.length === 3) h = h.split('').map(x => x + x).join('');
+  const n = parseInt(h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const rgba = (c, a) => `rgba(${c[0] | 0},${c[1] | 0},${c[2] | 0},${a})`;
+function ramp(stops, u) {
+  const x = Math.max(0, Math.min(1, u)) * (stops.length - 1), i = Math.min(stops.length - 2, Math.floor(x)), f = x - i;
+  const a = stops[i], b = stops[i + 1];
+  return [a[0] + (b[0] - a[0]) * f, a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f];
+}
+let swarmSt = [], swarmCh = [];
+function buildSwarmColors() {
+  const K = SIM.K || P.K || 2;
+  swarmSt = []; swarmCh = [];
+  for (let k = 0; k < K; k++) {
+    if (K <= 9) { swarmSt.push(QST[k]); swarmCh.push(QCH[k]); }
+    else { const u = k / (K - 1); swarmSt.push(ramp(QST, u)); swarmCh.push(ramp(QCH, u)); }
+  }
+}
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  const g = (k) => cs.getPropertyValue('--' + k).trim();
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'accent', 'blue', 'amber', 'violet', 'green', 'lime', 'purple',
+    'st-bg', 'st-bg2', 'st-ink', 'st-ink2', 'st-ink3', 'st-line', 'st-grid']) col[k.replace(/-/g, '')] = g(k);
+  QST = []; QCH = [];
+  for (let i = 0; i < 9; i++) { QST.push(hexRgb(g('q' + i))); QCH.push(hexRgb(g('s' + i))); }
+  buildSwarmColors();
+  dirty = true; chartDirty = true; mapDirty = true;
+}
+
+/* ---------- UI: outputs, presets ---------- */
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+const PRESETS = {
+  inphase: () => { const nm = normalModes(coefs(P)); return { th1: 6, th2: 6 * nm.rm, w1: 0, w2: 0, lin: true }; },
+  anti: () => { const nm = normalModes(coefs(P)); return { th1: 6, th2: 6 * nm.rp, w1: 0, w2: 0, lin: true }; },
+  small: () => ({ th1: 10, th2: 0, w1: 0, w2: 0, lin: true }),
+  medium: () => ({ th1: 45, th2: -45, w1: 0, w2: 0, lin: false }),
+  chaos: () => ({ th1: 120, th2: 120, w1: 0, w2: 0, lin: false }),
+  flip: () => ({ th1: 0, th2: 0, w1: 0, w2: Math.min(15, Math.round(3.8 * Math.sqrt(P.g / P.l2) * 20) / 20), lin: false })
+};
+const PRESET_ORDER = ['inphase', 'anti', 'small', 'medium', 'chaos', 'flip'];
+function presetSub(p) {
+  const v = PRESETS[p]();
+  return v.w2 ? `ω₂ = ${fmt(v.w2, 1)}` : `${fmt(v.th1, 0)}° · ${fmt(v.th2, Math.abs(v.th2 % 1) > 0.05 ? 1 : 0)}°`;
+}
+function updateOutputs() {
+  const o = (id, s) => { $('#' + id + '-out').textContent = s; };
+  o('th1', `${fmt(P.th10 * R2D, 1)}°`); o('th2', `${fmt(P.th20 * R2D, 1)}°`);
+  o('w1', `${fmt(P.w10, 2)} rad/s`); o('w2', `${fmt(P.w20, 2)} rad/s`);
+  o('K', String(P.K)); o('dlog', `${fsci(P.delta)} rad`); o('elog', `${fsig(P.eps)} rad`);
+  o('m1', `${fmt(P.m1, 2)} kg`); o('m2', `${fmt(P.m2, 2)} kg`); o('l1', `${fmt(P.l1, 2)} m`); o('l2', `${fmt(P.l2, 2)} m`);
+  o('g', `${fmt(P.g, 2)} m/s²`); o('damp', `${fmt(P.b, 3)} N·m·s`); o('trail', `${fmt(P.trail, 1)} s`);
+  $$('input[type=range]').forEach(setFill);
+  for (const p of PRESET_ORDER) {
+    const v = PRESETS[p](), b = $('#pr-' + p);
+    const on = Math.abs(v.th1 - P.th10 * R2D) < 0.06 && Math.abs(v.th2 - P.th20 * R2D) < 0.06 && Math.abs(v.w1 - P.w10) < 0.03 && Math.abs(v.w2 - P.w20) < 0.03;
+    b.setAttribute('aria-pressed', String(on));
+    b.querySelector('small').textContent = presetSub(p);
+  }
+  $$('#model button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.model === S.model)));
+}
+function updateLegend() {
+  $('#legend').innerHTML = `<span><i class="ramp"></i>K = ${P.K} ${tr('lgCopies')}</span><span>δ = ${fsci(P.delta)} rad</span><span class="state" id="state" data-s="together">${tr('sTogether')}</span>`;
+  stateShown = '';
+}
+let stateShown = '';
+function setStateChip(spread) {
+  const s = spread < 0.02 ? 'together' : spread < 0.5 ? 'diverge' : 'chaos';
+  if (s === stateShown) return;
+  stateShown = s;
+  const el = $('#state'); if (!el) return;
+  el.dataset.s = s; el.textContent = tr(s === 'together' ? 'sTogether' : s === 'diverge' ? 'sDiverge' : 'sChaos');
+}
+
+/* ---------- HUD ---------- */
+let hudLast = '';
+function updateHud() {
+  const dp = disp(), a = dp.a, o = dp.o;
+  const e = energy(SIM.c, a, o), d = angDist(a, o, o + 4);
+  const key = [dp.t.toFixed(2), a[o].toFixed(3), a[o + 1].toFixed(3), a[o + 2].toFixed(2), a[o + 3].toFixed(2), (e[0] + e[1]).toFixed(3), d.toExponential(1), lang].join('|');
+  if (key === hudLast) return; hudLast = key;
+  const set = (id, h) => { $('#hud-' + id).innerHTML = h; };
+  set('t', `${fmt(dp.t, 2)} <span>s</span>`);
+  set('th1', fdeg(a[o])); set('th2', fdeg(a[o + 1]));
+  set('w1', `${fmt(a[o + 2], 2)} <span>rad/s</span>`); set('w2', `${fmt(a[o + 3], 2)} <span>rad/s</span>`);
+  set('e', `${fa(e[0] + e[1])} <span>J</span>`); set('d', `${fdist(d)} <span>rad</span>`);
+  setStateChip(swarmSpread(dp));
+}
+
+/* ---------- results ---------- */
+const RES = [
+  ['rgEnergy', [['rE', 'E'], ['rE0', 'E0'], ['rDrift', 'drift'], ['rEk', 'Ek'], ['rEp', 'Ep']]],
+  ['rgChaos', [['rLam', 'lam'], ['rLamB', 'lamB'], ['rHz', 'hz'], ['rCross', 'cross'], ['rDiv', 'div'], ['rSpread', 'spread']]],
+  ['rgState', [['rTh1', 'th1'], ['rTh2', 'th2'], ['rW1', 'w1'], ['rW2', 'w2'], ['rFlip', 'flip'], ['rFlips', 'flips']]],
+  ['rgModes', [['rWm', 'wm'], ['rWp', 'wp'], ['rTm', 'Tm'], ['rTp', 'Tp'], ['rRm', 'rm'], ['rRp', 'rp']]]
+];
+function buildResults() {
+  $('#rgrid').innerHTML = RES.map(([h, rows]) => `<div class="rblock"><h3>${tr(h)}</h3><table class="res"><tbody>${rows.map(([lab, id]) => `<tr><th>${tr(lab)}</th><td id="r-${id}">—</td></tr>`).join('')}</tbody></table></div>`).join('');
+}
+function liveValues() {
+  const dp = disp(), a = dp.a, o = dp.o, c = SIM.c, f = getFit();
+  const e = energy(c, a, o), E = e[0] + e[1];
+  const drift = SIM.E0 > 1e-12 ? (E - SIM.E0) / SIM.E0 : 0;
+  const lamB = benettin(dp);
+  return { dp, a, o, c, f, e, E, drift, lamB, d: angDist(a, o, o + 4), spread: swarmSpread(dp) };
+}
+function updateResults(L) {
+  const set = (id, s, cls) => { const el = $('#r-' + id); if (el.textContent !== s) el.textContent = s; el.className = cls || ''; };
+  const { a, o, f, e, E, drift, lamB } = L;
+  set('E', `${fa(E)} J`); set('E0', `${fa(SIM.E0)} J`);
+  set('drift', `${drift >= 0 ? '+' : ''}${fsci(drift)}`, P.b > 0 ? 'hi' : Math.abs(drift) < 1e-5 ? 'ok' : 'hi');
+  if (P.b > 0) set('drift', `${fmt(drift * 100, 1)} % (${tr('damped')})`, 'hi');
+  set('Ek', `${fa(e[0])} J`); set('Ep', `${fa(e[1])} J`);
+  set('lam', f.ok ? `${fmt(f.lam, 2)} s⁻¹` : tr('none'), f.ok && !f.regular ? 'hi' : '');
+  set('lamB', lamB != null ? `${fmt(lamB, 2)} s⁻¹` : tr('none'));
+  set('hz', f.hz != null ? `${fmt(f.hz, 1)} s` : f.regular ? tr('inf') : tr('none'), f.hz != null ? 'hi' : '');
+  set('cross', f.crossT != null ? `${fmt(f.crossT, 2)} s` : tr('notYet'));
+  set('div', `${fdist(L.d)} rad`); set('spread', `${fdist(L.spread)} rad`);
+  set('th1', `${fdeg(a[o])}  (${fmt(a[o], 3)} rad)`); set('th2', `${fdeg(a[o + 1])}  (${fmt(a[o + 1], 3)} rad)`);
+  set('w1', `${fmt(a[o + 2], 3)} rad/s`); set('w2', `${fmt(a[o + 3], 3)} rad/s`);
+  set('flip', f.firstFlip != null ? `${fmt(f.firstFlip, 2)} s` : tr('notYet')); set('flips', String(f.flips));
+  set('wm', `${fmt(NM.wm, 3)} rad/s`); set('wp', `${fmt(NM.wp, 3)} rad/s`);
+  set('Tm', `${fmt(TAU / NM.wm, 3)} s`); set('Tp', `${fmt(TAU / NM.wp, 3)} s`);
+  set('rm', `+${fmt(NM.rm, 3)}`); set('rp', fmt(NM.rp, 3));
+  // swarm pills
+  $('#pill-hz').textContent = f.hz != null ? `${fmt(f.hz, 1)} s` : f.regular ? '∞' : '—';
+  $('#pill-lam').textContent = f.ok ? `${fmt(f.lam, 2)} s⁻¹` : '—';
+  $('#pill-gain').textContent = f.ok && !f.regular ? `+${fmt(Math.LN10 / f.lam, 2)} s` : '—';
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const MX = (cells, c2) => `<span class="mx${c2 ? ' c2' : ''}">${cells.map(x => `<span>${x}</span>`).join('')}</span>`;
+const EQ = ' = ';
+const LV = (k) => `<span class="lv" data-k="${k}">…</span>`;
+const RV = (k) => `<span class="r" data-k="${k}">…</span>`;
+function buildFormulas() {
+  const n = (x, d = 2) => fmt(x, d), c = SIM.c, rod = P.compound;
+  const t1 = V('θ', '1'), t2 = V('θ', '2'), w1 = V('ω', '1'), w2 = V('ω', '2'), m1 = V('m', '1'), m2 = V('m', '2'), l1 = V('l', '1'), l2 = V('l', '2'), g = V('g');
+  const D = `(${t1} − ${t2})`;
+  const cards = [];
+  // Lagrangian
+  const defs = rod
+    ? `${V('A')} = (${FR(m1, '3')} + ${m2})${l1}<sup>2</sup>, ${V('B')} = ${FR('1', '2')}${m2}${l1}${l2}, ${V('C')} = ${FR('1', '3')}${m2}${l2}<sup>2</sup>, ${V('G', '1')} = (${FR(m1, '2')} + ${m2})${g}${l1}, ${V('G', '2')} = ${FR('1', '2')}${m2}${g}${l2}`
+    : `${V('A')} = (${m1} + ${m2})${l1}<sup>2</sup>, ${V('B')} = ${m2}${l1}${l2}, ${V('C')} = ${m2}${l2}<sup>2</sup>, ${V('G', '1')} = (${m1} + ${m2})${g}${l1}, ${V('G', '2')} = ${m2}${g}${l2}`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fLag')}</h4>
+    <div class="eq">${V('L')}${EQ}${V('T')} − ${V('V')}</div>
+    <div class="eq">${V('T')}${EQ}${FR('1', '2')}${V('A')}${w1}<sup>2</sup> + ${FR('1', '2')}${V('C')}${w2}<sup>2</sup> + ${V('B')}${w1}${w2} cos${D}, &nbsp; ${V('V')}${EQ}${V('G', '1')}(1 − cos ${t1}) + ${V('G', '2')}(1 − cos ${t2})</div>
+    <div class="eq num">${defs}</div>
+    <div class="eq num">${V('A')} = ${n(c.A, 3)} kg·m², ${V('B')} = ${n(c.B, 3)} kg·m², ${V('C')} = ${n(c.C, 3)} kg·m², ${V('G', '1')} = ${n(c.G1, 2)} J, ${V('G', '2')} = ${n(c.G2, 2)} J</div>
+    <div class="eq num">${V('T')}${EQ}${LV('T')} J, &nbsp; ${V('V')}${EQ}${LV('V')} J, &nbsp; ${V('L')}${EQ}${RV('L')}</div>
+    <p class="fnote">${tr('noteLag')}${rod ? ' ' + tr('noteLagRod') : ''}</p></div>`);
+  // Explicit EOM (point masses)
+  const den = `${l1}(2${m1} + ${m2} − ${m2} cos(2${t1} − 2${t2}))`;
+  const valid = !rod && P.b === 0;
+  cards.push(`<div class="fcard wide"><h4>${tr('fEom')}</h4>
+    <div class="eq">${V('θ̈', '1')}${EQ}${FR(`−${g}(2${m1} + ${m2}) sin ${t1} − ${m2}${g} sin(${t1} − 2${t2}) − 2 sin${D} ${m2}(${w2}<sup>2</sup>${l2} + ${w1}<sup>2</sup>${l1} cos${D})`, den)}</div>
+    <div class="eq">${V('θ̈', '2')}${EQ}${FR(`2 sin${D} (${w1}<sup>2</sup>${l1}(${m1} + ${m2}) + ${g}(${m1} + ${m2}) cos ${t1} + ${w2}<sup>2</sup>${l2}${m2} cos${D})`, den.replace(l1, l2))}</div>
+    ${valid ? `<div class="eq num">${V('θ̈', '1')}${EQ}${FR(LV('n1'), LV('d1'))}${EQ}${RV('a1')}, &nbsp; ${V('θ̈', '2')}${EQ}${FR(LV('n2'), LV('d2'))}${EQ}${RV('a2')}</div>
+    <p class="fnote">${tr('noteEom')}</p>` : `<p class="fnote">${tr('noteEomOff')}</p>`}</div>`);
+  // Matrix form
+  cards.push(`<div class="fcard wide"><h4>${tr('fMat')}</h4>
+    <div class="eq">${MX([V('A'), `${V('B')} cos${D}`, `${V('B')} cos${D}`, V('C')], true)} ${MX([V('θ̈', '1'), V('θ̈', '2')])}${EQ}${MX([`−${V('B')} sin${D} ${w2}<sup>2</sup> − ${V('G', '1')} sin ${t1} − ${V('b')}${w1}`, `${V('B')} sin${D} ${w1}<sup>2</sup> − ${V('G', '2')} sin ${t2} − ${V('b')}${w2}`])}</div>
+    <div class="eq num">${MX([LV('M11'), LV('M12'), LV('M12'), LV('M22')], true)} ${MX([V('θ̈', '1'), V('θ̈', '2')])}${EQ}${MX([LV('R1'), LV('R2')])} &nbsp;⇒&nbsp; ${V('θ̈', '1')}${EQ}${RV('ma1')}, ${V('θ̈', '2')}${EQ}${RV('ma2')}</div>
+    <p class="fnote">${tr('noteMat')} ${V('b')} = ${n(P.b, 3)} N·m·s.</p></div>`);
+  // Energy
+  cards.push(`<div class="fcard"><h4>${tr('fE')}</h4>
+    <div class="eq">${V('E')}${EQ}${V('T')} + ${V('V')}${EQ}${LV('T')} + ${LV('V')}${EQ}${RV('E')}</div>
+    <div class="eq num">${V('E', '0')}${EQ}${n(SIM.E0, 4)} J, &nbsp; ${FR(`Δ${V('E')}`, V('E', '0'))}${EQ}${RV('drift')}</div>
+    <p class="fnote">${tr('noteE')} ${P.b > 0 ? tr('noteEDamp') : ''}</p></div>`);
+  // Normal modes
+  const nm = NM;
+  cards.push(`<div class="fcard"><h4>${tr('fModes')}</h4>
+    <p class="fnote">${tr('noteModes')}</p>
+    <div class="eq">${V('ω')}<sub>∓</sub><sup>2</sup>${EQ}${FR(`${V('G', '1')}${V('C')} + ${V('G', '2')}${V('A')} ∓ ${RT(`(${V('G', '1')}${V('C')} + ${V('G', '2')}${V('A')})<sup>2</sup> − 4(${V('A')}${V('C')} − ${V('B')}<sup>2</sup>)${V('G', '1')}${V('G', '2')}`)}`, `2(${V('A')}${V('C')} − ${V('B')}<sup>2</sup>)`)}</div>
+    ${rod ? `<p class="fnote">${tr('noteModesRod')}</p>` : `<div class="eq">${V('ω')}<sub>∓</sub><sup>2</sup>${EQ}${FR(`${g}[(${m1} + ${m2})(${l1} + ${l2}) ∓ ${RT(`(${m1} + ${m2})<sup>2</sup>(${l1} + ${l2})<sup>2</sup> − 4${m1}(${m1} + ${m2})${l1}${l2}`)}]`, `2${m1}${l1}${l2}`)}</div>
+    <p class="fnote">${tr('noteModesEq')}</p><div class="eq">${V('ω')}<sub>∓</sub><sup>2</sup>${EQ}${FR(g, V('l'))}(2 ∓ √2)</div>`}
+    <div class="eq num">${V('ω')}<sub>−</sub>${EQ}<span class="r">${n(nm.wm, 3)} rad/s</span>, ${V('T')}<sub>−</sub>${EQ}${n(TAU / nm.wm, 3)} s <small>(${tr('modeIn')}, ${V('A')}<sub>2</sub>/${V('A')}<sub>1</sub> = ${n(nm.rm, 3)})</small></div>
+    <div class="eq num">${V('ω')}<sub>+</sub>${EQ}<span class="r">${n(nm.wp, 3)} rad/s</span>, ${V('T')}<sub>+</sub>${EQ}${n(TAU / nm.wp, 3)} s <small>(${tr('modeAnti')}, ${V('A')}<sub>2</sub>/${V('A')}<sub>1</sub> = ${n(nm.rp, 3)})</small></div></div>`);
+  // Divergence
+  cards.push(`<div class="fcard"><h4>${tr('fDiv')}</h4>
+    <div class="eq">|Δ${V('θ')}(${V('t')})| ≈ ${V('δ')} e<sup>${V('λ')}${V('t')}</sup> &nbsp;⟺&nbsp; ln|Δ${V('θ')}| = ln ${V('δ')} + ${V('λ')}${V('t')}</div>
+    <div class="eq num">${V('δ')}${EQ}${fsci(P.delta)} rad, &nbsp; ${V('λ')}${EQ}${RV('lam')}</div>
+    <div class="eq num">${tr('lyapTime')} 1/${V('λ')}${EQ}${LV('tly')}, &nbsp; ${tr('doubling')} ln 2/${V('λ')}${EQ}${LV('tdbl')}</div>
+    <p class="fnote" data-k="divnote">…</p></div>`);
+  // Horizon
+  cards.push(`<div class="fcard"><h4>${tr('fHz')}</h4>
+    <div class="eq">${V('t')}*${EQ}${FR(`ln(${V('ε')}/${V('δ')})`, V('λ'))}${EQ}${FR(`ln(${fsig(P.eps)} / ${fsci(P.delta)})`, LV('lam2'))}${EQ}${RV('hz')}</div>
+    <p class="fnote" data-k="hznote">…</p></div>`);
+  $('#fgrid').innerHTML = cards.join('');
+  liveEls = $$('#fgrid [data-k]');
+}
+let liveEls = [];
+function updateFormulas(L) {
+  const { a, o, c, e, E, drift, f } = L;
+  const t1 = a[o], t2 = a[o + 1], w1 = a[o + 2], w2 = a[o + 3];
+  const ex = explicitAcc(P, t1, t2, w1, w2);
+  const d = t1 - t2, cd = Math.cos(d), sd = Math.sin(d);
+  const r1 = -c.B * sd * w2 * w2 - c.G1 * Math.sin(t1) - P.b * w1, r2 = c.B * sd * w1 * w1 - c.G2 * Math.sin(t2) - P.b * w2;
+  accel(c, P.b, t1, t2, w1, w2);
+  const lamOk = f.ok && !f.regular;
+  const vals = {
+    T: fmt(e[0], 3), V: fmt(e[1], 3), L: `${fmt(e[0] - e[1], 3)} J`, E: `${fmt(E, 4)} J`,
+    drift: P.b > 0 ? `${fmt(drift * 100, 2)} %` : `${drift >= 0 ? '+' : ''}${fsci(drift)}`,
+    n1: fmt(ex.n1, 2), d1: fmt(ex.d1, 3), a1: `${fmt(ex.a1, 2)} rad/s²`, n2: fmt(ex.n2, 2), d2: fmt(ex.d2, 3), a2: `${fmt(ex.a2, 2)} rad/s²`,
+    M11: fmt(c.A, 3), M12: fmt(c.B * cd, 3), M22: fmt(c.C, 3), R1: fmt(r1, 2), R2: fmt(r2, 2),
+    ma1: `${fmt(_a1, 2)} rad/s²`, ma2: `${fmt(_a2, 2)} rad/s²`,
+    lam: f.ok ? `${fmt(f.lam, 3)} s⁻¹` : tr('none'), lam2: f.ok ? fmt(f.lam, 3) : '—',
+    tly: lamOk ? `${fmt(1 / f.lam, 2)} s` : '—', tdbl: lamOk ? `${fmt(Math.LN2 / f.lam, 2)} s` : '—',
+    hz: f.hz != null ? `${fmt(f.hz, 2)} s` : f.regular ? '∞' : '—',
+    divnote: f.ok ? tr('noteDiv') : tr('noteDivNone'),
+    hznote: lamOk ? `${tr('noteHz')} ln 10/λ = ${fmt(Math.LN10 / f.lam, 2)} s.` : f.regular ? tr('noteHzReg') : tr('noteDivNone')
+  };
+  for (const el of liveEls) {
+    const v = vals[el.dataset.k]; if (v == null) continue;
+    if (el.tagName === 'P') { if (el.innerHTML !== v) el.innerHTML = v; }
+    else if (el.textContent !== v) el.textContent = v;
+  }
+}
+function updateSlow() {
+  const L = liveValues();
+  updateResults(L); updateFormulas(L);
+}
+
+/* ---------- scene ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 500, dpr = 1, dirty = true;
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = Math.max(1, box.clientWidth); ch = Math.max(1, box.clientHeight);
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+function geom() {
+  const R = P.l1 + P.l2;
+  return { cx: cw / 2, cy: ch / 2, s: Math.min(cw, ch) / 2 * 0.86 / R };
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.stbg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function bobPos(G, t1, t2) {
+  const x1 = G.cx + G.s * P.l1 * Math.sin(t1), y1 = G.cy + G.s * P.l1 * Math.cos(t1);
+  return [x1, y1, x1 + G.s * P.l2 * Math.sin(t2), y1 + G.s * P.l2 * Math.cos(t2)];
+}
+function bobR(m, G) { return (4 + 3.2 * Math.cbrt(m)) * Math.max(0.75, Math.min(1.35, G.s / 150)); }
+
+function drawScene() {
+  const c = ctx, G = geom(), dp = disp(), K = SIM.K, N4 = SIM.N * 4;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.globalCompositeOperation = 'source-over'; c.globalAlpha = 1;
+  const bg = c.createRadialGradient(G.cx, G.cy, 0, G.cx, G.cy, Math.max(cw, ch) * 0.75);
+  bg.addColorStop(0, col.stbg2); bg.addColorStop(1, col.stbg);
+  c.fillStyle = bg; c.fillRect(0, 0, cw, ch);
+
+  // protractor around the pivot
+  const R1 = G.s * P.l1, R2 = G.s * (P.l1 + P.l2);
+  c.save();
+  c.strokeStyle = col.stgrid; c.lineWidth = 1;
+  c.setLineDash([2, 5]); c.beginPath(); c.arc(G.cx, G.cy, R1, 0, TAU); c.stroke(); c.setLineDash([]);
+  c.beginPath(); c.arc(G.cx, G.cy, R2, 0, TAU); c.stroke();
+  c.strokeStyle = col.stline;
+  for (let a = 0; a < 360; a += 10) {
+    const r = a * D2R, L = a % 30 === 0 ? 9 : 4;
+    const sx = Math.sin(r), cy = Math.cos(r);
+    c.beginPath(); c.moveTo(G.cx + sx * R2, G.cy + cy * R2); c.lineTo(G.cx + sx * (R2 + L), G.cy + cy * (R2 + L)); c.stroke();
+  }
+  c.setLineDash([3, 6]); c.beginPath(); c.moveTo(G.cx, G.cy); c.lineTo(G.cx, G.cy + R2); c.stroke(); c.setLineDash([]);
+  c.restore();
+  const lab = (deg, txt) => { const r = deg * D2R, rr = R2 + 20; halo(txt, G.cx + Math.sin(r) * rr, G.cy + Math.cos(r) * rr, col.stink3, `500 10.5px ${FONT_MONO}`, 'center'); };
+  lab(0, '0°'); lab(90, '90°'); lab(-90, '−90°'); lab(180, '180°');
+
+  // trails of the lower bob (from the stored history, additive glow)
+  const j1 = dp.j, nTr = Math.round(P.trail / DTS);
+  if (S.trails && nTr > 1) {
+    const j0 = Math.max(SIM.hStart, j1 - nTr);
+    const kMax = S.copies ? K : 1;
+    const nPts = j1 - j0 + 1;
+    const stride = Math.max(1, Math.ceil(kMax * nPts / 36000));
+    const base = Math.min(0.85, 2.4 / Math.sqrt(K));
+    c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round'; c.lineJoin = 'round';
+    const xs = [], ys = [];
+    for (let k = kMax - 1; k >= 0; k--) {
+      xs.length = 0; ys.length = 0;
+      for (let j = j0; j <= j1; j += stride) {
+        const o = (j - SIM.hStart) * N4 + 4 * k, p = bobPos(G, SIM.hist[o], SIM.hist[o + 1]);
+        xs.push(p[2]); ys.push(p[3]);
+      }
+      { const p = bobPos(G, dp.a[dp.o + 4 * k], dp.a[dp.o + 4 * k + 1]); xs.push(p[2]); ys.push(p[3]); }
+      const n = xs.length; if (n < 2) continue;
+      const M = Math.min(14, n - 1), rgb = swarmSt[k], ref = k === 0;
+      for (let m = 0; m < M; m++) {
+        const ia = Math.floor(m * (n - 1) / M), ib = Math.floor((m + 1) * (n - 1) / M);
+        if (ib <= ia) continue;
+        const al = Math.pow((m + 1) / M, 1.6);
+        c.beginPath(); c.moveTo(xs[ia], ys[ia]);
+        for (let i = ia + 1; i <= ib; i++) c.lineTo(xs[i], ys[i]);
+        if (ref) {
+          c.strokeStyle = rgba(rgb, 0.16 * al); c.lineWidth = 9; c.stroke();
+          c.strokeStyle = rgba(rgb, 0.95 * al); c.lineWidth = 2.4; c.stroke();
+        } else {
+          c.strokeStyle = rgba(rgb, 0.12 * al * base); c.lineWidth = 5; c.stroke();
+          c.strokeStyle = rgba(rgb, al * base); c.lineWidth = 1.3; c.stroke();
+        }
+      }
+    }
+    c.restore();
+  }
+
+  // linear approximation (ghost) of copy 0
+  if (S.linear) {
+    const la = linearAngles(NM, P.th10, P.th20, P.w10, P.w20, dp.t);
+    const p = bobPos(G, la[0], la[1]);
+    c.save(); c.strokeStyle = col.stink2; c.lineWidth = 1.5; c.setLineDash([5, 5]);
+    c.beginPath(); c.moveTo(G.cx, G.cy); c.lineTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.stroke(); c.setLineDash([]);
+    c.beginPath(); c.arc(p[0], p[1], bobR(P.m1, G) + 2, 0, TAU); c.stroke();
+    c.beginPath(); c.arc(p[2], p[3], bobR(P.m2, G) + 2, 0, TAU); c.stroke();
+    c.restore();
+    if (cw > 420) halo(tr('cvLin'), p[2] + bobR(P.m2, G) + 8, p[3], col.stink2, `500 10.5px ${FONT_MONO}`, 'left');
+  }
+
+  // copies (back to front), then the reference copy 0
+  const rodW = (m) => Math.max(4, Math.min(14, 4 + 4 * Math.sqrt(m)));
+  const drawPendulum = (k) => {
+    const o = dp.o + 4 * k, p = bobPos(G, dp.a[o], dp.a[o + 1]), rgb = swarmSt[k], ref = k === 0;
+    if (P.compound) {
+      c.save(); c.lineCap = 'round';
+      if (ref) { c.strokeStyle = col.stink; c.lineWidth = rodW(P.m1) + 3; c.beginPath(); c.moveTo(G.cx, G.cy); c.lineTo(p[0], p[1]); c.stroke(); c.lineWidth = rodW(P.m2) + 3; c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.stroke(); }
+      c.globalAlpha = ref ? 1 : 0.55;
+      c.strokeStyle = rgba(rgb, 1); c.lineWidth = rodW(P.m1); c.beginPath(); c.moveTo(G.cx, G.cy); c.lineTo(p[0], p[1]); c.stroke();
+      c.lineWidth = rodW(P.m2); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.stroke();
+      c.globalAlpha = 1;
+      if (ref) { c.fillStyle = col.stbg; c.beginPath(); c.arc(p[0], p[1], 3, 0, TAU); c.fill(); c.fillStyle = col.stink; c.beginPath(); c.arc(p[2], p[3], 3, 0, TAU); c.fill(); }
+      c.restore();
+      return p;
+    }
+    const r1 = bobR(P.m1, G) * (ref ? 1 : 0.82), r2 = bobR(P.m2, G) * (ref ? 1 : 0.82);
+    if (S.rods) {
+      c.save(); c.strokeStyle = ref ? col.stink : rgba(rgb, 0.45); c.lineWidth = ref ? 2.2 : 1; c.lineCap = 'round';
+      c.beginPath(); c.moveTo(G.cx, G.cy); c.lineTo(p[0], p[1]); c.lineTo(p[2], p[3]); c.stroke(); c.restore();
+    }
+    if (ref) {
+      c.save(); c.globalCompositeOperation = 'lighter';
+      const gl = c.createRadialGradient(p[2], p[3], 0, p[2], p[3], r2 * 3.2);
+      gl.addColorStop(0, rgba(rgb, 0.55)); gl.addColorStop(1, rgba(rgb, 0));
+      c.fillStyle = gl; c.beginPath(); c.arc(p[2], p[3], r2 * 3.2, 0, TAU); c.fill(); c.restore();
+    }
+    c.save(); c.globalAlpha = ref ? 1 : 0.9;
+    c.fillStyle = rgba(ref ? QST[4] : rgb, 1); c.beginPath(); c.arc(p[0], p[1], r1, 0, TAU); c.fill();
+    c.fillStyle = rgba(rgb, 1); c.beginPath(); c.arc(p[2], p[3], r2, 0, TAU); c.fill();
+    if (ref) {
+      c.strokeStyle = col.stink; c.lineWidth = 2;
+      c.beginPath(); c.arc(p[0], p[1], r1, 0, TAU); c.stroke();
+      c.beginPath(); c.arc(p[2], p[3], r2, 0, TAU); c.stroke();
+    }
+    c.restore();
+    return p;
+  };
+  if (S.copies) for (let k = K - 1; k >= 1; k--) drawPendulum(k);
+  const p0 = drawPendulum(0);
+
+  // pivot
+  c.save(); c.fillStyle = col.stbg; c.strokeStyle = col.stink; c.lineWidth = 2;
+  c.beginPath(); c.arc(G.cx, G.cy, 5, 0, TAU); c.fill(); c.stroke(); c.restore();
+
+  // angle arcs of copy 0 while paused or dragging
+  if (!S.playing || S.dragging) {
+    const a1 = dp.a[dp.o], a2 = dp.a[dp.o + 1];
+    const arc = (x, y, th, r, txt) => {
+      c.save(); c.strokeStyle = col.stink3; c.setLineDash([3, 4]); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(x, y); c.lineTo(x, y + r * 1.6); c.stroke(); c.setLineDash([]);
+      const w = wrapPi(th);
+      c.strokeStyle = col.stink2; c.lineWidth = 1.4;
+      c.beginPath(); c.arc(x, y, r, Math.PI / 2, Math.PI / 2 - w, w > 0); c.stroke(); c.restore();
+      const am = Math.PI / 2 - w / 2;
+      halo(txt, x + Math.cos(am) * (r + 16), y + Math.sin(am) * (r + 16), col.stink, `600 12px ${FONT_MONO}`, 'center');
+    };
+    arc(G.cx, G.cy, a1, Math.min(40, R1 * 0.4), `θ₁ ${fdeg(a1)}`);
+    arc(p0[0], p0[1], a2, Math.min(32, G.s * P.l2 * 0.35), `θ₂ ${fdeg(a2)}`);
+  }
+
+  // predictability bar
+  const f = getFit();
+  {
+    const x0 = 14, yb = ch - 22, wb = Math.min(190, cw * 0.36);
+    if (f.hz != null) {
+      const u = Math.min(1, dp.t / f.hz), beyond = dp.t >= f.hz;
+      c.save();
+      c.fillStyle = rgba(hexRgb(col.stline), 1); c.fillRect(x0, yb, wb, 4);
+      c.fillStyle = beyond ? rgba(QST[0], 1) : rgba(QST[3], 1); c.fillRect(x0, yb, wb * u, 4);
+      c.restore();
+      halo(`${beyond ? tr('cvBeyond') : tr('cvHorizon')} ≈ ${fmt(f.hz, 1)} s`, x0, yb - 11, beyond ? rgba(QST[0], 1) : col.stink2, `600 11.5px ${FONT_MONO}`, 'left');
+    } else if (f.regular) {
+      halo(tr('cvRegular'), x0, yb - 4, col.stink2, `500 11px ${FONT_MONO}`, 'left');
+    }
+    if (!S.hasDragged && cw > 560) halo(tr('cvDrag'), cw - 14, ch - 18, col.stink3, `500 11px ${FONT_MONO}`, 'right');
+  }
+}
+
+/* ---------- drag the bobs ---------- */
+function hitTest(x, y) {
+  const G = geom(), dp = disp(), p = bobPos(G, dp.a[dp.o], dp.a[dp.o + 1]);
+  const d2 = Math.hypot(x - p[2], y - p[3]), d1 = Math.hypot(x - p[0], y - p[1]);
+  const lim = 30;
+  if (d2 < lim && d2 <= d1) return 2;
+  if (d1 < lim) return 1;
+  return 0;
+}
+function canvasXY(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+cv.addEventListener('pointerdown', (e) => {
+  const [x, y] = canvasXY(e), h = hitTest(x, y);
+  if (!h) return;
+  e.preventDefault();
+  S.dragging = h; S.wasPlaying = S.playing; S.playing = false; S.hasDragged = true;
+  // take the displayed configuration as the new start
+  const dp = disp();
+  $('#th1').value = (wrapPi(dp.a[dp.o]) * R2D).toFixed(2); $('#th2').value = (wrapPi(dp.a[dp.o + 1]) * R2D).toFixed(2);
+  $('#w1').value = 0; $('#w2').value = 0;
+  cv.setPointerCapture(e.pointerId); cv.style.cursor = 'grabbing';
+  dragTo(x, y);
+});
+function dragTo(x, y) {
+  const G = geom();
+  if (S.dragging === 1) $('#th1').value = (Math.atan2(x - G.cx, y - G.cy) * R2D).toFixed(2);
+  else {
+    const t1 = +$('#th1').value * D2R, x1 = G.cx + G.s * P.l1 * Math.sin(t1), y1 = G.cy + G.s * P.l1 * Math.cos(t1);
+    $('#th2').value = (Math.atan2(x - x1, y - y1) * R2D).toFixed(2);
+  }
+  applyParams(false);
+}
+cv.addEventListener('pointermove', (e) => {
+  const [x, y] = canvasXY(e);
+  if (S.dragging) { dragTo(x, y); return; }
+  cv.style.cursor = hitTest(x, y) ? 'grab' : 'default';
+});
+const endDrag = (e) => {
+  if (!S.dragging) return;
+  S.dragging = 0; cv.style.cursor = 'grab';
+  try { cv.releasePointerCapture(e.pointerId); } catch (err) {}
+  S.playing = true; updatePauseIcon(); dirty = true;
+};
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ---------- transport ---------- */
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIconState = null;
+function updatePauseIcon() {
+  const k = S.playing + lang;
+  if (pauseIconState === k) return; pauseIconState = k;
+  const pb = $('#pause'); pb.innerHTML = S.playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(S.playing ? 'pause' : 'play'));
+}
+function timeWindow() {
+  const t0 = SIM.hStart * DTS, t1 = Math.max(lastJ() * DTS, SIM.step * HSTEP);
+  return [t0, Math.max(t1, t0 + DTS)];
+}
+let scrubLast = '';
+function updateScrub() {
+  const [t0, t1] = timeWindow(), t = disp().t, el = $('#scrub');
+  const v = Math.round((t - t0) / (t1 - t0) * 1000);
+  const key = v + '|' + t.toFixed(2) + '|' + t1.toFixed(2) + lang;
+  if (key === scrubLast) return; scrubLast = key;
+  el.value = v; setFill(el);
+  $('#scrub-time').textContent = `${fmt(t, 2)} / ${fmt(t1, 2)} s`;
+}
+function seekJ(j) {
+  j = Math.max(SIM.hStart, Math.min(lastJ(), Math.round(j)));
+  S.viewJ = j === lastJ() && SIM.step === j * SUB ? null : j;
+  S.playing = false; updatePauseIcon(); refreshAll();
+}
+function stepBy(sign) {
+  S.playing = false;
+  const dj = 5;   // 0.05 s
+  if (sign > 0 && (S.viewJ === null || S.viewJ >= lastJ())) { S.viewJ = null; advance(dj * SUB); }
+  else seekJ((S.viewJ ?? lastJ()) + sign * dj);
+  updatePauseIcon(); refreshAll();
+}
+function togglePause() { S.playing = !S.playing; updatePauseIcon(); dirty = true; }
+function restart() { applyParams(true); S.playing = true; updatePauseIcon(); }
+function refreshAll() { dirty = true; chartDirty = true; slowDirty = true; }
+
+/* ---------- applying parameter changes ---------- */
+let lastPhysKey = '';
+function applyParams(fromUser) {
+  readParams();
+  const physKey = [P.m1, P.m2, P.l1, P.l2, P.g, P.b, P.compound].join('|');
+  startRun();
+  buildSwarmColors();
+  updateOutputs(); updateLegend(); buildFormulas();
+  if (physKey !== lastPhysKey) { lastPhysKey = physKey; scheduleMap(); }
+  hudLast = ''; updateHud(); refreshAll(); mapDirty = true;
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 290, chartDirty = true, chartGeom = null;
+function resizeChart() { ccw = Math.max(1, cbox.clientWidth); cch = Math.max(1, cbox.clientHeight); ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+const decFor = (st) => (st >= 1 ? 0 : st >= 0.1 ? 1 : st >= 0.01 ? 2 : 3);
+function chartLegend(items, note) {
+  $('#clegend').innerHTML = items.map(it => it.dot
+    ? `<span><i class="sw-dot" style="background:${it.color}"></i>${it.name}</span>`
+    : `<span><i class="sw-line" style="color:${it.color};border-top-style:${it.dash ? 'dashed' : 'solid'}"></i>${it.name}</span>`).join('');
+  $('#cnote').innerHTML = note;
+}
+// Frame + axes; returns mapping functions. log: y values are log10.
+function axes(c, W, H, xr, yr, opt = {}) {
+  c.font = `500 11px ${FONT_MONO}`;
+  let ylabs = [];
+  if (opt.log) { for (let e = Math.ceil(yr[0]); e <= Math.floor(yr[1]); e += opt.logStep || 1) ylabs.push([e, `10${sup(e)}`]); }
+  else { const st = niceStep(yr[1] - yr[0], 4), dc = decFor(st); for (let v = Math.ceil(yr[0] / st) * st; v <= yr[1] + 1e-9; v += st) ylabs.push([v, fmt(v, dc)]); }
+  let labW = 0; for (const [, s] of ylabs) labW = Math.max(labW, c.measureText(s).width);
+  const L = labW + 14, R = 12, T = 16, B = 28, pw = W - L - R, ph = H - T - B;
+  const X = (x) => L + (x - xr[0]) / (xr[1] - xr[0]) * pw, Y = (y) => T + (1 - (y - yr[0]) / (yr[1] - yr[0])) * ph;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  c.setLineDash([1.5, 3]);
+  for (const [v, s] of ylabs) { const yy = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(s, L - 7, yy); }
+  const xst = niceStep(xr[1] - xr[0], Math.max(3, Math.floor(pw / 90))), xdc = decFor(xst);
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let v = Math.ceil(xr[0] / xst) * xst; v <= xr[1] + 1e-9; v += xst) {
+    const xx = Math.round(X(v)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke();
+    c.fillText(fmt(v, xdc), xx, T + ph + 7);
+  }
+  c.setLineDash([]);
+  c.strokeStyle = col.ink3; c.strokeRect(L + 0.5, T + 0.5, pw, ph);
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(opt.ylab || '', 2, 0);
+  c.textAlign = 'right'; c.fillText(opt.xlab ? `→ ${opt.xlab}` : '', W - R, 0);
+  return { L, R, T, B, pw, ph, X, Y, xr, yr };
+}
+// Min/max per pixel column so that fast oscillations survive decimation.
+function bucketLine(c, ax, n, tOf, vOf) {
+  let col0 = -1, mn = 0, mx = 0, first = 0, last = 0, started = false;
+  const flush = () => {
+    const x = ax.L + col0 + 0.5;
+    if (!started) { c.moveTo(x, ax.Y(first)); started = true; } else c.lineTo(x, ax.Y(first));
+    c.lineTo(x, ax.Y(mn)); c.lineTo(x, ax.Y(mx)); c.lineTo(x, ax.Y(last));
+  };
+  c.beginPath();
+  for (let i = 0; i < n; i++) {
+    const v = vOf(i); if (!isFinite(v)) continue;
+    const cc = Math.floor(ax.X(tOf(i)) - ax.L);
+    if (cc !== col0) { if (col0 >= 0) flush(); col0 = cc; mn = mx = first = last = v; }
+    else { if (v < mn) mn = v; if (v > mx) mx = v; last = v; }
+  }
+  if (col0 >= 0) flush();
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const n = SIM.hLen, N4 = SIM.N * 4, Hh = SIM.hist, hs = SIM.hStart, dp = disp(), tNow = dp.t;
+  const tOf = (i) => (hs + i) * DTS;
+  const [t0, t1] = timeWindow();
+  const xr = [t0, Math.max(t1, t0 + 1)];
+  const cur = S.hover && S.hover.t != null ? S.hover.t : tNow;
+  const iCur = Math.max(0, Math.min(n - 1, Math.round(cur / DTS) - hs));
+  const cs = (i) => rgba(swarmCh[i % swarmCh.length], 1);
+  const cursor = (ax, pts) => {
+    const xx = Math.round(ax.X(Math.min(cur, xr[1]))) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, ax.T); c.lineTo(xx, ax.T + ax.ph); c.stroke(); c.restore();
+    for (const [v, color] of pts) { if (!isFinite(v)) continue; c.save(); c.fillStyle = color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, ax.Y(v), 4.5, 0, TAU); c.fill(); c.stroke(); c.restore(); }
+  };
+  const stroke = (color, w, dash, alpha = 1) => { c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineJoin = 'round'; if (dash) c.setLineDash(dash); c.stroke(); c.restore(); };
+
+  if (S.tab === 'th') {
+    let lo = Infinity, hi = -Infinity;
+    for (let i = 0; i < n; i++) { const o = i * N4; for (const v of [Hh[o], Hh[o + 1]]) { if (v < lo) lo = v; if (v > hi) hi = v; } }
+    const ks = Math.min(SIM.K, 25);
+    if (S.copies) for (let k = 1; k < ks; k++) for (let i = 0; i < n; i += 4) { const v = Hh[i * N4 + 4 * k + 1]; if (v < lo) lo = v; if (v > hi) hi = v; }
+    if (S.linear) for (let i = 0; i < n; i += 5) { const la = linearAngles(NM, P.th10, P.th20, P.w10, P.w20, tOf(i)); lo = Math.min(lo, la[0], la[1]); hi = Math.max(hi, la[0], la[1]); }
+    const pad = Math.max(0.05, (hi - lo) * 0.08);
+    const ax = axes(c, W, H, xr, [lo - pad, hi + pad], { ylab: 'θ [rad]', xlab: 't [s]' });
+    chartGeom = { type: 'time', ax };
+    c.save(); c.beginPath(); c.rect(ax.L, ax.T, ax.pw, ax.ph); c.clip();
+    if (S.copies) for (let k = 1; k < ks; k++) { bucketLine(c, ax, n, tOf, (i) => Hh[i * N4 + 4 * k + 1]); stroke(cs(k), 1, null, 0.45); }
+    bucketLine(c, ax, n, tOf, (i) => Hh[i * N4]); stroke(col.accent, 2.2);
+    bucketLine(c, ax, n, tOf, (i) => Hh[i * N4 + 1]); stroke(col.blue, 2.2);
+    if (S.linear) {
+      for (const q of [0, 1]) {
+        c.beginPath();
+        const st = Math.max(1, Math.floor(n / (ax.pw * 2)));
+        for (let i = 0; i < n; i += st) { const la = linearAngles(NM, P.th10, P.th20, P.w10, P.w20, tOf(i)); const x = ax.X(tOf(i)), yv = ax.Y(la[q]); i ? c.lineTo(x, yv) : c.moveTo(x, yv); }
+        stroke(col.ink, 1.4, [5, 4], 0.8);
+      }
+    }
+    c.restore();
+    const o = iCur * N4;
+    cursor(ax, [[Hh[o], col.accent], [Hh[o + 1], col.blue]]);
+    const items = [{ name: tr('cTh1'), color: col.accent }, { name: tr('cTh2'), color: col.blue }];
+    if (S.copies) items.push({ name: tr('cSwarm'), color: col.ink3 });
+    if (S.linear) items.push({ name: tr('cLin'), color: col.ink, dash: true });
+    chartLegend(items, tr('noteTh') + (S.linear ? ' ' + tr('noteThLin') : ''));
+  } else if (S.tab === 'en') {
+    const c0 = SIM.c; let hi = 0;
+    const ek = new Float64Array(n), ep = new Float64Array(n);
+    for (let i = 0; i < n; i++) { const e = energy(c0, Hh, i * N4); ek[i] = e[0]; ep[i] = e[1]; hi = Math.max(hi, e[0] + e[1], e[0], e[1]); }
+    const ax = axes(c, W, H, xr, [0, Math.max(hi * 1.08, 1e-6)], { ylab: 'E [J]', xlab: 't [s]' });
+    chartGeom = { type: 'time', ax };
+    c.save(); c.beginPath(); c.rect(ax.L, ax.T, ax.pw, ax.ph); c.clip();
+    bucketLine(c, ax, n, tOf, (i) => ek[i]); stroke(col.amber, 2);
+    bucketLine(c, ax, n, tOf, (i) => ep[i]); stroke(col.violet, 2);
+    bucketLine(c, ax, n, tOf, (i) => ek[i] + ep[i]); stroke(col.ink, 2.6);
+    c.restore();
+    cursor(ax, [[ek[iCur], col.amber], [ep[iCur], col.violet], [ek[iCur] + ep[iCur], col.ink]]);
+    const Ee = ek[n - 1] + ep[n - 1], drift = SIM.E0 > 1e-12 ? (Ee - SIM.E0) / SIM.E0 : 0;
+    chartLegend([{ name: tr('cEk'), color: col.amber }, { name: tr('cEp'), color: col.violet }, { name: tr('cEt'), color: col.ink }],
+      `${tr('noteEn')} ${tr('noteEnDrift')} ${P.b > 0 ? fmt(drift * 100, 2) + ' %' : (drift >= 0 ? '+' : '') + fsci(drift)}.`);
+  } else if (S.tab === 'div') {
+    const f = getFit();
+    let mn = Infinity;
+    for (let i = 0; i < n; i++) if (f.ds[i] > 0 && f.ds[i] < mn) mn = f.ds[i];
+    const lo = Math.max(Math.floor(Math.log10(Math.min(mn, P.delta))), Math.floor(Math.log10(P.delta)) - 3);
+    const yr = [lo, 1];
+    const ax = axes(c, W, H, xr, yr, { log: true, logStep: yr[1] - yr[0] > 8 ? 2 : 1, ylab: '|Δθ| [rad]', xlab: 't [s]' });
+    chartGeom = { type: 'time', ax };
+    c.save(); c.beginPath(); c.rect(ax.L, ax.T, ax.pw, ax.ph); c.clip();
+    // tolerance
+    const ye = ax.Y(Math.log10(P.eps));
+    c.save(); c.strokeStyle = col.green; c.setLineDash([6, 4]); c.lineWidth = 1.4; c.beginPath(); c.moveTo(ax.L, ye); c.lineTo(ax.L + ax.pw, ye); c.stroke(); c.restore();
+    bucketLine(c, ax, n, tOf, (i) => Math.log10(Math.max(f.ds[i], 1e-300))); stroke(col.blue, 1.8);
+    if (f.ok) {
+      const tEnd = f.hz != null ? Math.min(xr[1], Math.max(f.tB, f.hz)) : xr[1];
+      c.beginPath(); c.moveTo(ax.X(0), ax.Y((f.a + f.lam * 0) / Math.LN10)); c.lineTo(ax.X(tEnd), ax.Y((f.a + f.lam * tEnd) / Math.LN10));
+      stroke(col.accent, 2.2, [7, 5]);
+      c.save(); c.fillStyle = col.accent; c.globalAlpha = 0.045; c.fillRect(ax.X(f.tA), ax.T, ax.X(f.tB) - ax.X(f.tA), ax.ph); c.restore();
+      if (f.hz != null && f.hz <= xr[1]) {
+        const xh = ax.X(f.hz);
+        c.save(); c.strokeStyle = col.accent; c.lineWidth = 1.2; c.beginPath(); c.moveTo(xh, ax.T); c.lineTo(xh, ax.T + ax.ph); c.stroke(); c.restore();
+        c.font = `600 11px ${FONT_MONO}`; c.fillStyle = col.accent; c.textAlign = xh > ax.L + ax.pw - 90 ? 'right' : 'left'; c.textBaseline = 'top';
+        c.fillText(`t* ≈ ${fmt(f.hz, 1)} s`, xh + (c.textAlign === 'left' ? 5 : -5), ax.T + 4);
+      }
+      c.font = `600 12px ${FONT_MONO}`; c.fillStyle = col.ink; c.textAlign = 'left'; c.textBaseline = 'top';
+      c.fillText(`λ = ${fmt(f.lam, 2)} s⁻¹`, ax.L + 8, ax.T + 6);
+    }
+    c.restore();
+    cursor(ax, [[Math.log10(Math.max(f.ds[iCur], 1e-300)), col.blue]]);
+    chartLegend([{ name: tr('cDiv'), color: col.blue }, { name: tr('cFit'), color: col.accent, dash: true }, { name: tr('cEps'), color: col.green, dash: true }],
+      `${tr('noteDivC')} ${f.ok ? tr('noteDiv') : tr('noteDivNone')}`);
+  } else {
+    // phase portrait or Poincare section in (theta2 wrapped, omega2)
+    const isPo = S.tab === 'po';
+    let mth = 0.05, mw = 0.1;
+    if (isPo) { for (let i = 0; i < SIM.pn; i++) { mth = Math.max(mth, Math.abs(SIM.pth[i])); mw = Math.max(mw, Math.abs(SIM.pw[i])); } }
+    else { for (let i = 0; i < n; i++) { const o = i * N4; mth = Math.max(mth, Math.abs(wrapPi(Hh[o + 1]))); mw = Math.max(mw, Math.abs(Hh[o + 3])); } }
+    for (let k = 0; k < SIM.K; k++) { const o = dp.o + 4 * k; mth = Math.max(mth, Math.abs(wrapPi(dp.a[o + 1]))); mw = Math.max(mw, Math.abs(dp.a[o + 3])); }
+    const xm = mth > 2.5 ? Math.PI : mth * 1.15, ym = mw * 1.1;
+    const ax = axes(c, W, H, [-xm, xm], [-ym, ym], { ylab: 'ω₂ [rad/s]', xlab: 'θ₂ [rad]' });
+    chartGeom = { type: 'xy', ax };
+    c.save(); c.beginPath(); c.rect(ax.L, ax.T, ax.pw, ax.ph); c.clip();
+    c.strokeStyle = col.ink3; c.globalAlpha = 0.5; c.beginPath(); c.moveTo(ax.X(0), ax.T); c.lineTo(ax.X(0), ax.T + ax.ph); c.moveTo(ax.L, ax.Y(0)); c.lineTo(ax.L + ax.pw, ax.Y(0)); c.stroke(); c.globalAlpha = 1;
+    if (isPo) {
+      const r = SIM.pn > 4000 ? 1.1 : 1.6;
+      for (let i = 0; i < SIM.pn; i++) {
+        if (SIM.pt[i] > tNow + 1e-6) continue;
+        c.fillStyle = cs(SIM.pk[i]); c.fillRect(ax.X(SIM.pth[i]) - r, ax.Y(SIM.pw[i]) - r, 2 * r, 2 * r);
+      }
+    } else {
+      const iEnd = Math.max(0, Math.min(n - 1, dp.j - hs)), M = 8, span = iEnd + 1;
+      for (let m = 0; m < M; m++) {
+        const ia = Math.floor(m * span / M), ib = Math.floor((m + 1) * span / M);
+        c.beginPath(); let prev = null;
+        for (let i = ia; i <= Math.min(ib, iEnd); i++) {
+          const o = i * N4, th = wrapPi(Hh[o + 1]), x = ax.X(th), yv = ax.Y(Hh[o + 3]);
+          if (prev === null || Math.abs(th - prev) > Math.PI) c.moveTo(x, yv); else c.lineTo(x, yv);
+          prev = th;
+        }
+        stroke(col.blue, 1.5, null, 0.15 + 0.85 * Math.pow((m + 1) / M, 1.5));
+      }
+    }
+    // all copies at the displayed time
+    for (let k = SIM.K - 1; k >= 0; k--) {
+      const o = dp.o + 4 * k;
+      c.fillStyle = cs(k); c.strokeStyle = col.surface; c.lineWidth = k === 0 ? 2 : 1;
+      c.beginPath(); c.arc(ax.X(wrapPi(dp.a[o + 1])), ax.Y(dp.a[o + 3]), k === 0 ? 5 : 3.2, 0, TAU); c.fill(); c.stroke();
+    }
+    c.restore();
+    if (S.hover && S.hover.xy) {
+      const [hx, hy] = S.hover.xy;
+      c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(hx, ax.T); c.lineTo(hx, ax.T + ax.ph); c.moveTo(ax.L, hy); c.lineTo(ax.L + ax.pw, hy); c.stroke(); c.restore();
+    }
+    if (isPo) {
+      let shown = 0; for (let i = 0; i < SIM.pn; i++) if (SIM.pt[i] <= tNow + 1e-6) shown++;
+      chartLegend([{ name: `${tr('cPoin')} (${shown})`, color: cs(0), dot: true }, { name: tr('cNow'), color: cs(Math.floor(SIM.K / 2)), dot: true }],
+        tr('notePo') + (P.b > 0 ? ' ' + tr('notePoDamp') : ''));
+    } else {
+      chartLegend([{ name: tr('cPath'), color: col.blue }, { name: tr('cNow'), color: cs(0), dot: true }], tr('notePh'));
+    }
+  }
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, ax = chartGeom.ax;
+  if (x < ax.L || x > ax.L + ax.pw || y < ax.T || y > ax.T + ax.ph) { S.hover = null; tip.hidden = true; chartDirty = true; return; }
+  let html = '';
+  if (chartGeom.type === 'time') {
+    const t = ax.xr[0] + (x - ax.L) / ax.pw * (ax.xr[1] - ax.xr[0]);
+    const i = Math.max(0, Math.min(SIM.hLen - 1, Math.round(t / DTS) - SIM.hStart)), o = i * SIM.N * 4, Hh = SIM.hist;
+    S.hover = { t: (SIM.hStart + i) * DTS };
+    html = `<div>t = ${fmt(S.hover.t, 2)} s</div>`;
+    const row = (color, name, val) => `<div class="row"><i class="k" style="background:${color}"></i>${name}: ${val}</div>`;
+    if (S.tab === 'th') html += row(col.accent, 'θ₁', `${fmt(Hh[o], 3)} rad`) + row(col.blue, 'θ₂', `${fmt(Hh[o + 1], 3)} rad`);
+    else if (S.tab === 'en') { const e = energy(SIM.c, Hh, o); html += row(col.amber, 'Eₖ', `${fmt(e[0], 3)} J`) + row(col.violet, 'Eₚ', `${fmt(e[1], 3)} J`) + row(col.ink, 'E', `${fmt(e[0] + e[1], 4)} J`); }
+    else { const d = angDist(Hh, o, o + 4); html += row(col.blue, '|Δθ|', `${fsci(d, 2)} rad`); const f = getFit(); if (f.ok) html += row(col.accent, 'δe^{λt}', `${fsci(Math.exp(f.a + f.lam * S.hover.t), 2)} rad`); }
+  } else {
+    const th = ax.xr[0] + (x - ax.L) / ax.pw * (ax.xr[1] - ax.xr[0]), w = ax.yr[0] + (1 - (y - ax.T) / ax.ph) * (ax.yr[1] - ax.yr[0]);
+    S.hover = { xy: [x, y] };
+    html = `<div>θ₂ = ${fmt(th, 3)} rad</div><div>ω₂ = ${fmt(w, 3)} rad/s</div>`;
+  }
+  tip.innerHTML = html; tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, y) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hover = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- flip-time map ---------- */
+const MAPN = 120;
+const mcv = $('#map'), mctx = mcv.getContext('2d'), mbox = $('#map-box'), mtip = $('#mtip');
+const MAP = { data: new Float32Array(MAPN * MAPN), done: new Uint8Array(MAPN), nDone: 0, id: 0, tau: 1, tmax: 100, worker: null, fallback: null, img: null };
+let mapDirty = true, mapTimer = null, mcw = 400, mch = 420;
+const MAP_STOPS = ['#B8F11F', '#83C78F', '#4E9DFF', '#6472FD', '#7A47FB', '#5931A6', '#391B52'].map(hexRgb);
+const MAP_FORB = hexRgb('#1E1937'), MAP_NEVER = hexRgb('#07060E');
+const WORKER_SRC = flipMapRow.toString() + `
+self.onmessage = function (e) {
+  var d = e.data;
+  for (var r = 0; r < d.order.length; r++) {
+    var j = d.order[r], out = new Float32Array(d.N);
+    flipMapRow(d.p, j, d.N, out);
+    self.postMessage({ id: d.id, j: j, out: out }, [out.buffer]);
+  }
+};`;
+function rowOrder(N) {
+  const seen = new Uint8Array(N), order = [];
+  for (let s = 64; s >= 1; s >>= 1) for (let j = 0; j < N; j += s) if (!seen[j]) { seen[j] = 1; order.push(j); }
+  return order;
+}
+function scheduleMap() { clearTimeout(mapTimer); mapTimer = setTimeout(startMap, 350); }
+function startMap() {
+  const c = coefs(P);
+  MAP.tau = Math.sqrt((P.l1 + P.l2) / 2 / P.g); MAP.tmax = 100 * MAP.tau;
+  const p = { A: c.A, B: c.B, C: c.C, G1: c.G1, G2: c.G2, b: P.b, h: MAP.tau / 70, tmax: MAP.tmax };
+  MAP.id++; MAP.done.fill(0); MAP.nDone = 0; MAP.data.fill(0); mapDirty = true;
+  if (MAP.worker) { MAP.worker.terminate(); MAP.worker = null; }
+  MAP.fallback = null;
+  const order = rowOrder(MAPN), id = MAP.id;
+  try {
+    const url = URL.createObjectURL(new Blob([WORKER_SRC], { type: 'text/javascript' }));
+    const w = new Worker(url);
+    w.onmessage = (e) => { if (e.data.id !== MAP.id) return; MAP.data.set(e.data.out, e.data.j * MAPN); MAP.done[e.data.j] = 1; MAP.nDone++; mapDirty = true; };
+    w.onerror = (ev) => { if (ev && ev.preventDefault) ev.preventDefault(); if (id === MAP.id) { w.terminate(); MAP.worker = null; MAP.fallback = { p, order, next: 0 }; } };
+    w.postMessage({ id, p, N: MAPN, order });
+    MAP.worker = w;
+  } catch (err) {
+    MAP.fallback = { p, order, next: 0 };
+  }
+}
+function mapFallbackStep() {
+  const fb = MAP.fallback; if (!fb) return;
+  const t0 = performance.now(), out = new Float32Array(MAPN);
+  while (fb.next < fb.order.length && performance.now() - t0 < 6) {
+    const j = fb.order[fb.next++]; flipMapRow(fb.p, j, MAPN, out);
+    MAP.data.set(out, j * MAPN); MAP.done[j] = 1; MAP.nDone++; mapDirty = true;
+  }
+  if (fb.next >= fb.order.length) MAP.fallback = null;
+}
+function mapColor(v) {
+  if (v === -2) return MAP_FORB;
+  if (v === -1) return MAP_NEVER;
+  const u = Math.log10(Math.max(v / MAP.tau, 1)) / 2;
+  return ramp(MAP_STOPS, u);
+}
+function resizeMap() { mcw = Math.max(1, mbox.clientWidth); mch = Math.max(1, mbox.clientHeight); mcv.width = Math.round(mcw * dpr); mcv.height = Math.round(mch * dpr); mapDirty = true; }
+let mapGeom = null;
+function drawMap() {
+  const c = mctx, W = mcw, H = mch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.stbg; c.fillRect(0, 0, W, H);
+  const L = 40, B = 30, T = 24, Rm = 8, S0 = Math.min(W - L - Rm, H - T - B);
+  const x0 = L + (W - L - Rm - S0) / 2, y0 = T;
+  mapGeom = { x0, y0, S: S0 };
+  // image: rows not yet computed borrow the nearest computed row below (progressive refinement)
+  if (!MAP.img) { MAP.off = document.createElement('canvas'); MAP.off.width = MAPN; MAP.off.height = MAPN; MAP.img = MAP.off.getContext('2d').createImageData(MAPN, MAPN); }
+  const px = MAP.img.data;
+  let src = -1;
+  for (let j = 0; j < MAPN; j++) {
+    if (MAP.done[j]) src = j;
+    let s = src;
+    if (s < 0) { for (let q = j; q < MAPN; q++) if (MAP.done[q]) { s = q; break; } }
+    const yrow = MAPN - 1 - j;
+    for (let i = 0; i < MAPN; i++) {
+      const k = (yrow * MAPN + i) * 4;
+      if (s < 0) { px[k] = 11; px[k + 1] = 9; px[k + 2] = 24; px[k + 3] = 255; continue; }
+      const cc = mapColor(MAP.data[s * MAPN + i]);
+      const dim = MAP.done[j] ? 1 : 0.55;
+      px[k] = cc[0] * dim; px[k + 1] = cc[1] * dim; px[k + 2] = cc[2] * dim; px[k + 3] = 255;
+    }
+  }
+  MAP.off.getContext('2d').putImageData(MAP.img, 0, 0);
+  c.imageSmoothingEnabled = false;
+  c.drawImage(MAP.off, x0, y0, S0, S0);
+  c.strokeStyle = col.stline; c.lineWidth = 1; c.strokeRect(x0 + 0.5, y0 + 0.5, S0 - 1, S0 - 1);
+  // axes
+  c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = col.stink2;
+  for (const d of [-180, -90, 0, 90, 180]) {
+    const u = (d + 180) / 360;
+    c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(`${d === 0 ? '0' : (d < 0 ? '−' : '') + Math.abs(d)}°`, x0 + u * S0, y0 + S0 + 6);
+    c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillText(`${d === 0 ? '0' : (d < 0 ? '−' : '') + Math.abs(d)}°`, x0 - 5, y0 + (1 - u) * S0);
+  }
+  c.save(); c.font = `italic 15px ${FONT_MATH}`; c.fillStyle = col.stink; c.textAlign = 'right'; c.textBaseline = 'top';
+  c.fillText('θ₁₀', x0 + S0, y0 + S0 + 17); c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText('θ₂₀', x0 - 5, y0 - 9); c.restore();
+  // current start marker
+  const cx = x0 + (wrapPi(P.th10) * R2D + 180) / 360 * S0, cy = y0 + (1 - (wrapPi(P.th20) * R2D + 180) / 360) * S0;
+  c.save(); c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.5;
+  c.beginPath(); c.arc(cx, cy, 6, 0, TAU); c.moveTo(cx - 11, cy); c.lineTo(cx - 3, cy); c.moveTo(cx + 3, cy); c.lineTo(cx + 11, cy); c.moveTo(cx, cy - 11); c.lineTo(cx, cy - 3); c.moveTo(cx, cy + 3); c.lineTo(cx, cy + 11); c.stroke(); c.restore();
+  if (MAP.hover) { c.save(); c.strokeStyle = col.stink2; c.strokeRect(MAP.hover[0] - 3.5, MAP.hover[1] - 3.5, 7, 7); c.restore(); }
+  const pct = Math.round(MAP.nDone / MAPN * 100);
+  $('#mstat').textContent = pct < 100 ? `${tr('mComputing')} ${pct} %` : tr('mDone');
+}
+function buildMapLegend() {
+  $('#mlegend').innerHTML = `<span>${tr('mFast')} <i class="grad"></i> ${tr('mSlow')} <small>(τ … 100τ, τ = √(l̄/g))</small></span>`
+    + `<span><i class="box" style="background:#1E1937"></i>${tr('mForbidden')}</span><span><i class="box" style="background:#07060E"></i>${tr('mNever')}</span>`;
+}
+function mapPick(e) {
+  if (!mapGeom) return null;
+  const r = mcv.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, g = mapGeom;
+  const u = (x - g.x0) / g.S, v = 1 - (y - g.y0) / g.S;
+  if (u < 0 || u > 1 || v < 0 || v > 1) return null;
+  const i = Math.min(MAPN - 1, Math.floor(u * MAPN)), j = Math.min(MAPN - 1, Math.floor(v * MAPN));
+  return { x, y, i, j, th1: -180 + (i + 0.5) * 360 / MAPN, th2: -180 + (j + 0.5) * 360 / MAPN };
+}
+mcv.addEventListener('pointermove', (e) => {
+  const q = mapPick(e);
+  if (!q) { mtip.hidden = true; MAP.hover = null; mapDirty = true; return; }
+  const v = MAP.done[q.j] ? MAP.data[q.j * MAPN + q.i] : null;
+  const tt = v == null ? '…' : v === -2 ? tr('mTipForb') : v === -1 ? `${tr('mTipNever')} ${fmt(MAP.tmax, 1)} s` : `${tr('mTip')} ${fmt(v, 2)} s (${fmt(v / MAP.tau, 1)}τ)`;
+  mtip.innerHTML = `<div>θ₁₀ = ${fmt(q.th1, 1)}°, θ₂₀ = ${fmt(q.th2, 1)}°</div><div>${tt}</div>`;
+  mtip.hidden = false;
+  const r = mbox.getBoundingClientRect(), tw = mtip.offsetWidth;
+  mtip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, q.x)) + 'px';
+  mtip.style.top = Math.max(mtip.offsetHeight + 16, q.y) + 'px';
+  MAP.hover = [q.x, q.y]; mapDirty = true;
+});
+mcv.addEventListener('pointerleave', () => { mtip.hidden = true; MAP.hover = null; mapDirty = true; });
+mcv.addEventListener('click', (e) => {
+  const q = mapPick(e); if (!q) return;
+  $('#th1').value = q.th1.toFixed(2); $('#th2').value = q.th2.toFixed(2); $('#w1').value = 0; $('#w2').value = 0;
+  S.linear = false; $('#tg-linear').setAttribute('aria-pressed', 'false');
+  restart();
+});
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), lastChart = 0, lastSlow = 0, slowDirty = true;
+function frame(now) {
+  const dt = Math.min(0.05, Math.max(0, (now - lastT) / 1000)); lastT = now;
+  if (S.playing && !S.dragging) {
+    if (S.viewJ !== null) { truncateTo(S.viewJ); S.viewJ = null; }
+    S.acc += dt * S.speed / HSTEP;
+    let n = Math.floor(S.acc); S.acc -= n; n = Math.min(n, 800);
+    if (n > 0) { advance(n); dirty = true; chartDirty = true; slowDirty = true; }
+  }
+  if (MAP.fallback) mapFallbackStep();
+  if (dirty) { drawScene(); updateHud(); updateScrub(); dirty = false; }
+  if (chartDirty && (now - lastChart > 40 || !S.playing)) { drawChart(); chartDirty = false; lastChart = now; }
+  if (slowDirty && now - lastSlow > 250) { updateSlow(); slowDirty = false; lastSlow = now; }
+  if (mapDirty) { drawMap(); mapDirty = false; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+['m1', 'm2', 'l1', 'l2', 'g', 'damp', 'th1', 'th2', 'w1', 'w2', 'K', 'dlog'].forEach(id => $('#' + id).addEventListener('input', () => applyParams(true)));
+$('#elog').addEventListener('input', () => { readParams(); updateOutputs(); buildFormulas(); fitCache.key = ''; refreshAll(); });
+$('#trail').addEventListener('input', () => { readParams(); updateOutputs(); dirty = true; });
+const nudgeDelta = (d) => { const el = $('#dlog'); el.value = Math.max(-9, Math.min(-1, Math.round(+el.value + d))); applyParams(true); };
+$('#d-down').addEventListener('click', () => nudgeDelta(-1));
+$('#d-up').addEventListener('click', () => nudgeDelta(1));
+function loadPreset(name) {
+  readParams();
+  const v = PRESETS[name]();
+  $('#th1').value = v.th1.toFixed(2); $('#th2').value = v.th2.toFixed(2); $('#w1').value = v.w1; $('#w2').value = v.w2;
+  S.linear = v.lin; $('#tg-linear').setAttribute('aria-pressed', String(S.linear));
+  restart();
+}
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
+$$('#model button').forEach(b => b.addEventListener('click', () => { S.model = b.dataset.model; applyParams(true); }));
+$('#restart').addEventListener('click', restart);
+$('#pause').addEventListener('click', togglePause);
+$('#step-back').addEventListener('click', () => stepBy(-1));
+$('#step-fwd').addEventListener('click', () => stepBy(1));
+$('#scrub').addEventListener('input', (e) => { const [t0, t1] = timeWindow(); seekJ((t0 + (+e.target.value / 1000) * (t1 - t0)) / DTS); });
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+const TOGGLES = { 'tg-rods': 'rods', 'tg-trails': 'trails', 'tg-copies': 'copies', 'tg-linear': 'linear' };
+function toggle(id) { const key = TOGGLES[id]; S[key] = !S[key]; $('#' + id).setAttribute('aria-pressed', String(S[key])); dirty = true; chartDirty = true; }
+Object.keys(TOGGLES).forEach(id => $('#' + id).addEventListener('click', () => toggle(id)));
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  S.tab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b)));
+  try { localStorage.setItem('wahadlo-tab', S.tab); } catch (e) {}
+  S.hover = null; tip.hidden = true; chartDirty = true;
+}));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+}
+fsBtn.addEventListener('click', toggleFs);
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePause(); return; }
+  if (tag === 'input') return;
+  const k = e.key;
+  if (k === 'r' || k === 'R') restart();
+  else if (k === 'ArrowLeft') { e.preventDefault(); stepBy(-1); }
+  else if (k === 'ArrowRight') { e.preventDefault(); stepBy(1); }
+  else if (k === 'ArrowUp') { e.preventDefault(); nudgeDelta(1); }
+  else if (k === 'ArrowDown') { e.preventDefault(); nudgeDelta(-1); }
+  else if (k >= '1' && k <= '6') loadPreset(PRESET_ORDER[+k - 1]);
+  else if (k === 't' || k === 'T') toggle('tg-trails');
+  else if (k === 'l' || k === 'L') toggle('tg-linear');
+  else if ((k === 'f' || k === 'F') && document.fullscreenEnabled) toggleFs();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#sp-01').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  $('#step-back').setAttribute('aria-label', tr('stepBack')); $('#step-fwd').setAttribute('aria-label', tr('stepFwd'));
+  $('#scrub').setAttribute('aria-label', tr('timeline')); cv.setAttribute('aria-label', tr('sceneLabel'));
+  $('#keys').innerHTML = tr('keys');
+  buildResults(); buildMapLegend(); updateOutputs(); updateLegend(); buildFormulas();
+  pauseIconState = null; updatePauseIcon(); hudLast = ''; scrubLast = '';
+  updateHud(); updateSlow(); refreshAll(); mapDirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('wahadlo-lang', lang); } catch (e) {}
+  for (const k in nfCache) delete nfCache[k];
+  applyLang();
+}));
+new ResizeObserver(() => { resize(); }).observe(box);
+new ResizeObserver(() => { resizeChart(); }).observe(cbox);
+new ResizeObserver(() => { resizeMap(); }).observe(mbox);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { refreshAll(); mapDirty = true; });
+
+/* ---------- start: a running swarm that is just starting to fan out ---------- */
+try { const t = localStorage.getItem('wahadlo-tab'); if (['th', 'ph', 'po', 'div', 'en'].includes(t)) { S.tab = t; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === t))); } } catch (e) {}
+readParams();
+lastPhysKey = [P.m1, P.m2, P.l1, P.l2, P.g, P.b, P.compound].join('|');
+startRun();
+readTokens();
+advance(3500);   // 3.5 s in: the copies are visibly beginning to separate
+resize(); resizeChart(); resizeMap();
+applyLang();
+drawScene(); updateHud(); updateScrub(); drawChart(); drawMap(); updateSlow();
+dirty = false; chartDirty = false; mapDirty = false; slowDirty = false;
+startMap();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>

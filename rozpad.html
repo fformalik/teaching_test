@@ -1,0 +1,1887 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rozpad promieniotwórczy</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: counting room. A dark scintillation chamber (the stage) with a Geiger-Müller rail
+   and transport under it, controls on the right; charts beside the results, then the
+   radiocarbon dating bench and the live derivations. */
+:root{
+  --bg:#E8ECF2; --surface:#F8F9FB; --paper:#FFFFFF; --sunk:#EEF1F6;
+  --ink:#131B2A; --ink-2:#4A5568; --ink-3:#7F8A9C; --line:#D0D7E1;
+  --grid:#E5E9EF; --grid-major:#CBD3DE;
+  --crimson:#E41C55; --blue:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(19,27,42,.04), 0 8px 24px -12px rgba(19,27,42,.18);
+  /* the chamber is dark in both themes on purpose: decays read as light */
+  --st-bg:#0C1322; --st-bg2:#15203A; --st-ink:#DDE6F2; --st-ink-2:#8E9DB4; --st-line:#24324C; --st-plate:rgba(12,19,34,.78);
+  --st-a:#FF3D6E; --st-b:#4E9DFF; --st-c:#E39A45; --st-al:#FFB65C; --st-be:#B3A8FF; --st-ga:#EAF2FF;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#080D16; --surface:#0E1623; --paper:#0B121D; --sunk:#131E2E;
+    --ink:#E3EAF3; --ink-2:#A2AFC0; --ink-3:#6B798C; --line:#202D40;
+    --grid:#132032; --grid-major:#1E2E45;
+    --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    --st-bg:#060B14; --st-bg2:#0E1830; --st-line:#1C2A42; --st-plate:rgba(6,11,20,.8);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080D16; --surface:#0E1623; --paper:#0B121D; --sunk:#131E2E;
+  --ink:#E3EAF3; --ink-2:#A2AFC0; --ink-3:#6B798C; --line:#202D40;
+  --grid:#132032; --grid-major:#1E2E45;
+  --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  --st-bg:#060B14; --st-bg2:#0E1830; --st-line:#1C2A42; --st-plate:rgba(6,11,20,.8);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 40px; display:flex; flex-direction:column; gap:20px}
+button, input{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.28em}
+.brand h1 svg{width:1.05em; height:.7em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.row2{display:grid; grid-template-columns:minmax(0,1.25fr) minmax(0,1fr); gap:20px; align-items:start}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow); min-width:0}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3); white-space:nowrap}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:6ch; color:var(--ink); white-space:nowrap}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.dot{width:10px; height:10px; border-radius:50%; display:inline-block; flex:none}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--crimson); color:var(--crimson)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="end"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(340px, 56vh, 600px); background:var(--st-bg)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:crosshair}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+.eqn{position:absolute; top:8px; left:10px; max-width:calc(100% - 20px); padding:4px 10px; border-radius:8px; background:var(--st-plate); color:var(--st-ink); font-family:var(--f-math); font-size:18px; line-height:1.35; display:flex; align-items:center; gap:.3em; flex-wrap:wrap; pointer-events:none; border:1px solid var(--st-line)}
+.nuc{display:inline-flex; align-items:center; white-space:nowrap}
+.nuc .pre{display:inline-flex; flex-direction:column; align-items:flex-end; font-family:var(--f-mono); font-size:.56em; line-height:1.05; margin-right:.1em}
+.nuc .pre sup, .nuc .pre sub{font-size:1em; vertical-align:baseline; line-height:1.05}
+.nuc i{font-style:italic}
+.arr{display:inline-flex; flex-direction:column; align-items:center; line-height:1; margin:0 .1em}
+.arr small{font-size:.62em; color:var(--st-ink-2)}
+.eqn .em-a{color:var(--st-al)} .eqn .em-b{color:var(--st-be)} .eqn .em-g{color:var(--st-ga)}
+
+/* Geiger-Müller rail */
+.gm{display:flex; align-items:center; gap:10px 18px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line); background:var(--sunk)}
+.gm-id{display:flex; align-items:center; gap:10px; min-width:0}
+.gm-tube{width:84px; height:30px; flex:none}
+.gm-id b{display:block; font-family:var(--f-display); font-weight:700; font-size:15px; line-height:1.15}
+.gm-id small{display:block; font-family:var(--f-mono); font-size:11px; color:var(--ink-3); white-space:nowrap}
+.gm-meter{width:150px; height:82px; flex:none; display:block}
+.gm-read{display:flex; flex-direction:column; min-width:8.5ch}
+.gm-n{font-family:var(--f-display); font-weight:800; font-size:36px; line-height:1; font-variant-numeric:tabular-nums; letter-spacing:-.01em}
+.gm-pm{font-family:var(--f-mono); font-size:12.5px; color:var(--ink-2); white-space:nowrap}
+.gm-l{font-size:11.5px; color:var(--ink-3); line-height:1.25; max-width:16ch}
+.gm-tape{flex:1 1 160px; min-width:140px; height:58px; display:block}
+.snd[aria-pressed="true"]{background:var(--crimson); color:var(--on-accent); border-color:var(--crimson)}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px; flex:none}
+.btn.go{background:var(--crimson); color:var(--on-accent); border-color:var(--crimson); font-family:var(--f-display); font-weight:700}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg button:disabled{opacity:.35; cursor:default}
+.seg.wide{display:grid; grid-template-columns:1fr 1fr; border-radius:10px}
+.seg.wide button{font-family:var(--f-body); font-size:13px; border-radius:8px; padding:6px 8px}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--crimson); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.scale{font-family:var(--f-mono); font-size:12px; color:var(--ink-3); white-space:nowrap}
+.bar .spacer{flex:1}
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--crimson)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label, .ctl .lab{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .ctl .lab i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:grid; grid-template-columns:repeat(auto-fill, minmax(92px, 1fr)); gap:6px}
+.chips.row{display:flex; flex-wrap:wrap}
+#arts{grid-template-columns:repeat(2, minmax(0,1fr))}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 9px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.25; text-align:left; min-width:0}
+.chip .nuc{font-family:var(--f-body); font-weight:600; font-size:14.5px; color:var(--ink)}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.info{margin:0; font-size:12.5px; color:var(--ink-2); line-height:1.45}
+.info b{font-family:var(--f-mono); font-weight:500; font-size:12px; color:var(--ink)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.badge{display:inline-block; font-family:var(--f-mono); font-size:11px; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:999px; border:1px solid currentColor}
+.badge[data-k="sec"]{color:var(--blue)} .badge[data-k="tr"]{color:var(--violet)} .badge[data-k="none"]{color:var(--amber)}
+
+/* Section heads */
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:6px 12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+
+/* Charts */
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px}
+.chart-ctl{display:flex; gap:8px 12px; flex-wrap:wrap; align-items:center}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw{width:20px; height:0; border-top:2.5px solid; display:inline-block}
+.chart-box{position:relative; height:300px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; cursor:crosshair}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:12px}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:420px}
+.res th, .res td{padding:7px 9px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res tbody th i{font-family:var(--f-math); font-size:16px}
+.res td{font-family:var(--f-mono); font-size:13.5px}
+.res td.z{color:var(--ink-3)}
+.res td.z.hi{color:var(--crimson)}
+.res tr.sub th{font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); padding-top:12px}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+
+/* Dating */
+.dating{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px}
+.dgrid{display:grid; grid-template-columns:minmax(0,300px) minmax(0,280px) minmax(0,1fr); gap:20px; align-items:start}
+.dcol{display:flex; flex-direction:column; gap:12px; min-width:0}
+.numin{display:flex; align-items:center; gap:8px}
+.numin input{width:100%; min-width:0; border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:6px 10px; font-family:var(--f-mono); font-size:14px; color:var(--ink)}
+.numin span{font-family:var(--f-mono); font-size:12.5px; color:var(--ink-3); white-space:nowrap}
+.dres{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:14px 16px; display:flex; flex-direction:column; gap:10px}
+.age{font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 4.2vw, 46px); line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums}
+.age small{font-family:var(--f-mono); font-weight:500; font-size:15px; letter-spacing:0; color:var(--ink-2)}
+.dstats{display:grid; grid-template-columns:auto 1fr; gap:3px 12px; margin:0; font-size:13px}
+.dstats dt{color:var(--ink-3)}
+.dstats dt i{font-family:var(--f-math); font-size:15px; color:var(--ink-2)}
+.dstats dd{margin:0; font-family:var(--f-mono); text-align:right; white-space:nowrap}
+.warn{margin:0; font-size:12.5px; color:var(--crimson)}
+.dchart{position:relative; height:280px}
+.dchart canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+/* Formulas */
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px}
+.fgrid{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:span 2}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--crimson); font-family:var(--f-mono); font-size:14.5px; font-weight:500; font-style:normal}
+.eq .rb{color:var(--blue)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0; line-height:1.45}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.keys{margin:0; font-size:12.5px; color:var(--ink-3)}
+.keys kbd{font-family:var(--f-mono); font-size:11px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 5px; background:var(--surface); color:var(--ink-2)}
+
+@media (max-width: 1180px){
+  .dgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .dchart{grid-column:1 / -1}
+  .fgrid{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .row2{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 4.2; max-width:100%}
+  .dgrid, .fgrid{grid-template-columns:minmax(0,1fr)}
+  .fcard.wide{grid-column:auto}
+  .hud{gap:2px 12px}
+  .hud dd{font-size:12.5px; min-width:5ch}
+  .bar .spacer{display:none}
+  .eqn{font-size:15px}
+  .gm-meter{width:130px; height:72px}
+}
+@media (prefers-reduced-motion: reduce){
+  *{scroll-behavior:auto !important}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka jądrowa · pracownia promieniotwórczości</span>
+      <h1>
+        <svg viewBox="0 0 64 42" aria-hidden="true"><path d="M3 5 C 14 26, 26 34, 61 38" fill="none" stroke="var(--crimson)" stroke-width="3.2" stroke-linecap="round"/><circle cx="3.5" cy="5" r="3.4" fill="var(--crimson)"/><circle cx="16" cy="22.5" r="3" fill="var(--crimson)"/><circle cx="30" cy="31.2" r="2.6" fill="var(--blue)"/><circle cx="45" cy="35.6" r="2.2" fill="var(--blue)"/></svg>
+        <span data-i18n="title">Rozpad promieniotwórczy</span>
+      </h1>
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <section class="card stage" id="stage">
+      <div class="strip">
+        <dl class="hud" id="hud"></dl>
+        <div class="legend" id="legend"></div>
+      </div>
+      <div class="canvas-box" id="canvas-box">
+        <canvas id="scene" role="img" aria-label="Rozpad jąder"></canvas>
+        <div class="eqn" id="eqn"></div>
+      </div>
+      <div class="gm" id="gm">
+        <div class="gm-id">
+          <svg class="gm-tube" viewBox="0 0 84 30" aria-hidden="true">
+            <rect x="10" y="7" width="60" height="16" rx="3" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.4"/>
+            <rect x="4" y="9" width="7" height="12" rx="1.5" fill="var(--ink-3)"/>
+            <line x1="14" y1="15" x2="64" y2="15" stroke="var(--ink-3)" stroke-width="1" stroke-dasharray="2 2"/>
+            <rect x="70" y="8.5" width="4" height="13" rx="1" fill="var(--ink-2)"/>
+            <circle id="gm-led" cx="79" cy="15" r="3.6" fill="var(--crimson)" opacity=".18"/>
+          </svg>
+          <div><b data-i18n="gmTitle">Licznik Geigera–Müllera</b><small id="gm-gate"></small></div>
+        </div>
+        <canvas class="gm-meter" id="gm-meter" aria-hidden="true"></canvas>
+        <div class="gm-read"><span class="gm-n" id="gm-n">0</span><span class="gm-pm" id="gm-pm"></span><span class="gm-l" data-i18n="gmLast">zliczeń w ostatnim przedziale</span></div>
+        <canvas class="gm-tape" id="gm-tape" aria-hidden="true"></canvas>
+        <button type="button" class="btn snd" id="snd" aria-pressed="false">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 8v4h3l4 3.5v-11L6 8z" fill="currentColor"/><path id="snd-wave" d="M13 7.2a4 4 0 0 1 0 5.6M15.3 5a7 7 0 0 1 0 10" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+          <span id="snd-l" data-i18n="soundOn">Włącz dźwięk</span>
+        </button>
+      </div>
+      <div class="scrub">
+        <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+        <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+        <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+        <span class="time" id="scrub-time"></span>
+      </div>
+      <div class="bar">
+        <button type="button" class="btn go" id="restart">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="restart">Od początku</span>
+        </button>
+        <div class="seg" role="group" id="speed">
+          <span class="lbl" data-i18n="speed">Tempo</span>
+          <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+          <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+          <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+          <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+          <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
+        </div>
+        <button type="button" class="tg" id="tg-real" aria-pressed="false" data-i18n="realtime">Czas rzeczywisty</button>
+        <span class="scale" id="scale"></span>
+        <button type="button" class="tg" id="tg-rays" aria-pressed="true" data-i18n="rays">Promieniowanie</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" id="fs">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <span data-i18n="fullscreen">Pełny ekran</span>
+        </button>
+      </div>
+    </section>
+
+    <aside class="card panel" id="panel">
+      <fieldset class="grp">
+        <h3 data-i18n="gMode">Tryb</h3>
+        <div class="seg wide" role="group" id="modes">
+          <button type="button" id="m-single" data-mode="single" aria-pressed="true" data-i18n="mSingle">Jeden izotop</button>
+          <button type="button" id="m-chain" data-mode="chain" aria-pressed="false" data-i18n="mChain">Łańcuch A → B → C</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="g-iso" style="--c:var(--crimson)">
+        <h3 data-i18n="gIso">Izotop</h3>
+        <div class="chips" id="presets"></div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="hl" data-i18n-html="lT">Okres połowicznego rozpadu <i>T</i><sub>½</sub></label><output id="hl-out" for="hl"></output></div>
+          <input type="range" id="hl" min="0" max="17.3" step="0.005" value="1.745">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><span class="lab" data-i18n="lMode">Rodzaj rozpadu</span>
+            <div class="seg" role="group" id="dms">
+              <button type="button" id="dm-a" data-dm="a" aria-pressed="true">α</button>
+              <button type="button" id="dm-b" data-dm="b" aria-pressed="false">β⁻</button>
+              <button type="button" id="dm-g" data-dm="g" aria-pressed="false">γ</button>
+            </div>
+          </div>
+        </div>
+        <p class="info" id="iso-info"></p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-chain" hidden>
+        <h3 data-i18n="gChain">Łańcuch rozpadów</h3>
+        <div class="chips" id="chains"></div>
+        <div class="ctl" style="--c:var(--crimson)">
+          <div class="ctl-head"><label for="ta" data-i18n-html="lTA"><i>T</i><sub>½</sub> izotopu A</label><output id="ta-out" for="ta"></output></div>
+          <input type="range" id="ta" min="0" max="10" step="0.005" value="5.37">
+        </div>
+        <div class="ctl" style="--c:var(--blue)">
+          <div class="ctl-head"><label for="tb" data-i18n-html="lTB"><i>T</i><sub>½</sub> izotopu B</label><output id="tb-out" for="tb"></output></div>
+          <input type="range" id="tb" min="0" max="10" step="0.005" value="4.33">
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pRatio">T_A / T_B</small><span id="pill-ratio">—</span></div>
+          <div class="pill"><small data-i18n="pTmax">maks. N_B</small><span id="pill-tmax">—</span></div>
+          <div class="pill"><small data-i18n="pEqR">A_B/A_A → </small><span id="pill-eq">—</span></div>
+        </div>
+        <p class="info" id="chain-info"></p>
+      </fieldset>
+
+      <fieldset class="grp" style="--c:var(--ink)">
+        <h3 data-i18n="gSample">Próbka</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="n0" data-i18n-html="lN">Liczba jąder <i>N</i><sub>0</sub></label><output id="n0-out" for="n0"></output></div>
+          <input type="range" id="n0" min="2" max="4" step="0.005" value="3">
+        </div>
+        <div class="chips row" id="nchips">
+          <button type="button" class="chip" id="nc-100" data-n="100" aria-pressed="false"><span>100</span></button>
+          <button type="button" class="chip" id="nc-1000" data-n="1000" aria-pressed="true"><span>1000</span></button>
+          <button type="button" class="chip" id="nc-10000" data-n="10000" aria-pressed="false"><span>10 000</span></button>
+        </div>
+        <button type="button" class="btn" id="reseed">
+          <svg viewBox="0 0 20 20" aria-hidden="true"><rect x="3.5" y="3.5" width="13" height="13" rx="2.5" fill="none" stroke="currentColor" stroke-width="1.6"/><circle cx="7.3" cy="7.3" r="1.3" fill="currentColor"/><circle cx="12.7" cy="12.7" r="1.3" fill="currentColor"/><circle cx="12.7" cy="7.3" r="1.3" fill="currentColor"/><circle cx="7.3" cy="12.7" r="1.3" fill="currentColor"/></svg>
+          <span data-i18n="reseed">Nowa próbka (inne losowanie)</span>
+        </button>
+        <p class="info" data-i18n="sampleNote">Każde jądro ma ten sam czas życia średnio, ale nikt nie wie, kiedy rozpadnie się to konkretne.</p>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="row2">
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2><p data-i18n="chartsSub">Kliknij wykres, żeby przewinąć symulację do tej chwili.</p></div>
+      <div class="chart-ctl">
+        <div class="tabs" role="tablist" id="tabs">
+          <button type="button" role="tab" id="tab-n" data-tab="n" aria-selected="true" data-i18n="tabN">Liczba jąder</button>
+          <button type="button" role="tab" id="tab-a" data-tab="a" aria-selected="false" data-i18n="tabA">Aktywność</button>
+          <button type="button" role="tab" id="tab-h" data-tab="h" aria-selected="false" data-i18n="tabH">Histogram zliczeń</button>
+        </div>
+        <button type="button" class="tg" id="tg-log" aria-pressed="false" data-i18n="logScale">Skala logarytmiczna</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+
+    <section class="card results">
+      <div class="sec-h"><h2 data-i18n="results">Wyniki</h2></div>
+      <div class="tbl-wrap">
+        <table class="res">
+          <thead><tr><th></th><th data-i18n="cSim">Symulacja</th><th data-i18n="cTh">Teoria</th><th data-i18n="cDev">Odchylenie</th></tr></thead>
+          <tbody id="res-body"></tbody>
+        </table>
+      </div>
+      <p class="cnote" data-i18n-html="resNote"></p>
+    </section>
+  </div>
+
+  <section class="card dating" id="dating" style="--c:var(--amber)">
+    <div class="sec-h"><h2 data-i18n="dTitle">Datowanie radiowęglowe</h2><p data-i18n="dSub"></p></div>
+    <div class="dgrid">
+      <div class="dcol">
+        <div class="seg wide" role="group" id="dmodes">
+          <button type="button" id="dmode-frac" data-dmode="frac" aria-pressed="true" data-i18n="dFrac">Ułamek C-14</button>
+          <button type="button" id="dmode-act" data-dmode="act" aria-pressed="false" data-i18n="dAct">Aktywność (Bq/g)</button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="d-num" id="d-num-l"></label><output id="d-f-out" for="d-f"></output></div>
+          <div class="numin"><input type="number" id="d-num" step="any" min="0" inputmode="decimal"><span id="d-num-u">%</span></div>
+          <input type="range" id="d-f" min="0" max="1000" step="1" value="908" aria-label="N/N0">
+          <span class="hint" data-i18n="dLiving">Żywy organizm: 0,23 Bq na gram węgla (100 %).</span>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="d-m" data-i18n-html="dMass">Masa węgla w próbce <i>m</i></label><output id="d-m-out" for="d-m"></output></div>
+          <input type="range" id="d-m" min="0.1" max="10" step="0.1" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="d-h" data-i18n-html="dHours">Czas pomiaru <i>t</i><sub>m</sub></label><output id="d-h-out" for="d-h"></output></div>
+          <input type="range" id="d-h" min="1" max="72" step="1" value="24">
+        </div>
+        <div class="chips" id="arts"></div>
+        <p class="info" data-i18n="dArtsNote">Przykłady, wartości przybliżone.</p>
+      </div>
+      <div class="dcol">
+        <div class="dres">
+          <span class="eyebrow" data-i18n="dAge">Wiek próbki</span>
+          <div class="age" id="d-age">—</div>
+          <dl class="dstats" id="d-stats"></dl>
+          <p class="warn" id="d-warn" hidden></p>
+          <button type="button" class="btn" id="d-sim"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg><span data-i18n="dToSim">Pokaż na symulacji C-14</span></button>
+        </div>
+        <p class="fnote" data-i18n="dCal"></p>
+      </div>
+      <div class="dchart"><canvas id="d-chart"></canvas></div>
+    </div>
+  </section>
+
+  <section class="card formulas">
+    <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącej chwili symulacji.</p></div>
+    <div class="fgrid" id="fgrid"></div>
+  </section>
+  <p class="keys" id="keys"></p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const LN2 = Math.LN2;
+const MIN = 60, HR = 3600, DAY = 86400, YR = 365.25 * DAY;
+const BASE_WALL = 36;                 // wall seconds to play the whole horizon at 1x
+const A_LIVING = 0.23;                // Bq per gram of carbon in a living organism
+const T_C14 = 5730 * YR;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka jądrowa · pracownia promieniotwórczości', title:'Rozpad promieniotwórczy',
+    lede:'Każde jądro rozpada się w losowej chwili, a cała próbka zawsze tak samo: w każdym okresie połowicznego rozpadu ubywa połowa. Wybierz izotop, posłuchaj licznika Geigera i porównaj symulację z prawem rozpadu.',
+    gMode:'Tryb', mSingle:'Jeden izotop', mChain:'Łańcuch A → B → C',
+    gIso:'Izotop', custom:'Własny', lT:'Okres połowicznego rozpadu <i>T</i><sub>½</sub>', lMode:'Rodzaj rozpadu',
+    infoEm:'Emisja:', infoDau:'Produkt promieniotwórczy; jego dalszy rozpad pominięto.', infoStable:'Produkt trwały.', infoCustom:'Izotop umowny X; produkt Y traktujemy jako trwały.',
+    gChain:'Łańcuch rozpadów', chSec:'Wiekowa', chSecS:'A → B → C', chTr:'Przejściowa', chNo:'Bez równowagi', chCustom:'Własny', chCustomS:'A → B → C',
+    lTA:'<i>T</i><sub>½</sub> izotopu A', lTB:'<i>T</i><sub>½</sub> izotopu B', pRatio:'T½(A) / T½(B)', pTmax:'maksimum N_B', pEqR:'A_B / A_A →',
+    eqSec:'równowaga wiekowa', eqTr:'równowaga przejściowa', eqNone:'brak równowagi',
+    ciSec:'T½(A) ≫ T½(B): po kilku T½(B) aktywności A i B się zrównują, a N_B/N_A = λ_A/λ_B.',
+    ciTr:'T½(A) > T½(B): po czasie stosunek A_B/A_A ustala się na λ_B/(λ_B − λ_A) > 1, a B zanika w tempie A.',
+    ciNone:'T½(A) < T½(B): A znika pierwszy, B zostaje i rozpada się już ze swoim okresem.',
+    ciGen:'Izotopy umowne A, B, C (C trwały).', ciMo:'Generator technetowy w szpitalu: ⁹⁹Mo „doi się”, żeby uzyskać ⁹⁹ᵐTc.', ciPo:'Fragment szeregu uranowego; dalszy rozpad ²¹⁴Bi pominięto.',
+    gSample:'Próbka', lN:'Liczba jąder <i>N</i><sub>0</sub>', reseed:'Nowa próbka (inne losowanie)',
+    sampleNote:'Jądra nie starzeją się: w każdej chwili każde ma takie samo prawdopodobieństwo rozpadu, niezależnie od tego, jak długo już istnieje.',
+    gmTitle:'Licznik Geigera–Müllera', gmGate:'przedział Δt', gmLast:'zliczeń w ostatnim przedziale', gmUnit:'zliczenia / Δt',
+    soundOn:'Włącz dźwięk', soundOff:'Wycisz', noAudio:'Brak dźwięku w tej przeglądarce',
+    restart:'Od początku', speed:'Tempo', realtime:'Czas rzeczywisty', rays:'Promieniowanie', fullscreen:'Pełny ekran', pause:'Pauza', play:'Odtwórz',
+    scale:'1 s animacji =', sRun:'rozpad trwa', sPause:'pauza', sEnd:'koniec pomiaru',
+    product:'produkt', stableP:'trwały',
+    charts:'Wykresy', chartsSub:'Kliknij wykres, żeby przewinąć symulację do tej chwili.', tabN:'Liczba jąder', tabA:'Aktywność', tabH:'Histogram zliczeń', logScale:'Skala logarytmiczna',
+    lgSim:'symulacja', lgTh:'teoria', lgFit:'dopasowanie', lgMeas:'pomiar ± √n', lgTot:'całkowita', lgObs:'zmierzone', lgPois:'Poisson',
+    cnN:'Schodki: symulacja. Linia przerywana: <i>N</i>₀e<sup>−<i>λt</i></sup>. Co <i>T</i><sub>½</sub> zostaje połowa.',
+    cnNlog:'W skali logarytmicznej prawo rozpadu to prosta o nachyleniu −<i>λ</i>. Fioletowa linia: dopasowanie do symulacji.',
+    cnNch:'Schodki: symulacja. Przerywane: rozwiązanie Batemana. Pionowa kreska: maksimum <i>N</i><sub>B</sub>.',
+    cnA:'Punkty: liczba rozpadów w przedziale podzielona przez jego długość, z niepewnością √<i>n</i>. Linia: <i>A</i> = <i>λN</i>.',
+    cnAch:'Aktywność całkowita to suma <i>A</i><sub>A</sub> + <i>A</i><sub>B</sub>. W równowadze krzywe A i B biegną równolegle.',
+    cnH:'Rozkład zliczeń w {g} przedziałach Δt = {dt} z ostatnich {w}. Dla rozpadu promieniotwórczego to rozkład Poissona: wariancja ≈ średnia.',
+    cnHwait:'Za mało przedziałów. Puść symulację dalej.',
+    hMean:'średnia', hVar:'wariancja', hSig:'√średniej',
+    results:'Wyniki', cSim:'Symulacja', cTh:'Teoria', cDev:'Odchylenie',
+    resNote:'Odchylenie w jednostkach <i>σ</i> rozkładu dwumianowego. Wartości |<i>z</i>| poniżej 2 to zwykły szum statystyczny.',
+    rN:'Pozostałe jądra <i>N</i>', rD:'Rozpadnięte', rA:'Aktywność <i>A</i> = <i>λN</i>', rHalf:'Upłynęło <i>t</i>/<i>T</i><sub>½</sub>',
+    rFit:'<i>T</i><sub>½</sub> z dopasowania', rCount:'Zliczenia w ostatnim Δt', rNA:'Jądra A, <i>N</i><sub>A</sub>', rNB:'Jądra B, <i>N</i><sub>B</sub>', rNC:'Jądra C, <i>N</i><sub>C</sub>',
+    rAA:'Aktywność <i>A</i><sub>A</sub>', rAB:'Aktywność <i>A</i><sub>B</sub>', rRatio:'<i>A</i><sub>B</sub> / <i>A</i><sub>A</sub>', rTmax:'Maksimum <i>N</i><sub>B</sub> w chwili', rHalfA:'Upłynęło <i>t</i>/<i>T</i><sub>½</sub>(A)', rFitA:'<i>T</i><sub>½</sub>(A) z dopasowania',
+    secCount:'Liczba jąder', secAct:'Aktywność i licznik', secTime:'Czas',
+    dTitle:'Datowanie radiowęglowe', dSub:'Organizm za życia wymienia węgiel z atmosferą. Po śmierci ¹⁴C już tylko ubywa, więc zmierzony ułamek to zegar.',
+    dFrac:'Ułamek ¹⁴C', dAct:'Aktywność (Bq/g)', dNumFrac:'Pozostało ¹⁴C, <i>N</i>/<i>N</i><sub>0</sub>', dNumAct:'Aktywność właściwa próbki',
+    dLiving:'Żywy organizm: 0,23 Bq na gram węgla (100 %).', dMass:'Masa węgla w próbce <i>m</i>', dHours:'Czas pomiaru <i>t</i><sub>m</sub>',
+    dArtsNote:'Przykłady; wartości przybliżone.', dAge:'Wiek próbki', dToSim:'Pokaż na symulacji ¹⁴C',
+    dCal:'Wiek radiowęglowy bez kalibracji, liczony z T½ = 5730 lat. Laboratoria podają tzw. wiek konwencjonalny z T½ = 5568 lat (Libby) i przeliczają go krzywą kalibracyjną IntCal.',
+    dsF:'ułamek <i>N</i>/<i>N</i><sub>0</sub>', dsA:'aktywność <i>A</i>', dsN:'zliczenia <i>n</i> = <i>A m t</i><sub>m</sub>', dsRel:'niepewność względna 1/√<i>n</i>', dsRange:'przedział ±1<i>σ</i>',
+    dWarnOld:'Poniżej około 0,2 % ¹⁴C (ponad ~50 000 lat) sygnał ginie w tle: metoda przestaje działać.', dWarnStat:'Mniej niż 400 zliczeń: niepewność rośnie. Wydłuż pomiar albo zwiększ masę próbki.',
+    aOetzi:'Ötzi', aOetziS:'człowiek z lodu', aShroud:'Całun turyński', aShroudS:'len', aScrolls:'Zwoje z Qumran', aScrollsS:'pergamin', aLascaux:'Lascaux', aLascauxS:'węgiel drzewny', aMammoth:'Mamut', aMammothS:'kość', aLiving:'Żywe drewno', aLivingS:'odniesienie',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącej chwili symulacji.',
+    fLaw:'Prawo rozpadu', fLam:'Stała rozpadu i średni czas życia', fMC:'Losowanie w kroku Δt', fAct:'Aktywność', fPois:'Statystyka zliczeń (Poisson)', fAge:'Czas z liczby jąder', fFit:'Dopasowanie T½ do symulacji',
+    fBate:'Rozwiązanie Batemana dla B i C', fTmax:'Maksimum liczby jąder B', fEq:'Równowaga promieniotwórcza',
+    nLawSim:'W symulacji:', nMC:'W każdym kroku Δt każde jądro rozpada się z prawdopodobieństwem <i>p</i>, niezależnie od wieku. Program losuje od razu czas życia każdego jądra, <i>t</i> = −<i>τ</i> ln <i>u</i> (<i>u</i> losowe z (0, 1]), co daje ten sam wynik dla każdego Δt.',
+    nAct:'1 Bq = 1 rozpad na sekundę. Mała próbka długożyciowego izotopu ma znikomą aktywność.',
+    nPois:'Zliczenia z ostatniego przedziału licznika. Niepewność względna maleje jak 1/√<i>n</i>.', nPoisNone:'Licznik nie zamknął jeszcze pierwszego przedziału.',
+    nAge:'To samo równanie podaje wiek w datowaniu radiowęglowym. Prawdziwy czas symulacji:', nFit:'Estymator największej wiarygodności: <i>D</i> rozpadów, <i>S</i> = suma czasów życia rozpadniętych + czas obserwacji jąder, które przetrwały.',
+    nFitNone:'Za mało rozpadów, żeby dopasować T½.', nBate:'Liczba jąder C wynika z zachowania liczby jąder:',
+    nTmax:'W tej chwili <i>A</i><sub>A</sub> = <i>A</i><sub>B</sub>: dopływ jąder B równa się ich ubytkowi.', nTmaxNone:'Dla λ_A = λ_B: t_max = 1/λ.',
+    nEqSec:'λ_A ≪ λ_B: aktywności się zrównują, a N_B/N_A → λ_A/λ_B = ', nEqTr:'Stosunek aktywności dąży do stałej większej od 1.', nEqNone:'λ_A > λ_B: stosunek rośnie bez ograniczeń, równowagi nie ma.',
+    keys:'Skróty: <kbd>spacja</kbd> start/pauza · <kbd>←</kbd> <kbd>→</kbd> krok · <kbd>R</kbd> od początku · <kbd>N</kbd> nowa próbka · <kbd>1</kbd>–<kbd>3</kbd> wykresy · <kbd>L</kbd> skala log · <kbd>M</kbd> dźwięk · <kbd>F</kbd> pełny ekran',
+    u_s:'s', u_min:'min', u_h:'h', u_d:'d', u_y:'lat', u_Myr:'mln lat', u_Gyr:'mld lat', none:'—', at:'w chwili'
+  },
+  en: {
+    eyebrow:'Nuclear physics · radioactivity lab', title:'Radioactive decay',
+    lede:'Each nucleus decays at a random moment, yet the sample as a whole always behaves the same way: half of it is gone in every half-life. Pick an isotope, listen to the Geiger counter and compare the simulation with the decay law.',
+    gMode:'Mode', mSingle:'Single isotope', mChain:'Chain A → B → C',
+    gIso:'Isotope', custom:'Custom', lT:'Half-life <i>T</i><sub>½</sub>', lMode:'Decay type',
+    infoEm:'Emission:', infoDau:'The daughter is radioactive too; its further decay is ignored.', infoStable:'Stable daughter.', infoCustom:'Hypothetical isotope X; the daughter Y is treated as stable.',
+    gChain:'Decay chain', chSec:'Secular', chSecS:'A → B → C', chTr:'Transient', chNo:'No equilibrium', chCustom:'Custom', chCustomS:'A → B → C',
+    lTA:'Half-life of A, <i>T</i><sub>½</sub>', lTB:'Half-life of B, <i>T</i><sub>½</sub>', pRatio:'T½(A) / T½(B)', pTmax:'N_B maximum', pEqR:'A_B / A_A →',
+    eqSec:'secular equilibrium', eqTr:'transient equilibrium', eqNone:'no equilibrium',
+    ciSec:'T½(A) ≫ T½(B): after a few T½(B) the activities of A and B match, and N_B/N_A = λ_A/λ_B.',
+    ciTr:'T½(A) > T½(B): the ratio A_B/A_A settles at λ_B/(λ_B − λ_A) > 1 and B then decays at the pace of A.',
+    ciNone:'T½(A) < T½(B): A is gone first; B is left behind and decays with its own half-life.',
+    ciGen:'Hypothetical isotopes A, B, C (C stable).', ciMo:'The hospital technetium generator: ⁹⁹Mo is “milked” for ⁹⁹ᵐTc.', ciPo:'A piece of the uranium series; the further decay of ²¹⁴Bi is ignored.',
+    gSample:'Sample', lN:'Number of nuclei <i>N</i><sub>0</sub>', reseed:'New sample (new draw)',
+    sampleNote:'Nuclei do not age: at any moment each one has the same chance to decay, no matter how long it has existed.',
+    gmTitle:'Geiger–Müller counter', gmGate:'interval Δt', gmLast:'counts in the last interval', gmUnit:'counts / Δt',
+    soundOn:'Sound on', soundOff:'Mute', noAudio:'No audio in this browser',
+    restart:'Restart', speed:'Speed', realtime:'Real time', rays:'Radiation', fullscreen:'Full screen', pause:'Pause', play:'Play',
+    scale:'1 s of animation =', sRun:'decaying', sPause:'paused', sEnd:'run finished',
+    product:'daughter', stableP:'stable',
+    charts:'Charts', chartsSub:'Click a chart to move the simulation to that moment.', tabN:'Nuclei', tabA:'Activity', tabH:'Count histogram', logScale:'Log scale',
+    lgSim:'simulation', lgTh:'theory', lgFit:'fit', lgMeas:'measured ± √n', lgTot:'total', lgObs:'observed', lgPois:'Poisson',
+    cnN:'Steps: simulation. Dashed: <i>N</i>₀e<sup>−<i>λt</i></sup>. After every <i>T</i><sub>½</sub> half is left.',
+    cnNlog:'On a log scale the decay law is a straight line with slope −<i>λ</i>. Violet line: fit to the simulation.',
+    cnNch:'Steps: simulation. Dashed: Bateman solution. Vertical mark: maximum of <i>N</i><sub>B</sub>.',
+    cnA:'Dots: decays in each interval divided by its length, with √<i>n</i> uncertainty. Line: <i>A</i> = <i>λN</i>.',
+    cnAch:'Total activity is <i>A</i><sub>A</sub> + <i>A</i><sub>B</sub>. In equilibrium the A and B curves run parallel.',
+    cnH:'Distribution of counts in {g} intervals Δt = {dt} from the last {w}. Radioactive counts follow a Poisson distribution: variance ≈ mean.',
+    cnHwait:'Not enough intervals yet. Let the simulation run.',
+    hMean:'mean', hVar:'variance', hSig:'√mean',
+    results:'Results', cSim:'Simulation', cTh:'Theory', cDev:'Deviation',
+    resNote:'Deviation in units of the binomial <i>σ</i>. Values of |<i>z</i>| below 2 are ordinary statistical noise.',
+    rN:'Nuclei left <i>N</i>', rD:'Decayed', rA:'Activity <i>A</i> = <i>λN</i>', rHalf:'Elapsed <i>t</i>/<i>T</i><sub>½</sub>',
+    rFit:'<i>T</i><sub>½</sub> from fit', rCount:'Counts in the last Δt', rNA:'Nuclei A, <i>N</i><sub>A</sub>', rNB:'Nuclei B, <i>N</i><sub>B</sub>', rNC:'Nuclei C, <i>N</i><sub>C</sub>',
+    rAA:'Activity <i>A</i><sub>A</sub>', rAB:'Activity <i>A</i><sub>B</sub>', rRatio:'<i>A</i><sub>B</sub> / <i>A</i><sub>A</sub>', rTmax:'Maximum of <i>N</i><sub>B</sub> at', rHalfA:'Elapsed <i>t</i>/<i>T</i><sub>½</sub>(A)', rFitA:'<i>T</i><sub>½</sub>(A) from fit',
+    secCount:'Nuclei', secAct:'Activity and counter', secTime:'Time',
+    dTitle:'Radiocarbon dating', dSub:'A living organism exchanges carbon with the air. After death ¹⁴C only decays, so the measured fraction is a clock.',
+    dFrac:'¹⁴C fraction', dAct:'Activity (Bq/g)', dNumFrac:'¹⁴C left, <i>N</i>/<i>N</i><sub>0</sub>', dNumAct:'Specific activity of the sample',
+    dLiving:'Living organism: 0.23 Bq per gram of carbon (100 %).', dMass:'Carbon mass in the sample <i>m</i>', dHours:'Counting time <i>t</i><sub>m</sub>',
+    dArtsNote:'Examples; approximate values.', dAge:'Sample age', dToSim:'Show in the ¹⁴C simulation',
+    dCal:'Uncalibrated radiocarbon age with T½ = 5730 years. Labs report the so-called conventional age with T½ = 5568 years (Libby) and convert it with the IntCal calibration curve.',
+    dsF:'fraction <i>N</i>/<i>N</i><sub>0</sub>', dsA:'activity <i>A</i>', dsN:'counts <i>n</i> = <i>A m t</i><sub>m</sub>', dsRel:'relative uncertainty 1/√<i>n</i>', dsRange:'±1<i>σ</i> range',
+    dWarnOld:'Below about 0.2 % ¹⁴C (older than ~50 000 years) the signal drowns in background: the method stops working.', dWarnStat:'Fewer than 400 counts: the uncertainty grows. Count longer or use more carbon.',
+    aOetzi:'Ötzi', aOetziS:'the Iceman', aShroud:'Shroud of Turin', aShroudS:'linen', aScrolls:'Dead Sea Scrolls', aScrollsS:'parchment', aLascaux:'Lascaux', aLascauxS:'charcoal', aMammoth:'Mammoth', aMammothS:'bone', aLiving:'Living wood', aLivingS:'reference',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current moment of the simulation.',
+    fLaw:'Decay law', fLam:'Decay constant and mean lifetime', fMC:'Random draw in a step Δt', fAct:'Activity', fPois:'Counting statistics (Poisson)', fAge:'Time from the number of nuclei', fFit:'Fitting T½ to the simulation',
+    fBate:'Bateman solution for B and C', fTmax:'Maximum number of B nuclei', fEq:'Radioactive equilibrium',
+    nLawSim:'In the simulation:', nMC:'In each step Δt every nucleus decays with probability <i>p</i>, regardless of its age. The program draws each lifetime directly, <i>t</i> = −<i>τ</i> ln <i>u</i> (<i>u</i> random in (0, 1]), which gives the same result for any Δt.',
+    nAct:'1 Bq = 1 decay per second. A small sample of a long-lived isotope has a tiny activity.',
+    nPois:'Counts from the last counter interval. The relative uncertainty falls as 1/√<i>n</i>.', nPoisNone:'The counter has not closed its first interval yet.',
+    nAge:'The same equation gives the age in radiocarbon dating. True simulation time:', nFit:'Maximum-likelihood estimate: <i>D</i> decays, <i>S</i> = sum of lifetimes of decayed nuclei + observation time of the survivors.',
+    nFitNone:'Too few decays to fit T½.', nBate:'The number of C nuclei follows from conservation:',
+    nTmax:'At this moment <i>A</i><sub>A</sub> = <i>A</i><sub>B</sub>: B nuclei are created as fast as they decay.', nTmaxNone:'For λ_A = λ_B: t_max = 1/λ.',
+    nEqSec:'λ_A ≪ λ_B: the activities match and N_B/N_A → λ_A/λ_B = ', nEqTr:'The activity ratio tends to a constant above 1.', nEqNone:'λ_A > λ_B: the ratio grows without bound; there is no equilibrium.',
+    keys:'Keys: <kbd>space</kbd> play/pause · <kbd>←</kbd> <kbd>→</kbd> step · <kbd>R</kbd> restart · <kbd>N</kbd> new sample · <kbd>1</kbd>–<kbd>3</kbd> charts · <kbd>L</kbd> log scale · <kbd>M</kbd> sound · <kbd>F</kbd> full screen',
+    u_s:'s', u_min:'min', u_h:'h', u_d:'d', u_y:'y', u_Myr:'Myr', u_Gyr:'Gyr', none:'—', at:'at'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('rozpad-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const loc = (s) => (lang === 'pl' ? s.replace(/(\d)\.(\d)/g, '$1,$2') : s);
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUPD = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', '-':'⁻', 'm':'ᵐ' };
+const sup = (s) => String(s).split('').map(ch => SUPD[ch] ?? ch).join('');
+function fsci(x, sig = 3) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return fmt(0, 0);
+  const sg = x < 0 ? '−' : ''; x = Math.abs(x);
+  let e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  if (+m.toFixed(sig - 1) >= 10) { m /= 10; e++; }
+  return `${sg}${fmt(m, sig - 1)}·10${sup(e)}`;
+}
+function fsig(x, sig = 3) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return fmt(0, 0);
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  return fmt(x, clamp(sig - 1 - e, 0, 6));
+}
+function fnum(x, sig = 3) { const a = Math.abs(x); return (a !== 0 && (a < 1e-3 || a >= 1e6)) ? fsci(x, sig) : fsig(x, sig); }
+const fint = (x) => fmt(Math.round(x), 0);
+const fpct = (x, dec = 1) => `${fmt(x * 100, dec)} %`;
+
+/* ---------- time units ---------- */
+const UNITS = [
+  { k:'s', f:1, max:120 }, { k:'min', f:MIN, max:2 * HR }, { k:'h', f:HR, max:2 * DAY }, { k:'d', f:DAY, max:2 * YR },
+  { k:'y', f:YR, max:1e6 * YR }, { k:'Myr', f:1e6 * YR, max:1e9 * YR }, { k:'Gyr', f:1e9 * YR, max:Infinity }
+];
+const unitFor = (sec) => UNITS.find(u => sec < u.max) || UNITS[UNITS.length - 1];
+const uLab = (u) => tr('u_' + u.k);
+const decFor = (v) => (v >= 100 ? 0 : v >= 10 ? 1 : 2);
+function fdur(sec, sig = 3) { const u = unitFor(sec); return `${fsig(sec / u.f, sig)} ${uLab(u)}`; }
+
+/* ---------- nuclide data ---------- */
+const SP = {
+  c14:{ sym:'C', A:14, Z:6 }, n14:{ sym:'N', A:14, Z:7 },
+  i131:{ sym:'I', A:131, Z:53 }, xe131:{ sym:'Xe', A:131, Z:54 },
+  rn222:{ sym:'Rn', A:222, Z:86 }, po218:{ sym:'Po', A:218, Z:84 },
+  rn220:{ sym:'Rn', A:220, Z:86 }, po216:{ sym:'Po', A:216, Z:84 },
+  co60:{ sym:'Co', A:60, Z:27 }, ni60:{ sym:'Ni', A:60, Z:28 },
+  u238:{ sym:'U', A:238, Z:92 }, th234:{ sym:'Th', A:234, Z:90 },
+  tc99m:{ sym:'Tc', A:99, Z:43, m:true }, tc99:{ sym:'Tc', A:99, Z:43 }, mo99:{ sym:'Mo', A:99, Z:42 },
+  pb214:{ sym:'Pb', A:214, Z:82 }, bi214:{ sym:'Bi', A:214, Z:83 },
+  X:{ sym:'X' }, Y:{ sym:'Y' }, gA:{ sym:'A' }, gB:{ sym:'B' }, gC:{ sym:'C' }
+};
+// Half-lives and main emission energies (decimal point; localized at render time).
+const PRESETS = {
+  c14:   { T:5730 * YR,   p:'c14',   d:'n14',   em:['b'],      e:'β⁻ 156 keV',                    stable:true },
+  i131:  { T:8.02 * DAY,  p:'i131',  d:'xe131', em:['b', 'g'], e:'β⁻ 606 keV · γ 364 keV',        stable:true },
+  rn222: { T:3.82 * DAY,  p:'rn222', d:'po218', em:['a'],      e:'α 5.49 MeV',                    stable:false },
+  rn220: { T:55.6,        p:'rn220', d:'po216', em:['a'],      e:'α 6.29 MeV',                    stable:false },
+  co60:  { T:5.27 * YR,   p:'co60',  d:'ni60',  em:['b', 'g'], e:'β⁻ 318 keV · γ 1.17 + 1.33 MeV', stable:true },
+  u238:  { T:4.47e9 * YR, p:'u238',  d:'th234', em:['a'],      e:'α 4.20 MeV',                    stable:false },
+  tc99m: { T:6.01 * HR,   p:'tc99m', d:'tc99',  em:['g'],      e:'γ 140.5 keV',                   stable:true }
+};
+const CHAINS = {
+  sec: { TA:4 * DAY,    TB:1 * HR,     a:'gA',    b:'gB',    c:'gC',    emA:['a'], emB:['b'], N:10000, k:'chSec', s:'chSecS', info:'ciGen' },
+  mo:  { TA:65.94 * HR, TB:6.01 * HR,  a:'mo99',  b:'tc99m', c:'tc99',  emA:['b'], emB:['g'], k:'chTr', info:'ciMo' },
+  po:  { TA:3.10 * MIN, TB:26.8 * MIN, a:'po218', b:'pb214', c:'bi214', emA:['a'], emB:['b'], k:'chNo', info:'ciPo' }
+};
+const ARTS = [
+  { id:'oetzi',   f:0.53,  k:'aOetzi',   s:'aOetziS' },
+  { id:'shroud',  f:0.920, k:'aShroud',  s:'aShroudS' },
+  { id:'scrolls', f:0.785, k:'aScrolls', s:'aScrollsS' },
+  { id:'lascaux', f:0.128, k:'aLascaux', s:'aLascauxS' },
+  { id:'mammoth', f:0.0265, k:'aMammoth', s:'aMammothS' },
+  { id:'living',  f:1.0,   k:'aLiving',  s:'aLivingS' }
+];
+function nucHTML(id) {
+  const s = SP[id];
+  if (!s.A) return `<span class="nuc"><i>${s.sym}</i></span>`;
+  return `<span class="nuc"><span class="pre"><sup>${s.A}${s.m ? 'm' : ''}</sup><sub>${s.Z}</sub></span>${s.sym}</span>`;
+}
+const nucText = (id) => { const s = SP[id]; return s.A ? `${sup(s.A)}${s.m ? 'ᵐ' : ''}${s.sym}` : s.sym; };
+const EMSYM = { a:'α', b:'β⁻', g:'γ' };
+function emHTML(k) {
+  if (k === 'a') return `<span class="em-a"><span class="nuc"><span class="pre"><sup>4</sup><sub>2</sub></span>α</span></span>`;
+  if (k === 'b') return `<span class="em-b"><span class="nuc"><span class="pre"><sup>0</sup><sub>−1</sub></span>e</span></span> + <span class="em-b">ν̄<sub>e</sub></span>`;
+  return `<span class="em-g">γ</span>`;
+}
+
+/* ---------- state ---------- */
+const S = {
+  mode:'single', preset:'rn220', T:55.6, dm:'a', chain:'mo', TA:65.94 * HR, TB:6.01 * HR,
+  N:1000, seed:20261023, t:0, playing:true, ended:false, speed:1, realtime:false, rays:true,
+  tab:'n', log:false, hoverT:null, hoverK:null
+};
+
+/* ---------- simulation ---------- */
+function mulberry32(seed) {
+  let a = seed >>> 0;
+  return () => {
+    a = (a + 0x6D2B79F5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+// Number of entries <= t in a sorted array.
+function upper(arr, t) { let lo = 0, hi = arr.length; while (lo < hi) { const m = (lo + hi) >>> 1; if (arr[m] <= t) lo = m + 1; else hi = m; } return lo; }
+
+function chainHorizon(TA, TB) {
+  if (TA <= TB) return 6 * TB;
+  if (TA / TB < 20) return Math.min(6 * TA, Math.max(12 * TB, 2 * TA));
+  return 12 * TB;
+}
+function eqKind(TA, TB) { return TA <= TB ? 'none' : TA / TB >= 20 ? 'sec' : 'tr'; }
+
+function simConfig() {
+  if (S.mode === 'single') {
+    const pr = S.preset !== 'custom' ? PRESETS[S.preset] : null;
+    return { N:S.N, seed:S.seed, lamA:LN2 / S.T, lamB:0, H:6 * S.T, Tref:S.T, TA:S.T, TB:0,
+      spA: pr ? pr.p : 'X', spB: pr ? pr.d : 'Y', spC:null, emA: pr ? pr.em : [S.dm], emB:[], stable: pr ? pr.stable : true };
+  }
+  const ch = S.chain !== 'custom' ? CHAINS[S.chain] : null;
+  const H = chainHorizon(S.TA, S.TB);
+  return { N:S.N, seed:S.seed, lamA:LN2 / S.TA, lamB:LN2 / S.TB, H, Tref:H / 6, TA:S.TA, TB:S.TB,
+    spA: ch ? ch.a : 'gA', spB: ch ? ch.b : 'gB', spC: ch ? ch.c : 'gC', emA: ch ? ch.emA : ['a'], emB: ch ? ch.emB : ['b'], stable:true };
+}
+
+// Exact Monte Carlo: an exponential lifetime per nucleus is equivalent to a Bernoulli trial
+// with p = 1 - exp(-lambda dt) in every step dt. Chain: B lifetime starts when A decays.
+function buildSim(cfg) {
+  const N = cfg.N, R = mulberry32(cfg.seed);
+  const tA = new Float64Array(N), tB = new Float64Array(N);
+  for (let i = 0; i < N; i++) {
+    tA[i] = -Math.log(1 - R()) / cfg.lamA;
+    tB[i] = cfg.lamB > 0 ? tA[i] - Math.log(1 - R()) / cfg.lamB : Infinity;
+  }
+  const order = (arr) => { const o = new Uint32Array(N); for (let i = 0; i < N; i++) o[i] = i; o.sort((a, b) => arr[a] - arr[b]); return o; };
+  const oA = order(tA), oB = cfg.lamB > 0 ? order(tB) : oA;
+  const sA = new Float64Array(N), sB = new Float64Array(N);
+  for (let i = 0; i < N; i++) { sA[i] = tA[oA[i]]; sB[i] = tB[oB[i]]; }
+  const pre = new Float64Array(N + 1);
+  for (let i = 0; i < N; i++) pre[i + 1] = pre[i] + sA[i];
+  return Object.assign({}, cfg, { tA, tB, oA, oB, sA, sB, pre,
+    gG: cfg.H / 60, gH: cfg.H / 1200, bA: cfg.H / 120, step: cfg.H / 240 });
+}
+function bateman(N0, la, lb, t) {
+  const ea = Math.exp(-la * t), eb = Math.exp(-lb * t);
+  if (Math.abs(lb - la) <= 1e-9 * Math.max(la, lb)) {
+    const nb = N0 * la * t * ea;
+    return [N0 * ea, nb, N0 * (1 - ea - la * t * ea)];
+  }
+  const nb = N0 * la / (lb - la) * (ea - eb);
+  const nc = N0 * (1 - (lb * ea - la * eb) / (lb - la));
+  return [N0 * ea, nb, nc];
+}
+function theoryN(t, sim = SIM) {
+  if (!(sim.lamB > 0)) { const a = sim.N * Math.exp(-sim.lamA * t); return [a, sim.N - a, 0]; }
+  return bateman(sim.N, sim.lamA, sim.lamB, t);
+}
+function simN(t, sim = SIM) {
+  const nA = sim.N - upper(sim.sA, t), nC = sim.lamB > 0 ? upper(sim.sB, t) : 0;
+  return [nA, sim.N - nA - nC, nC];
+}
+// Decays (of any kind) in the half-open interval (t0, t1].
+function decays(t0, t1, sim = SIM) {
+  let n = upper(sim.sA, t1) - upper(sim.sA, t0);
+  if (sim.lamB > 0) n += upper(sim.sB, t1) - upper(sim.sB, t0);
+  return n;
+}
+function expDecays(t0, t1, sim = SIM) {
+  const a = theoryN(t0, sim), b = theoryN(t1, sim);
+  return (a[0] - b[0]) + (b[2] - a[2]);
+}
+const theoryAct = (t) => { const n = theoryN(t); return [SIM.lamA * n[0], SIM.lamB * n[1]]; };
+function fitHalfLife(t) {
+  const D = upper(SIM.sA, t);
+  if (D < 3) return null;
+  const Ssum = SIM.pre[D] + (SIM.N - D) * t;
+  const lam = D / Ssum, T = LN2 / lam;
+  return { D, S:Ssum, lam, T, sT:T / Math.sqrt(D) };
+}
+function tMaxB() {
+  const la = SIM.lamA, lb = SIM.lamB;
+  if (!(lb > 0)) return null;
+  if (Math.abs(lb - la) <= 1e-9 * Math.max(la, lb)) return 1 / la;
+  return Math.log(lb / la) / (lb - la);
+}
+
+let SIM = null;
+const ptr = { a:0, b:0 };
+
+/* ---------- tokens ---------- */
+let col = {};
+const TOKENS = ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'crimson', 'blue', 'amber', 'violet',
+  'st-bg', 'st-bg2', 'st-ink', 'st-ink-2', 'st-line', 'st-a', 'st-b', 'st-c', 'st-al', 'st-be', 'st-ga'];
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of TOKENS) col[k.replace(/-/g, '')] = cs.getPropertyValue('--' + k).trim() || '#888888';
+  if (L.ready) { makeSprites(); fullPaint(); }
+  dirty = true; chartDirty = true; gmDirty = true; dateDirty = true;
+}
+function hexRGB(hex) {
+  const h = hex.replace('#', '');
+  const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h.slice(0, 6), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const withAlpha = (hex, a) => { const [r, g, b] = hexRGB(hex); return `rgba(${r},${g},${b},${a})`; };
+const mix = (h1, h2, u) => { const a = hexRGB(h1), b = hexRGB(h2); return `rgb(${a.map((v, i) => Math.round(v + (b[i] - v) * u)).join(',')})`; };
+
+/* ---------- canvas helpers ---------- */
+let dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+function fitCanvas(cv) {
+  const w = cv.clientWidth || cv.parentElement.clientWidth || 300, h = cv.clientHeight || cv.parentElement.clientHeight || 150;
+  const W = Math.max(1, Math.round(w * dpr)), Hh = Math.max(1, Math.round(h * dpr));
+  if (cv.width !== W) cv.width = W;
+  if (cv.height !== Hh) cv.height = Hh;
+  return { w, h };
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function niceCeil(x) {
+  if (!(x > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(x))), f = x / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p;
+}
+const stepDec = (step) => Math.max(0, -Math.floor(Math.log10(step) + 1e-9));
+function tickLab(v, step) {
+  if (Math.abs(v) < step * 1e-6) return '0';
+  if (step < 1e-3 || Math.abs(v) >= 1e6) return fsci(v, 2);
+  return fmt(v, stepDec(step));
+}
+function logTicks(lo, hi) {
+  const out = [], d0 = Math.floor(Math.log10(lo)), d1 = Math.ceil(Math.log10(hi));
+  const mults = d1 - d0 <= 3 ? [1, 2, 5] : [1];
+  for (let d = d0; d <= d1; d++) for (const m of mults) { const v = m * Math.pow(10, d); if (v >= lo * 0.999 && v <= hi * 1.001) out.push(v); }
+  return out;
+}
+const logLab = (v) => ((v >= 1e-3 && v < 1e6) ? fsig(v, 1) : fsci(v, 1));
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+
+/* ---------- stage: lattice of nuclei ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+const lat = document.createElement('canvas'), lctx = lat.getContext('2d');
+let cw = 800, ch = 450, dirty = true;
+const L = { ready:false, cx:null, cy:null, p:10, r:4, spr:[], band:46 };
+
+function layoutLattice() {
+  const N = SIM.N, band = L.band = cw < 520 ? 52 : 46;
+  const x0 = 10, x1 = cw - 10, y0 = band, y1 = ch - 10, W = x1 - x0, Hh = y1 - y0;
+  let p = Math.sqrt(W * Hh / (N * 0.866)), cols = 1, rows = 1;
+  for (let it = 0; it < 80; it++) {
+    cols = Math.max(1, Math.floor((W - p / 2) / p));
+    rows = Math.max(1, Math.floor((Hh - p) / (0.866 * p)) + 1);
+    if (cols * rows >= N) break;
+    p *= 0.985;
+  }
+  const used = Math.ceil(N / cols);
+  const gw = cols * p + (used > 1 ? p / 2 : 0), gh = (used - 1) * 0.866 * p + p;
+  const ox = x0 + (W - gw) / 2 + p / 2, oy = y0 + (Hh - gh) / 2 + p / 2;
+  L.cx = new Float32Array(N); L.cy = new Float32Array(N);
+  for (let i = 0; i < N; i++) {
+    const r = Math.floor(i / cols), c = i % cols;
+    L.cx[i] = ox + c * p + (r % 2 ? p / 2 : 0); L.cy[i] = oy + r * 0.866 * p;
+  }
+  L.p = p; L.r = p * (p < 8 ? 0.36 : 0.40);
+  L.ready = true;
+}
+function makeSprites() {
+  const r = L.r, half = r + 1.5, size = Math.max(2, Math.ceil(half * 2 * dpr));
+  const colors = [col.sta, col.stb, S.mode === 'chain' ? col.stc : col.stb];
+  L.spr = colors.map((c, st) => {
+    const sc = document.createElement('canvas'); sc.width = sc.height = size;
+    const g = sc.getContext('2d'); g.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const stableEnd = (S.mode === 'single' && st >= 1) || st === 2;
+    drawGlyph(g, half, half, stableEnd ? r * 0.8 : r, c, stableEnd);
+    return sc;
+  });
+  L.half = half;
+}
+function drawGlyph(g, x, y, r, c, dim) {
+  g.globalAlpha = dim ? 0.55 : 1;
+  if (r >= 9) {
+    // nucleus as a cluster of nucleons: two tints for protons and neutrons
+    const nr = r * 0.40, pos = [[0, 0]];
+    for (let k = 0; k < 6; k++) pos.push([Math.cos(k * Math.PI / 3 + 0.5) * r * 0.58, Math.sin(k * Math.PI / 3 + 0.5) * r * 0.58]);
+    pos.forEach(([dx, dy], k) => {
+      const base = k % 2 ? mix(c, '#9AA8C0', 0.55) : c;
+      const gr = g.createRadialGradient(x + dx - nr * 0.35, y + dy - nr * 0.35, nr * 0.1, x + dx, y + dy, nr);
+      gr.addColorStop(0, mix(base, '#ffffff', 0.55)); gr.addColorStop(0.55, base); gr.addColorStop(1, mix(base, '#000000', 0.35));
+      g.fillStyle = gr; g.beginPath(); g.arc(x + dx, y + dy, nr, 0, Math.PI * 2); g.fill();
+    });
+  } else if (r >= 3) {
+    const gr = g.createRadialGradient(x - r * 0.35, y - r * 0.35, r * 0.1, x, y, r);
+    gr.addColorStop(0, mix(c, '#ffffff', 0.5)); gr.addColorStop(0.6, c); gr.addColorStop(1, mix(c, '#000000', 0.3));
+    g.fillStyle = gr; g.beginPath(); g.arc(x, y, r, 0, Math.PI * 2); g.fill();
+  } else {
+    g.fillStyle = c; g.beginPath(); g.arc(x, y, Math.max(r, 0.7), 0, Math.PI * 2); g.fill();
+  }
+  g.globalAlpha = 1;
+}
+const stateAt = (i, t) => (SIM.tA[i] > t ? 0 : SIM.tB[i] > t ? 1 : 2);
+function paintCell(i, st) {
+  const x = L.cx[i], y = L.cy[i], p = L.p, h = L.half;
+  lctx.clearRect(x - p / 2, y - p * 0.433, p, p * 0.866);
+  lctx.drawImage(L.spr[st], x - h, y - h, h * 2, h * 2);
+}
+function fullPaint() {
+  if (!L.ready) return;
+  lctx.setTransform(1, 0, 0, 1, 0, 0); lctx.clearRect(0, 0, lat.width, lat.height);
+  lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const t = S.t, N = SIM.N;
+  for (let i = 0; i < N; i++) { const st = stateAt(i, t), h = L.half; lctx.drawImage(L.spr[st], L.cx[i] - h, L.cy[i] - h, h * 2, h * 2); }
+  ptr.a = upper(SIM.sA, t); ptr.b = SIM.lamB > 0 ? upper(SIM.sB, t) : 0;
+  dirty = true;
+}
+function resizeScene() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  const s = fitCanvas(cv); cw = s.w; ch = s.h;
+  lat.width = cv.width; lat.height = cv.height;
+  layoutLattice(); makeSprites(); fullPaint();
+}
+
+/* flashes and emitted particles */
+const FX = [], PT = [];
+function spawnDecay(i, em) {
+  const x = L.cx[i], y = L.cy[i];
+  FX.push({ x, y, age:0, life:reduceMotion ? 0.35 : 0.55, k:em[0] });
+  if (!S.rays || reduceMotion) return;
+  for (const k of em) {
+    const a = Math.random() * Math.PI * 2;
+    if (k === 'a') PT.push({ k, x, y, vx:Math.cos(a) * 110, vy:Math.sin(a) * 110, age:0, life:0.55, a });
+    else if (k === 'b') PT.push({ k, x, y, vx:Math.cos(a) * 300, vy:Math.sin(a) * 300, age:0, life:1.1, a, hx:[x], hy:[y] });
+    else PT.push({ k, x, y, vx:Math.cos(a) * 560, vy:Math.sin(a) * 560, age:0, life:1.4, a });
+  }
+}
+function stepFx(dt) {
+  for (let i = FX.length - 1; i >= 0; i--) { FX[i].age += dt; if (FX[i].age >= FX[i].life) FX.splice(i, 1); }
+  for (let i = PT.length - 1; i >= 0; i--) {
+    const q = PT[i]; q.age += dt;
+    if (q.k === 'a') { const d = Math.exp(-4 * dt); q.vx *= d; q.vy *= d; }
+    if (q.k === 'b') {                                    // electrons scatter: small random turns
+      const turn = (Math.random() - 0.5) * 6 * dt, c = Math.cos(turn), s = Math.sin(turn);
+      const vx = q.vx * c - q.vy * s; q.vy = q.vx * s + q.vy * c; q.vx = vx;
+      q.hx.push(q.x); q.hy.push(q.y); if (q.hx.length > 9) { q.hx.shift(); q.hy.shift(); }
+    }
+    q.x += q.vx * dt; q.y += q.vy * dt;
+    if (q.age >= q.life || q.x < -40 || q.x > cw + 40 || q.y < -40 || q.y > ch + 40) PT.splice(i, 1);
+  }
+  if (FX.length > 900) FX.splice(0, FX.length - 900);
+  if (PT.length > 500) PT.splice(0, PT.length - 500);
+}
+
+// Move the simulation clock to tn and update the lattice incrementally.
+// Returns the number of decays that happened in (t, tn].
+function advance(tn, fx = true) {
+  const t0 = S.t; S.t = tn;
+  if (tn < t0) { fullPaint(); return 0; }
+  const nA = upper(SIM.sA, tn) - ptr.a, nB = SIM.lamB > 0 ? upper(SIM.sB, tn) - ptr.b : 0;
+  if (nA + nB > 4000) { fullPaint(); return nA + nB; }
+  let spawned = 0;
+  lctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (let k = 0; k < nA; k++) {
+    const i = SIM.oA[ptr.a++];
+    paintCell(i, stateAt(i, tn));
+    if (fx && spawned++ < 60) spawnDecay(i, SIM.emA);
+  }
+  for (let k = 0; k < nB; k++) {
+    const i = SIM.oB[ptr.b++];
+    paintCell(i, 2);
+    if (fx && spawned++ < 60) spawnDecay(i, SIM.emB);
+  }
+  if (nA + nB) dirty = true;
+  return nA + nB;
+}
+
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const g = c.createRadialGradient(cw * 0.3, ch * 0.2, 10, cw * 0.5, ch * 0.5, Math.max(cw, ch) * 0.8);
+  g.addColorStop(0, col.stbg2); g.addColorStop(1, col.stbg);
+  c.fillStyle = g; c.fillRect(0, 0, cw, ch);
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.drawImage(lat, 0, 0);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+  // half-life staircase (single mode): one bar per T1/2, height halves each time
+  if (S.mode === 'single' && cw >= 520) {
+    const w = Math.min(300, cw * 0.36), x0 = cw - 14 - w, sw = w / 6, yb = 30, frac = S.t / SIM.H;
+    c.font = `500 10.5px ${FONT_MONO}`; c.textBaseline = 'middle';
+    for (let k = 0; k < 6; k++) {
+      const hgt = 3 + 17 * Math.pow(0.5, k), x = x0 + k * sw + 2, ww = sw - 4;
+      const fill = clamp(frac * 6 - k, 0, 1);
+      c.fillStyle = withAlpha(col.stink, 0.12); c.fillRect(x, yb - hgt, ww, hgt);
+      if (fill > 0) { c.fillStyle = col.sta; c.fillRect(x, yb - hgt, ww * fill, hgt); }
+      c.fillStyle = col.stink2; c.textAlign = 'center';
+      c.fillText(k === 0 ? 'T½' : `${k + 1}T½`, x + ww / 2, yb + 9);
+    }
+  }
+
+  // flashes and particles, additive
+  c.save(); c.globalCompositeOperation = 'lighter';
+  const fr = Math.max(L.r, 2.5);
+  for (const f of FX) {
+    const u = f.age / f.life, colr = f.k === 'a' ? col.stal : f.k === 'b' ? col.stbe : col.stga;
+    const rr = reduceMotion ? fr * 1.6 : fr * (1.1 + 2.2 * u);
+    c.globalAlpha = (1 - u) * 0.9;
+    c.fillStyle = withAlpha(colr, 0.22); c.beginPath(); c.arc(f.x, f.y, rr, 0, Math.PI * 2); c.fill();
+    c.globalAlpha = (1 - u);
+    c.strokeStyle = colr; c.lineWidth = 1.4; c.beginPath(); c.arc(f.x, f.y, rr, 0, Math.PI * 2); c.stroke();
+    if (u < 0.3) { c.fillStyle = '#ffffff'; c.globalAlpha = 1 - u / 0.3; c.beginPath(); c.arc(f.x, f.y, fr * 0.7, 0, Math.PI * 2); c.fill(); }
+  }
+  for (const q of PT) {
+    const u = q.age / q.life; c.globalAlpha = 1 - u * u;
+    if (q.k === 'a') {                                    // 2p + 2n, short range
+      c.fillStyle = col.stal; const s = 2.1, ca = Math.cos(q.a), sa = Math.sin(q.a);
+      for (const [dx, dy] of [[s, 0], [-s, 0], [0, s], [0, -s]]) { c.beginPath(); c.arc(q.x + dx * ca - dy * sa, q.y + dx * sa + dy * ca, 1.8, 0, Math.PI * 2); c.fill(); }
+    } else if (q.k === 'b') {
+      c.strokeStyle = col.stbe; c.lineWidth = 1.2; c.beginPath(); c.moveTo(q.hx[0], q.hy[0]);
+      for (let j = 1; j < q.hx.length; j++) c.lineTo(q.hx[j], q.hy[j]);
+      c.lineTo(q.x, q.y); c.stroke();
+      c.fillStyle = col.stbe; c.beginPath(); c.arc(q.x, q.y, 1.9, 0, Math.PI * 2); c.fill();
+    } else {                                              // photon: a short wave packet
+      c.strokeStyle = col.stga; c.lineWidth = 1.3; c.beginPath();
+      const ca = Math.cos(q.a), sa = Math.sin(q.a);
+      for (let j = 0; j <= 24; j++) { const s = -j * 1.4, w = Math.sin(j * 0.9) * 3 * Math.sin(Math.PI * j / 24); const px = q.x + s * ca - w * sa, py = q.y + s * sa + w * ca; j ? c.lineTo(px, py) : c.moveTo(px, py); }
+      c.stroke();
+    }
+  }
+  c.restore();
+}
+
+/* ---------- Geiger-Müller counter ---------- */
+const gmMeter = $('#gm-meter'), gmTape = $('#gm-tape'), gmm = gmMeter.getContext('2d'), gmt = gmTape.getContext('2d');
+const GM = { needle:0, led:0, scale:10, lastK:-1 };
+let gmDirty = true;
+function gmScale() {
+  let mx = 0;
+  for (let j = 0; j < 60; j++) mx = Math.max(mx, expDecays(j * SIM.gG, (j + 1) * SIM.gG));
+  GM.scale = niceCeil(mx + 3 * Math.sqrt(mx) + 1);
+}
+function drawGM() {
+  // meter
+  let s = fitCanvas(gmMeter); const W = s.w, H = s.h, c = gmm;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const cx = W / 2, cy = H - 10, R = Math.min(W / 2 - 8, H - 18), a0 = Math.PI * 1.1, a1 = Math.PI * 1.9;
+  c.lineCap = 'round';
+  c.strokeStyle = col.line; c.lineWidth = 6; c.beginPath(); c.arc(cx, cy, R, a0, a1); c.stroke();
+  const vfrac = clamp(GM.needle / GM.scale, 0, 1);
+  c.strokeStyle = withAlpha(col.crimson, 0.35); c.beginPath(); c.arc(cx, cy, R, a0, a0 + (a1 - a0) * vfrac); c.stroke();
+  c.strokeStyle = col.ink3; c.lineWidth = 1; c.font = `500 9.5px ${FONT_MONO}`; c.fillStyle = col.ink3; c.textAlign = 'center'; c.textBaseline = 'middle';
+  for (let k = 0; k <= 4; k++) {
+    const a = a0 + (a1 - a0) * k / 4, ca = Math.cos(a), sa = Math.sin(a);
+    c.beginPath(); c.moveTo(cx + ca * (R - 7), cy + sa * (R - 7)); c.lineTo(cx + ca * (R - 12), cy + sa * (R - 12)); c.stroke();
+    if (k === 0 || k === 2 || k === 4) c.fillText(fsig(GM.scale * k / 4, 2), cx + ca * (R - 21), cy + sa * (R - 21));
+  }
+  const an = a0 + (a1 - a0) * vfrac;
+  c.strokeStyle = col.crimson; c.lineWidth = 2.2; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx + Math.cos(an) * (R - 4), cy + Math.sin(an) * (R - 4)); c.stroke();
+  c.fillStyle = col.ink; c.beginPath(); c.arc(cx, cy, 4, 0, Math.PI * 2); c.fill();
+  c.fillStyle = col.ink3; c.font = `500 9.5px ${FONT_MONO}`; c.fillText(tr('gmUnit'), cx, cy - R * 0.45);
+  // tape: counts in the last 40 closed intervals
+  s = fitCanvas(gmTape); const TW = s.w, TH = s.h, t = gmt;
+  t.setTransform(dpr, 0, 0, dpr, 0, 0); t.clearRect(0, 0, TW, TH);
+  const k = Math.floor(S.t / SIM.gG + 1e-9), nbar = 40, bw = TW / nbar, top = 4, bot = TH - 12;
+  t.strokeStyle = col.grid; t.lineWidth = 1; t.beginPath(); t.moveTo(0, bot + 0.5); t.lineTo(TW, bot + 0.5); t.stroke();
+  const yOf = (v) => bot - clamp(v / GM.scale, 0, 1) * (bot - top);
+  for (let j = 0; j < nbar; j++) {
+    const g = k - nbar + j; if (g < 0) continue;
+    const n = decays(g * SIM.gG, (g + 1) * SIM.gG);
+    t.fillStyle = withAlpha(col.crimson, j === nbar - 1 ? 0.95 : 0.55);
+    t.fillRect(j * bw + 1, yOf(n), Math.max(1, bw - 2), bot - yOf(n));
+  }
+  t.strokeStyle = col.blue; t.lineWidth = 1.5; t.setLineDash([3, 3]); t.beginPath();
+  let started = false;
+  for (let j = 0; j < nbar; j++) { const g = k - nbar + j; if (g < 0) continue; const e = expDecays(g * SIM.gG, (g + 1) * SIM.gG); const x = j * bw + bw / 2; started ? t.lineTo(x, yOf(e)) : t.moveTo(x, yOf(e)); started = true; }
+  t.stroke(); t.setLineDash([]);
+  t.fillStyle = col.ink3; t.font = `500 9.5px ${FONT_MONO}`; t.textAlign = 'left'; t.textBaseline = 'bottom';
+  t.fillText(`${nbar} × Δt`, 2, TH);
+  // LED
+  $('#gm-led').setAttribute('opacity', String(0.18 + 0.82 * clamp(GM.led, 0, 1)));
+}
+function updateGMReadout() {
+  const k = Math.floor(S.t / SIM.gG + 1e-9);
+  if (k === GM.lastK && !gmDirty) return;
+  GM.lastK = k;
+  if (k >= 1) {
+    const n = decays((k - 1) * SIM.gG, k * SIM.gG);
+    $('#gm-n').textContent = fint(n);
+    $('#gm-pm').textContent = `± ${fmt(Math.sqrt(n), 1)} (√n)`;
+    GM.lastN = n;
+  } else { $('#gm-n').textContent = tr('none'); $('#gm-pm').textContent = ''; GM.lastN = null; }
+}
+
+/* sound: a short noise burst per detected decay */
+const SND = { ctx:null, buf:null, gain:null, on:false };
+function soundInit() {
+  const AC = window.AudioContext || window.webkitAudioContext;
+  if (!AC) return false;
+  try {
+    SND.ctx = new AC();
+    const sr = SND.ctx.sampleRate, len = Math.floor(sr * 0.006), b = SND.ctx.createBuffer(1, len, sr), d = b.getChannelData(0);
+    for (let i = 0; i < len; i++) d[i] = (Math.random() * 2 - 1) * Math.exp(-i / (len * 0.16));
+    SND.buf = b; SND.gain = SND.ctx.createGain(); SND.gain.gain.value = 0.4; SND.gain.connect(SND.ctx.destination);
+    return true;
+  } catch (e) { return false; }
+}
+function clicks(n, span) {
+  if (!SND.on || !SND.ctx || n <= 0) return;
+  const now = SND.ctx.currentTime, m = Math.min(n, 14);
+  for (let j = 0; j < m; j++) {
+    const s = SND.ctx.createBufferSource(); s.buffer = SND.buf; s.playbackRate.value = 0.85 + Math.random() * 0.35;
+    s.connect(SND.gain); s.start(now + 0.005 + Math.random() * span);
+  }
+}
+function toggleSound() {
+  if (!SND.ctx && !soundInit()) { $('#snd-l').textContent = tr('noAudio'); return; }
+  SND.on = !SND.on;
+  if (SND.on && SND.ctx.state === 'suspended') SND.ctx.resume().catch(() => {});
+  $('#snd').setAttribute('aria-pressed', String(SND.on));
+  $('#snd-l').textContent = tr(SND.on ? 'soundOff' : 'soundOn');
+}
+
+/* ---------- HUD, legend, equation ---------- */
+function buildHud() {
+  const cells = S.mode === 'single'
+    ? [['t', 'hud-t'], ['N', 'hud-n'], ['N/N<sub>0</sub>', 'hud-f'], ['A', 'hud-a'], ['t/T<sub>½</sub>', 'hud-h']]
+    : [['t', 'hud-t'], ['N<sub>A</sub>', 'hud-na'], ['N<sub>B</sub>', 'hud-nb'], ['N<sub>C</sub>', 'hud-nc'], ['A', 'hud-a']];
+  $('#hud').innerHTML = cells.map(([k, id]) => `<div><dt>${k}</dt><dd id="${id}"></dd></div>`).join('');
+}
+let hudKey = '';
+function updateHud() {
+  const t = S.t, n = simN(t), act = SIM.lamA * n[0] + SIM.lamB * n[1];
+  const key = [t, n.join(','), lang, S.mode].join('|');
+  if (key === hudKey) return; hudKey = key;
+  const u = S.unit, set = (id, html) => { const el = $('#' + id); if (el) el.innerHTML = html; };
+  set('hud-t', `${fmt(t / u.f, S.tdec)} <span>${uLab(u)}</span>`);
+  set('hud-a', `${fnum(act, 3)} <span>Bq</span>`);
+  if (S.mode === 'single') {
+    set('hud-n', fint(n[0])); set('hud-f', `${fmt(n[0] / SIM.N * 100, 1)} <span>%</span>`); set('hud-h', fmt(t / SIM.TA, 2));
+  } else { set('hud-na', fint(n[0])); set('hud-nb', fint(n[1])); set('hud-nc', fint(n[2])); }
+}
+const stateKey = () => (S.ended ? 'end' : S.playing ? 'run' : 'pause');
+function updateLegend() {
+  const items = S.mode === 'single'
+    ? [[SIM.spA, 'sta', ''], [SIM.spB, 'stb', SIM.stable ? tr('stableP') : tr('product')]]
+    : [[SIM.spA, 'sta', ''], [SIM.spB, 'stb', ''], [SIM.spC, 'stc', '']];
+  const h = items.map(([sp, c, note]) => `<span><i class="dot" style="background:var(--${c.replace('st', 'st-')})${(S.mode === 'single' && c === 'stb') || c === 'stc' ? ';opacity:.6' : ''}"></i>${nucText(sp)}${note ? ` <small>(${note})</small>` : ''}</span>`).join('');
+  $('#legend').innerHTML = h + `<span class="state" id="state" data-s="${stateKey()}">${tr('s' + stateKey()[0].toUpperCase() + stateKey().slice(1))}</span>`;
+}
+function setStateChip() {
+  const el = $('#state'); if (!el) return;
+  const s = stateKey();
+  if (el.dataset.s !== s) { el.dataset.s = s; el.textContent = tr('s' + s[0].toUpperCase() + s.slice(1)); }
+}
+function updateEqn() {
+  const arrow = (k) => `<span class="arr"><small class="em-${k}">${EMSYM[k]}</small>→</span>`;
+  let h;
+  if (S.mode === 'single') h = `${nucHTML(SIM.spA)} → ${nucHTML(SIM.spB)} + ${SIM.emA.map(emHTML).join(' + ')}`;
+  else h = `${nucHTML(SIM.spA)} ${arrow(SIM.emA[0])} ${nucHTML(SIM.spB)} ${arrow(SIM.emB[0])} ${nucHTML(SIM.spC)}`;
+  $('#eqn').innerHTML = h;
+}
+
+/* ---------- transport ---------- */
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIcon = null;
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+function updateScrub() {
+  const el = $('#scrub');
+  el.value = Math.round(S.t / SIM.H * 1000); setFill(el);
+  const u = S.unit;
+  $('#scrub-time').textContent = `${fmt(S.t / u.f, S.tdec)} / ${fmt(SIM.H / u.f, S.tdec)} ${uLab(u)}`;
+  const k = S.playing + lang;
+  if (pauseIcon !== k) { pauseIcon = k; const b = $('#pause'); b.innerHTML = S.playing ? ICON_PAUSE : ICON_PLAY; b.setAttribute('aria-label', tr(S.playing ? 'pause' : 'play')); }
+  setStateChip();
+}
+const simRate = () => (S.realtime ? 1 : SIM.H / BASE_WALL * S.speed);
+function updateScale() {
+  const r = simRate();
+  $('#scale').textContent = `${tr('scale')} ${fdur(r)}`;
+  const canReal = SIM.H <= 3 * HR;
+  $('#tg-real').hidden = !canReal;
+  if (!canReal && S.realtime) { S.realtime = false; $('#tg-real').setAttribute('aria-pressed', 'false'); }
+  $$('#speed button').forEach(b => { b.disabled = S.realtime; });
+  $('#gm-gate').textContent = `${tr('gmGate')} = ${fdur(SIM.gG)}`;
+}
+function seek(t, keepPlaying = false) {
+  t = clamp(t, 0, SIM.H);
+  FX.length = 0; PT.length = 0;
+  if (t >= S.t) advance(t, false); else { S.t = t; fullPaint(); }
+  S.ended = t >= SIM.H; if (!keepPlaying || S.ended) S.playing = false;
+  GM.needle = decays(Math.max(0, S.t - SIM.gG), S.t);
+  markAll();
+}
+function togglePlay() {
+  if (S.ended || S.t >= SIM.H) { seek(0); S.playing = true; S.ended = false; }
+  else S.playing = !S.playing;
+  markAll();
+}
+function restart() { seek(0); S.playing = true; S.ended = false; markAll(); }
+
+/* ---------- rebuild ---------- */
+function rebuild(keepFrac = false) {
+  const frac = SIM ? S.t / SIM.H : 0;
+  SIM = buildSim(simConfig());
+  S.unit = unitFor(SIM.Tref); S.tdec = decFor(SIM.Tref / S.unit.f);
+  S.t = keepFrac ? clamp(frac, 0, 1) * SIM.H : 0;
+  S.ended = S.t >= SIM.H;
+  FX.length = 0; PT.length = 0;
+  if (L.ready || cw) { layoutLattice(); makeSprites(); fullPaint(); }
+  gmScale(); GM.needle = decays(Math.max(0, S.t - SIM.gG), S.t); GM.lastK = -1;
+  buildHud(); hudKey = ''; updateLegend(); updateEqn(); updateScale(); updatePanel();
+  markAll();
+}
+let domDirty = true, chartDirty = true, dateDirty = true;
+function markAll() { dirty = true; chartDirty = true; gmDirty = true; domDirty = true; }
+
+/* ---------- panel ---------- */
+const hlFromSlider = (v) => Math.pow(10, +v);
+function renderChips() {
+  $('#presets').innerHTML = Object.entries(PRESETS).map(([k, p]) =>
+    `<button type="button" class="chip" id="pr-${k}" data-pr="${k}" aria-pressed="false">${nucHTML(p.p)}<small>${fdur(p.T)}</small></button>`).join('') +
+    `<button type="button" class="chip" id="pr-custom" data-pr="custom" aria-pressed="false"><span>${tr('custom')}</span><small>X → Y</small></button>`;
+  $$('#presets .chip').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.pr)));
+  $('#chains').innerHTML = Object.entries(CHAINS).map(([k, c]) =>
+    `<button type="button" class="chip" id="ch-${k}" data-ch="${k}" aria-pressed="false"><span>${tr(c.k)}</span><small>${c.s ? tr(c.s) : `${nucText(c.a)} → ${nucText(c.b)}`}</small></button>`).join('') +
+    `<button type="button" class="chip" id="ch-custom" data-ch="custom" aria-pressed="false"><span>${tr('chCustom')}</span><small>${tr('chCustomS')}</small></button>`;
+  $$('#chains .chip').forEach(b => b.addEventListener('click', () => loadChain(b.dataset.ch)));
+  $('#arts').innerHTML = ARTS.map(a => `<button type="button" class="chip" id="art-${a.id}" data-art="${a.id}" aria-pressed="false"><span>${tr(a.k)}</span><small>${tr(a.s)} · ${fmt(a.f * 100, a.f < 0.1 ? 2 : 1)} %</small></button>`).join('');
+  $$('#arts .chip').forEach(b => b.addEventListener('click', () => { const a = ARTS.find(x => x.id === b.dataset.art); DT.f = a.f; syncDating(); }));
+}
+function updatePanel() {
+  const single = S.mode === 'single';
+  $('#g-iso').hidden = !single; $('#g-chain').hidden = single;
+  $$('#modes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)));
+  // isotope
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pr === S.preset)));
+  $('#hl').value = Math.log10(S.T); $('#hl-out').textContent = fdur(S.T);
+  const em = single ? SIM.emA : [S.dm];
+  $$('#dms button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dm === em[0])));
+  if (single) {
+    const pr = S.preset !== 'custom' ? PRESETS[S.preset] : null;
+    $('#iso-info').innerHTML = pr ? `${tr('infoEm')} <b>${loc(pr.e)}</b>. ${tr(pr.stable ? 'infoStable' : 'infoDau')}` : tr('infoCustom');
+  }
+  // chain
+  $$('#chains .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.ch === S.chain)));
+  $('#ta').value = Math.log10(S.TA); $('#tb').value = Math.log10(S.TB);
+  $('#ta-out').textContent = fdur(S.TA); $('#tb-out').textContent = fdur(S.TB);
+  const kind = eqKind(S.TA, S.TB), la = LN2 / S.TA, lb = LN2 / S.TB;
+  $('#pill-ratio').textContent = fnum(S.TA / S.TB, 3);
+  if (!single) $('#pill-tmax').textContent = fdur(tMaxB());
+  $('#pill-eq').textContent = lb > la ? fsig(lb / (lb - la), 3) : '∞';
+  const ch = S.chain !== 'custom' ? CHAINS[S.chain] : null;
+  $('#chain-info').innerHTML = `<span class="badge" data-k="${kind}">${tr(kind === 'sec' ? 'eqSec' : kind === 'tr' ? 'eqTr' : 'eqNone')}</span> ${tr(kind === 'sec' ? 'ciSec' : kind === 'tr' ? 'ciTr' : 'ciNone')} ${tr(ch ? ch.info : 'ciGen')}`;
+  // sample
+  $('#n0').value = Math.log10(S.N); $('#n0-out').textContent = fint(S.N);
+  $$('#nchips .chip').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === S.N)));
+  $$('#panel input[type=range]').forEach(setFill);
+}
+function loadPreset(k) {
+  S.mode = 'single'; S.preset = k;
+  if (k !== 'custom') { S.T = PRESETS[k].T; S.dm = PRESETS[k].em[0]; }
+  S.playing = true; rebuild(false);
+}
+function loadChain(k) {
+  S.mode = 'chain'; S.chain = k;
+  if (k !== 'custom') { const c = CHAINS[k]; S.TA = c.TA; S.TB = c.TB; if (c.N) S.N = c.N; }
+  S.playing = true; rebuild(false);
+}
+
+/* ---------- results ---------- */
+function zText(sim, th, p) {
+  const sg = Math.sqrt(SIM.N * p * (1 - p));
+  if (!(sg > 1e-9)) return ['', tr('none')];
+  const z = (sim - th) / sg;
+  return [Math.abs(z) >= 2 ? 'z hi' : 'z', `${z >= 0 ? '+' : '−'}${fmt(Math.abs(z), 1)} σ`];
+}
+function updateResults() {
+  const t = S.t, n = simN(t), th = theoryN(t), N0 = SIM.N, rows = [];
+  const row = (k, a, b, z = ['z', '']) => rows.push(`<tr><th>${tr(k)}</th><td>${a}</td><td>${b}</td><td class="${z[0]}">${z[1]}</td></tr>`);
+  const sub = (k) => rows.push(`<tr class="sub"><th colspan="4">${tr(k)}</th></tr>`);
+  const fit = fitHalfLife(t);
+  const lastN = GM.lastN, kk = Math.floor(t / SIM.gG + 1e-9);
+  const expLast = kk >= 1 ? expDecays((kk - 1) * SIM.gG, kk * SIM.gG) : null;
+  if (S.mode === 'single') {
+    sub('secCount');
+    row('rN', fint(n[0]), fmt(th[0], 1), zText(n[0], th[0], th[0] / N0));
+    row('rD', fint(n[1]), fmt(th[1], 1), zText(n[1], th[1], th[1] / N0));
+    sub('secAct');
+    row('rA', `${fnum(SIM.lamA * n[0])} Bq`, `${fnum(SIM.lamA * th[0])} Bq`);
+    row('rCount', lastN != null ? `${fint(lastN)} ± ${fmt(Math.sqrt(lastN), 1)}` : tr('none'), expLast != null ? fmt(expLast, 1) : tr('none'),
+      lastN != null && expLast > 0 ? (() => { const z = (lastN - expLast) / Math.sqrt(expLast); return [Math.abs(z) >= 2 ? 'z hi' : 'z', `${z >= 0 ? '+' : '−'}${fmt(Math.abs(z), 1)} σ`]; })() : ['z', '']);
+    sub('secTime');
+    row('rHalf', fmt(t / SIM.TA, 2), tr('none'));
+    row('rFit', fit ? `${fdur(fit.T)} ± ${fdur(fit.sT, 2)}` : tr('none'), fdur(SIM.TA),
+      fit ? (() => { const z = (fit.T - SIM.TA) / fit.sT; return [Math.abs(z) >= 2 ? 'z hi' : 'z', `${z >= 0 ? '+' : '−'}${fmt(Math.abs(z), 1)} σ`]; })() : ['z', '']);
+  } else {
+    sub('secCount');
+    row('rNA', fint(n[0]), fmt(th[0], 1), zText(n[0], th[0], th[0] / N0));
+    row('rNB', fint(n[1]), fmt(th[1], 1), zText(n[1], th[1], th[1] / N0));
+    row('rNC', fint(n[2]), fmt(th[2], 1), zText(n[2], th[2], th[2] / N0));
+    sub('secAct');
+    const aS = [SIM.lamA * n[0], SIM.lamB * n[1]], aT = [SIM.lamA * th[0], SIM.lamB * th[1]];
+    row('rAA', `${fnum(aS[0])} Bq`, `${fnum(aT[0])} Bq`);
+    row('rAB', `${fnum(aS[1])} Bq`, `${fnum(aT[1])} Bq`);
+    row('rRatio', aS[0] > 0 ? fsig(aS[1] / aS[0], 3) : tr('none'), aT[0] > 0 ? fsig(aT[1] / aT[0], 3) : tr('none'));
+    row('rCount', lastN != null ? `${fint(lastN)} ± ${fmt(Math.sqrt(lastN), 1)}` : tr('none'), expLast != null ? fmt(expLast, 1) : tr('none'));
+    sub('secTime');
+    row('rTmax', tr('none'), fdur(tMaxB()));
+    row('rHalfA', fmt(t / SIM.TA, 2), tr('none'));
+    row('rFitA', fit ? `${fdur(fit.T)} ± ${fdur(fit.sT, 2)}` : tr('none'), fdur(SIM.TA),
+      fit ? (() => { const z = (fit.T - SIM.TA) / fit.sT; return [Math.abs(z) >= 2 ? 'z hi' : 'z', `${z >= 0 ? '+' : '−'}${fmt(Math.abs(z), 1)} σ`]; })() : ['z', '']);
+  }
+  $('#res-body').innerHTML = rows.join('');
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+const EX = (x) => `e<sup>${x}</sup>`;
+const R = (s) => `<span class="r">${s}</span>`;
+const RB = (s) => `<span class="r rb">${s}</span>`;
+const fsec = (x) => `${fnum(x, 3)} s`;
+const flam = (x) => `${fnum(x, 3)} s⁻¹`;
+function card(title, body, wide = false) { return `<div class="fcard${wide ? ' wide' : ''}"><h4>${tr(title)}</h4>${body}</div>`; }
+function updateFormulas() {
+  const t = S.t, n = simN(t), th = theoryN(t), N0 = SIM.N, la = SIM.lamA, lb = SIM.lamB, Tm = SIM.TA;
+  const tt = `${fmt(t / S.unit.f, S.tdec)} ${uLab(S.unit)}`, cards = [];
+  const A = S.mode === 'chain' ? 'A' : null;
+  // decay law
+  cards.push(card('fLaw', `
+    <div class="eq">${V('N', A)}(${V('t')})${EQ}${V('N', A ? 'A0' : '0')} ${EX(`−${V('λ', A)}${V('t')}`)}${EQ}${V('N', A ? 'A0' : '0')} (½)<sup>${V('t')}/${V('T')}<sub>½</sub></sup></div>
+    <div class="eq num">${V('N', A)}(${tt})${EQ}${fint(N0)} · ${EX(`−${fmt(la * t, 3)}`)}${EQ}${fint(N0)} · (½)<sup>${fmt(t / Tm, 3)}</sup>${EQ}${R(fmt(th[0], 1))}</div>
+    <p class="fnote">${tr('nLawSim')} <i>N</i>${A ? '<sub>A</sub>' : ''} = ${fint(n[0])}.</p>`, true));
+  // lambda, tau
+  let lamBody = `<div class="eq">${V('λ', A)}${EQ}${FR('ln 2', `${V('T')}<sub>½</sub>`)}${EQ}${FR('0,6931', fsec(Tm))}${EQ}${R(flam(la))}</div>
+    <div class="eq">${V('τ', A)}${EQ}${FR('1', V('λ', A))}${EQ}${R(fdur(1 / la))}</div>`;
+  if (A) lamBody += `<div class="eq num">${V('λ', 'B')}${EQ}${FR('0,6931', fsec(SIM.TB))}${EQ}${RB(flam(lb))}</div>`;
+  cards.push(card('fLam', lamBody.replace(/0,6931/g, fmt(LN2, 4))));
+  if (S.mode === 'chain') {
+    const c1 = Math.abs(lb - la) > 1e-12 ? la / (lb - la) : null;
+    cards.push(card('fBate', `
+      <div class="eq">${V('N', 'B')}(${V('t')})${EQ}${V('N', 'A0')} ${FR(V('λ', 'A'), `${V('λ', 'B')} − ${V('λ', 'A')}`)} (${EX(`−${V('λ', 'A')}${V('t')}`)} − ${EX(`−${V('λ', 'B')}${V('t')}`)})</div>
+      <div class="eq num">${V('N', 'B')}(${tt})${EQ}${fint(N0)} · ${c1 != null ? fnum(c1, 4) : '—'} · (${EX(`−${fmt(la * t, 3)}`)} − ${EX(`−${fmt(lb * t, 3)}`)})${EQ}${RB(fmt(th[1], 1))}</div>
+      <p class="fnote">${tr('nBate')}</p>
+      <div class="eq num">${V('N', 'C')}${EQ}${V('N', 'A0')} − ${V('N', 'A')} − ${V('N', 'B')}${EQ}${fint(N0)} − ${fmt(th[0], 1)} − ${fmt(th[1], 1)}${EQ}${R(fmt(th[2], 1))}</div>
+      <p class="fnote">${tr('nLawSim')} <i>N</i><sub>B</sub> = ${fint(n[1])}, <i>N</i><sub>C</sub> = ${fint(n[2])}.</p>`, true));
+    const tm = tMaxB();
+    cards.push(card('fTmax', `<div class="eq">${V('t', 'max')}${EQ}${FR(`ln(${V('λ', 'B')}/${V('λ', 'A')})`, `${V('λ', 'B')} − ${V('λ', 'A')}`)}${EQ}${R(fdur(tm))}</div><p class="fnote">${tr('nTmax')}</p>`));
+    const kind = eqKind(SIM.TA, SIM.TB);
+    let eqb = `<div class="eq">${FR(V('A', 'B'), V('A', 'A'))} → ${FR(V('λ', 'B'), `${V('λ', 'B')} − ${V('λ', 'A')}`)}${lb > la ? `${EQ}${R(fsig(lb / (lb - la), 4))}` : ''}</div>`;
+    if (kind === 'sec') eqb += `<p class="fnote">${tr('nEqSec')}${fnum(la / lb, 3)}.</p>`;
+    else if (kind === 'tr') eqb += `<p class="fnote">${tr('nEqTr')}</p>`;
+    else eqb += `<p class="fnote">${tr('nEqNone')}</p>`;
+    const aS = [la * n[0], lb * n[1]];
+    if (aS[0] > 0) eqb += `<div class="eq num">${tr('nLawSim').replace(':', '')}: ${FR(fnum(aS[1]), fnum(aS[0]))}${EQ}${fsig(aS[1] / aS[0], 3)}</div>`;
+    cards.push(card('fEq', eqb));
+  }
+  // MC step
+  const dt = SIM.step, p = 1 - Math.exp(-la * dt);
+  cards.push(card('fMC', `<div class="eq">${V('p')}${EQ}1 − ${EX(`−${V('λ', A)}Δ${V('t')}`)}${EQ}1 − ${EX(`−${fmt(la * dt, 4)}`)}${EQ}${R(fsig(p, 3))}</div>
+    <p class="fnote">Δ<i>t</i> = ${fdur(dt)}. ${tr('nMC')}</p>`));
+  // activity
+  const act = la * n[0] + lb * n[1];
+  let ab = `<div class="eq">${V('A')}${EQ}${V('λ', A)}${V('N', A)}${A ? ` + ${V('λ', 'B')}${V('N', 'B')}` : ''}</div>`;
+  ab += A ? `<div class="eq num">${V('A')}${EQ}${flam(la)} · ${fint(n[0])} + ${flam(lb)} · ${fint(n[1])}${EQ}${R(`${fnum(act)} Bq`)}</div>`
+          : `<div class="eq num">${V('A')}${EQ}${flam(la)} · ${fint(n[0])}${EQ}${R(`${fnum(act)} Bq`)}</div>`;
+  ab += `<p class="fnote">${V('A', '0')} = ${V('λ', A)}${V('N', A ? 'A0' : '0')} = ${fnum(la * N0)} Bq. ${tr('nAct')}</p>`;
+  cards.push(card('fAct', ab));
+  // Poisson
+  const ln = GM.lastN;
+  cards.push(card('fPois', ln != null
+    ? `<div class="eq">${V('σ')}${EQ}${RT(V('n'))}${EQ}${RT(fint(ln))}${EQ}${R(fmt(Math.sqrt(ln), 2))}</div>
+       <div class="eq num">${V('n')}${EQ}${fint(ln)} ± ${fmt(Math.sqrt(ln), 1)}${ln > 0 ? ` (${fmt(100 / Math.sqrt(ln), 0)} %)` : ''}</div><p class="fnote">${tr('nPois')} Δ<i>t</i> = ${fdur(SIM.gG)}.</p>`
+    : `<div class="eq">${V('σ')}${EQ}${RT(V('n'))}</div><p class="fnote">${tr('nPoisNone')}</p>`));
+  // age from N
+  if (S.mode === 'single') {
+    const tEst = n[0] > 0 && n[0] < N0 ? Math.log(N0 / n[0]) / la : null;
+    cards.push(card('fAge', `<div class="eq">${V('t')}${EQ}${FR(`${V('T')}<sub>½</sub>`, 'ln 2')} ln ${FR(V('N', '0'), V('N'))}</div>
+      <div class="eq num">${V('t')}${EQ}${fdur(1 / la)} · ln ${FR(fint(N0), fint(n[0]))}${EQ}${tEst != null ? R(`${fmt(tEst / S.unit.f, S.tdec)} ${uLab(S.unit)}`) : '—'}</div>
+      <p class="fnote">${tr('nAge')} ${tt}.</p>`));
+  }
+  // fit
+  const fit = fitHalfLife(t);
+  cards.push(card('fFit', fit
+    ? `<div class="eq">${V('λ̂')}${EQ}${FR(V('D'), V('S'))}${EQ}${FR(fint(fit.D), fsec(fit.S))}${EQ}${R(flam(fit.lam))}</div>
+       <div class="eq num">${V('T')}<sub>½</sub>${EQ}${FR('ln 2', V('λ̂'))}${EQ}${R(`${fdur(fit.T)} ± ${fdur(fit.sT, 2)}`)}</div><p class="fnote">${tr('nFit')} ±${V('T')}<sub>½</sub>/√<i>D</i>.</p>`
+    : `<p class="fnote">${tr('nFitNone')}</p>`));
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 300, chartGeom = null;
+function seriesColors() { return [col.crimson, col.blue, col.amber]; }
+function spNames() { return S.mode === 'single' ? [nucText(SIM.spA), nucText(SIM.spB)] : [nucText(SIM.spA), nucText(SIM.spB), nucText(SIM.spC)]; }
+function updateChartLegend() {
+  const cs = seriesColors(), nm = spNames(), sw = (c, dash, w = 2.5) => `<i class="sw" style="border-top:${w}px ${dash ? 'dashed' : 'solid'} ${c}"></i>`;
+  let h = '', note = '';
+  if (S.tab === 'n') {
+    h = nm.map((s, i) => `<span>${sw(cs[i])}${s}</span>`).join('') + `<span>${sw(col.ink3, true, 2)}${tr('lgTh')}</span>`;
+    if (S.log && S.mode === 'single') h += `<span>${sw(col.violet, true, 2)}${tr('lgFit')}</span>`;
+    note = S.mode === 'chain' ? tr('cnNch') : S.log ? tr('cnNlog') : tr('cnN');
+  } else if (S.tab === 'a') {
+    h = `<span><i class="dot" style="background:${col.ink}"></i>${tr('lgMeas')}</span>`;
+    h += S.mode === 'chain' ? `<span>${sw(col.ink2)}${tr('lgTot')}</span><span>${sw(cs[0], true)}${nm[0]}</span><span>${sw(cs[1], true)}${nm[1]}</span>` : `<span>${sw(cs[0])}${tr('lgTh')}</span>`;
+    note = S.mode === 'chain' ? tr('cnAch') : tr('cnA');
+  } else {
+    const hs = histData();
+    h = `<span><i class="dot" style="background:${withAlpha(col.crimson, 0.7)};border-radius:2px"></i>${tr('lgObs')}</span><span>${sw(col.blue)}${tr('lgPois')}</span>`;
+    if (hs) h += `<span>${tr('hMean')} ${fmt(hs.mean, 2)} · ${tr('hVar')} ${fmt(hs.vr, 2)} · ${tr('hSig')} ${fmt(Math.sqrt(hs.mean), 2)}</span>`;
+    note = hs ? tr('cnH').replace('{g}', fint(hs.G)).replace('{dt}', fdur(SIM.gH)).replace('{w}', fdur(hs.G * SIM.gH)) : tr('cnHwait');
+  }
+  $('#clegend').innerHTML = h; $('#cnote').innerHTML = note;
+}
+function histData() {
+  const gh = SIM.gH, kh = Math.floor(S.t / gh + 1e-9), j0 = Math.max(0, kh - 100), G = kh - j0;
+  if (G < 12) return null;
+  const counts = []; let sum = 0, sq = 0, mx = 0;
+  for (let j = j0; j < kh; j++) { const n = decays(j * gh, (j + 1) * gh); counts.push(n); sum += n; sq += n * n; if (n > mx) mx = n; }
+  const mean = sum / G, vr = G > 1 ? (sq - G * mean * mean) / (G - 1) : 0;
+  return { counts, mean, vr, G, mx };
+}
+function lnFact(k) { let s = 0; for (let i = 2; i <= k; i++) s += Math.log(i); return s; }
+const poisPmf = (k, mu) => (mu <= 0 ? (k === 0 ? 1 : 0) : Math.exp(k * Math.log(mu) - mu - lnFact(k)));
+
+function chartSpec() {
+  const cs = seriesColors(), N0 = SIM.N, nsp = S.mode === 'single' ? 2 : 3;
+  if (S.tab === 'n') {
+    return { ylab:'N', unit:'', nsp,
+      theory: Array.from({ length:nsp }, (_, i) => ({ color:cs[i], f:(t) => theoryN(t)[i] })),
+      sim: Array.from({ length:nsp }, (_, i) => ({ color:cs[i], f:(t) => simN(t)[i] })),
+      hi:N0 };
+  }
+  const bins = [], b = SIM.bA, nb = Math.floor(S.t / b + 1e-9);
+  for (let j = 0; j < nb; j++) { const n = decays(j * b, (j + 1) * b); bins.push({ t:(j + 0.5) * b, n, v:n / b, e:Math.sqrt(n) / b }); }
+  const th = S.mode === 'chain'
+    ? [{ color:col.ink2, f:(t) => { const a = theoryAct(t); return a[0] + a[1]; } }, { color:cs[0], dash:true, f:(t) => theoryAct(t)[0] }, { color:cs[1], dash:true, f:(t) => theoryAct(t)[1] }]
+    : [{ color:cs[0], f:(t) => theoryAct(t)[0] }];
+  return { ylab:'A [Bq]', unit:'Bq', theory:th, sim:[], bins };
+}
+function drawChart() {
+  const s = fitCanvas(ccv); ccw = s.w; cch = s.h;
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  updateChartLegend();
+  if (S.tab === 'h') { drawHist(); return; }
+  const sp = chartSpec(), Hz = SIM.H, u = S.unit, logY = S.log;
+  // y range
+  let hi = 0, minPos = Infinity;
+  for (let k = 0; k <= 120; k++) {
+    const t = Hz * k / 120;
+    for (const th of sp.theory) { const v = th.f(t); if (v > hi) hi = v; if (v > 0 && t > Hz / 200 && v < minPos) minPos = v; }
+  }
+  if (sp.bins) for (const q of sp.bins) { if (q.v + q.e > hi) hi = q.v + q.e; }
+  if (sp.hi) hi = Math.max(hi, sp.hi);
+  let lo = 0, ystep = 1, ticks;
+  if (logY) {
+    hi = hi * 1.25; lo = Math.max(minPos * 0.5, hi * 1e-6);
+    if (S.tab === 'n') lo = Math.max(lo, 0.6);
+    ticks = logTicks(lo, hi);
+  } else {
+    ystep = niceStep(hi || 1, 4); hi = Math.ceil(hi * 1.05 / ystep) * ystep || 1;
+    ticks = []; for (let v = 0; v <= hi + ystep * 1e-6; v += ystep) ticks.push(v);
+  }
+  const lab = (v) => (logY ? logLab(v) : tickLab(v, ystep));
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0; for (const v of ticks) labW = Math.max(labW, c.measureText(lab(v)).width);
+  const Lm = labW + 14, Rm = 12, Tm = 20, Bm = 28, pw = W - Lm - Rm, ph = H - Tm - Bm;
+  const X = (t) => Lm + t / Hz * pw;
+  const Y = logY ? (v) => Tm + (1 - (Math.log(Math.max(v, lo * 0.5)) - Math.log(lo)) / (Math.log(hi) - Math.log(lo))) * ph
+                 : (v) => Tm + (1 - v / hi) * ph;
+  chartGeom = { Lm, pw, Tm, ph, X, Y, Hz, sp };
+  // grid
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  c.setLineDash([2, 3]);
+  for (const v of ticks) { const yy = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(Lm, yy); c.lineTo(W - Rm, yy); c.stroke(); c.fillText(lab(v), Lm - 8, yy); }
+  const xstep = niceStep(Hz / u.f, 5), xdec = stepDec(xstep);
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let v = 0; v <= Hz / u.f + 1e-9; v += xstep) { const xx = Math.round(X(v * u.f)) + 0.5; c.beginPath(); c.moveTo(xx, Tm); c.lineTo(xx, Tm + ph); c.stroke(); c.fillText(fmt(v, xdec > 0 ? xdec : 0), xx, H - Bm + 8); }
+  c.setLineDash([]);
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(Lm, Tm + ph + 0.5); c.lineTo(W - Rm, Tm + ph + 0.5); c.moveTo(Lm + 0.5, Tm); c.lineTo(Lm + 0.5, Tm + ph); c.stroke();
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(sp.ylab, 4, 2);
+  c.textAlign = 'right'; c.fillText(`t [${uLab(u)}]`, W - Rm, 2);
+  c.save(); c.beginPath(); c.rect(Lm, Tm - 2, pw + 2, ph + 4); c.clip();
+  // half-life marks (single mode)
+  if (S.mode === 'single') {
+    c.font = `500 10px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let k = 1; k <= 5; k++) {
+      const tk = k * SIM.TA, xx = Math.round(X(tk)) + 0.5;
+      c.strokeStyle = withAlpha(col.ink3, 0.8); c.setLineDash([4, 4]); c.beginPath(); c.moveTo(xx, Tm); c.lineTo(xx, Tm + ph); c.stroke();
+      if (S.tab === 'n' && k <= 3) {
+        const yv = SIM.N * Math.pow(0.5, k), yy = Math.round(Y(yv)) + 0.5;
+        c.strokeStyle = withAlpha(col.crimson, 0.45); c.beginPath(); c.moveTo(Lm, yy); c.lineTo(xx, yy); c.stroke();
+        c.setLineDash([]); c.fillStyle = col.ink2; c.textAlign = 'left'; c.textBaseline = 'bottom';
+        c.fillText(`N₀/${1 << k}`, Lm + 4, yy - 2); c.textAlign = 'center'; c.textBaseline = 'top';
+      }
+      c.setLineDash([]); c.fillStyle = col.ink3;
+      c.fillText(k === 1 ? 'T½' : `${k}T½`, xx, Tm + 2);
+    }
+  } else {
+    const tm = tMaxB();
+    if (tm != null && tm < Hz) {
+      const xx = Math.round(X(tm)) + 0.5;
+      c.strokeStyle = withAlpha(col.blue, 0.7); c.setLineDash([4, 4]); c.beginPath(); c.moveTo(xx, Tm); c.lineTo(xx, Tm + ph); c.stroke(); c.setLineDash([]);
+      c.fillStyle = col.blue; c.font = `500 10px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText('t_max', xx + 4, Tm + 2);
+    }
+  }
+  // theory
+  for (const th of sp.theory) {
+    c.beginPath();
+    for (let k = 0; k <= 300; k++) { const t = Hz * k / 300, x = X(t), y = Y(th.f(t)); k ? c.lineTo(x, y) : c.moveTo(x, y); }
+    c.strokeStyle = th.color; c.lineWidth = S.tab === 'a' && !th.dash ? 2 : 1.5; c.setLineDash(S.tab === 'n' || th.dash ? [6, 4] : []);
+    c.globalAlpha = S.tab === 'n' ? 0.75 : 0.95; c.stroke(); c.globalAlpha = 1; c.setLineDash([]);
+  }
+  // MLE fit line on log scale
+  if (S.tab === 'n' && S.log && S.mode === 'single') {
+    const fit = fitHalfLife(S.t);
+    if (fit) { c.beginPath(); c.moveTo(X(0), Y(SIM.N)); c.lineTo(X(Hz), Y(SIM.N * Math.exp(-fit.lam * Hz))); c.strokeStyle = col.violet; c.lineWidth = 1.6; c.setLineDash([2, 3]); c.stroke(); c.setLineDash([]);
+      c.fillStyle = col.violet; c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'right'; c.textBaseline = 'bottom';
+      c.fillText(`−λ = −${fnum(fit.lam * u.f, 3)} ${uLab(u)}⁻¹`, Lm + pw - 6, Tm + ph - 6); }
+  }
+  // simulated steps up to the current time
+  const xEnd = X(S.t);
+  for (const sm of sp.sim) {
+    c.beginPath(); let prevY = null;
+    for (let x = Lm; x <= xEnd + 0.5; x += 1) {
+      const t = Math.min((x - Lm) / pw * Hz, S.t), y = Y(sm.f(t));
+      if (prevY == null) c.moveTo(x, y); else { c.lineTo(x, prevY); c.lineTo(x, y); }
+      prevY = y;
+    }
+    c.strokeStyle = sm.color; c.lineWidth = 2; c.lineJoin = 'round'; c.stroke();
+  }
+  // measured activity bins
+  if (sp.bins) {
+    c.strokeStyle = col.ink; c.fillStyle = col.ink; c.lineWidth = 1;
+    for (const q of sp.bins) {
+      const x = X(q.t);
+      if (logY && q.v <= 0) continue;
+      const y1 = Y(Math.max(q.v - q.e, logY ? lo : 0)), y2 = Y(q.v + q.e);
+      c.beginPath(); c.moveTo(x, y1); c.lineTo(x, y2); c.moveTo(x - 2.5, y1); c.lineTo(x + 2.5, y1); c.moveTo(x - 2.5, y2); c.lineTo(x + 2.5, y2); c.stroke();
+      c.beginPath(); c.arc(x, Y(q.v), 2.6, 0, Math.PI * 2); c.fillStyle = col.ink; c.fill();
+    }
+  }
+  c.restore();
+  // cursor
+  const xx = Math.round(xEnd) + 0.5;
+  c.strokeStyle = col.ink2; c.lineWidth = 1; c.beginPath(); c.moveTo(xx, Tm); c.lineTo(xx, Tm + ph); c.stroke();
+  for (const sm of sp.sim) { const y = Y(sm.f(S.t)); c.fillStyle = sm.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, y, 4.2, 0, Math.PI * 2); c.fill(); c.stroke(); }
+  if (S.hoverT != null) {
+    const hx = Math.round(X(S.hoverT)) + 0.5;
+    c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(hx, Tm); c.lineTo(hx, Tm + ph); c.stroke(); c.setLineDash([]);
+  }
+}
+function drawHist() {
+  const c = cctx, W = ccw, H = cch, hs = histData();
+  if (!hs) { chartGeom = null; c.fillStyle = col.ink3; c.font = `500 12px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(tr('cnHwait'), W / 2, H / 2); return; }
+  const kmin = 0, kmax = Math.max(hs.mx, Math.ceil(hs.mean + 4 * Math.sqrt(hs.mean) + 1));
+  const bw = Math.max(1, Math.ceil((kmax - kmin + 1) / 32));
+  const nb = Math.ceil((kmax - kmin + 1) / bw), obs = new Array(nb).fill(0), expv = new Array(nb).fill(0);
+  for (const n of hs.counts) obs[Math.min(nb - 1, Math.floor((n - kmin) / bw))]++;
+  for (let k = kmin; k <= kmax; k++) expv[Math.floor((k - kmin) / bw)] += hs.G * poisPmf(k, hs.mean);
+  const ymax = Math.max(...obs, ...expv) * 1.12 || 1, ystep = niceStep(ymax, 4), hi = Math.ceil(ymax / ystep) * ystep;
+  c.font = `500 11px ${FONT_MONO}`;
+  const labW = c.measureText(fmt(hi, 0)).width, Lm = labW + 14, Rm = 12, Tm = 20, Bm = 28, pw = W - Lm - Rm, ph = H - Tm - Bm;
+  const X = (b) => Lm + b / nb * pw, Y = (v) => Tm + (1 - v / hi) * ph;
+  chartGeom = { hist:true, Lm, pw, nb, bw, kmin, obs, expv, X, Y };
+  c.strokeStyle = col.grid; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle'; c.lineWidth = 1; c.setLineDash([2, 3]);
+  for (let v = 0; v <= hi + 1e-9; v += ystep) { const yy = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(Lm, yy); c.lineTo(W - Rm, yy); c.stroke(); c.fillText(fmt(v, stepDec(ystep)), Lm - 8, yy); }
+  c.setLineDash([]);
+  for (let b = 0; b < nb; b++) {
+    const x = X(b), w = pw / nb;
+    c.fillStyle = withAlpha(col.crimson, S.hoverK === b ? 0.9 : 0.6); c.fillRect(x + 1, Y(obs[b]), Math.max(1, w - 2), Tm + ph - Y(obs[b]));
+  }
+  c.strokeStyle = col.blue; c.lineWidth = 2; c.beginPath();
+  for (let b = 0; b < nb; b++) { const x = X(b + 0.5), y = Y(expv[b]); b ? c.lineTo(x, y) : c.moveTo(x, y); }
+  c.stroke();
+  for (let b = 0; b < nb; b++) { c.fillStyle = col.blue; c.strokeStyle = col.surface; c.lineWidth = 1.5; c.beginPath(); c.arc(X(b + 0.5), Y(expv[b]), 3, 0, Math.PI * 2); c.fill(); c.stroke(); }
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(Lm, Tm + ph + 0.5); c.lineTo(W - Rm, Tm + ph + 0.5); c.stroke();
+  c.fillStyle = col.ink2; c.textAlign = 'center'; c.textBaseline = 'top';
+  const lstep = Math.max(1, Math.ceil(nb / 12));
+  for (let b = 0; b < nb; b += lstep) c.fillText(bw === 1 ? String(kmin + b) : `${kmin + b * bw}`, X(b + 0.5), H - Bm + 8);
+  // mean marker
+  const xm = X((hs.mean - kmin + 0.5) / bw);
+  c.strokeStyle = col.ink; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(xm, Tm); c.lineTo(xm, Tm + ph); c.stroke(); c.setLineDash([]);
+  c.fillStyle = col.ink; c.font = `500 10.5px ${FONT_MONO}`; c.textAlign = 'left'; c.fillText(`n̄ = ${fmt(hs.mean, 2)}`, xm + 4, Tm + 2);
+  c.fillStyle = col.ink3; c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(lang === 'pl' ? 'liczba przedziałów' : 'intervals', 4, 2);
+  c.textAlign = 'right'; c.fillText(lang === 'pl' ? 'zliczenia n w Δt' : 'counts n per Δt', W - Rm, 2);
+}
+cbox.addEventListener('pointermove', (e) => {
+  const g = chartGeom; if (!g) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left;
+  if (x < g.Lm || x > g.Lm + g.pw) { S.hoverT = null; S.hoverK = null; tip.hidden = true; chartDirty = true; return; }
+  let html;
+  if (g.hist) {
+    const b = clamp(Math.floor((x - g.Lm) / g.pw * g.nb), 0, g.nb - 1); S.hoverK = b;
+    const k0 = g.kmin + b * g.bw, k1 = k0 + g.bw - 1;
+    html = `<div>n = ${g.bw === 1 ? k0 : `${k0}–${k1}`}</div><div class="row"><i class="k" style="background:${col.crimson}"></i>${tr('lgObs')}: ${g.obs[b]}</div><div class="row"><i class="k" style="background:${col.blue}"></i>${tr('lgPois')}: ${fmt(g.expv[b], 1)}</div>`;
+  } else {
+    const t = (x - g.Lm) / g.pw * g.Hz; S.hoverT = t;
+    const u = S.unit, nm = spNames(), cs = seriesColors();
+    html = `<div>t = ${fmt(t / u.f, S.tdec)} ${uLab(u)}</div>`;
+    if (S.tab === 'n') {
+      const th = theoryN(t), sm = simN(Math.min(t, S.t));
+      nm.forEach((s, i) => { html += `<div class="row"><i class="k" style="background:${cs[i]}"></i>${s}: ${t <= S.t ? fint(sm[i]) + ' · ' : ''}${tr('lgTh')} ${fmt(th[i], 1)}</div>`; });
+    } else {
+      const a = theoryAct(t), b = g.sp.bins.find(q => Math.abs(q.t - t) <= SIM.bA / 2);
+      if (b) html += `<div class="row"><i class="k" style="background:${col.ink}"></i>${fnum(b.v)} ± ${fnum(b.e, 2)} Bq (n = ${b.n})</div>`;
+      html += `<div class="row"><i class="k" style="background:${cs[0]}"></i>${tr('lgTh')}: ${fnum(a[0] + a[1])} Bq</div>`;
+    }
+  }
+  tip.innerHTML = html; tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = clamp(x, tw / 2 + 4, r.width - tw / 2 - 4) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverT = null; S.hoverK = null; tip.hidden = true; chartDirty = true; });
+cbox.addEventListener('click', (e) => {
+  const g = chartGeom; if (!g || g.hist) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left;
+  if (x < g.Lm || x > g.Lm + g.pw) return;
+  seek((x - g.Lm) / g.pw * g.Hz);
+});
+
+/* ---------- radiocarbon dating ---------- */
+const DT = { mode:'frac', f:0.53, m:1, hours:24 };
+const TAU14_Y = 5730 / LN2;
+const dcv = $('#d-chart'), dctx = dcv.getContext('2d');
+const fFromSlider = (v) => Math.pow(10, -3 + 3 * v / 1000);
+const sliderFromF = (f) => Math.round((Math.log10(f) + 3) / 3 * 1000);
+function dateCalc() {
+  const f = clamp(DT.f, 1e-4, 1), A = f * A_LIVING, n = A * DT.m * DT.hours * 3600;
+  const t = TAU14_Y * Math.log(1 / f), st = TAU14_Y / Math.sqrt(n);
+  return { f, A, n, t, st, sf:f / Math.sqrt(n) };
+}
+function syncDating(fromNum = false) {
+  const d = dateCalc();
+  if (!fromNum) $('#d-num').value = DT.mode === 'frac' ? (+(d.f * 100).toPrecision(4)).toString() : (+(d.A).toPrecision(4)).toString();
+  $('#d-f').value = sliderFromF(d.f);
+  $('#d-f-out').textContent = DT.mode === 'frac' ? fpct(d.f, d.f < 0.1 ? 2 : 1) : `${fnum(d.A, 3)} Bq/g`;
+  $('#d-num-l').innerHTML = tr(DT.mode === 'frac' ? 'dNumFrac' : 'dNumAct');
+  $('#d-num-u').textContent = DT.mode === 'frac' ? '%' : 'Bq/g';
+  $('#d-m').value = DT.m; $('#d-h').value = DT.hours;
+  $('#d-m-out').textContent = `${fmt(DT.m, 1)} g`; $('#d-h-out').textContent = `${fint(DT.hours)} h`;
+  $$('#dmodes button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.dmode === DT.mode)));
+  $$('#arts .chip').forEach(b => { const a = ARTS.find(x => x.id === b.dataset.art); b.setAttribute('aria-pressed', String(Math.abs(a.f - d.f) < 5e-4)); });
+  const yl = uLab(UNITS[4]);
+  $('#d-age').innerHTML = d.f >= 1 ? `0 <small>${yl}</small>` : `${fint(d.t)} <small>± ${fint(d.st)} ${yl}</small>`;
+  $('#d-stats').innerHTML = [
+    [tr('dsF'), `${fpct(d.f, 2)} ± ${fpct(d.sf, 2)}`],
+    [tr('dsA'), `${fnum(d.A, 3)} Bq/g`],
+    [tr('dsN'), fint(d.n)],
+    [tr('dsRel'), fpct(1 / Math.sqrt(d.n), 2)],
+    [tr('dsRange'), `${fint(Math.max(0, d.t - d.st))} – ${fint(d.t + d.st)} ${yl}`]
+  ].map(([k, v]) => `<dt>${k}</dt><dd>${v}</dd>`).join('');
+  const w = $('#d-warn');
+  if (d.f < 0.002) { w.hidden = false; w.textContent = tr('dWarnOld'); }
+  else if (d.n < 400) { w.hidden = false; w.textContent = tr('dWarnStat'); }
+  else w.hidden = true;
+  $$('#dating input[type=range]').forEach(setFill);
+  dateDirty = true; domDirty = true;
+}
+function drawDate() {
+  const s = fitCanvas(dcv), W = s.w, H = s.h, c = dctx, d = dateCalc();
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const tmax = 50000, Lm = 44, Rm = 12, Tm = 22, Bm = 30, pw = W - Lm - Rm, ph = H - Tm - Bm;
+  const X = (t) => Lm + t / tmax * pw, Y = (f) => Tm + (1 - f) * ph;
+  c.font = `500 11px ${FONT_MONO}`; c.lineWidth = 1;
+  c.strokeStyle = col.grid; c.fillStyle = col.ink2; c.setLineDash([2, 3]);
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let f = 0; f <= 1.0001; f += 0.25) { const y = Math.round(Y(f)) + 0.5; c.beginPath(); c.moveTo(Lm, y); c.lineTo(W - Rm, y); c.stroke(); c.fillText(`${fmt(f * 100, 0)}%`, Lm - 6, y); }
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let t = 0; t <= tmax; t += 10000) { const x = Math.round(X(t)) + 0.5; c.beginPath(); c.moveTo(x, Tm); c.lineTo(x, Tm + ph); c.stroke(); c.fillText(fmt(t / 1000, 0), x, H - Bm + 8); }
+  c.setLineDash([]);
+  c.fillStyle = col.ink3; c.textAlign = 'right'; c.textBaseline = 'top'; c.fillText(lang === 'pl' ? 't [tys. lat]' : 't [kyr]', W - Rm, 2);
+  c.textAlign = 'left'; c.fillText('N/N₀', 4, 2);
+  // half-life marks
+  c.font = `500 10px ${FONT_MONO}`;
+  for (let k = 1; k <= 3; k++) {
+    const x = Math.round(X(5730 * k)) + 0.5, y = Y(Math.pow(0.5, k));
+    c.strokeStyle = withAlpha(col.amber, 0.6); c.setLineDash([4, 4]); c.beginPath(); c.moveTo(x, y); c.lineTo(x, Tm + ph); c.moveTo(Lm, y); c.lineTo(x, y); c.stroke(); c.setLineDash([]);
+    c.fillStyle = col.amber; c.textAlign = 'left'; c.textBaseline = 'bottom'; c.fillText(k === 1 ? 'T½' : `${k}T½`, x + 3, Tm + ph - 3);
+  }
+  // decay curve
+  c.beginPath();
+  for (let k = 0; k <= 300; k++) { const t = tmax * k / 300, x = X(t), y = Y(Math.pow(0.5, t / 5730)); k ? c.lineTo(x, y) : c.moveTo(x, y); }
+  c.strokeStyle = col.amber; c.lineWidth = 2.2; c.stroke();
+  // artefacts
+  for (const a of ARTS) {
+    if (a.f >= 1) continue;
+    const t = TAU14_Y * Math.log(1 / a.f);
+    c.fillStyle = col.surface; c.strokeStyle = col.ink2; c.lineWidth = 1.4; c.beginPath(); c.arc(X(t), Y(a.f), 3.6, 0, Math.PI * 2); c.fill(); c.stroke();
+  }
+  // current measurement with 1 sigma bars
+  if (d.f < 1 && d.t <= tmax) {
+    const x = X(d.t), y = Y(d.f);
+    c.strokeStyle = col.ink3; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(Lm, y); c.lineTo(x, y); c.lineTo(x, Tm + ph); c.stroke(); c.setLineDash([]);
+    c.strokeStyle = col.ink; c.lineWidth = 1.2;
+    const x1 = X(Math.max(0, d.t - d.st)), x2 = X(d.t + d.st);
+    c.beginPath(); c.moveTo(x1, y); c.lineTo(x2, y); c.moveTo(x1, y - 4); c.lineTo(x1, y + 4); c.moveTo(x2, y - 4); c.lineTo(x2, y + 4); c.stroke();
+    c.fillStyle = col.crimson; c.strokeStyle = col.ink; c.lineWidth = 1.2; c.beginPath(); c.arc(x, y, 5, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.fillStyle = col.ink; c.font = `600 12px ${FONT_MONO}`; c.textBaseline = 'bottom';
+    const txt = `${fint(d.t)} ± ${fint(d.st)} ${uLab(UNITS[4])}`;
+    const tw = c.measureText(txt).width;
+    c.textAlign = x + 10 + tw > W - Rm ? 'right' : 'left';
+    c.fillText(txt, c.textAlign === 'right' ? x - 10 : x + 10, y - 8);
+  }
+}
+
+/* ---------- DOM refresh (throttled) ---------- */
+function refreshDom() {
+  updateHud(); updateScrub(); updateGMReadout(); updateResults(); updateFormulas();
+  domDirty = false;
+}
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), lastDom = 0;
+function frame(now) {
+  const dtw = Math.min(0.1, Math.max(0, (now - lastT) / 1000)); lastT = now;
+  if (S.playing && !S.ended) {
+    let tn = S.t + dtw * simRate();
+    if (tn >= SIM.H) { tn = SIM.H; }
+    const n = advance(tn, true);
+    if (n > 0) { GM.led = 1; clicks(n, dtw); }
+    if (tn >= SIM.H) { S.playing = false; S.ended = true; }
+    chartDirty = true; gmDirty = true; domDirty = true;
+  }
+  // ratemeter: counts in the trailing interval, with a little needle inertia
+  const target = decays(Math.max(0, S.t - SIM.gG), S.t);
+  const kf = reduceMotion ? 1 : 1 - Math.exp(-dtw * 8);
+  if (Math.abs(target - GM.needle) > 1e-3) { GM.needle += (target - GM.needle) * kf; gmDirty = true; }
+  if (GM.led > 0) { GM.led = Math.max(0, GM.led - dtw * 9); gmDirty = true; }
+  if (FX.length || PT.length) { stepFx(dtw); dirty = true; }
+  if (dirty) { drawScene(); dirty = false; }
+  if (gmDirty) { drawGM(); gmDirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  if (dateDirty) { drawDate(); dateDirty = false; }
+  if (domDirty && now - lastDom > 90) { refreshDom(); lastDom = now; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+$$('#modes button').forEach(b => b.addEventListener('click', () => {
+  if (b.dataset.mode === S.mode) return;
+  if (b.dataset.mode === 'single') loadPreset(S.preset); else loadChain(S.chain);
+}));
+$('#hl').addEventListener('input', (e) => { S.T = hlFromSlider(e.target.value); S.preset = 'custom'; rebuild(true); });
+$$('#dms button').forEach(b => b.addEventListener('click', () => { S.dm = b.dataset.dm; S.preset = 'custom'; rebuild(true); }));
+$('#ta').addEventListener('input', (e) => { S.TA = hlFromSlider(e.target.value); S.chain = 'custom'; rebuild(true); });
+$('#tb').addEventListener('input', (e) => { S.TB = hlFromSlider(e.target.value); S.chain = 'custom'; rebuild(true); });
+$('#n0').addEventListener('input', (e) => { S.N = Math.round(Math.pow(10, +e.target.value) / 10) * 10; rebuild(true); });
+$$('#nchips .chip').forEach(b => b.addEventListener('click', () => { S.N = +b.dataset.n; S.playing = true; rebuild(false); }));
+$('#reseed').addEventListener('click', () => { S.seed = (Math.random() * 4294967296) >>> 0; S.playing = true; rebuild(false); });
+$('#pause').addEventListener('click', togglePlay);
+$('#restart').addEventListener('click', restart);
+$('#step-back').addEventListener('click', () => seek(S.t - SIM.step));
+$('#step-fwd').addEventListener('click', () => seek(S.t + SIM.step));
+$('#scrub').addEventListener('input', (e) => seek(+e.target.value / 1000 * SIM.H));
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); updateScale();
+}));
+$('#tg-real').addEventListener('click', (e) => { S.realtime = !S.realtime; e.currentTarget.setAttribute('aria-pressed', String(S.realtime)); updateScale(); });
+$('#tg-rays').addEventListener('click', (e) => { S.rays = !S.rays; e.currentTarget.setAttribute('aria-pressed', String(S.rays)); if (!S.rays) PT.length = 0; });
+$('#snd').addEventListener('click', toggleSound);
+$('#tg-log').addEventListener('click', (e) => { S.log = !S.log; e.currentTarget.setAttribute('aria-pressed', String(S.log)); chartDirty = true; });
+function setTab(k) { S.tab = k; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === k))); $('#tg-log').hidden = k === 'h'; tip.hidden = true; chartDirty = true; }
+$$('#tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+}
+fsBtn.addEventListener('click', toggleFs);
+// dating
+$$('#dmodes button').forEach(b => b.addEventListener('click', () => { DT.mode = b.dataset.dmode; syncDating(); }));
+$('#d-f').addEventListener('input', (e) => { DT.f = fFromSlider(+e.target.value); syncDating(); });
+$('#d-num').addEventListener('input', (e) => {
+  const v = parseFloat(String(e.target.value).replace(',', '.'));
+  if (!(v > 0)) return;
+  DT.f = clamp(DT.mode === 'frac' ? v / 100 : v / A_LIVING, 1e-3, 1);
+  syncDating(true);
+});
+$('#d-m').addEventListener('input', (e) => { DT.m = +e.target.value; syncDating(); });
+$('#d-h').addEventListener('input', (e) => { DT.hours = +e.target.value; syncDating(); });
+$('#d-sim').addEventListener('click', () => {
+  const d = dateCalc();
+  loadPreset('c14');
+  seek(Math.min(d.t * YR, SIM.H));
+  $('#stage').scrollIntoView({ behavior:reduceMotion ? 'auto' : 'smooth', block:'start' });
+});
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (tag === 'input' || tag === 'textarea') return;
+  if (e.code === 'Space' && tag !== 'button') { e.preventDefault(); togglePlay(); return; }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); seek(S.t - SIM.step); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); seek(S.t + SIM.step); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'n' || e.key === 'N') $('#reseed').click();
+  else if (e.key === 'l' || e.key === 'L') $('#tg-log').click();
+  else if (e.key === 'm' || e.key === 'M') toggleSound();
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+  else if (e.key === '1') setTab('n'); else if (e.key === '2') setTab('a'); else if (e.key === '3') setTab('h');
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#keys').innerHTML = tr('keys');
+  $('#snd-l').textContent = tr(SND.on ? 'soundOff' : 'soundOn');
+  $('#nc-10000 span').textContent = fint(10000);
+  renderChips();
+  hudKey = ''; pauseIcon = null; GM.lastK = -1;
+  updateLegend(); updateScale(); updatePanel(); syncDating();
+  markAll(); refreshDom();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('rozpad-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+new ResizeObserver(() => { resizeScene(); dirty = true; }).observe(box);
+new ResizeObserver(() => { chartDirty = true; }).observe(cbox);
+new ResizeObserver(() => { gmDirty = true; }).observe($('#gm'));
+new ResizeObserver(() => { dateDirty = true; }).observe($('.dchart'));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes:true, attributeFilter:['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { markAll(); dateDirty = true; });
+
+/* ---------- boot: realistic working state, first frame drawn synchronously ---------- */
+readTokens();
+rebuild(false);
+S.t = 0;
+advance(0.75 * S.T, false);                       // open with a sample already decaying
+resizeScene();
+GM.needle = decays(Math.max(0, S.t - SIM.gG), S.t);
+applyLang();
+drawScene(); drawGM(); drawChart(); drawDate(); refreshDom();
+dirty = chartDirty = gmDirty = dateDirty = domDirty = false;
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
