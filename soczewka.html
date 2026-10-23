@@ -1,0 +1,2472 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Ława optyczna</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: optical bench. A dark rail-mounted instrument (HUD strip on top, tool bar below) owns the page
+   in both themes; the control panel sits on the right, live derivations and plots run underneath. */
+:root{
+  --bg:#E7EAF1; --surface:#F8F9FC; --paper:#FFFFFF; --sunk:#EEF1F7;
+  --ink:#121729; --ink-2:#465071; --ink-3:#7C86A3; --line:#D2D7E4;
+  --crimson:#E41C55; --blue:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF;
+  --shadow:0 1px 0 rgba(18,23,41,.04), 0 10px 28px -14px rgba(18,23,41,.24);
+  /* the bench is dark in both themes */
+  --bench:#0A1120; --bench-2:#0E1628; --bench-3:#141E36; --bench-line:#212C46;
+  --bench-ink:#E8EDF8; --bench-ink-2:#A2AECB; --bench-ink-3:#65739A;
+  --grid-minor:rgba(132,170,255,.055); --grid-major:rgba(132,170,255,.13);
+  --ray-1:#FFB547; --ray-2:#FF4F7E; --ray-3:#55A6FF; --ray-fan:#FFEFD2;
+  --obj:#FFD49A; --img:#A897FF; --glass:#8FD3FF;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#060A12; --surface:#0D1321; --paper:#0A101C; --sunk:#121B2D;
+    --ink:#E6EBF5; --ink-2:#A4AEC8; --ink-3:#6B7693; --line:#1F2840;
+    --crimson:#EE3A68; --blue:#3F8EF0; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    --bench:#0B1324; --bench-2:#0F182C; --bench-3:#152039; --bench-line:#24304D;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#060A12; --surface:#0D1321; --paper:#0A101C; --sunk:#121B2D;
+  --ink:#E6EBF5; --ink-2:#A4AEC8; --ink-3:#6B7693; --line:#1F2840;
+  --crimson:#EE3A68; --blue:#3F8EF0; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  --bench:#0B1324; --bench-2:#0F182C; --bench-3:#152039; --bench-line:#24304D;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+i.m{font-family:var(--f-math); font-style:italic}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.28em}
+.brand h1 svg{width:1.3em; height:.8em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 350px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage: the dark instrument */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--bench); border-color:var(--bench-line); color:var(--bench-ink)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--bench-line); background:var(--bench-2)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--bench-ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:7ch; color:var(--bench-ink)}
+.hud dd span{color:var(--bench-ink-3); font-size:11.5px}
+.verdict{display:flex; gap:6px; flex-wrap:wrap}
+.vchip{font-family:var(--f-mono); font-size:11px; letter-spacing:.07em; text-transform:uppercase; padding:3px 10px; border-radius:999px; border:1px solid var(--bench-line); color:var(--bench-ink-2); white-space:nowrap}
+.vchip[data-tone="img"]{border-color:var(--img); color:var(--img)}
+.vchip[data-tone="ghost"]{border-style:dashed; border-color:var(--img); color:var(--img)}
+.vchip[data-tone="hot"]{border-color:var(--ray-2); color:var(--ray-2)}
+.vchip[data-tone="warm"]{border-color:var(--ray-1); color:var(--ray-1)}
+.vchip[data-tone="cool"]{border-color:var(--ray-3); color:var(--ray-3)}
+.vchip[data-tone="solid"]{background:var(--bench-ink); border-color:var(--bench-ink); color:var(--bench)}
+.canvas-box{position:relative; height:clamp(360px, 60vh, 660px); background:var(--bench)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.ov-legend{position:absolute; left:12px; top:10px; display:flex; flex-direction:column; gap:3px; pointer-events:none; font-size:12px; color:var(--bench-ink-2); background:color-mix(in srgb, var(--bench) 78%, transparent); border:1px solid var(--bench-line); border-radius:10px; padding:7px 10px}
+.ov-legend span{display:flex; align-items:center; gap:8px; white-space:nowrap}
+.ov-legend b{font-family:var(--f-mono); font-weight:500; font-size:10.5px; width:15px; height:15px; border-radius:50%; display:inline-flex; align-items:center; justify-content:center; border:1.5px solid currentColor}
+.ov-legend .ln{width:20px; height:0; border-top:2.5px solid currentColor}
+.ov-legend .ln.d{border-top-style:dashed; border-top-width:2px}
+.ov-msg{position:absolute; left:50%; top:12px; transform:translateX(-50%); max-width:calc(100% - 24px); text-align:center; pointer-events:none; font-size:13px; font-weight:500; color:var(--bench); background:var(--ray-1); padding:5px 14px; border-radius:999px; box-shadow:0 8px 24px -10px rgba(0,0,0,.6)}
+.ov-msg.cool{background:var(--ray-3)}
+.ov-msg.hot{background:var(--ray-2); color:#FFFFFF}
+.ov-hint{position:absolute; right:12px; top:14px; pointer-events:none; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--bench-ink-3)}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.bar{display:flex; align-items:center; gap:10px 12px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--bench-line); background:var(--bench-2)}
+.flash{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--crimson); color:var(--on-accent); padding:9px 18px 9px 14px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 22px -8px var(--crimson); transition:transform .12s ease}
+.flash:hover{transform:translateY(-1px)}
+.flash:active{transform:translateY(1px) scale(.98)}
+.flash svg{width:18px; height:18px}
+.flash kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.85; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.bbtn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--bench-line); background:var(--bench-3); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--bench-ink)}
+.bbtn:hover{border-color:var(--bench-ink-3)}
+.bbtn svg{width:15px; height:15px}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--bench-line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--bench-ink-3); --dot:var(--bench-ink)}
+.tg:hover{color:var(--bench-ink-2)}
+.tg[aria-pressed="true"]{background:var(--bench-3); color:var(--bench-ink); border-color:var(--bench-ink-3)}
+.tg::before{content:""; display:inline-block; width:7px; height:7px; border-radius:50%; border:1.5px solid var(--dot); margin-right:7px; vertical-align:middle; transform:translateY(-1px); opacity:.5}
+.tg[aria-pressed="true"]::before{background:var(--dot); opacity:1}
+.bar .spacer{flex:1}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.diag{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:8px}
+.dchip{border:1px solid var(--line); border-radius:12px; padding:10px 12px; background:var(--paper); display:flex; flex-direction:column; gap:2px; min-width:0}
+.dchip small{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.dchip b{font-family:var(--f-display); font-weight:700; font-size:20px; letter-spacing:-.01em; line-height:1.15}
+.dchip[data-tone="real"]{border-color:var(--violet); box-shadow:inset 0 0 0 1px var(--violet)}
+.dchip[data-tone="real"] b{color:var(--violet)}
+.dchip[data-tone="ghost"]{border-style:dashed; border-color:var(--violet)}
+.dchip[data-tone="ghost"] b{color:var(--violet); opacity:.8}
+.dchip[data-tone="hot"] b{color:var(--crimson)}
+.dchip[data-tone="cool"] b{color:var(--blue)}
+.dchip[data-tone="warm"] b{color:var(--amber)}
+.story{margin:0; padding:10px 12px; border-radius:10px; background:var(--sunk); color:var(--ink-2); font-size:14px}
+.story b{color:var(--ink); font-weight:600}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:420px}
+.res th, .res td{padding:8px 10px; border-bottom:1px solid var(--line); white-space:nowrap}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res tbody th i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.res td{font-family:var(--f-mono); font-size:14px; text-align:right}
+.res td.note{font-family:var(--f-body); font-size:13px; color:var(--ink-3); text-align:left; white-space:normal}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.modes{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.mode{display:flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:8px 10px; cursor:pointer; font-size:13px; line-height:1.2; text-align:left; color:var(--ink-2)}
+.mode svg{width:30px; height:22px; flex:none}
+.mode[aria-pressed="true"]{background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.erow{display:grid; grid-template-columns:84px minmax(0,1fr); gap:8px; align-items:center}
+.elab{font-size:12.5px; color:var(--ink-3)}
+.etiles{display:grid; gap:6px}
+.etiles.c2{grid-template-columns:repeat(2, minmax(0,1fr))}
+.etiles.c3{grid-template-columns:repeat(3, minmax(0,1fr))}
+.etile{display:flex; flex-direction:column; align-items:center; gap:2px; padding:7px 4px 6px; border:1px solid var(--line); border-radius:10px; background:var(--paper); cursor:pointer; color:var(--ink-2); font-size:12px; line-height:1.15; text-align:center; min-width:0}
+.etile svg{width:40px; height:28px}
+.etile kbd{font-family:var(--f-mono); font-size:9.5px; color:var(--ink-3)}
+.etile[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); background:var(--sunk)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+.ctl.off{opacity:.4}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]:disabled{cursor:not-allowed}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.chip:disabled{opacity:.45; cursor:not-allowed}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 11px; border-radius:999px; font-size:12.5px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.switch{display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500}
+.switch input{position:absolute; opacity:0; width:1px; height:1px}
+.switch .sw{width:38px; height:22px; border-radius:999px; background:var(--line); position:relative; transition:background .15s; flex:none}
+.switch .sw::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--paper); transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .sw{background:var(--crimson)}
+.switch input:checked + .sw::after{transform:translateX(16px)}
+.switch input:focus-visible + .sw{outline:2px solid var(--blue); outline-offset:2px}
+.sub{display:flex; flex-direction:column; gap:12px; padding:10px 12px; border-radius:10px; background:var(--sunk)}
+.pbtn{align-self:flex-start; border:1px solid var(--line); background:var(--paper); padding:6px 12px; border-radius:999px; cursor:pointer; font-size:13px; color:var(--ink)}
+.pbtn:hover{border-color:var(--ink-3)}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--crimson); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.v{color:var(--violet)}
+.eq .r.b{color:var(--blue)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.conv{margin:0; padding:0 0 0 18px; display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:4px 22px; font-size:13.5px; color:var(--ink-2)}
+.conv i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.conv b{color:var(--ink); font-weight:600}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start; flex-wrap:wrap}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button i{font-family:var(--f-math); font-size:15px}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.clegend .sw-line{width:20px; height:0; border-top:2.5px solid currentColor}
+.chart-box{position:relative; height:280px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.6; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .conv{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .ov-legend{display:none}
+  .ov-hint{display:none}
+  .ov-msg{font-size:12px; top:8px}
+  .diag{grid-template-columns:minmax(0,1fr)}
+  .dchip{flex-direction:row; align-items:baseline; justify-content:space-between}
+  .dchip b{font-size:17px}
+  .erow{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  .flash, .switch .sw, .switch .sw::after{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Optyka geometryczna · ława optyczna</span>
+      <h1>
+        <svg viewBox="0 0 72 44" aria-hidden="true">
+          <path d="M2 10 L36 10 L66 34" fill="none" stroke="var(--crimson)" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M2 22 L66 34" fill="none" stroke="var(--amber)" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M2 30 L36 30" fill="none" stroke="var(--blue)" stroke-width="2.6" stroke-linecap="round"/>
+          <path d="M36 4 Q46 22 36 40 Q26 22 36 4Z" fill="color-mix(in srgb, var(--blue) 18%, transparent)" stroke="var(--ink)" stroke-width="2"/>
+          <circle cx="66" cy="34" r="3.2" fill="var(--violet)"/>
+        </svg>
+        <span data-i18n="title">Soczewki i zwierciadła</span>
+      </h1>
+      <p class="lede" id="lede" data-i18n="lede">Przesuń przedmiot po ławie i obserwuj, gdzie powstaje obraz. Trzy promienie konstrukcyjne, równanie soczewki i powiększenie liczą się na żywo.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud" id="hud"></dl>
+          <div class="verdict" id="verdict"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="scene" aria-label="Ława optyczna"></canvas>
+          <div class="ov-legend" id="ov-legend"></div>
+          <div class="ov-msg" id="ov-msg" hidden></div>
+          <div class="ov-hint" id="ov-hint"></div>
+        </div>
+        <div class="bar">
+          <button type="button" class="flash" id="flash">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M11.5 1.5 4 11h5l-1 7.5L15.5 9h-5z" fill="currentColor"/></svg>
+            <span data-i18n="flash">Błysk</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <div class="toggles" id="toggles">
+            <button type="button" class="tg" id="tg-principal" data-key="principal" data-for="lens" aria-pressed="true" style="--dot:var(--ray-2)" data-i18n="tgPrincipal">Promienie główne</button>
+            <button type="button" class="tg" id="tg-fan" data-key="fan" data-for="lens" aria-pressed="false" style="--dot:var(--ray-fan)" data-i18n="tgFan">Wiązka</button>
+            <button type="button" class="tg" id="tg-foci" data-key="foci" data-for="lens" aria-pressed="true" style="--dot:var(--bench-ink)" data-i18n="tgFoci">Ogniska</button>
+            <button type="button" class="tg" id="tg-virt" data-key="virt" data-for="lens" aria-pressed="true" style="--dot:var(--img)" data-i18n="tgVirt">Przedłużenia</button>
+            <button type="button" class="tg" id="tg-screen" data-key="screen" data-for="lens" aria-pressed="false" style="--dot:var(--glass)" data-i18n="tgScreen">Ekran</button>
+            <button type="button" class="tg" id="tg-grid" data-key="grid" data-for="lens" aria-pressed="true" style="--dot:var(--bench-ink-2)" data-i18n="tgGrid">Siatka</button>
+            <button type="button" class="tg" id="tg-prot" data-key="prot" data-for="refr" aria-pressed="true" style="--dot:var(--bench-ink-2)" data-i18n="tgProt">Kątomierz</button>
+            <button type="button" class="tg" id="tg-wave" data-key="wave" data-for="iface" aria-pressed="true" style="--dot:var(--ray-3)" data-i18n="tgWave">Fronty falowe</button>
+            <button type="button" class="tg" id="tg-refl" data-key="refl" data-for="refr" aria-pressed="true" style="--dot:var(--ray-1)" data-i18n="tgRefl">Promień odbity</button>
+            <button type="button" class="tg" id="tg-labels" data-key="labels" aria-pressed="true" style="--dot:var(--bench-ink)" data-i18n="tgLabels">Opisy</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="bbtn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="diag" id="diag"></div>
+        <p class="story" id="story"></p>
+        <div class="tbl-wrap">
+          <table class="res"><tbody id="res-body"></tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia" id="panel">
+      <fieldset class="grp">
+        <h3 data-i18n="gMode">Tryb</h3>
+        <div class="modes" role="group">
+          <button type="button" class="mode" id="m-lens" data-mode="lens" aria-pressed="true">
+            <svg viewBox="0 0 30 22" aria-hidden="true"><path d="M15 2 Q21 11 15 20 Q9 11 15 2Z" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M1 11h28" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+            <span data-i18n="mLens">Soczewki i zwierciadła</span>
+          </button>
+          <button type="button" class="mode" id="m-refr" data-mode="refr" aria-pressed="false">
+            <svg viewBox="0 0 30 22" aria-hidden="true"><path d="M1 11h28" stroke="currentColor" stroke-width="1.4"/><path d="M5 2 15 11 20 21" fill="none" stroke="currentColor" stroke-width="1.6"/><path d="M15 2v19" stroke="currentColor" stroke-width="1" stroke-dasharray="2 2"/></svg>
+            <span data-i18n="mRefr">Załamanie światła</span>
+          </button>
+        </div>
+      </fieldset>
+
+      <!-- lens / mirror mode -->
+      <fieldset class="grp" data-for="lens">
+        <h3 data-i18n="gElem">Element optyczny</h3>
+        <div class="erow">
+          <span class="elab" data-i18n="famLens">Soczewka</span>
+          <div class="etiles c2">
+            <button type="button" class="etile" id="e-conv" data-elem="conv" aria-pressed="true">
+              <svg viewBox="0 0 40 28" aria-hidden="true"><path d="M0 14h40" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 2"/><path d="M20 1 Q28 14 20 27 Q12 14 20 1Z" fill="color-mix(in srgb, currentColor 12%, transparent)" stroke="currentColor" stroke-width="1.6"/></svg>
+              <span data-i18n="eConv">skupiająca</span><kbd>1</kbd>
+            </button>
+            <button type="button" class="etile" id="e-div" data-elem="div" aria-pressed="false">
+              <svg viewBox="0 0 40 28" aria-hidden="true"><path d="M0 14h40" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 2"/><path d="M13 1 H27 Q21 14 27 27 H13 Q19 14 13 1Z" fill="color-mix(in srgb, currentColor 12%, transparent)" stroke="currentColor" stroke-width="1.6"/></svg>
+              <span data-i18n="eDiv">rozpraszająca</span><kbd>2</kbd>
+            </button>
+          </div>
+        </div>
+        <div class="erow">
+          <span class="elab" data-i18n="famMirror">Zwierciadło</span>
+          <div class="etiles c3">
+            <button type="button" class="etile" id="e-concave" data-elem="concave" aria-pressed="false">
+              <svg viewBox="0 0 40 28" aria-hidden="true"><path d="M0 14h40" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 2"/><path d="M17 1 Q29 14 17 27" fill="none" stroke="currentColor" stroke-width="2"/><path d="M22 4l4 3M25 9l4 3M26 15l4 3M24 20l4 3" stroke="currentColor" stroke-width="1"/></svg>
+              <span data-i18n="eConcave">wklęsłe</span><kbd>3</kbd>
+            </button>
+            <button type="button" class="etile" id="e-convex" data-elem="convex" aria-pressed="false">
+              <svg viewBox="0 0 40 28" aria-hidden="true"><path d="M0 14h40" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 2"/><path d="M24 1 Q12 14 24 27" fill="none" stroke="currentColor" stroke-width="2"/><path d="M24 4l4 3M20 9l4 3M19 15l4 3M21 20l4 3" stroke="currentColor" stroke-width="1"/></svg>
+              <span data-i18n="eConvex">wypukłe</span><kbd>4</kbd>
+            </button>
+            <button type="button" class="etile" id="e-plane" data-elem="plane" aria-pressed="false">
+              <svg viewBox="0 0 40 28" aria-hidden="true"><path d="M0 14h40" stroke="currentColor" stroke-width=".8" stroke-dasharray="2 2"/><path d="M20 1 V27" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 4l4 3M20 9l4 3M20 15l4 3M20 20l4 3" stroke="currentColor" stroke-width="1"/></svg>
+              <span data-i18n="ePlane">płaskie</span><kbd>5</kbd>
+            </button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" data-for="lens" style="--c:var(--blue)">
+        <h3 data-i18n="gFocal">Ogniskowa</h3>
+        <div class="ctl" id="ctl-f">
+          <div class="ctl-head"><label for="f" data-i18n-html="lf">Ogniskowa <i>f</i></label><output id="f-out" for="f"></output></div>
+          <input type="range" id="f" min="2" max="30" step="0.1" value="10">
+          <span class="hint" id="f-hint"></span>
+        </div>
+        <div id="lm-wrap" class="sub">
+          <label class="switch"><input type="checkbox" id="lm"><span class="sw"></span><span data-i18n="lmOn">Licz ze wzoru soczewkarza</span></label>
+          <div class="ctl" id="ctl-n">
+            <div class="ctl-head"><label for="n" data-i18n-html="ln">Współczynnik załamania szkła <i>n</i></label><output id="n-out" for="n"></output></div>
+            <input type="range" id="n" min="1.2" max="2" step="0.01" value="1.5">
+          </div>
+          <div class="ctl" id="ctl-r1">
+            <div class="ctl-head"><label for="r1" data-i18n-html="lr1">Promień powierzchni |<i>R</i><sub>1</sub>|</label><output id="r1-out" for="r1"></output></div>
+            <input type="range" id="r1" min="2" max="61" step="0.5" value="10">
+          </div>
+          <div class="ctl" id="ctl-r2">
+            <div class="ctl-head"><label for="r2" data-i18n-html="lr2">Promień powierzchni |<i>R</i><sub>2</sub>|</label><output id="r2-out" for="r2"></output></div>
+            <input type="range" id="r2" min="2" max="61" step="0.5" value="10">
+            <span class="hint" data-i18n="rHint">Skrajnie w prawo: powierzchnia płaska (R = ∞)</span>
+          </div>
+          <div class="chips" id="media">
+            <button type="button" class="chip" id="md-air" data-nm="1" aria-pressed="true"><span data-i18n="air">Powietrze</span><small>n = 1,00</small></button>
+            <button type="button" class="chip" id="md-water" data-nm="1.333" aria-pressed="false"><span data-i18n="water">Woda</span><small>n = 1,33</small></button>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" data-for="lens" style="--c:var(--amber)">
+        <h3 data-i18n="gObj">Przedmiot</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="x" data-i18n-html="lx">Odległość przedmiotu <i>x</i></label><output id="x-out" for="x"></output></div>
+          <input type="range" id="x" min="0.5" max="100" step="0.1" value="15">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h" data-i18n-html="lh">Wysokość przedmiotu <i>h</i></label><output id="h-out" for="h"></output></div>
+          <input type="range" id="h" min="0.5" max="10" step="0.1" value="4">
+        </div>
+        <div class="seg" role="group" id="ostyle">
+          <span class="lbl" data-i18n="oStyle">Kształt</span>
+          <button type="button" id="os-candle" data-os="candle" aria-pressed="true" data-i18n="osCandle">Świeca</button>
+          <button type="button" id="os-arrow" data-os="arrow" aria-pressed="false" data-i18n="osArrow">Strzałka</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" data-for="lens">
+        <h3 data-i18n="gPresets">Typowe sytuacje</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" id="pr-loupe" data-pr="loupe" aria-pressed="false"><span data-i18n="prLoupe">Lupa</span><small>x &lt; f</small></button>
+          <button type="button" class="chip" id="pr-proj" data-pr="proj" aria-pressed="false"><span data-i18n="prProj">Rzutnik</span><small>f &lt; x &lt; 2f</small></button>
+          <button type="button" class="chip" id="pr-cam" data-pr="cam" aria-pressed="false"><span data-i18n="prCam">Aparat, oko</span><small>x &gt; 2f</small></button>
+          <button type="button" class="chip" id="pr-two" data-pr="two" aria-pressed="false"><span data-i18n="prTwo">Kopia 1 : 1</span><small>x = 2f</small></button>
+          <button type="button" class="chip" id="pr-one" data-pr="one" aria-pressed="false"><span data-i18n="prOne">Brak obrazu</span><small>x = f</small></button>
+        </div>
+        <span class="ctl"><span class="hint" data-i18n="prHint">Sytuacje dotyczą elementu skupiającego; z elementem rozpraszającym przełączą go na skupiający.</span></span>
+      </fieldset>
+
+      <!-- refraction mode -->
+      <fieldset class="grp" data-for="refr">
+        <h3 data-i18n="gScene">Scena</h3>
+        <div class="seg" role="group" id="rsub">
+          <button type="button" id="rs-iface" data-rs="iface" aria-pressed="true" data-i18n="rsIface">Granica ośrodków</button>
+          <button type="button" id="rs-prism" data-rs="prism" aria-pressed="false" data-i18n="rsPrism">Pryzmat</button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" data-for="iface" style="--c:var(--crimson)">
+        <h3 data-i18n="gBeam">Promień padający</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="al" data-i18n-html="lal">Kąt padania <i>α</i></label><output id="al-out" for="al"></output></div>
+          <input type="range" id="al" min="0" max="89.5" step="0.5" value="40">
+          <span class="hint" data-i18n="alHint">Mierzony od normalnej. Laser możesz też przeciągnąć na scenie.</span>
+        </div>
+      </fieldset>
+      <fieldset class="grp" data-for="iface" style="--c:var(--blue)">
+        <h3 data-i18n="gMedia">Ośrodki</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="n1" data-i18n-html="ln1">Górny ośrodek <i>n</i><sub>1</sub></label><output id="n1-out" for="n1"></output></div>
+          <input type="range" id="n1" min="1" max="2.5" step="0.01" value="1">
+          <div class="chips" id="med1"></div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="n2" data-i18n-html="ln2">Dolny ośrodek <i>n</i><sub>2</sub></label><output id="n2-out" for="n2"></output></div>
+          <input type="range" id="n2" min="1" max="2.5" step="0.01" value="1.33">
+          <div class="chips" id="med2"></div>
+        </div>
+        <button type="button" class="pbtn" id="swap" data-i18n="swap">⇅ Zamień ośrodki</button>
+      </fieldset>
+
+      <fieldset class="grp" data-for="prism" style="--c:var(--violet)">
+        <h3 data-i18n="gPrism">Pryzmat</h3>
+        <div class="chips" id="mats">
+          <button type="button" class="chip" id="mt-crown" data-mat="crown" aria-pressed="true"><span data-i18n="matCrown">Szkło kronowe</span><small>BK7</small></button>
+          <button type="button" class="chip" id="mt-flint" data-mat="flint" aria-pressed="false"><span data-i18n="matFlint">Szkło flintowe</span><small>F2</small></button>
+          <button type="button" class="chip" id="mt-diamond" data-mat="diamond" aria-pressed="false"><span data-i18n="matDiamond">Diament</span><small>C</small></button>
+          <button type="button" class="chip" id="mt-water" data-mat="water" aria-pressed="false"><span data-i18n="matWater">Woda</span><small>H₂O</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="phi" data-i18n-html="lphi">Kąt łamiący <i>φ</i></label><output id="phi-out" for="phi"></output></div>
+          <input type="range" id="phi" min="20" max="80" step="1" value="60">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="a1" data-i18n-html="la1">Kąt padania <i>α</i><sub>1</sub></label><output id="a1-out" for="a1"></output></div>
+          <input type="range" id="a1" min="0" max="88" step="0.5" value="50">
+        </div>
+        <button type="button" class="pbtn" id="setmin" data-i18n="setMin">Ustaw minimum odchylenia</button>
+        <label class="switch"><input type="checkbox" id="white" checked><span class="sw"></span><span data-i18n="whiteOn">Światło białe</span></label>
+        <div class="ctl" id="ctl-lam">
+          <div class="ctl-head"><label for="lam" data-i18n-html="llam">Długość fali <i>λ</i></label><output id="lam-out" for="lam"></output></div>
+          <input type="range" id="lam" min="400" max="700" step="1" value="589">
+        </div>
+        <label class="switch"><input type="checkbox" id="boost"><span class="sw"></span><span data-i18n="boostOn">Wzmocnij dyspersję na rysunku ×5</span></label>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącego ustawienia ławy.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+const C_LIGHT = 2.998e8;
+const RINF = 61;                       // slider value meaning a flat surface (R = infinity)
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Optyka geometryczna · ława optyczna', title:'Soczewki i zwierciadła',
+    lede:'Przesuń przedmiot po ławie i obserwuj, gdzie powstaje obraz. Trzy promienie konstrukcyjne, równanie soczewki i powiększenie liczą się na żywo.',
+    ledeR:'Zmieniaj kąt padania i ośrodki. Zobacz prawo Snelliusa, kąt graniczny, całkowite wewnętrzne odbicie i rozszczepienie światła w pryzmacie.',
+    flash:'Błysk', kbd:'spacja', fullscreen:'Pełny ekran',
+    tgPrincipal:'Promienie główne', tgFan:'Wiązka', tgFoci:'Ogniska', tgVirt:'Przedłużenia', tgScreen:'Ekran', tgGrid:'Siatka',
+    tgProt:'Kątomierz', tgWave:'Fronty falowe', tgRefl:'Promień odbity', tgLabels:'Opisy',
+    gMode:'Tryb', mLens:'Soczewki i zwierciadła', mRefr:'Załamanie światła',
+    gElem:'Element optyczny', famLens:'Soczewka', famMirror:'Zwierciadło',
+    eConv:'skupiająca', eDiv:'rozpraszająca', eConcave:'wklęsłe', eConvex:'wypukłe', ePlane:'płaskie',
+    elConv:'soczewka skupiająca', elDiv:'soczewka rozpraszająca', elConcave:'zwierciadło wklęsłe', elConvex:'zwierciadło wypukłe', elPlane:'zwierciadło płaskie',
+    gFocal:'Ogniskowa', lf:'Ogniskowa <i>f</i>', lmOn:'Licz ze wzoru soczewkarza',
+    ln:'Współczynnik załamania szkła <i>n</i>', lr1:'Promień powierzchni |<i>R</i><sub>1</sub>|', lr2:'Promień powierzchni |<i>R</i><sub>2</sub>|',
+    rHint:'Skrajnie w prawo: powierzchnia płaska (R = ∞)', air:'Powietrze', water:'Woda',
+    fHintLens:'Przeciągnij punkt F na ławie, żeby zmienić ogniskową.', fHintMirror:'Środek krzywizny C leży w odległości R = 2f =', fHintPlane:'Zwierciadło płaskie: f = ∞, nie ma ognisk.',
+    fHintLm:'Ogniskowa wynika z kształtu soczewki (wzór soczewkarza).',
+    gObj:'Przedmiot', lx:'Odległość przedmiotu <i>x</i>', lh:'Wysokość przedmiotu <i>h</i>', oStyle:'Kształt', osCandle:'Świeca', osArrow:'Strzałka',
+    gPresets:'Typowe sytuacje', prLoupe:'Lupa', prProj:'Rzutnik', prCam:'Aparat, oko', prTwo:'Kopia 1 : 1', prOne:'Brak obrazu',
+    prHint:'Sytuacje dotyczą elementu skupiającego; z elementem rozpraszającym przełączą go na skupiający.',
+    gScene:'Scena', rsIface:'Granica ośrodków', rsPrism:'Pryzmat',
+    gBeam:'Promień padający', lal:'Kąt padania <i>α</i>', alHint:'Mierzony od normalnej. Laser możesz też przeciągnąć na scenie.',
+    gMedia:'Ośrodki', ln1:'Górny ośrodek <i>n</i><sub>1</sub>', ln2:'Dolny ośrodek <i>n</i><sub>2</sub>', swap:'⇅ Zamień ośrodki',
+    medAir:'powietrze', medWater:'woda', medGlass:'szkło', medDiamond:'diament',
+    gPrism:'Pryzmat', matCrown:'Szkło kronowe', matFlint:'Szkło flintowe', matDiamond:'Diament', matWater:'Woda',
+    lphi:'Kąt łamiący <i>φ</i>', la1:'Kąt padania <i>α</i><sub>1</sub>', setMin:'Ustaw minimum odchylenia', whiteOn:'Światło białe', llam:'Długość fali <i>λ</i>', boostOn:'Wzmocnij dyspersję na rysunku ×5',
+    results:'Wyniki', formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego ustawienia ławy.', charts:'Wykresy',
+    hint:'przeciągnij przedmiot lub F',
+    hintR:'przeciągnij laser', hintP:'przeciągnij źródło światła',
+    lg1lens:'przez środek soczewki', lg1mir:'przez środek krzywizny C', lg1vert:'w wierzchołek zwierciadła', lg2:'równoległy → przez F', lg3:'przez F → równoległy',
+    lg2plane:'prostopadły do lustra', lgVirt:'przedłużenie (obraz pozorny)', lgFan:'wiązka promieni',
+    cReal:'rzeczywisty', cVirtual:'pozorny', cUpright:'prosty', cInverted:'odwrócony', cMag:'powiększony', cRed:'pomniejszony', cSame:'tej samej wielkości', cNone:'brak obrazu', cInf:'w nieskończoności', cPar:'promienie równoległe',
+    dKind:'rodzaj', dOrient:'położenie', dSize:'wielkość',
+    msgInf:'x = f: obraz w nieskończoności. Promienie po przejściu biegną równolegle.',
+    msgInfMir:'x = f: obraz w nieskończoności. Promienie po odbiciu biegną równolegle.',
+    msgFlat:'Obie powierzchnie płaskie: płytka bez mocy optycznej, f = ∞.',
+    msgTIR:'Całkowite wewnętrzne odbicie: α > α_gr',
+    msgPrismTIR:'Promień nie wychodzi drugą ścianą: całkowite wewnętrzne odbicie w pryzmacie.',
+    rx:'Odległość przedmiotu <i>x</i>', ry:'Odległość obrazu <i>y</i>', rf:'Ogniskowa <i>f</i>', rp:'Powiększenie <i>p</i>', rh:'Wysokość obrazu <i>h′</i>', rZ:'Zdolność skupiająca <i>Z</i>', rR:'Promień krzywizny <i>R</i>',
+    nyRealLens:'za soczewką, po drugiej stronie niż przedmiot', nyVirtLens:'przed soczewką, po tej samej stronie co przedmiot', nyRealMir:'przed zwierciadłem, po stronie przedmiotu', nyVirtMir:'za zwierciadłem',
+    nyInf:'obraz w nieskończoności', nfConv:'element skupiający (f > 0)', nfDiv:'element rozpraszający (f < 0)', nfInf:'brak mocy optycznej',
+    npInv:'znak minus: obraz odwrócony', npUp:'znak plus: obraz prosty', nhAbs:'|h′| =', nZ:'1 D = 1 m⁻¹', nRmir:'R = 2f', nRplane:'powierzchnia płaska',
+    resSubLens:'Obraz punktu wierzchołkowego przedmiotu z równania soczewki.', resSubMir:'Obraz z równania zwierciadła (ta sama postać co dla soczewki).',
+    stLoupe:'<b>Lupa.</b> Przedmiot bliżej niż ognisko. Promienie po przejściu rozbiegają się, a oko widzi ich przedłużenia: obraz pozorny, prosty i powiększony po tej samej stronie soczewki.',
+    stProj:'<b>Rzutnik.</b> Przedmiot między f a 2f daje obraz rzeczywisty, odwrócony i powiększony daleko za soczewką. Dlatego slajd w projektorze wkłada się do góry nogami.',
+    stCam:'<b>Aparat fotograficzny i oko.</b> Przedmiot dalej niż 2f daje obraz rzeczywisty, odwrócony i pomniejszony między f a 2f, tam gdzie stoi matryca albo siatkówka.',
+    stLens2F:'<b>Kopia 1 : 1.</b> Przedmiot w 2f daje obraz w 2f po drugiej stronie: rzeczywisty, odwrócony i tej samej wielkości.',
+    stLensF:'<b>Kolimator, latarka.</b> Przedmiot w ognisku: promienie wychodzą równolegle i obraz nie powstaje (y → ∞).',
+    stDiv:'<b>Soczewka rozpraszająca</b> zawsze daje obraz pozorny, prosty i pomniejszony, leżący między ogniskiem a soczewką. Tak działa wizjer w drzwiach i okulary dla krótkowidza.',
+    stFlat:'<b>Płytka płasko-równoległa.</b> Bez mocy optycznej (w przybliżeniu cienkiej soczewki) obraz pokrywa się z przedmiotem.',
+    stMirMag:'<b>Lusterko kosmetyczne.</b> Twarz bliżej niż ognisko zwierciadła wklęsłego daje obraz pozorny, prosty i powiększony za zwierciadłem.',
+    stMirProj:'<b>Zwierciadło wklęsłe, f < x < 2f.</b> Obraz rzeczywisty, odwrócony i powiększony przed zwierciadłem, dalej niż środek krzywizny C.',
+    stMirTel:'<b>Teleskop zwierciadlany.</b> Odległy przedmiot daje obraz rzeczywisty, odwrócony i pomniejszony blisko ogniska zwierciadła.',
+    stMir2F:'<b>Przedmiot w środku krzywizny C.</b> Obraz powstaje w C: rzeczywisty, odwrócony i tej samej wielkości.',
+    stMirF:'<b>Reflektor.</b> Żarówka w ognisku zwierciadła wklęsłego: promienie po odbiciu biegną równolegle, obraz nie powstaje.',
+    stConvex:'<b>Lustro drogowe i lusterko wsteczne.</b> Zwierciadło wypukłe zawsze daje obraz pozorny, prosty i pomniejszony, za to obejmuje szerokie pole widzenia.',
+    stPlane:'<b>Lustro płaskie.</b> Obraz pozorny, prosty, tej samej wielkości, w tej samej odległości za lustrem co przedmiot przed nim.',
+    fLensEq:'Równanie soczewki', fMirEq:'Równanie zwierciadła', fMag:'Powiększenie', fPower:'Zdolność skupiająca', fLm:'Wzór soczewkarza', fMir:'Zwierciadło kuliste', fConv:'Konwencja znaków',
+    noteLmOff:'Teraz ogniskowa pochodzi z suwaka. Włącz wzór soczewkarza w panelu, żeby wyznaczyć ją z kształtu soczewki.',
+    noteLmR:'Soczewka symetryczna o tej ogniskowej z normalnego szkła (n = 1,50) w powietrzu miałaby',
+    noteLmSign:'Powierzchnia wypukła: R > 0, wklęsła: R < 0, płaska: R = ∞. Soczewka w wodzie słabiej skupia, bo liczy się stosunek n/n<sub>o</sub>.',
+    noteMirPlane:'Zwierciadło płaskie to granica R → ∞: wtedy f → ∞ i z równania wynika y = −x.',
+    noteMirConvex:'Dla zwierciadła wypukłego środek krzywizny leży za zwierciadłem, więc R < 0 i f < 0.',
+    notePower:'Ogniskową trzeba wyrazić w metrach. Okulary dla dalekowidza mają Z > 0, dla krótkowidza Z < 0.',
+    notePowerPlane:'Zwierciadło płaskie nie skupia ani nie rozprasza światła: Z = 0.',
+    conv1:'<i>x</i> > 0: przedmiot rzeczywisty, mierzony od soczewki lub zwierciadła.',
+    conv2:'<i>y</i> > 0: obraz <b>rzeczywisty</b> (za soczewką, przed zwierciadłem).',
+    conv3:'<i>y</i> < 0: obraz <b>pozorny</b> (po stronie przedmiotu dla soczewki, za zwierciadłem).',
+    conv4:'<i>f</i> > 0: soczewka skupiająca, zwierciadło wklęsłe. <i>f</i> < 0: rozpraszająca, wypukłe.',
+    conv5:'<i>p</i> < 0: obraz odwrócony; <i>p</i> > 0: prosty. |<i>p</i>| > 1: powiększony.',
+    conv6:'Zwierciadło spełnia ten sam wzór co soczewka, gdy <i>y</i> liczymy po stronie, do której wraca światło.',
+    tabY:'<i>y</i>(<i>x</i>)', tabP:'<i>p</i>(<i>x</i>)', tabInv:'1/<i>y</i> od 1/<i>x</i>', tabBeta:'<i>β</i>(<i>α</i>)', tabRefl:'Odbicie', tabDelta:'<i>δ</i>(<i>α</i><sub>1</sub>)', tabDisp:'<i>n</i>(<i>λ</i>)',
+    cnY:'Hiperbola <i>y</i> = <i>xf</i>/(<i>x</i> − <i>f</i>) z asymptotami <i>x</i> = <i>f</i> i <i>y</i> = <i>f</i>. Poniżej osi obraz jest pozorny.',
+    cnYplane:'Dla lustra płaskiego <i>y</i> = −<i>x</i>: obraz zawsze pozorny, tak samo daleko jak przedmiot.',
+    cnP:'<i>p</i> = <i>f</i>/(<i>f</i> − <i>x</i>). Linie przerywane: <i>p</i> = ±1, czyli obraz tej samej wielkości.',
+    cnInv:'Równanie soczewki to prosta: 1/<i>y</i> = <i>Z</i> − 1/<i>x</i>. Obie osie przecina w punkcie <i>Z</i> (w dioptriach).',
+    cnBeta:'Kąt załamania od kąta padania. Linia przerywana: <i>β</i> = <i>α</i> (bez załamania).',
+    cnBetaTIR:'Kąt załamania od kąta padania. Za kątem granicznym promień załamany nie istnieje.',
+    cnRefl:'Wzory Fresnela dla światła niespolaryzowanego. Przy kącie Brewstera odbicie składowej p znika.',
+    cnDelta:'Kąt odchylenia w pryzmacie dla trzech linii widmowych. Każda krzywa ma minimum (odchylenie minimalne).',
+    cnDisp:'Dyspersja ze wzoru Cauchy\'ego: fiolet załamuje się silniej niż czerwień.',
+    serReal:'obraz rzeczywisty', serVirt:'obraz pozorny', serAsym:'asymptoty', serNow:'teraz',
+    serRs:'składowa s', serRp:'składowa p', serR:'średnio', serCrit:'kąt graniczny', serBrew:'kąt Brewstera', serRef:'β = α',
+    hx:'x', vInf:'∞',
+    rAl:'Kąt padania <i>α</i>', rBe:'Kąt załamania <i>β</i>', rCrit:'Kąt graniczny <i>α</i><sub>gr</sub>', rBrew:'Kąt Brewstera <i>α</i><sub>B</sub>', rRefl:'Odbite <i>R</i>', rTrans:'Przechodzi <i>T</i>', rV1:'Prędkość w górnym <i>v</i><sub>1</sub>', rV2:'Prędkość w dolnym <i>v</i><sub>2</sub>', rN21:'Wsp. względny <i>n</i><sub>21</sub>',
+    nCritNo:'nie istnieje, bo n₁ ≤ n₂', nTIR:'całkowite wewnętrzne odbicie', nTowards:'promień załamuje się ku normalnej', nAway:'promień załamuje się od normalnej', nStraight:'bez zmiany kierunku',
+    resSubIface:'Laser pada z górnego ośrodka na płaską granicę.', resSubPrism:'Odchylenie dla trzech linii Fraunhofera: C (656 nm), D (589 nm), F (486 nm).',
+    vDenser:'do gęstszego', vRarer:'do rzadszego', vSame:'te same ośrodki', vTowards:'ku normalnej', vAway:'od normalnej', vTIR:'całkowite odbicie', vNormal:'wzdłuż normalnej',
+    vDisp:'rozszczepienie', vMin:'odchylenie minimalne', vPTIR:'odbicie wewnątrz',
+    dDir:'kierunek', dBend:'załamanie', dEnergy:'energia', dWhite:'światło', dDev:'odchylenie', dSpread:'rozszczepienie',
+    stIfaceT:'<b>Ku normalnej.</b> Światło przechodzi do ośrodka optycznie gęstszego, zwalnia i załamuje się ku normalnej (β < α).',
+    stIfaceA:'<b>Od normalnej.</b> Światło przechodzi do ośrodka rzadszego, przyspiesza i odchyla się od normalnej (β > α). Przy α = α_gr promień załamany biegnie wzdłuż granicy.',
+    stIfaceTIR:'<b>Całkowite wewnętrzne odbicie.</b> Kąt padania przekracza kąt graniczny, więc całe światło wraca do górnego ośrodka. Tak światło biegnie w światłowodzie.',
+    stIfaceSame:'<b>Te same ośrodki.</b> Przy n₁ = n₂ granica nie istnieje optycznie: promień biegnie dalej prosto.',
+    stIfaceN:'<b>Padanie prostopadłe.</b> Promień wzdłuż normalnej nie zmienia kierunku, zmienia tylko prędkość.',
+    stPrism:'<b>Rozszczepienie.</b> Współczynnik załamania zależy od długości fali, więc fiolet odchyla się bardziej niż czerwień i białe światło rozkłada się na widmo.',
+    stPrismMin:'<b>Odchylenie minimalne.</b> Promień biegnie w pryzmacie równolegle do podstawy (β₁ = β₂ = φ/2). Na tej zasadzie mierzy się n w spektrometrze.',
+    stPrismTIR:'<b>Brak promienia wychodzącego.</b> Na drugiej ścianie kąt padania przekracza graniczny. Zwiększ α₁ albo zmniejsz kąt łamiący φ.',
+    rPa1:'Kąt padania <i>α</i><sub>1</sub>', rPphi:'Kąt łamiący <i>φ</i>', rPnD:'<i>n</i> dla linii D', rPdC:'Odchylenie <i>δ</i><sub>C</sub> (656 nm)', rPdD:'Odchylenie <i>δ</i><sub>D</sub> (589 nm)', rPdF:'Odchylenie <i>δ</i><sub>F</sub> (486 nm)', rPspread:'Rozszczepienie <i>δ</i><sub>F</sub> − <i>δ</i><sub>C</sub>', rPmin:'Odchylenie minimalne <i>δ</i><sub>min</sub>', rPV:'Liczba Abbego <i>V</i>',
+    nPmin:'przy α₁ =', nPV:'im mniejsza, tym silniejsza dyspersja', nPtir:'nie wychodzi z pryzmatu',
+    fSnell:'Prawo Snelliusa', fCrit:'Kąt graniczny', fSpeed:'Prędkość światła w ośrodku', fFresnel:'Ile światła się odbija', fReflLaw:'Prawo odbicia',
+    noteCritNo:'Kąt graniczny istnieje tylko przy przejściu do ośrodka rzadszego (n₁ > n₂). Teraz n₁ ≤ n₂.',
+    noteTIRnow:'Teraz α > α_gr: zachodzi całkowite wewnętrzne odbicie.', noteFres:'Średnia ze składowych s i p (światło niespolaryzowane).',
+    noteRefl:'Kąt odbicia równa się kątowi padania. Promień padający, odbity, załamany i normalna leżą w jednej płaszczyźnie.',
+    fCauchy:'Dyspersja (wzór Cauchy\'ego)', fFaces:'Załamanie na obu ścianach', fDev:'Kąt odchylenia', fMinDev:'Odchylenie minimalne', fAbbe:'Liczba Abbego',
+    noteCauchy:'λ w mikrometrach. Stałe A i B zależą od materiału.', noteBoost:'Na rysunku dyspersja jest wzmocniona ×5; liczby dotyczą rzeczywistego materiału.',
+    noteAbbe:'Szkło kronowe ma V ≈ 64, flintowe V ≈ 36. Achromat łączy oba, żeby zniwelować aberrację chromatyczną.',
+    noteMinDev:'Z tego wzoru wyznacza się n, mierząc δ_min spektrometrem.', notePTIR:'Linia D nie wychodzi drugą ścianą (całkowite odbicie).',
+    medium1:'ośrodek 1', medium2:'ośrodek 2'
+  },
+  en: {
+    eyebrow:'Geometric optics · optical bench', title:'Lenses and mirrors',
+    lede:'Slide the object along the bench and watch where the image forms. The three construction rays, the lens equation and the magnification update live.',
+    ledeR:'Change the angle of incidence and the media. See Snell\'s law, the critical angle, total internal reflection and dispersion in a prism.',
+    flash:'Flash', kbd:'space', fullscreen:'Full screen',
+    tgPrincipal:'Principal rays', tgFan:'Ray fan', tgFoci:'Foci', tgVirt:'Extensions', tgScreen:'Screen', tgGrid:'Grid',
+    tgProt:'Protractor', tgWave:'Wavefronts', tgRefl:'Reflected ray', tgLabels:'Labels',
+    gMode:'Mode', mLens:'Lenses and mirrors', mRefr:'Refraction',
+    gElem:'Optical element', famLens:'Lens', famMirror:'Mirror',
+    eConv:'converging', eDiv:'diverging', eConcave:'concave', eConvex:'convex', ePlane:'plane',
+    elConv:'converging lens', elDiv:'diverging lens', elConcave:'concave mirror', elConvex:'convex mirror', elPlane:'plane mirror',
+    gFocal:'Focal length', lf:'Focal length <i>f</i>', lmOn:'Use the lensmaker\'s equation',
+    ln:'Refractive index of the glass <i>n</i>', lr1:'Surface radius |<i>R</i><sub>1</sub>|', lr2:'Surface radius |<i>R</i><sub>2</sub>|',
+    rHint:'Far right: flat surface (R = ∞)', air:'Air', water:'Water',
+    fHintLens:'Drag the point F on the bench to change the focal length.', fHintMirror:'The centre of curvature C is at R = 2f =', fHintPlane:'Plane mirror: f = ∞, no foci.',
+    fHintLm:'The focal length follows from the lens shape (lensmaker\'s equation).',
+    gObj:'Object', lx:'Object distance <i>x</i>', lh:'Object height <i>h</i>', oStyle:'Shape', osCandle:'Candle', osArrow:'Arrow',
+    gPresets:'Typical cases', prLoupe:'Magnifier', prProj:'Projector', prCam:'Camera, eye', prTwo:'1 : 1 copy', prOne:'No image',
+    prHint:'The cases apply to a converging element; with a diverging one they switch it to converging.',
+    gScene:'Scene', rsIface:'Interface', rsPrism:'Prism',
+    gBeam:'Incident ray', lal:'Angle of incidence <i>α</i>', alHint:'Measured from the normal. You can also drag the laser on the stage.',
+    gMedia:'Media', ln1:'Upper medium <i>n</i><sub>1</sub>', ln2:'Lower medium <i>n</i><sub>2</sub>', swap:'⇅ Swap media',
+    medAir:'air', medWater:'water', medGlass:'glass', medDiamond:'diamond',
+    gPrism:'Prism', matCrown:'Crown glass', matFlint:'Flint glass', matDiamond:'Diamond', matWater:'Water',
+    lphi:'Apex angle <i>φ</i>', la1:'Angle of incidence <i>α</i><sub>1</sub>', setMin:'Set minimum deviation', whiteOn:'White light', llam:'Wavelength <i>λ</i>', boostOn:'Exaggerate dispersion in the drawing ×5',
+    results:'Results', formulas:'Formulas', formulasSub:'Numbers are filled in live from the current bench setup.', charts:'Charts',
+    hint:'drag the object or F',
+    hintR:'drag the laser', hintP:'drag the light source',
+    lg1lens:'through the lens centre', lg1mir:'through the centre of curvature C', lg1vert:'to the mirror vertex', lg2:'parallel → through F', lg3:'through F → parallel',
+    lg2plane:'perpendicular to the mirror', lgVirt:'extension (virtual image)', lgFan:'ray fan',
+    cReal:'real', cVirtual:'virtual', cUpright:'upright', cInverted:'inverted', cMag:'magnified', cRed:'reduced', cSame:'same size', cNone:'no image', cInf:'at infinity', cPar:'parallel rays',
+    dKind:'type', dOrient:'orientation', dSize:'size',
+    msgInf:'x = f: the image is at infinity. Rays leave the lens parallel.',
+    msgInfMir:'x = f: the image is at infinity. Rays leave the mirror parallel.',
+    msgFlat:'Both surfaces flat: a plate with no optical power, f = ∞.',
+    msgTIR:'Total internal reflection: α > α_c',
+    msgPrismTIR:'The ray does not leave through the second face: total internal reflection inside the prism.',
+    rx:'Object distance <i>x</i>', ry:'Image distance <i>y</i>', rf:'Focal length <i>f</i>', rp:'Magnification <i>p</i>', rh:'Image height <i>h′</i>', rZ:'Optical power <i>Z</i>', rR:'Radius of curvature <i>R</i>',
+    nyRealLens:'behind the lens, opposite the object', nyVirtLens:'in front of the lens, on the object side', nyRealMir:'in front of the mirror, on the object side', nyVirtMir:'behind the mirror',
+    nyInf:'image at infinity', nfConv:'converging element (f > 0)', nfDiv:'diverging element (f < 0)', nfInf:'no optical power',
+    npInv:'minus sign: inverted image', npUp:'plus sign: upright image', nhAbs:'|h′| =', nZ:'1 D = 1 m⁻¹', nRmir:'R = 2f', nRplane:'flat surface',
+    resSubLens:'Image of the object\'s tip from the lens equation.', resSubMir:'Image from the mirror equation (same form as for a lens).',
+    stLoupe:'<b>Magnifier.</b> The object is closer than the focal point. The rays diverge after the lens and the eye sees their extensions: a virtual, upright, magnified image on the same side as the object.',
+    stProj:'<b>Projector.</b> An object between f and 2f gives a real, inverted, magnified image far behind the lens. That is why slides go into a projector upside down.',
+    stCam:'<b>Camera and eye.</b> An object beyond 2f gives a real, inverted, reduced image between f and 2f, where the sensor or the retina sits.',
+    stLens2F:'<b>1 : 1 copy.</b> An object at 2f gives an image at 2f on the other side: real, inverted and the same size.',
+    stLensF:'<b>Collimator, torch.</b> Object at the focal point: rays leave parallel and no image forms (y → ∞).',
+    stDiv:'<b>A diverging lens</b> always gives a virtual, upright, reduced image between the focal point and the lens. A door peephole and glasses for short sight work this way.',
+    stFlat:'<b>Parallel plate.</b> With no optical power (thin-lens approximation) the image coincides with the object.',
+    stMirMag:'<b>Make-up mirror.</b> A face closer than the focal point of a concave mirror gives a virtual, upright, magnified image behind the mirror.',
+    stMirProj:'<b>Concave mirror, f < x < 2f.</b> A real, inverted, magnified image in front of the mirror, beyond the centre of curvature C.',
+    stMirTel:'<b>Reflecting telescope.</b> A distant object gives a real, inverted, reduced image close to the focal point of the mirror.',
+    stMir2F:'<b>Object at the centre of curvature C.</b> The image forms at C: real, inverted and the same size.',
+    stMirF:'<b>Headlight.</b> A bulb at the focal point of a concave mirror: the reflected rays run parallel and no image forms.',
+    stConvex:'<b>Traffic mirror and car wing mirror.</b> A convex mirror always gives a virtual, upright, reduced image, but covers a wide field of view.',
+    stPlane:'<b>Plane mirror.</b> A virtual, upright, same-size image, as far behind the mirror as the object is in front of it.',
+    fLensEq:'Lens equation', fMirEq:'Mirror equation', fMag:'Magnification', fPower:'Optical power', fLm:'Lensmaker\'s equation', fMir:'Spherical mirror', fConv:'Sign convention',
+    noteLmOff:'The focal length now comes from the slider. Turn on the lensmaker\'s equation in the panel to get it from the lens shape.',
+    noteLmR:'A symmetric lens with this focal length made of ordinary glass (n = 1.50) in air would need',
+    noteLmSign:'Convex surface: R > 0, concave: R < 0, flat: R = ∞. A lens in water focuses less, because the ratio n/n<sub>o</sub> counts.',
+    noteMirPlane:'A plane mirror is the limit R → ∞: then f → ∞ and the equation gives y = −x.',
+    noteMirConvex:'For a convex mirror the centre of curvature is behind the mirror, so R < 0 and f < 0.',
+    notePower:'The focal length must be in metres. Glasses for long sight have Z > 0, for short sight Z < 0.',
+    notePowerPlane:'A plane mirror neither converges nor diverges light: Z = 0.',
+    conv1:'<i>x</i> > 0: a real object, measured from the lens or mirror.',
+    conv2:'<i>y</i> > 0: a <b>real</b> image (behind a lens, in front of a mirror).',
+    conv3:'<i>y</i> < 0: a <b>virtual</b> image (object side of a lens, behind a mirror).',
+    conv4:'<i>f</i> > 0: converging lens, concave mirror. <i>f</i> < 0: diverging lens, convex mirror.',
+    conv5:'<i>p</i> < 0: inverted image; <i>p</i> > 0: upright. |<i>p</i>| > 1: magnified.',
+    conv6:'A mirror obeys the same equation as a lens when <i>y</i> is measured on the side the light returns to.',
+    tabY:'<i>y</i>(<i>x</i>)', tabP:'<i>p</i>(<i>x</i>)', tabInv:'1/<i>y</i> vs 1/<i>x</i>', tabBeta:'<i>β</i>(<i>α</i>)', tabRefl:'Reflection', tabDelta:'<i>δ</i>(<i>α</i><sub>1</sub>)', tabDisp:'<i>n</i>(<i>λ</i>)',
+    cnY:'The hyperbola <i>y</i> = <i>xf</i>/(<i>x</i> − <i>f</i>) with asymptotes <i>x</i> = <i>f</i> and <i>y</i> = <i>f</i>. Below the axis the image is virtual.',
+    cnYplane:'For a plane mirror <i>y</i> = −<i>x</i>: the image is always virtual and as far away as the object.',
+    cnP:'<i>p</i> = <i>f</i>/(<i>f</i> − <i>x</i>). Dashed lines: <i>p</i> = ±1, an image of the same size.',
+    cnInv:'The lens equation is a straight line: 1/<i>y</i> = <i>Z</i> − 1/<i>x</i>. It crosses both axes at <i>Z</i> (in dioptres).',
+    cnBeta:'Angle of refraction against angle of incidence. Dashed line: <i>β</i> = <i>α</i> (no bending).',
+    cnBetaTIR:'Angle of refraction against angle of incidence. Beyond the critical angle there is no refracted ray.',
+    cnRefl:'Fresnel equations for unpolarised light. At Brewster\'s angle the p component is not reflected.',
+    cnDelta:'Deviation in the prism for three spectral lines. Each curve has a minimum (minimum deviation).',
+    cnDisp:'Dispersion from Cauchy\'s formula: violet is refracted more than red.',
+    serReal:'real image', serVirt:'virtual image', serAsym:'asymptotes', serNow:'now',
+    serRs:'s component', serRp:'p component', serR:'average', serCrit:'critical angle', serBrew:'Brewster\'s angle', serRef:'β = α',
+    hx:'x', vInf:'∞',
+    rAl:'Angle of incidence <i>α</i>', rBe:'Angle of refraction <i>β</i>', rCrit:'Critical angle <i>α</i><sub>c</sub>', rBrew:'Brewster\'s angle <i>α</i><sub>B</sub>', rRefl:'Reflected <i>R</i>', rTrans:'Transmitted <i>T</i>', rV1:'Speed in upper <i>v</i><sub>1</sub>', rV2:'Speed in lower <i>v</i><sub>2</sub>', rN21:'Relative index <i>n</i><sub>21</sub>',
+    nCritNo:'does not exist, since n₁ ≤ n₂', nTIR:'total internal reflection', nTowards:'the ray bends towards the normal', nAway:'the ray bends away from the normal', nStraight:'no change of direction',
+    resSubIface:'A laser shines from the upper medium onto a flat interface.', resSubPrism:'Deviation for three Fraunhofer lines: C (656 nm), D (589 nm), F (486 nm).',
+    vDenser:'into denser', vRarer:'into rarer', vSame:'same media', vTowards:'towards normal', vAway:'away from normal', vTIR:'total reflection', vNormal:'along the normal',
+    vDisp:'dispersion', vMin:'minimum deviation', vPTIR:'internal reflection',
+    dDir:'direction', dBend:'bending', dEnergy:'energy', dWhite:'light', dDev:'deviation', dSpread:'dispersion',
+    stIfaceT:'<b>Towards the normal.</b> Light enters an optically denser medium, slows down and bends towards the normal (β < α).',
+    stIfaceA:'<b>Away from the normal.</b> Light enters a rarer medium, speeds up and bends away from the normal (β > α). At α = α_c the refracted ray runs along the interface.',
+    stIfaceTIR:'<b>Total internal reflection.</b> The angle of incidence exceeds the critical angle, so all the light returns to the upper medium. This is how light travels in an optical fibre.',
+    stIfaceSame:'<b>Same media.</b> With n₁ = n₂ the interface does not exist optically: the ray goes straight on.',
+    stIfaceN:'<b>Normal incidence.</b> A ray along the normal keeps its direction and only changes speed.',
+    stPrism:'<b>Dispersion.</b> The refractive index depends on wavelength, so violet is deviated more than red and white light spreads into a spectrum.',
+    stPrismMin:'<b>Minimum deviation.</b> Inside the prism the ray runs parallel to the base (β₁ = β₂ = φ/2). Spectrometers measure n this way.',
+    stPrismTIR:'<b>No emerging ray.</b> At the second face the angle of incidence exceeds the critical angle. Increase α₁ or reduce the apex angle φ.',
+    rPa1:'Angle of incidence <i>α</i><sub>1</sub>', rPphi:'Apex angle <i>φ</i>', rPnD:'<i>n</i> for the D line', rPdC:'Deviation <i>δ</i><sub>C</sub> (656 nm)', rPdD:'Deviation <i>δ</i><sub>D</sub> (589 nm)', rPdF:'Deviation <i>δ</i><sub>F</sub> (486 nm)', rPspread:'Spread <i>δ</i><sub>F</sub> − <i>δ</i><sub>C</sub>', rPmin:'Minimum deviation <i>δ</i><sub>min</sub>', rPV:'Abbe number <i>V</i>',
+    nPmin:'at α₁ =', nPV:'the smaller, the stronger the dispersion', nPtir:'does not leave the prism',
+    fSnell:'Snell\'s law', fCrit:'Critical angle', fSpeed:'Speed of light in a medium', fFresnel:'How much light is reflected', fReflLaw:'Law of reflection',
+    noteCritNo:'A critical angle exists only when light goes into a rarer medium (n₁ > n₂). Now n₁ ≤ n₂.',
+    noteTIRnow:'Now α > α_c: total internal reflection.', noteFres:'Average of the s and p components (unpolarised light).',
+    noteRefl:'The angle of reflection equals the angle of incidence. The incident, reflected and refracted rays and the normal lie in one plane.',
+    fCauchy:'Dispersion (Cauchy\'s formula)', fFaces:'Refraction at both faces', fDev:'Angle of deviation', fMinDev:'Minimum deviation', fAbbe:'Abbe number',
+    noteCauchy:'λ in micrometres. The constants A and B depend on the material.', noteBoost:'The drawing exaggerates dispersion ×5; the numbers are for the real material.',
+    noteAbbe:'Crown glass has V ≈ 64, flint V ≈ 36. An achromat combines both to cancel chromatic aberration.',
+    noteMinDev:'This formula gives n from δ_min measured with a spectrometer.', notePTIR:'The D line does not leave through the second face (total reflection).',
+    medium1:'medium 1', medium2:'medium 2'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('lawa-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return x < 0 ? '−∞' : '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function autoDec(x) { const a = Math.abs(x); return a >= 1000 ? 0 : a >= 10 ? 1 : 2; }
+const fa = (x) => fmt(x, autoDec(x));
+const fsgn = (x, d) => (x > 0 ? '+' : '') + fmt(x, d);
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const round1 = (v) => Math.round(v * 10) / 10;
+
+/* ---------- data ---------- */
+// Cauchy coefficients n(λ) = A + B/λ², λ in µm
+const MATS = {
+  crown:   { A: 1.5046, B: 0.00420 },
+  flint:   { A: 1.5888, B: 0.01070 },
+  diamond: { A: 2.3800, B: 0.01270 },
+  water:   { A: 1.3240, B: 0.00310 }
+};
+const MEDIA = [ { k: 'medAir', n: 1.00 }, { k: 'medWater', n: 1.33 }, { k: 'medGlass', n: 1.50 }, { k: 'medDiamond', n: 2.42 } ];
+const LINES = { C: 656.3, D: 589.3, F: 486.1 };
+const PRESETS = { loupe: 0.6, proj: 1.5, cam: 3.2, two: 2, one: 1 };
+const nCauchy = (mat, nm) => { const q = MATS[mat], l = nm / 1000; return q.A + q.B / (l * l); };
+
+/* ---------- state ---------- */
+const S = {
+  mode: 'lens', elem: 'conv', fAbs: 10, x: 15, h: 4, ostyle: 'candle',
+  lensmaker: false, n: 1.5, R1: 10, R2: 10, nm: 1,
+  show: { principal: true, fan: false, foci: true, virt: true, screen: false, grid: true, prot: true, wave: true, refl: true, labels: true },
+  rsub: 'iface', n1: 1.0, n2: 1.33, alpha: 40,
+  mat: 'crown', phi: 60, a1: 50, white: true, lam: 589, boost: false,
+  tab: { lens: 'y', iface: 'beta', prism: 'delta' }, hover: null
+};
+const isMirror = () => S.elem === 'concave' || S.elem === 'convex' || S.elem === 'plane';
+const isLens = () => S.elem === 'conv' || S.elem === 'div';
+const sceneKey = () => (S.mode === 'lens' ? 'lens' : S.rsub);
+
+/* ---------- physics: thin lens / spherical mirror ---------- */
+const invR = (R) => (R >= RINF ? 0 : 1 / R);
+function lensmakerPower() {
+  // 1/f = (n/n_o - 1)(1/R1 + 1/R2); convex surfaces positive, concave negative
+  const k = (S.elem === 'conv' ? 1 : -1) * (invR(S.R1) + invR(S.R2));
+  return (S.n / S.nm - 1) * k;
+}
+function focal() {
+  if (S.elem === 'plane') return Infinity;
+  if (isLens() && S.lensmaker) { const pw = lensmakerPower(); return Math.abs(pw) < 1e-9 ? Infinity : 1 / pw; }
+  return (S.elem === 'conv' || S.elem === 'concave') ? S.fAbs : -S.fAbs;
+}
+function computeLens() {
+  const mirror = isMirror(), f = focal(), x = S.x, h = S.h;
+  const invf = isFinite(f) ? 1 / f : 0, invy = invf - 1 / x;
+  const atInf = Math.abs(invy) < 1e-6;
+  const y = atInf ? Infinity : 1 / invy;
+  const p = atInf ? Infinity : -y / x;
+  const hi = atInf ? Infinity : p * h;
+  const kind = atInf ? 'inf' : y > 0 ? 'real' : 'virtual';
+  const ximg = atInf ? Infinity : (mirror ? -y : y);
+  const Z = isFinite(f) ? 100 / f : 0;
+  return { mirror, f, x, h, y, p, hi, kind, ximg, Z, atInf, fin: isFinite(f) };
+}
+function sizeKey(p) { const a = Math.abs(p); return a > 1.004 ? 'cMag' : a < 0.996 ? 'cRed' : 'cSame'; }
+
+/* ---------- physics: refraction ---------- */
+function fresnel(n1, n2, a) {
+  const ci = Math.cos(a), s = n1 / n2 * Math.sin(a);
+  if (s >= 1) return { Rs: 1, Rp: 1, R: 1 };
+  const ct = Math.sqrt(1 - s * s);
+  const rs = (n1 * ci - n2 * ct) / (n1 * ci + n2 * ct), rp = (n2 * ci - n1 * ct) / (n2 * ci + n1 * ct);
+  return { Rs: rs * rs, Rp: rp * rp, R: (rs * rs + rp * rp) / 2 };
+}
+function computeIface() {
+  const n1 = S.n1, n2 = S.n2, a = S.alpha * D2R;
+  const sb = n1 / n2 * Math.sin(a), tir = sb > 1 + 1e-12;
+  const b = tir ? NaN : Math.asin(Math.min(1, sb));
+  const crit = n1 > n2 ? Math.asin(n2 / n1) : NaN;
+  const fr = fresnel(n1, n2, a);
+  return { n1, n2, a, b, sb, tir, crit, R: fr.R, Rs: fr.Rs, Rp: fr.Rp, T: 1 - fr.R, brew: Math.atan(n2 / n1) };
+}
+// analytic prism deviation, angles in rad; returns NaN if the ray does not emerge from the second face
+function prismDev(n, a1, phi) {
+  const b1 = Math.asin(Math.sin(a1) / n), b2 = phi - b1, s2 = n * Math.sin(b2);
+  if (Math.abs(s2) > 1) return { d: NaN, b1, b2, a2: NaN };
+  const a2 = Math.asin(s2);
+  return { d: a1 + a2 - phi, b1, b2, a2 };
+}
+function computePrism() {
+  const phi = S.phi * D2R, a1 = S.a1 * D2R;
+  const n = { C: nCauchy(S.mat, LINES.C), D: nCauchy(S.mat, LINES.D), F: nCauchy(S.mat, LINES.F) };
+  const dv = { C: prismDev(n.C, a1, phi), D: prismDev(n.D, a1, phi), F: prismDev(n.F, a1, phi) };
+  const dmin = 2 * Math.asin(n.D * Math.sin(phi / 2)) - phi;           // NaN if n sin(φ/2) > 1
+  const amin = Math.asin(n.D * Math.sin(phi / 2));
+  const V = (n.D - 1) / (n.F - n.C);
+  const nearMin = isFinite(dmin) && Math.abs(a1 - amin) < 0.6 * D2R;
+  return { phi, a1, n, dv, dmin, amin, V, nearMin, tir: !isFinite(dv.D.d) };
+}
+
+let O = null, RI = null, PR = null;
+function compute() {
+  O = computeLens(); RI = computeIface(); PR = computePrism();
+}
+
+/* ---------- canvas setup ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 480, dpr = 1, dirty = true, chartDirty = true;
+let col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'crimson', 'blue', 'amber', 'violet',
+    'bench', 'bench-2', 'bench-3', 'bench-line', 'bench-ink', 'bench-ink-2', 'bench-ink-3', 'grid-minor', 'grid-major',
+    'ray-1', 'ray-2', 'ray-3', 'ray-fan', 'obj', 'img', 'glass'])
+    col[k.replace(/-/g, '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = Math.max(1, box.clientWidth); ch = Math.max(1, box.clientHeight);
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+
+function withAlpha(c, a) {
+  if (c.startsWith('rgba')) return c.replace(/[\d.]+\)$/, a + ')');
+  if (c.startsWith('rgb(')) return c.replace('rgb(', 'rgba(').replace(')', `,${a})`);
+  const h = c.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle', bg = null) {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = bg || col.bench; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function pill(text, x, y, color, font, align = 'center') {
+  const c = ctx; c.font = font; const w = c.measureText(text).width;
+  const x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+  c.fillStyle = withAlpha(col.bench, 0.86); c.strokeStyle = col.benchline; c.lineWidth = 1;
+  c.beginPath(); c.roundRect ? c.roundRect(x0 - 6, y - 9, w + 12, 18, 9) : c.rect(x0 - 6, y - 9, w + 12, 18); c.fill(); c.stroke();
+  c.fillStyle = color; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(text, x0, y + 0.5);
+}
+function mathLabel(b, sub, x, y, color, size = 17, align = 'center') {
+  const c = ctx, fb = `italic ${size}px ${FONT_MATH}`, fs = `italic ${Math.round(size * 0.68)}px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fs; const ws = sub ? c.measureText(sub).width + 1 : 0;
+  const x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb, 'left');
+  if (sub) halo(sub, x0 + wb + 1, y + size * 0.3, color, fs, 'left');
+}
+function arrowHead(x, y, ang, size, color) {
+  const c = ctx; c.fillStyle = color; c.beginPath(); c.moveTo(x, y);
+  c.lineTo(x - Math.cos(ang - 0.42) * size, y - Math.sin(ang - 0.42) * size);
+  c.lineTo(x - Math.cos(ang + 0.42) * size, y - Math.sin(ang + 0.42) * size); c.closePath(); c.fill();
+}
+// Liang-Barsky clip of segment to a rectangle
+function clipSeg(x0, y0, x1, y1, xmin, ymin, xmax, ymax) {
+  let t0 = 0, t1 = 1; const dx = x1 - x0, dy = y1 - y0;
+  const p = [-dx, dx, -dy, dy], q = [x0 - xmin, xmax - x0, y0 - ymin, ymax - y0];
+  for (let i = 0; i < 4; i++) {
+    if (p[i] === 0) { if (q[i] < 0) return null; continue; }
+    const r = q[i] / p[i];
+    if (p[i] < 0) { if (r > t1) return null; if (r > t0) t0 = r; }
+    else { if (r < t0) return null; if (r < t1) t1 = r; }
+  }
+  return [x0 + t0 * dx, y0 + t0 * dy, x0 + t1 * dx, y0 + t1 * dy];
+}
+const segLen = (s) => Math.hypot(s[2] - s[0], s[3] - s[1]);
+function strokeSeg(s, color, w, alpha = 1, dash = null, glow = 0) {
+  if (!s) return;
+  const c = ctx; c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
+  c.beginPath(); c.moveTo(s[0], s[1]); c.lineTo(s[2], s[3]); c.stroke(); c.restore();
+}
+function lambdaRGB(nm) {
+  nm = clamp(nm, 380, 780);
+  let r = 0, g = 0, b = 0;
+  if (nm < 440) { r = -(nm - 440) / 60; b = 1; }
+  else if (nm < 490) { g = (nm - 440) / 50; b = 1; }
+  else if (nm < 510) { g = 1; b = -(nm - 510) / 20; }
+  else if (nm < 580) { r = (nm - 510) / 70; g = 1; }
+  else if (nm < 645) { r = 1; g = -(nm - 645) / 65; }
+  else r = 1;
+  const a = nm < 420 ? 0.3 + 0.7 * (nm - 380) / 40 : nm > 700 ? 0.3 + 0.7 * (780 - nm) / 80 : 1;
+  const gm = (v) => Math.round(255 * Math.pow(Math.max(0, v * a), 0.8));
+  return `rgb(${gm(r)},${gm(g)},${gm(b)})`;
+}
+
+/* ---------- lens scene geometry ---------- */
+const RAIL = 46;
+const view = { s: 10, ready: false };
+let drag = null, hoverHit = null;
+function lensGeom() { const areaH = ch - RAIL; return { cx: cw / 2, ay: Math.round(areaH / 2), areaH }; }
+function targetScale() {
+  const o = O, g = lensGeom();
+  const F = o.fin ? Math.abs(o.f) : 0;
+  let W = Math.max(2.4 * F, o.x * 1.12 + 1.5, 8);
+  if (isFinite(o.ximg)) W = Math.max(W, Math.min(Math.abs(o.ximg) * 1.08 + 1, F ? 4.4 * F : Math.abs(o.ximg) * 1.08 + 1));
+  let s = (cw / 2 - 16) / W;
+  s = Math.min(s, (g.ay - 24) / (o.h * 1.3));
+  return Math.max(0.5, s);
+}
+function aperturePx(g) {
+  return clamp(Math.max(O.h * view.s * 1.3, g.ay * 0.62), 40, g.ay - 14);
+}
+
+// rays in world coordinates (cm), element at x = 0, object tip at (-x, h)
+function computeRays() {
+  const o = O, x = o.x, h = o.h, f = o.f, mir = o.mirror;
+  const mk = (kind, Yhit, via) => {
+    const mIn = (Yhit - h) / x;
+    const mOut = o.fin ? mIn - Yhit / f : mIn;
+    return { kind, Yhit, mIn, mOut, dir: mir ? [-1, mOut] : [1, mOut], via: via || null };
+  };
+  const pr = [];
+  if (mir && o.fin && Math.abs(x - 2 * f) > 0.01 * Math.abs(f)) pr.push(mk(1, -2 * f * h / (x - 2 * f), [-2 * f, 0]));
+  else pr.push(mk(1, 0, null));
+  pr[0].vertex = mir && !(o.fin && Math.abs(x - 2 * f) > 0.01 * Math.abs(f));
+  pr.push(mk(2, h, null));
+  if (o.fin && Math.abs(x - f) > 1e-6) pr.push(mk(3, -h * f / (x - f), [-f, 0]));
+  const g = lensGeom(), A = aperturePx(g) / view.s * 0.92;
+  const fan = [];
+  const N = 11;
+  for (let i = 0; i < N; i++) {
+    const Y = -A + 2 * A * i / (N - 1);
+    fan.push(mk(0, Y, null));
+  }
+  return { pr, fan };
+}
+// world -> px builders for a ray: incident segment, outgoing segment, virtual back-extension, construction lines
+function rayGeometry(r) {
+  const o = O, g = lensGeom(), s = view.s;
+  const X = (xw) => g.cx + xw * s, Y = (yw) => g.ay - yw * s;
+  const rect = [-30, -30, cw + 30, g.areaH + 30];
+  const tip = [-o.x, o.h], hit = [0, r.Yhit];
+  const Lout = cw / s + 10;
+  const end = [hit[0] + r.dir[0] * Lout, hit[1] + r.dir[1] * Lout];
+  const inc = clipSeg(X(tip[0]), Y(tip[1]), X(hit[0]), Y(hit[1]), ...rect);
+  const out = clipSeg(X(hit[0]), Y(hit[1]), X(end[0]), Y(end[1]), ...rect);
+  let virt = null;
+  if (o.kind === 'virtual') {
+    let Lb = Math.abs(o.ximg) * 1.15 + 1.5;
+    if (r.kind === 2 && o.fin && o.f < 0) Lb = Math.max(Lb, Math.abs(o.f) * 1.12);
+    const back = [hit[0] - r.dir[0] * Lb, hit[1] - r.dir[1] * Lb];
+    virt = clipSeg(X(hit[0]), Y(hit[1]), X(back[0]), Y(back[1]), ...rect);
+  }
+  const cons = [];
+  if (r.via) {
+    const vx = r.via[0];
+    if (vx > 0) {                               // aimed at a point on the far side: dashed continuation of the incident ray
+      const k = 1.08, px = vx * k, py = r.Yhit + (r.via[1] - r.Yhit) * k;
+      cons.push(clipSeg(X(0), Y(r.Yhit), X(px), Y(py), ...rect));
+    } else if (vx < -o.x) {                      // the point lies behind the object: dashed line from it to the tip
+      cons.push(clipSeg(X(vx), Y(0), X(tip[0]), Y(tip[1]), ...rect));
+    }
+  }
+  return { inc, out, virt, cons: cons.filter(Boolean) };
+}
+
+/* ---------- pulses ---------- */
+const pulse = { on: false, t: 0, flash: 0, arrived: false };
+let autoPulseTimer = null;
+function firePulse() {
+  if (reduceMotion) { pulse.flash = 1; dirty = true; return; }
+  pulse.on = true; pulse.t = 0; pulse.arrived = false; dirty = true;
+}
+function schedulePulse(ms = 260) { clearTimeout(autoPulseTimer); autoPulseTimer = setTimeout(firePulse, ms); }
+const pulseSpeed = () => Math.max(460, cw * 0.62);
+
+function drawComet(path, d, color, alpha = 1, r = 5) {
+  // path: list of px segments [x0,y0,x1,y1]; d: distance along path
+  const c = ctx; let acc = 0;
+  const tail = 70;
+  const pts = [];
+  for (const s of path) {
+    const L = segLen(s);
+    if (d - tail < acc + L && d > acc) {
+      const u0 = clamp((d - tail - acc) / L, 0, 1), u1 = clamp((d - acc) / L, 0, 1);
+      pts.push([s[0] + (s[2] - s[0]) * u0, s[1] + (s[3] - s[1]) * u0, s[0] + (s[2] - s[0]) * u1, s[1] + (s[3] - s[1]) * u1, u1 === clamp((d - acc) / L, 0, 1) && d <= acc + L]);
+    }
+    acc += L;
+  }
+  if (!pts.length) return false;
+  c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+  for (const q of pts) {
+    const gr = c.createLinearGradient(q[0], q[1], q[2], q[3]);
+    gr.addColorStop(0, withAlpha(color, 0)); gr.addColorStop(1, withAlpha(color, 0.9 * alpha));
+    c.strokeStyle = gr; c.lineWidth = 3.2; c.beginPath(); c.moveTo(q[0], q[1]); c.lineTo(q[2], q[3]); c.stroke();
+  }
+  const last = pts[pts.length - 1];
+  if (d <= acc) {
+    const hx = last[2], hy = last[3];
+    const rg = c.createRadialGradient(hx, hy, 0, hx, hy, r * 3.2);
+    rg.addColorStop(0, withAlpha('#FFFFFF', alpha)); rg.addColorStop(0.25, withAlpha(color, 0.9 * alpha)); rg.addColorStop(1, withAlpha(color, 0));
+    c.fillStyle = rg; c.beginPath(); c.arc(hx, hy, r * 3.2, 0, Math.PI * 2); c.fill();
+  }
+  c.restore();
+  return true;
+}
+
+/* ---------- lens scene drawing ---------- */
+function drawBenchBg(areaH) {
+  const c = ctx;
+  const gr = c.createLinearGradient(0, 0, 0, areaH);
+  gr.addColorStop(0, col.bench2); gr.addColorStop(0.5, col.bench); gr.addColorStop(1, col.bench2);
+  c.fillStyle = gr; c.fillRect(0, 0, cw, ch);
+}
+function gridSteps(s) {
+  const major = niceStep(90 / s, 1), mant = major / Math.pow(10, Math.floor(Math.log10(major) + 1e-9));
+  const minor = major / (Math.round(mant) === 2 ? 4 : 5);
+  return { major, minor };
+}
+function drawLens(now) {
+  const c = ctx, o = O, g = lensGeom(), s = view.s;
+  const X = (xw) => g.cx + xw * s, Y = (yw) => g.ay - yw * s;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawBenchBg(g.areaH);
+  const { major, minor } = gridSteps(s);
+  const xW = g.cx / s, yW = g.ay / s;
+
+  // grid in cm, anchored at the element and the axis
+  if (S.show.grid) {
+    c.lineWidth = 1;
+    for (const [step, color] of [[minor, col.gridminor], [major, col.gridmajor]]) {
+      c.strokeStyle = color; c.beginPath();
+      for (let k = Math.ceil(-xW / step); k * step <= xW; k++) { const Xp = Math.round(X(k * step)) + 0.5; c.moveTo(Xp, 0); c.lineTo(Xp, g.areaH); }
+      for (let k = Math.ceil(-yW / step); k * step <= yW + step; k++) { const Yp = Math.round(Y(k * step)) + 0.5; c.moveTo(0, Yp); c.lineTo(cw, Yp); }
+      c.stroke();
+    }
+  }
+
+  // rail with a cm ruler
+  {
+    const y0 = g.areaH;
+    const gr = c.createLinearGradient(0, y0, 0, ch);
+    gr.addColorStop(0, col.bench3); gr.addColorStop(1, col.bench2);
+    c.fillStyle = gr; c.fillRect(0, y0, cw, ch - y0);
+    c.strokeStyle = col.benchink3; c.lineWidth = 1; c.beginPath(); c.moveTo(0, y0 + 0.5); c.lineTo(cw, y0 + 0.5); c.stroke();
+    c.strokeStyle = withAlpha(col.benchink, 0.08); c.beginPath(); c.moveTo(0, y0 + 2.5); c.lineTo(cw, y0 + 2.5); c.stroke();
+    const tickMinor = minor * s >= 5 ? minor : major;
+    c.strokeStyle = col.benchink3; c.beginPath();
+    for (let k = Math.ceil(-xW / tickMinor); k * tickMinor <= xW; k++) {
+      const v = k * tickMinor, Xp = Math.round(X(v)) + 0.5;
+      const isMaj = Math.abs(v / major - Math.round(v / major)) < 1e-6;
+      c.moveTo(Xp, y0); c.lineTo(Xp, y0 + (isMaj ? 10 : 5));
+    }
+    c.stroke();
+    const dec = major < 1 ? 1 : 0;
+    for (let k = Math.ceil(-xW / major); k * major <= xW; k++) {
+      const v = k * major, Xp = X(v);
+      if (Xp < 12 || Xp > cw - 30) continue;
+      c.font = `500 11px ${FONT_MONO}`; c.fillStyle = v === 0 ? col.benchink : col.benchink2; c.textAlign = 'center'; c.textBaseline = 'top';
+      c.fillText(fmt(Math.abs(v), dec), Xp, y0 + 14);
+    }
+    c.font = `500 11px ${FONT_MONO}`; c.fillStyle = col.benchink3; c.textAlign = 'right'; c.textBaseline = 'top';
+    c.fillText('cm', cw - 8, y0 + 14);
+  }
+
+  c.save(); c.beginPath(); c.rect(0, 0, cw, g.areaH); c.clip();
+
+  // optical axis
+  c.save(); c.strokeStyle = withAlpha(col.benchink, 0.55); c.lineWidth = 1.2; c.shadowColor = col.glass; c.shadowBlur = 6;
+  c.beginPath(); c.moveTo(0, g.ay + 0.5); c.lineTo(cw, g.ay + 0.5); c.stroke(); c.restore();
+
+  // principal plane
+  c.save(); c.strokeStyle = withAlpha(col.benchink, 0.16); c.setLineDash([3, 5]); c.lineWidth = 1;
+  c.beginPath(); c.moveTo(g.cx + 0.5, 0); c.lineTo(g.cx + 0.5, g.areaH); c.stroke(); c.restore();
+
+  const ap = aperturePx(g);
+
+  // object rider and element post (behind everything)
+  const postAlpha = 0.28;
+  c.save(); c.strokeStyle = withAlpha(col.benchink, postAlpha); c.lineWidth = 3; c.lineCap = 'butt';
+  c.beginPath(); c.moveTo(X(-o.x), g.ay + 3); c.lineTo(X(-o.x), g.areaH); c.moveTo(g.cx, g.ay + ap); c.lineTo(g.cx, g.areaH); c.stroke();
+  c.fillStyle = withAlpha(col.benchink, 0.22);
+  c.fillRect(X(-o.x) - 12, g.areaH - 7, 24, 7); c.fillRect(g.cx - 16, g.areaH - 7, 32, 7);
+  c.restore();
+
+  // screen at a real image
+  const imgX = X(o.ximg), imgTipY = Y(o.hi);
+  if (S.show.screen && o.kind === 'real' && Math.abs(imgX) < cw * 4) {
+    const H1 = clamp(Math.max(Math.abs(o.hi) * s * 1.35, 50), 40, g.ay - 6);
+    c.save();
+    c.fillStyle = withAlpha(col.glass, 0.08); c.strokeStyle = withAlpha(col.glass, 0.45); c.lineWidth = 1;
+    c.fillRect(imgX - 4, g.ay - H1, 8, 2 * H1); c.strokeRect(imgX - 4 + 0.5, g.ay - H1 + 0.5, 7, 2 * H1 - 1);
+    c.strokeStyle = withAlpha(col.benchink, postAlpha); c.lineWidth = 3; c.beginPath(); c.moveTo(imgX, g.ay + H1); c.lineTo(imgX, g.areaH); c.stroke();
+    c.fillStyle = withAlpha(col.benchink, 0.22); c.fillRect(imgX - 12, g.areaH - 7, 24, 7);
+    c.restore();
+  }
+
+  // focal points
+  const foci = [];
+  if (o.fin) {
+    if (o.mirror) { foci.push({ x: -o.f, lab: 'F', drag: true }, { x: -2 * o.f, lab: 'C', drag: false }); }
+    else { foci.push({ x: -o.f, lab: 'F', drag: true }, { x: o.f, lab: 'F′', drag: true }, { x: -2 * o.f, lab: '2F', drag: false }, { x: 2 * o.f, lab: '2F′', drag: false }); }
+  }
+  if (S.show.foci) {
+    for (const F of foci) {
+      const Fx = X(F.x); if (Fx < -10 || Fx > cw + 10) continue;
+      const hot = hoverHit && hoverHit.kind === 'F' && F.drag && Math.abs(hoverHit.x - F.x) < 1e-9;
+      c.save();
+      if (F.drag) {
+        c.shadowColor = col.ray3; c.shadowBlur = hot ? 16 : 8;
+        c.fillStyle = col.bench; c.strokeStyle = hot ? col.ray3 : col.benchink; c.lineWidth = 2;
+        c.beginPath(); c.moveTo(Fx, g.ay - 7); c.lineTo(Fx + 7, g.ay); c.lineTo(Fx, g.ay + 7); c.lineTo(Fx - 7, g.ay); c.closePath(); c.fill(); c.stroke();
+      } else {
+        c.strokeStyle = col.benchink2; c.lineWidth = 1.5; c.beginPath(); c.moveTo(Fx, g.ay - 5); c.lineTo(Fx, g.ay + 5); c.stroke();
+        c.fillStyle = col.benchink2; c.beginPath(); c.arc(Fx, g.ay, 2.2, 0, Math.PI * 2); c.fill();
+      }
+      c.restore();
+      if (S.show.labels) {
+        const [b, sub] = F.lab === '2F′' ? ['2F′', ''] : [F.lab, ''];
+        mathLabel(b, sub, Fx, g.ay + 20, F.drag ? col.benchink : col.benchink2, F.drag ? 17 : 15);
+      }
+    }
+  }
+
+  // rays
+  const RC = { 1: col.ray1, 2: col.ray2, 3: col.ray3 };
+  const rays = computeRays();
+  const geoms = { pr: rays.pr.map(r => ({ r, gm: rayGeometry(r) })), fan: S.show.fan ? rays.fan.map(r => ({ r, gm: rayGeometry(r) })) : [] };
+  c.save(); c.globalCompositeOperation = 'lighter';
+  for (const { gm } of geoms.fan) {
+    strokeSeg(gm.inc, col.rayfan, 1.1, 0.32); strokeSeg(gm.out, col.rayfan, 1.1, 0.32);
+    if (S.show.virt && gm.virt) strokeSeg(gm.virt, col.img, 1, 0.3, [5, 6]);
+  }
+  if (S.show.principal) {
+    for (const { r, gm } of geoms.pr) {
+      const cl = RC[r.kind];
+      if (S.show.virt) {
+        if (gm.virt) strokeSeg(gm.virt, cl, 1.5, 0.75, [7, 6]);
+        for (const q of gm.cons) strokeSeg(q, cl, 1.2, 0.55, [3, 5]);
+      }
+      strokeSeg(gm.inc, cl, 2.1, 0.95, null, 8);
+      strokeSeg(gm.out, cl, 2.1, 0.95, null, 8);
+    }
+  }
+  c.restore();
+  // direction chevrons on principal rays
+  if (S.show.principal) {
+    for (const { r, gm } of geoms.pr) {
+      for (const sg of [gm.inc, gm.out]) {
+        if (!sg || segLen(sg) < 60) continue;
+        const u = sg === gm.inc ? 0.55 : 0.4, mx = sg[0] + (sg[2] - sg[0]) * u, my = sg[1] + (sg[3] - sg[1]) * u;
+        arrowHead(mx, my, Math.atan2(sg[3] - sg[1], sg[2] - sg[0]), 9, RC[r.kind]);
+      }
+    }
+  }
+
+  // element
+  drawElement(g, ap, s);
+
+  // object and image
+  const flick = (!reduceMotion && S.ostyle === 'candle') ? now / 1000 : 0;
+  drawThing(X(-o.x), g.ay, o.h * s, 'obj', flick, false);
+  if (isFinite(o.ximg) && isFinite(o.hi)) {
+    const glow = pulse.flash;
+    drawThing(imgX, g.ay, o.hi * s, o.kind === 'real' ? 'img' : 'ghost', flick, glow);
+  }
+
+  // ray number tags
+  if (S.show.principal && S.show.labels) {
+    for (const { r, gm } of geoms.pr) {
+      const sg = gm.inc; if (!sg || segLen(sg) < 70) continue;
+      const u = 0.28, tx = sg[0] + (sg[2] - sg[0]) * u, ty = sg[1] + (sg[3] - sg[1]) * u;
+      const cl = RC[r.kind];
+      c.save(); c.fillStyle = col.bench; c.strokeStyle = cl; c.lineWidth = 1.5;
+      c.beginPath(); c.arc(tx, ty - 12, 8.5, 0, Math.PI * 2); c.fill(); c.stroke();
+      c.fillStyle = cl; c.font = `500 10.5px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(String(r.kind), tx, ty - 11.5);
+      c.restore();
+    }
+  }
+
+  // pulses
+  if (pulse.on) {
+    const d = pulse.t * pulseSpeed();
+    let any = false;
+    const all = [...geoms.pr.filter(() => S.show.principal), ...geoms.fan];
+    for (const { r, gm } of all) {
+      const cl = r.kind ? RC[r.kind] : col.rayfan;
+      const path = [gm.inc, gm.out].filter(Boolean);
+      if (drawComet(path, d, cl, r.kind ? 1 : 0.55, r.kind ? 5 : 3.5)) any = true;
+      if (gm.virt && S.show.virt && gm.inc) {
+        const L1 = segLen(gm.inc);
+        if (d > L1 && drawComet([gm.virt], d - L1, col.img, 0.5, 4)) any = true;
+      }
+    }
+    // image flash when the principal rays arrive
+    if (!pulse.arrived && isFinite(o.ximg)) {
+      const r2 = geoms.pr[Math.min(1, geoms.pr.length - 1)].gm;
+      if (r2.inc) {
+        const arr = segLen(r2.inc) + Math.hypot(imgX - r2.inc[2], imgTipY - r2.inc[3]);
+        if (d >= arr) { pulse.arrived = true; pulse.flash = 1; }
+      }
+    }
+    if (!any) pulse.on = false;
+  }
+
+  // dimension lines
+  if (S.show.labels) {
+    const yd1 = g.areaH - 14, yd2 = g.areaH - 34;
+    dimLine(X(-o.x), g.cx, yd1, `x = ${fmt(o.x, 1)} cm`, col.obj, false);
+    if (isFinite(o.ximg) && Math.abs(o.y) < 1e5) dimLine(g.cx, imgX, yd2, `y = ${fa(o.y)} cm`, col.img, o.kind === 'virtual');
+  }
+  c.restore();
+}
+function dimLine(x0, x1, y, text, color, dashed) {
+  const c = ctx; if (Math.abs(x1 - x0) < 2) return;
+  c.save(); c.strokeStyle = withAlpha(color, 0.8); c.lineWidth = 1;
+  if (dashed) c.setLineDash([4, 4]);
+  c.beginPath(); c.moveTo(x0, y); c.lineTo(x1, y); c.stroke(); c.setLineDash([]);
+  c.beginPath(); c.moveTo(x0, y - 5); c.lineTo(x0, y + 5); c.moveTo(x1, y - 5); c.lineTo(x1, y + 5); c.stroke();
+  c.restore();
+  const mid = clamp((x0 + x1) / 2, 60, cw - 60);
+  pill(text, mid, y, color, `500 11.5px ${FONT_MONO}`);
+}
+function drawElement(g, ap, s) {
+  const c = ctx, cx = g.cx, ay = g.ay;
+  c.save();
+  if (isLens()) {
+    const f = O.f;
+    let R1, R2;
+    if (S.lensmaker) { R1 = S.R1 >= RINF ? Infinity : S.R1; R2 = S.R2 >= RINF ? Infinity : S.R2; }
+    else { R1 = R2 = isFinite(f) ? Math.abs(f) : Infinity; }
+    const apW = ap / s;
+    const sagOf = (R) => (isFinite(R) ? clamp(apW * apW / (2 * R) * s * 0.3, 1.5, ap * 0.36) : 0);
+    const s1 = sagOf(R1), s2 = sagOf(R2);
+    const conv = S.elem === 'conv';
+    const e = conv ? 3 : 6;
+    // each surface: endpoints x at top/bottom and mid x
+    const L = conv ? { end: -e / 2, mid: -e / 2 - s1 } : { end: -e / 2 - s1, mid: -e / 2 };
+    const Rr = conv ? { end: e / 2, mid: e / 2 + s2 } : { end: e / 2 + s2, mid: e / 2 };
+    const ctl = (end, mid) => 2 * mid - end;
+    c.beginPath();
+    c.moveTo(cx + L.end, ay - ap);
+    c.quadraticCurveTo(cx + ctl(L.end, L.mid), ay, cx + L.end, ay + ap);
+    c.lineTo(cx + Rr.end, ay + ap);
+    c.quadraticCurveTo(cx + ctl(Rr.end, Rr.mid), ay, cx + Rr.end, ay - ap);
+    c.closePath();
+    const gr = c.createLinearGradient(cx - 30, 0, cx + 30, 0);
+    gr.addColorStop(0, withAlpha(col.glass, 0.10)); gr.addColorStop(0.45, withAlpha(col.glass, 0.30)); gr.addColorStop(1, withAlpha(col.glass, 0.12));
+    c.fillStyle = gr; c.fill();
+    c.shadowColor = col.glass; c.shadowBlur = 10; c.strokeStyle = withAlpha(col.glass, 0.9); c.lineWidth = 1.6; c.stroke();
+    c.shadowBlur = 0;
+    // highlight
+    c.strokeStyle = withAlpha('#FFFFFF', 0.35); c.lineWidth = 1.2; c.beginPath();
+    c.moveTo(cx + (conv ? L.mid * 0.5 : L.mid) + 2, ay - ap * 0.7); c.quadraticCurveTo(cx + (conv ? L.mid * 0.6 : L.mid) + 2, ay - ap * 0.35, cx + (conv ? L.mid * 0.5 : L.mid) + 3, ay - ap * 0.12); c.stroke();
+  } else {
+    const R = isFinite(O.f) ? 2 * Math.abs(O.f) : Infinity;
+    const apW = ap / s;
+    const sag = isFinite(R) ? clamp(apW * apW / (2 * R) * s * 0.5, 2, 12) : 0;
+    const sign = S.elem === 'concave' ? -1 : 1;     // concave: edges curl towards the object
+    const xs = (t) => sign * sag * (t / ap) * (t / ap);
+    // hatching on the back
+    c.strokeStyle = withAlpha(col.benchink2, 0.5); c.lineWidth = 1;
+    c.beginPath();
+    for (let t = -ap + 4; t <= ap - 4; t += 9) { const x0 = cx + xs(t) + 2; c.moveTo(x0, t + ay); c.lineTo(x0 + 8, t + ay + 7); }
+    c.stroke();
+    c.beginPath();
+    for (let t = -ap; t <= ap + 0.1; t += 3) { const x0 = cx + xs(t); t === -ap ? c.moveTo(x0, ay + t) : c.lineTo(x0, ay + t); }
+    c.shadowColor = col.glass; c.shadowBlur = 12; c.strokeStyle = col.benchink; c.lineWidth = 3; c.stroke();
+    c.shadowBlur = 0; c.strokeStyle = withAlpha(col.glass, 0.8); c.lineWidth = 1; c.stroke();
+  }
+  c.restore();
+}
+// draws the object or its image; hpx is signed (positive = upwards)
+function drawThing(px, baseY, hpx, role, tsec, glow) {
+  const c = ctx;
+  if (!isFinite(px) || !isFinite(hpx) || Math.abs(px) > 1e5) return;
+  const ghost = role === 'ghost';
+  const color = role === 'obj' ? col.obj : col.img;
+  const H = Math.min(Math.abs(hpx), ch * 3), sg = Math.sign(hpx) || 1;
+  const tipY = baseY - hpx;
+  c.save();
+  if (ghost) c.globalAlpha = 0.5;
+  if (S.ostyle === 'arrow') {
+    const w = clamp(H * 0.08, 2, 5);
+    c.strokeStyle = color; c.lineWidth = w; c.lineCap = 'round';
+    if (ghost) c.setLineDash([6, 5]);
+    if (glow > 0 || role !== 'ghost') { c.shadowColor = color; c.shadowBlur = 8 + 22 * glow; }
+    const head = clamp(H * 0.3, 6, 16);
+    c.beginPath(); c.moveTo(px, baseY); c.lineTo(px, tipY + sg * head * 0.7); c.stroke();
+    c.setLineDash([]);
+    if (ghost) {
+      c.lineWidth = 1.6; c.beginPath(); c.moveTo(px, tipY); c.lineTo(px - head * 0.45, tipY + sg * head); c.lineTo(px + head * 0.45, tipY + sg * head); c.closePath(); c.stroke();
+    } else {
+      c.fillStyle = color; c.beginPath(); c.moveTo(px, tipY); c.lineTo(px - head * 0.5, tipY + sg * head); c.lineTo(px + head * 0.5, tipY + sg * head); c.closePath(); c.fill();
+    }
+    c.shadowBlur = 0; c.fillStyle = color; c.beginPath(); c.arc(px, baseY, 3, 0, Math.PI * 2); c.fill();
+  } else {
+    // candle: body 0..0.62, wick, flame 0.64..1 (u measured along hpx)
+    const w = clamp(H * 0.2, 4, 40);
+    const yAt = (u) => baseY - hpx * u;
+    const bodyTop = yAt(0.62);
+    const gb = c.createLinearGradient(px - w / 2, 0, px + w / 2, 0);
+    gb.addColorStop(0, withAlpha(role === 'obj' ? '#E9DCC6' : color, 0.75)); gb.addColorStop(0.45, role === 'obj' ? '#FFF6E6' : withAlpha(color, 0.95)); gb.addColorStop(1, withAlpha(role === 'obj' ? '#C9B89B' : color, 0.7));
+    c.fillStyle = gb;
+    const top = Math.min(baseY, bodyTop), hgt = Math.abs(bodyTop - baseY);
+    if (ghost) { c.strokeStyle = color; c.setLineDash([5, 4]); c.lineWidth = 1.5; c.strokeRect(px - w / 2, top, w, hgt); c.setLineDash([]); c.globalAlpha = 0.25; c.fillRect(px - w / 2, top, w, hgt); c.globalAlpha = 0.5; }
+    else c.fillRect(px - w / 2, top, w, hgt);
+    // wick
+    c.strokeStyle = role === 'obj' ? '#3A2A1C' : withAlpha(color, 0.8); c.lineWidth = Math.max(1, w * 0.06);
+    c.beginPath(); c.moveTo(px, bodyTop); c.lineTo(px, yAt(0.69)); c.stroke();
+    // flame (tip stays at u = 1 so rays start exactly there)
+    const fw = w * 0.42;
+    const sway = tsec ? (Math.sin(tsec * 8.3) * 0.5 + Math.sin(tsec * 21.7) * 0.25) * fw * 0.35 : 0;
+    const yb = yAt(0.66), ym = yAt(0.77), yt = yAt(1);
+    const fl = new Path2D();
+    fl.moveTo(px + sway, yt);
+    fl.bezierCurveTo(px + fw * 0.9 + sway * 0.5, yAt(0.86), px + fw, ym, px, yb);
+    fl.bezierCurveTo(px - fw, ym, px - fw * 0.9 + sway * 0.5, yAt(0.86), px + sway, yt);
+    const fc = (yb + yt) / 2;
+    const gf = c.createRadialGradient(px, yAt(0.73), 0, px, fc, clamp(H * 0.28, 4, 60));
+    gf.addColorStop(0, '#FFFFFF'); gf.addColorStop(0.25, '#FFE7A3'); gf.addColorStop(0.6, '#FFA54A'); gf.addColorStop(1, '#FF4F7E');
+    c.save(); c.globalCompositeOperation = 'lighter';
+    const hr = clamp(H * 0.55, 10, 140) * (1 + glow);
+    const halo2 = c.createRadialGradient(px, fc, 0, px, fc, hr);
+    halo2.addColorStop(0, withAlpha('#FFB547', ghost ? 0.18 : 0.35 + 0.4 * glow)); halo2.addColorStop(1, withAlpha('#FFB547', 0));
+    c.fillStyle = halo2; c.beginPath(); c.arc(px, fc, hr, 0, Math.PI * 2); c.fill();
+    c.restore();
+    if (ghost) { c.strokeStyle = color; c.lineWidth = 1.4; c.setLineDash([4, 3]); c.stroke(fl); c.setLineDash([]); c.globalAlpha = 0.35; c.fillStyle = gf; c.fill(fl); }
+    else { c.fillStyle = gf; c.fill(fl); }
+    if (role !== 'obj') { c.globalAlpha = ghost ? 0.5 : 1; c.fillStyle = color; c.beginPath(); c.arc(px, yt, 2.2, 0, Math.PI * 2); c.fill(); }
+  }
+  c.restore();
+}
+
+/* ---------- refraction: interface ---------- */
+function ifaceGeom() { return { ox: cw / 2, oy: Math.round(ch * 0.5), Rp: Math.min(cw * 0.42, ch * 0.42) }; }
+function mediumTint(n) { return withAlpha(col.ray3, clamp(0.03 + (n - 1) * 0.15, 0.02, 0.3)); }
+function drawIface(now) {
+  const c = ctx, r = RI, g = ifaceGeom(), { ox, oy, Rp } = g;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.bench; c.fillRect(0, 0, cw, ch);
+  c.fillStyle = mediumTint(r.n1); c.fillRect(0, 0, cw, oy);
+  c.fillStyle = mediumTint(r.n2); c.fillRect(0, oy, cw, ch - oy);
+  // interface + normal
+  c.save(); c.strokeStyle = withAlpha(col.glass, 0.8); c.lineWidth = 1.5; c.shadowColor = col.glass; c.shadowBlur = 8;
+  c.beginPath(); c.moveTo(0, oy + 0.5); c.lineTo(cw, oy + 0.5); c.stroke(); c.restore();
+  c.save(); c.strokeStyle = withAlpha(col.benchink, 0.35); c.setLineDash([5, 5]); c.lineWidth = 1;
+  c.beginPath(); c.moveTo(ox + 0.5, 0); c.lineTo(ox + 0.5, ch); c.stroke(); c.restore();
+
+  // protractor
+  if (S.show.prot) {
+    c.save(); c.strokeStyle = withAlpha(col.benchink, 0.16); c.lineWidth = 1;
+    c.beginPath(); c.arc(ox, oy, Rp, 0, Math.PI * 2); c.stroke();
+    for (let d = 0; d < 360; d += 5) {
+      const a = d * D2R, L = d % 30 === 0 ? 14 : d % 10 === 0 ? 9 : 5;
+      const sx = Math.sin(a), sy = -Math.cos(a);
+      c.strokeStyle = withAlpha(col.benchink, d % 10 === 0 ? 0.35 : 0.18);
+      c.beginPath(); c.moveTo(ox + sx * Rp, oy + sy * Rp); c.lineTo(ox + sx * (Rp - L), oy + sy * (Rp - L)); c.stroke();
+      if (d % 30 === 0) {
+        const fromN = Math.min(d % 180, 180 - d % 180);
+        c.font = `500 10px ${FONT_MONO}`; c.fillStyle = col.benchink3; c.textAlign = 'center'; c.textBaseline = 'middle';
+        c.fillText(fromN + '°', ox + sx * (Rp - 26), oy + sy * (Rp - 26));
+      }
+    }
+    c.restore();
+  }
+
+  const Lbig = Math.hypot(cw, ch);
+  const a = r.a, src = [ox - Math.sin(a) * Rp * 0.96, oy - Math.cos(a) * Rp * 0.96];
+  const rect = [-20, -20, cw + 20, ch + 20];
+  const incSeg = clipSeg(src[0], src[1], ox, oy, ...rect);
+  const reflSeg = clipSeg(ox, oy, ox + Math.sin(a) * Lbig, oy - Math.cos(a) * Lbig, ...rect);
+  const refrSeg = r.tir ? null : clipSeg(ox, oy, ox + Math.sin(r.b) * Lbig, oy + Math.cos(r.b) * Lbig, ...rect);
+  const beam = col.ray2;
+
+  // critical angle guide
+  if (isFinite(r.crit)) {
+    const ca = r.crit;
+    c.save(); c.strokeStyle = withAlpha(col.ray1, 0.75); c.setLineDash([3, 5]); c.lineWidth = 1.3;
+    c.beginPath(); c.moveTo(ox, oy); c.lineTo(ox - Math.sin(ca) * Rp, oy - Math.cos(ca) * Rp); c.stroke(); c.restore();
+    if (S.show.labels) {
+      const lx = ox - Math.sin(ca) * (Rp + 16), ly = oy - Math.cos(ca) * (Rp + 16);
+      pill(`${lang === 'pl' ? 'α_gr' : 'α_c'} = ${fmt(ca * R2D, 1)}°`, lx, ly, col.ray1, `500 11px ${FONT_MONO}`, 'center');
+    }
+  }
+
+  // wavefronts
+  if (S.show.wave) {
+    const sp0 = 22, phase = reduceMotion ? 0.35 : (now / 1000) * 1.1;
+    const fr = phase - Math.floor(phase);
+    const ticks = (seg, n, dirSign, alpha, w) => {
+      if (!seg) return;
+      const L = segLen(seg), sp = sp0 / n, ux = (seg[2] - seg[0]) / L, uy = (seg[3] - seg[1]) / L;
+      c.save(); c.strokeStyle = withAlpha(beam, alpha); c.lineWidth = 1.2;
+      c.beginPath();
+      for (let k = 0; k < L / sp + 1; k++) {
+        // incident: crests approach O; outgoing: crests leave O
+        const d = dirSign < 0 ? (k + 1 - fr) * sp : (k + fr) * sp;
+        if (d > L || d < 0) continue;
+        const px = dirSign < 0 ? seg[2] - ux * d : seg[0] + ux * d, py = dirSign < 0 ? seg[3] - uy * d : seg[1] + uy * d;
+        c.moveTo(px - uy * w, py + ux * w); c.lineTo(px + uy * w, py - ux * w);
+      }
+      c.stroke(); c.restore();
+    };
+    ticks(incSeg, r.n1, -1, 0.55, 9);
+    if (S.show.refl) ticks(reflSeg, r.n1, 1, 0.55 * clamp(r.R * 2.5, 0.15, 1), 9);
+    ticks(refrSeg, r.n2, 1, 0.55 * clamp(r.T, 0.2, 1), 9);
+  }
+
+  // beams
+  c.save(); c.globalCompositeOperation = 'lighter';
+  strokeSeg(incSeg, beam, 3, 1, null, 14);
+  if (S.show.refl || r.tir) strokeSeg(reflSeg, beam, r.tir ? 3 : 2.2, clamp(r.R * 1.6, 0.18, 1), null, 10);
+  if (refrSeg) strokeSeg(refrSeg, beam, 3, clamp(r.T, 0.25, 1), null, 14);
+  c.restore();
+  for (const sg of [incSeg, (S.show.refl || r.tir) ? reflSeg : null, refrSeg]) {
+    if (!sg || segLen(sg) < 80) continue;
+    const u = sg === incSeg ? 0.5 : 0.45;
+    arrowHead(sg[0] + (sg[2] - sg[0]) * u, sg[1] + (sg[3] - sg[1]) * u, Math.atan2(sg[3] - sg[1], sg[2] - sg[0]), 10, beam);
+  }
+
+  // pulses
+  if (pulse.on) {
+    const d = pulse.t * pulseSpeed() * 0.8;
+    let any = drawComet([incSeg].filter(Boolean), d, beam, 1, 5);
+    const L1 = incSeg ? segLen(incSeg) : 0;
+    if (d > L1) {
+      if ((S.show.refl || r.tir) && reflSeg && drawComet([reflSeg], d - L1, beam, clamp(r.R * 1.6, 0.25, 1), 4)) any = true;
+      if (refrSeg && drawComet([refrSeg], (d - L1) * (r.n1 / r.n2), beam, clamp(r.T, 0.3, 1), 5)) any = true;
+    } else any = true;
+    if (!any) pulse.on = false;
+  }
+
+  // laser device
+  {
+    const hot = hoverHit && hoverHit.kind === 'laser';
+    c.save(); c.translate(src[0], src[1]); c.rotate(Math.atan2(oy - src[1], ox - src[0]));
+    c.fillStyle = col.bench3; c.strokeStyle = hot ? col.ray2 : col.benchink2; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect ? c.roundRect(-46, -8, 46, 16, 4) : c.rect(-46, -8, 46, 16); c.fill(); c.stroke();
+    c.fillStyle = col.ray2; c.shadowColor = col.ray2; c.shadowBlur = 10; c.beginPath(); c.arc(0, 0, 3.5, 0, Math.PI * 2); c.fill();
+    c.shadowBlur = 0; c.fillStyle = col.benchink3; c.fillRect(-36, -3, 14, 6);
+    c.restore();
+  }
+
+  // angle arcs
+  if (S.show.labels) {
+    const arc = (R, a0, a1, color, label, sub) => {
+      c.save(); c.strokeStyle = color; c.lineWidth = 1.5;
+      c.beginPath(); c.arc(ox, oy, R, Math.min(a0, a1), Math.max(a0, a1)); c.stroke(); c.restore();
+      const am = (a0 + a1) / 2;
+      mathLabel(label, sub, ox + Math.cos(am) * (R + 14), oy + Math.sin(am) * (R + 14), color, 16);
+    };
+    const up = -Math.PI / 2, down = Math.PI / 2;
+    if (r.a > 0.5 * D2R) {
+      arc(48, up - r.a, up, col.ray2, 'α', '');
+      if (S.show.refl || r.tir) arc(48, up, up + r.a, withAlpha(col.ray2, 0.7), 'α′', '');
+      if (!r.tir && r.b > 0.3 * D2R) arc(62, down - r.b, down, col.ray3, 'β', '');
+    }
+    // media labels
+    const v1 = C_LIGHT / r.n1, v2 = C_LIGHT / r.n2;
+    const nm1 = MEDIA.find(m => Math.abs(m.n - r.n1) < 0.006), nm2 = MEDIA.find(m => Math.abs(m.n - r.n2) < 0.006);
+    c.font = `500 12px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillStyle = col.benchink2;
+    c.fillText(`n₁ = ${fmt(r.n1, 2)}${nm1 ? ' · ' + tr(nm1.k) : ''}`, 14, oy - 46);
+    c.fillStyle = col.benchink3; c.fillText(`v₁ = ${fmt(v1 / 1e8, 2)}·10⁸ m/s`, 14, oy - 28);
+    c.fillStyle = col.benchink2; c.fillText(`n₂ = ${fmt(r.n2, 2)}${nm2 ? ' · ' + tr(nm2.k) : ''}`, 14, oy + 12);
+    c.fillStyle = col.benchink3; c.fillText(`v₂ = ${fmt(v2 / 1e8, 2)}·10⁸ m/s`, 14, oy + 30);
+    // intensity tags on the beams
+    if ((S.show.refl || r.tir) && reflSeg) { const u = 0.62; pill(`R = ${fmt(r.R * 100, r.R < 0.1 ? 1 : 0)} %`, ox + (reflSeg[2] - ox) * u * 0.6 + 24, oy + (reflSeg[3] - oy) * u * 0.6, col.benchink2, `500 11px ${FONT_MONO}`, 'left'); }
+    if (refrSeg) { const u = 0.6; pill(`T = ${fmt(r.T * 100, r.T > 0.99 ? 1 : 0)} %`, ox + (refrSeg[2] - ox) * u * 0.6 + 24, oy + (refrSeg[3] - oy) * u * 0.6, col.benchink2, `500 11px ${FONT_MONO}`, 'left'); }
+  }
+  c.save(); c.fillStyle = col.benchink; c.beginPath(); c.arc(ox, oy, 3, 0, Math.PI * 2); c.fill(); c.restore();
+}
+
+/* ---------- refraction: prism ---------- */
+function rot(v, a) { const c = Math.cos(a), s = Math.sin(a); return [v[0] * c - v[1] * s, v[0] * s + v[1] * c]; }
+function norm(v) { const L = Math.hypot(v[0], v[1]); return [v[0] / L, v[1] / L]; }
+function refractVec(d, nn, eta) {
+  // nn: unit normal pointing to the incident side; eta = n_from / n_to
+  const cosi = -(d[0] * nn[0] + d[1] * nn[1]);
+  const k = 1 - eta * eta * (1 - cosi * cosi);
+  if (k < 0) return { tir: true, v: [d[0] + 2 * cosi * nn[0], d[1] + 2 * cosi * nn[1]], cosi };
+  const ct = Math.sqrt(k);
+  return { tir: false, v: [eta * d[0] + (eta * cosi - ct) * nn[0], eta * d[1] + (eta * cosi - ct) * nn[1]], cosi, cost: ct };
+}
+function intersectEdges(p, d, poly, skip) {
+  let best = null;
+  for (let i = 0; i < poly.length; i++) {
+    if (i === skip) continue;
+    const a = poly[i], b = poly[(i + 1) % poly.length], ex = b[0] - a[0], ey = b[1] - a[1];
+    const den = d[0] * ey - d[1] * ex; if (Math.abs(den) < 1e-12) continue;
+    const t = ((a[0] - p[0]) * ey - (a[1] - p[1]) * ex) / den;
+    const u = ((a[0] - p[0]) * d[1] - (a[1] - p[1]) * d[0]) / den;
+    if (t > 1e-6 && u >= -1e-9 && u <= 1 + 1e-9 && (!best || t < best.t)) best = { t, i };
+  }
+  return best;
+}
+function prismGeom() {
+  // math coordinates (y up), origin at the canvas point (pcx, pcy)
+  const phi = S.phi * D2R;
+  const hP = Math.min(ch * 0.66, cw * 0.46), b = hP * Math.tan(phi / 2);
+  const bb = Math.min(b, cw * 0.3), hh = bb / Math.tan(phi / 2);
+  const pcx = cw * 0.42, pcy = ch * 0.56;
+  const poly = [[-bb, -hh * 0.45], [bb, -hh * 0.45], [0, hh * 0.55]];   // base-left, base-right, apex (CCW)
+  const outN = (i) => { const a = poly[i], q = poly[(i + 1) % 3]; return norm([q[1] - a[1], -(q[0] - a[0])]); };
+  const entry = [(poly[2][0] + poly[0][0]) / 2, (poly[2][1] + poly[0][1]) / 2];
+  const nL = outN(2), nIn = [-nL[0], -nL[1]];
+  const d = norm(rot(nIn, S.a1 * D2R));
+  const toPx = (p) => [pcx + p[0], pcy - p[1]];
+  return { poly, outN, entry, nL, nIn, d, toPx, pcx, pcy };
+}
+function tracePrism(G, n) {
+  const segs = [];
+  const r0 = refractVec(G.d, G.nL, 1 / n);
+  let p = G.entry, dir = norm(r0.v), edge = 2, inside = true, bounces = 0;
+  while (inside && bounces < 6) {
+    const hit = intersectEdges(p, dir, G.poly, edge); if (!hit) break;
+    const q = [p[0] + dir[0] * hit.t, p[1] + dir[1] * hit.t];
+    segs.push({ a: p, b: q, inside: true });
+    const no = G.outN(hit.i), rr = refractVec(dir, [-no[0], -no[1]], n);
+    p = q; edge = hit.i;
+    if (rr.tir) { dir = norm(rr.v); bounces++; continue; }
+    dir = norm(rr.v); inside = false;
+  }
+  let exit = null;
+  if (!inside) { const far = Math.hypot(cw, ch) * 1.5; segs.push({ a: p, b: [p[0] + dir[0] * far, p[1] + dir[1] * far], inside: false }); exit = dir; }
+  const dev = exit ? Math.acos(clamp(G.d[0] * exit[0] + G.d[1] * exit[1], -1, 1)) : NaN;
+  return { segs, exit, dev, firstFace: edge };
+}
+const prismWaves = () => (S.white ? [405, 430, 455, 480, 505, 530, 555, 580, 605, 630, 655, 685] : [S.lam]);
+function nDraw(nm) { const n = nCauchy(S.mat, nm); if (!S.boost) return n; const nD = nCauchy(S.mat, LINES.D); return nD + 5 * (n - nD); }
+function drawPrism(now) {
+  const c = ctx, G = prismGeom(), P = (p) => G.toPx(p);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const gr = c.createLinearGradient(0, 0, 0, ch); gr.addColorStop(0, col.bench2); gr.addColorStop(0.55, col.bench); gr.addColorStop(1, col.bench2);
+  c.fillStyle = gr; c.fillRect(0, 0, cw, ch);
+  const rect = [-20, -20, cw + 20, ch + 20];
+  const srcDist = Math.min(cw * 0.34, 300);
+  const srcM = [G.entry[0] - G.d[0] * srcDist, G.entry[1] - G.d[1] * srcDist];
+  const sp = P(srcM), ep = P(G.entry);
+
+  // prism body
+  const pp = G.poly.map(P);
+  c.save(); c.beginPath(); c.moveTo(pp[0][0], pp[0][1]); c.lineTo(pp[1][0], pp[1][1]); c.lineTo(pp[2][0], pp[2][1]); c.closePath();
+  const pg = c.createLinearGradient(pp[0][0], pp[2][1], pp[1][0], pp[0][1]);
+  pg.addColorStop(0, withAlpha(col.glass, 0.20)); pg.addColorStop(1, withAlpha(col.glass, 0.07));
+  c.fillStyle = pg; c.fill(); c.shadowColor = col.glass; c.shadowBlur = 12; c.strokeStyle = withAlpha(col.glass, 0.85); c.lineWidth = 1.6; c.stroke(); c.restore();
+
+  // normals at entry
+  if (S.show.prot) {
+    c.save(); c.strokeStyle = withAlpha(col.benchink, 0.35); c.setLineDash([4, 5]); c.lineWidth = 1;
+    const a = P([G.entry[0] + G.nL[0] * 70, G.entry[1] + G.nL[1] * 70]), b = P([G.entry[0] - G.nL[0] * 50, G.entry[1] - G.nL[1] * 50]);
+    c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke(); c.restore();
+  }
+
+  // incident white beam
+  const beamCol = S.white ? '#FFFFFF' : lambdaRGB(S.lam);
+  const incSeg = clipSeg(sp[0], sp[1], ep[0], ep[1], ...rect);
+  // weak reflection at the first face
+  const r0 = refractVec(G.d, G.nL, 1 / nCauchy(S.mat, LINES.D));
+  const fr0 = fresnel(1, nCauchy(S.mat, LINES.D), S.a1 * D2R).R;
+  const refl = norm([G.d[0] + 2 * r0.cosi * G.nL[0], G.d[1] + 2 * r0.cosi * G.nL[1]]);
+  const rEnd = P([G.entry[0] + refl[0] * 2000, G.entry[1] + refl[1] * 2000]);
+  const reflSeg = clipSeg(ep[0], ep[1], rEnd[0], rEnd[1], ...rect);
+
+  c.save(); c.globalCompositeOperation = 'lighter';
+  strokeSeg(incSeg, beamCol, 3.4, 1, null, 14);
+  if (S.show.refl) strokeSeg(reflSeg, beamCol, 1.6, clamp(fr0 * 3, 0.12, 0.6), null, 6);
+  // spectrum
+  const waves = prismWaves();
+  const traces = waves.map(nm => ({ nm, color: lambdaRGB(nm), t: tracePrism(G, nDraw(nm)) }));
+  const per = S.white ? 0.42 : 1;
+  for (const tw of traces) {
+    for (const sg of tw.t.segs) {
+      const a = P(sg.a), b = P(sg.b);
+      const s2 = clipSeg(a[0], a[1], b[0], b[1], ...rect);
+      strokeSeg(s2, tw.color, sg.inside ? 2.2 : 2.6, sg.inside ? per * 0.9 : (S.white ? 0.85 : 1), null, sg.inside ? 0 : 10);
+    }
+  }
+  c.restore();
+  if (incSeg && segLen(incSeg) > 80) arrowHead((incSeg[0] + incSeg[2]) / 2, (incSeg[1] + incSeg[3]) / 2, Math.atan2(incSeg[3] - incSeg[1], incSeg[2] - incSeg[0]), 10, beamCol);
+
+  // undeviated guide and deviation label
+  const mid = traces[Math.floor(traces.length / 2)];
+  if (S.show.labels) {
+    const guideEnd = P([G.entry[0] + G.d[0] * 900, G.entry[1] + G.d[1] * 900]);
+    const gs = clipSeg(ep[0], ep[1], guideEnd[0], guideEnd[1], ...rect);
+    strokeSeg(gs, col.benchink3, 1, 0.8, [4, 6]);
+    if (mid.t.exit) {
+      const last = mid.t.segs[mid.t.segs.length - 1];
+      const lp = P(last.a), le = P([last.a[0] + mid.t.exit[0] * 140, last.a[1] + mid.t.exit[1] * 140]);
+      pill(`δ = ${fmt(mid.t.dev * R2D, 1)}°`, le[0] + 10, le[1], col.benchink, `500 11.5px ${FONT_MONO}`, 'left');
+      void lp;
+    }
+    // apex angle
+    const ap = pp[2], a0 = Math.atan2(pp[0][1] - ap[1], pp[0][0] - ap[0]), a1 = Math.atan2(pp[1][1] - ap[1], pp[1][0] - ap[0]);
+    c.save(); c.strokeStyle = col.ray1; c.lineWidth = 1.4; c.beginPath(); c.arc(ap[0], ap[1], 26, a1, a0); c.stroke(); c.restore();
+    mathLabel('φ', '', ap[0], ap[1] + 44, col.ray1, 16);
+    // incidence angle
+    const nOut = Math.atan2(-G.nL[1], G.nL[0]), dIn = Math.atan2(G.d[1], -G.d[0]);
+    c.save(); c.strokeStyle = col.ray2; c.lineWidth = 1.4; c.beginPath();
+    const aa = nOut, bb = Math.atan2(G.d[1], -G.d[0]);
+    let diff = bb - aa; while (diff > Math.PI) diff -= 2 * Math.PI; while (diff < -Math.PI) diff += 2 * Math.PI;
+    void dIn;
+    c.arc(ep[0], ep[1], 40, aa, aa + diff, diff < 0); c.stroke(); c.restore();
+    const am = aa + diff / 2;
+    mathLabel('α', '1', ep[0] + Math.cos(am) * 56, ep[1] + Math.sin(am) * 56, col.ray2, 16);
+    // material
+    c.font = `500 12px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillStyle = col.benchink2;
+    c.fillText(`${tr({ crown: 'matCrown', flint: 'matFlint', diamond: 'matDiamond', water: 'matWater' }[S.mat])} · n_D = ${fmt(PR.n.D, 4)}`, 14, 14);
+    c.fillStyle = col.benchink3; c.fillText(`φ = ${fmt(S.phi, 0)}° · α₁ = ${fmt(S.a1, 1)}°${S.boost ? ' · ×5' : ''}`, 14, 32);
+  }
+
+  // pulse along the D-ish trace
+  if (pulse.on) {
+    const d = pulse.t * pulseSpeed() * 0.8;
+    let any = drawComet([incSeg].filter(Boolean), d, '#FFFFFF', 1, 5);
+    const L1 = incSeg ? segLen(incSeg) : 0;
+    if (d > L1) {
+      for (const tw of traces) {
+        const path = tw.t.segs.map(sg => { const a = P(sg.a), b = P(sg.b); return clipSeg(a[0], a[1], b[0], b[1], ...rect); }).filter(Boolean);
+        if (drawComet(path, d - L1, tw.color, S.white ? 0.6 : 1, 4)) any = true;
+      }
+    } else any = true;
+    if (!any) pulse.on = false;
+  }
+
+  // lamp
+  {
+    const hot = hoverHit && hoverHit.kind === 'lamp';
+    c.save(); c.translate(sp[0], sp[1]); c.rotate(Math.atan2(ep[1] - sp[1], ep[0] - sp[0]));
+    c.fillStyle = col.bench3; c.strokeStyle = hot ? col.ray1 : col.benchink2; c.lineWidth = 1.5;
+    c.beginPath(); c.roundRect ? c.roundRect(-40, -11, 40, 22, 5) : c.rect(-40, -11, 40, 22); c.fill(); c.stroke();
+    c.fillStyle = beamCol; c.shadowColor = beamCol; c.shadowBlur = 12; c.fillRect(-3, -6, 4, 12);
+    c.restore();
+  }
+}
+
+/* ---------- main scene draw ---------- */
+function drawScene(now) {
+  if (S.mode === 'lens') drawLens(now);
+  else if (S.rsub === 'iface') drawIface(now);
+  else drawPrism(now);
+}
+
+/* ---------- interaction on the stage ---------- */
+function localPt(e) { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+function hitTest(px, py) {
+  if (S.mode === 'lens') {
+    const g = lensGeom(), s = view.s, o = O;
+    if (py > g.areaH) return null;
+    if (o.fin && S.show.foci) {
+      const list = o.mirror ? [-o.f] : [-o.f, o.f];
+      for (const fx of list) { const X = g.cx + fx * s; if (Math.hypot(px - X, py - g.ay) < 13) return { kind: 'F', x: fx }; }
+    }
+    const ox = g.cx - o.x * s, tipY = g.ay - o.h * s;
+    const w = S.ostyle === 'candle' ? clamp(o.h * s * 0.2, 4, 40) / 2 + 12 : 16;
+    if (Math.abs(px - ox) < w && py > tipY - 18 && py < g.ay + 12) return { kind: 'obj' };
+    return null;
+  }
+  if (S.rsub === 'iface') { const g = ifaceGeom(); return py < g.oy - 4 ? { kind: 'laser' } : null; }
+  const G = prismGeom(), ep = G.toPx(G.entry);
+  return px < ep[0] - 6 ? { kind: 'lamp' } : null;
+}
+function moveDrag(px, py) {
+  if (!drag) return;
+  if (drag.kind === 'obj') {
+    const g = lensGeom(), s = view.s;
+    px -= drag.dx || 0; py -= drag.dy || 0;            // keep the grab offset relative to the tip
+    let x = (g.cx - px) / s;
+    const fAbs = O.fin ? Math.abs(O.f) : 0;
+    // magnetic snap to f and 2f
+    if (fAbs && O.f > 0) for (const k of [1, 2]) if (Math.abs(x - k * fAbs) * s < 6) x = k * fAbs;
+    S.x = clamp(Math.abs(x - fAbs) < 1e-9 || Math.abs(x - 2 * fAbs) < 1e-9 ? x : round1(x), 0.5, Math.min(100, (g.cx - 10) / s));
+    S.h = clamp(round1((g.ay - py) / s), 0.5, Math.min(10, (g.ay - 10) / s));
+  } else if (drag.kind === 'F') {
+    const g = lensGeom();
+    const xw = (px - g.cx) / view.s;
+    if (S.lensmaker) { S.lensmaker = false; }
+    S.fAbs = clamp(round1(Math.abs(xw)), 2, 30);
+  } else if (drag.kind === 'laser') {
+    const g = ifaceGeom();
+    S.alpha = clamp(Math.round(Math.atan2(Math.abs(px - g.ox), Math.max(g.oy - py, 0.001)) * R2D * 2) / 2, 0, 89.5);
+  } else if (drag.kind === 'lamp') {
+    const G = prismGeom(), ep = G.toPx(G.entry);
+    const dm = norm([ep[0] - px, -(ep[1] - py)]);          // direction source -> entry in math coords
+    const ang = Math.atan2(G.nIn[0] * dm[1] - G.nIn[1] * dm[0], G.nIn[0] * dm[0] + G.nIn[1] * dm[1]) * R2D;
+    S.a1 = clamp(Math.round(ang * 2) / 2, 0, 88);
+  }
+  refresh(false);
+}
+cv.addEventListener('pointerdown', (e) => {
+  const p = localPt(e), h = hitTest(p.x, p.y);
+  if (!h) return;
+  drag = h; hoverHit = h;
+  if (h.kind === 'obj') { const g = lensGeom(); h.dx = p.x - (g.cx - O.x * view.s); h.dy = p.y - (g.ay - O.h * view.s); }
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  cv.style.cursor = 'grabbing'; e.preventDefault();
+  if (h.kind !== 'F') moveDrag(p.x, p.y);
+});
+cv.addEventListener('pointermove', (e) => {
+  const p = localPt(e);
+  if (drag) { moveDrag(p.x, p.y); return; }
+  const h = hitTest(p.x, p.y);
+  const changed = JSON.stringify(h) !== JSON.stringify(hoverHit);
+  hoverHit = h; cv.style.cursor = h ? 'grab' : 'default';
+  if (changed) dirty = true;
+});
+const endDrag = () => { if (!drag) return; drag = null; cv.style.cursor = hoverHit ? 'grab' : 'default'; refresh(true); schedulePulse(120); };
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+cv.addEventListener('pointerleave', () => { if (!drag && hoverHit) { hoverHit = null; dirty = true; } });
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+const R_ = (t, cls = '') => `<span class="r ${cls}">${t}</span>`;
+const par = (v, d = 1) => (v < 0 ? `(${fmt(v, d)})` : fmt(v, d));
+function fcard(title, body, wide = false) { return `<div class="fcard${wide ? ' wide' : ''}"><h4>${title}</h4>${body}</div>`; }
+function formulasLens() {
+  const o = O, cards = [];
+  const fS = o.fin ? fmt(o.f, 1) : '∞';
+  const xS = fmt(o.x, 1);
+  // lens / mirror equation
+  let b = `<div class="eq">${FR('1', V('f'))}${EQ}${FR('1', V('x'))} + ${FR('1', V('y'))}</div>`;
+  b += `<div class="eq num">${FR('1', V('y'))}${EQ}${FR('1', V('f'))} − ${FR('1', V('x'))}${EQ}${o.fin ? FR('1', fS) : '0'} − ${FR('1', xS)}${EQ}${o.atInf ? '0' : fmt(1 / o.y, 4) + ' cm⁻¹'}</div>`;
+  b += `<div class="eq num">${V('y')}${EQ}${R_(o.atInf ? '∞' : fa(o.y) + ' cm', 'v')}</div>`;
+  cards.push(fcard(o.mirror ? tr('fMirEq') : tr('fLensEq'), b));
+  // magnification
+  b = `<div class="eq">${V('p')}${EQ}−${FR(V('y'), V('x'))}${EQ}${FR(V('h′'), V('h'))}</div>`;
+  if (o.atInf) b += `<div class="eq num">${V('p')} → ${R_('∞')}</div>`;
+  else {
+    b += `<div class="eq num">${V('p')}${EQ}−${FR(par(o.y, autoDec(o.y)), xS)}${EQ}${R_(fsgn(o.p, 2))}</div>`;
+    b += `<div class="eq num">${V('h′')}${EQ}${V('p')} · ${V('h')}${EQ}${par(o.p, 2)} · ${fmt(o.h, 1)} cm${EQ}${R_(fsgn(o.hi, 2) + ' cm', 'v')}</div>`;
+  }
+  cards.push(fcard(tr('fMag'), b));
+  // optical power
+  b = `<div class="eq">${V('Z')}${EQ}${FR('1', V('f'))}</div>`;
+  if (o.fin) b += `<div class="eq num">${V('Z')}${EQ}${FR('1', par(o.f / 100, 3) + ' m')}${EQ}${R_(fsgn(o.Z, 2) + ' D', 'b')}</div><p class="fnote">${tr('notePower')}</p>`;
+  else b += `<div class="eq num">${V('Z')}${EQ}${FR('1', '∞')}${EQ}${R_('0 D', 'b')}</div><p class="fnote">${tr('notePowerPlane')}</p>`;
+  cards.push(fcard(tr('fPower'), b));
+  // lensmaker or mirror radius
+  if (!o.mirror) {
+    b = `<div class="eq">${FR('1', V('f'))}${EQ}(${FR(V('n'), V('n', 'o'))} − 1)(${FR('1', V('R', '1'))} + ${FR('1', V('R', '2'))})</div>`;
+    if (S.lensmaker) {
+      const sg = S.elem === 'conv' ? 1 : -1;
+      const r1 = S.R1 >= RINF ? '∞' : par(sg * S.R1, 1), r2 = S.R2 >= RINF ? '∞' : par(sg * S.R2, 1);
+      const pw = lensmakerPower();
+      b += `<div class="eq num">${FR('1', V('f'))}${EQ}(${FR(fmt(S.n, 2), fmt(S.nm, 2))} − 1)(${FR('1', r1)} + ${FR('1', r2)})${EQ}${fmt(pw, 4)} cm⁻¹</div>`;
+      b += `<div class="eq num">${V('f')}${EQ}${R_(o.fin ? fsgn(o.f, 1) + ' cm' : '∞', 'b')}</div>`;
+      b += `<p class="fnote">${tr('noteLmSign')}</p>`;
+    } else {
+      b += `<p class="fnote">${tr('noteLmOff')}</p>`;
+      b += `<div class="eq num">${V('R')}${EQ}2(${V('n')} − 1)${V('f')}${EQ}2 · 0,50 · ${par(o.f, 1)}${EQ}${R_(fsgn(o.f, 1) + ' cm', 'b')}</div>`;
+      b += `<p class="fnote">${tr('noteLmR')} R₁ = R₂ = ${fmt(Math.abs(o.f), 1)} cm.</p>`;
+    }
+    if (lang === 'en') b = b.replace('2 · 0,50', '2 · 0.50');
+    cards.push(fcard(tr('fLm'), b));
+  } else {
+    b = `<div class="eq">${V('f')}${EQ}${FR(V('R'), '2')}</div>`;
+    if (o.fin) {
+      b += `<div class="eq num">${V('R')}${EQ}2${V('f')}${EQ}2 · ${par(o.f, 1)}${EQ}${R_(fsgn(2 * o.f, 1) + ' cm', 'b')}</div>`;
+      if (o.f < 0) b += `<p class="fnote">${tr('noteMirConvex')}</p>`;
+    } else b += `<div class="eq num">${V('R')} = ∞ ⇒ ${V('f')} = ∞ ⇒ ${V('y')}${EQ}−${V('x')}${EQ}${R_(fmt(-o.x, 1) + ' cm', 'v')}</div><p class="fnote">${tr('noteMirPlane')}</p>`;
+    cards.push(fcard(tr('fMir'), b));
+  }
+  cards.push(fcard(tr('fConv'), `<ul class="conv">${['conv1', 'conv2', 'conv3', 'conv4', 'conv5', 'conv6'].map(k => `<li>${tr(k)}</li>`).join('')}</ul>`, true));
+  return cards.join('');
+}
+function formulasIface() {
+  const r = RI, cards = [];
+  let b = `<div class="eq">${V('n', '1')} sin ${V('α')}${EQ}${V('n', '2')} sin ${V('β')}</div>`;
+  b += `<div class="eq num">sin ${V('β')}${EQ}${FR(fmt(r.n1, 2), fmt(r.n2, 2))} · sin ${fmt(S.alpha, 1)}°${EQ}${fmt(r.sb, 3)}</div>`;
+  b += `<div class="eq num">${V('β')}${EQ}${R_(r.tir ? (lang === 'pl' ? 'brak (sin β > 1)' : 'none (sin β > 1)') : fmt(r.b * R2D, 1) + '°', 'b')}</div>`;
+  cards.push(fcard(tr('fSnell'), b));
+  b = `<div class="eq">sin ${V('α', lang === 'pl' ? 'gr' : 'c')}${EQ}${FR(V('n', '2'), V('n', '1'))}</div>`;
+  if (isFinite(r.crit)) {
+    b += `<div class="eq num">sin ${V('α', lang === 'pl' ? 'gr' : 'c')}${EQ}${FR(fmt(r.n2, 2), fmt(r.n1, 2))}${EQ}${fmt(r.n2 / r.n1, 3)} ⇒ ${R_(fmt(r.crit * R2D, 1) + '°')}</div>`;
+    if (r.tir) b += `<p class="fnote">${tr('noteTIRnow')}</p>`;
+  } else b += `<p class="fnote">${tr('noteCritNo')}</p>`;
+  cards.push(fcard(tr('fCrit'), b));
+  b = `<div class="eq">${V('v')}${EQ}${FR(V('c'), V('n'))}, &nbsp; ${V('n', '21')}${EQ}${FR(V('n', '2'), V('n', '1'))}${EQ}${FR(V('v', '1'), V('v', '2'))}</div>`;
+  b += `<div class="eq num">${V('v', '2')}${EQ}${FR('3,00·10⁸ m/s', fmt(r.n2, 2))}${EQ}${R_(fmt(C_LIGHT / r.n2 / 1e8, 2) + '·10⁸ m/s')}</div>`;
+  b += `<div class="eq num">${V('n', '21')}${EQ}${FR(fmt(r.n2, 2), fmt(r.n1, 2))}${EQ}${R_(fmt(r.n2 / r.n1, 3))}</div>`;
+  if (lang === 'en') b = b.replace('3,00·10⁸', '3.00·10⁸');
+  cards.push(fcard(tr('fSpeed'), b));
+  b = `<div class="eq">${V('R')}${EQ}${FR('1', '2')}(${V('r', 's')}<sup>2</sup> + ${V('r', 'p')}<sup>2</sup>), &nbsp; tg ${V('α', 'B')}${EQ}${FR(V('n', '2'), V('n', '1'))}</div>`;
+  b += `<div class="eq num">${V('R')}${EQ}${FR('1', '2')}(${fmt(r.Rs, 3)} + ${fmt(r.Rp, 3)})${EQ}${R_(fmt(r.R * 100, 1) + ' %')}</div>`;
+  b += `<div class="eq num">${V('α', 'B')}${EQ}arctg ${FR(fmt(r.n2, 2), fmt(r.n1, 2))}${EQ}${R_(fmt(r.brew * R2D, 1) + '°', 'b')}</div><p class="fnote">${tr('noteFres')}</p>`;
+  if (lang === 'en') b = b.replace(/tg /g, 'tan ').replace('arctg', 'arctan');
+  cards.push(fcard(tr('fFresnel'), b));
+  cards.push(fcard(tr('fReflLaw'), `<div class="eq">${V('α′')}${EQ}${V('α')}${EQ}${R_(fmt(S.alpha, 1) + '°')}</div><p class="fnote">${tr('noteRefl')}</p>`, true));
+  return cards.join('');
+}
+function formulasPrism() {
+  const p = PR, q = MATS[S.mat], cards = [];
+  const l = LINES.D / 1000;
+  let b = `<div class="eq">${V('n')}(${V('λ')})${EQ}${V('A')} + ${FR(V('B'), `${V('λ')}<sup>2</sup>`)}</div>`;
+  b += `<div class="eq num">${V('n', 'D')}${EQ}${fmt(q.A, 4)} + ${FR(fmt(q.B, 5) + ' µm²', `(${fmt(l, 4)} µm)<sup>2</sup>`)}${EQ}${R_(fmt(p.n.D, 4))}</div>`;
+  b += `<p class="fnote">${tr('noteCauchy')}${S.boost ? ' ' + tr('noteBoost') : ''}</p>`;
+  cards.push(fcard(tr('fCauchy'), b));
+  const dD = p.dv.D;
+  b = `<div class="eq">sin ${V('α', '1')}${EQ}${V('n')} sin ${V('β', '1')}, &nbsp; ${V('β', '1')} + ${V('β', '2')}${EQ}${V('φ')}, &nbsp; ${V('n')} sin ${V('β', '2')}${EQ}sin ${V('α', '2')}</div>`;
+  b += `<div class="eq num">${V('β', '1')}${EQ}arcsin ${FR(`sin ${fmt(S.a1, 1)}°`, fmt(p.n.D, 3))}${EQ}${fmt(dD.b1 * R2D, 2)}°, &nbsp; ${V('β', '2')}${EQ}${fmt(S.phi, 0)}° − ${fmt(dD.b1 * R2D, 2)}°${EQ}${fmt(dD.b2 * R2D, 2)}°</div>`;
+  b += `<div class="eq num">${V('α', '2')}${EQ}${R_(isFinite(dD.a2) ? fmt(dD.a2 * R2D, 2) + '°' : '—', 'b')}</div>`;
+  if (!isFinite(dD.a2)) b += `<p class="fnote">${tr('notePTIR')}</p>`;
+  cards.push(fcard(tr('fFaces'), b));
+  b = `<div class="eq">${V('δ')}${EQ}${V('α', '1')} + ${V('α', '2')} − ${V('φ')}</div>`;
+  b += isFinite(dD.d) ? `<div class="eq num">${V('δ', 'D')}${EQ}${fmt(S.a1, 1)}° + ${fmt(dD.a2 * R2D, 2)}° − ${fmt(S.phi, 0)}°${EQ}${R_(fmt(dD.d * R2D, 2) + '°')}</div>` : `<p class="fnote">${tr('notePTIR')}</p>`;
+  if (isFinite(p.dv.F.d) && isFinite(p.dv.C.d)) b += `<div class="eq num">${V('δ', 'F')} − ${V('δ', 'C')}${EQ}${fmt(p.dv.F.d * R2D, 2)}° − ${fmt(p.dv.C.d * R2D, 2)}°${EQ}${R_(fmt((p.dv.F.d - p.dv.C.d) * R2D, 2) + '°', 'v')}</div>`;
+  cards.push(fcard(tr('fDev'), b));
+  b = `<div class="eq">${V('n')}${EQ}${FR(`sin ${FR(`${V('φ')} + ${V('δ', 'min')}`, '2')}`, `sin ${FR(V('φ'), '2')}`)}</div>`;
+  if (isFinite(p.dmin)) b += `<div class="eq num">${V('δ', 'min')}${EQ}2 arcsin(${fmt(p.n.D, 3)} · sin ${fmt(S.phi / 2, 1)}°) − ${fmt(S.phi, 0)}°${EQ}${R_(fmt(p.dmin * R2D, 2) + '°')}</div>`;
+  b += `<p class="fnote">${tr('noteMinDev')}</p>`;
+  cards.push(fcard(tr('fMinDev'), b));
+  b = `<div class="eq">${V('V')}${EQ}${FR(`${V('n', 'D')} − 1`, `${V('n', 'F')} − ${V('n', 'C')}`)}${EQ}${FR(`${fmt(p.n.D, 4)} − 1`, `${fmt(p.n.F, 4)} − ${fmt(p.n.C, 4)}`)}${EQ}${R_(fmt(p.V, 1))}</div><p class="fnote">${tr('noteAbbe')}</p>`;
+  cards.push(fcard(tr('fAbbe'), b, true));
+  return cards.join('');
+}
+
+/* ---------- HUD, verdict, results ---------- */
+function hudItem(dt, val, unit) { return `<div><dt>${dt}</dt><dd>${val}${unit ? ` <span>${unit}</span>` : ''}</dd></div>`; }
+function updateHud() {
+  let h = '';
+  if (S.mode === 'lens') {
+    const o = O;
+    h += hudItem('x', fmt(o.x, 1), 'cm');
+    h += hudItem('y', o.atInf ? '∞' : fa(o.y), o.atInf ? '' : 'cm');
+    h += hudItem('f', o.fin ? fmt(o.f, 1) : '∞', o.fin ? 'cm' : '');
+    h += hudItem('Z', fmt(o.Z, 2), 'D');
+    h += hudItem('p', o.atInf ? '∞' : fmt(o.p, 2), '');
+    h += hudItem('h′', o.atInf ? '∞' : fmt(o.hi, 2), o.atInf ? '' : 'cm');
+  } else if (S.rsub === 'iface') {
+    const r = RI;
+    h += hudItem('α', fmt(S.alpha, 1), '°');
+    h += hudItem('β', r.tir ? '—' : fmt(r.b * R2D, 1), '°');
+    h += hudItem(`α<sub>${lang === 'pl' ? 'gr' : 'c'}</sub>`, isFinite(r.crit) ? fmt(r.crit * R2D, 1) : '—', '°');
+    h += hudItem('R', fmt(r.R * 100, 1), '%');
+    h += hudItem('T', fmt(r.T * 100, 1), '%');
+  } else {
+    const p = PR;
+    h += hudItem('α<sub>1</sub>', fmt(S.a1, 1), '°');
+    h += hudItem('δ<sub>D</sub>', isFinite(p.dv.D.d) ? fmt(p.dv.D.d * R2D, 2) : '—', '°');
+    h += hudItem('Δδ', isFinite(p.dv.F.d) && isFinite(p.dv.C.d) ? fmt((p.dv.F.d - p.dv.C.d) * R2D, 2) : '—', '°');
+    h += hudItem('n<sub>D</sub>', fmt(p.n.D, 4), '');
+    h += hudItem('φ', fmt(S.phi, 0), '°');
+  }
+  $('#hud').innerHTML = h;
+}
+function verdictItems() {
+  if (S.mode === 'lens') {
+    const o = O;
+    if (o.atInf) return [{ t: tr('cNone'), tone: 'warm', k: 'dKind' }, { t: tr('cPar'), tone: 'warm', k: 'dOrient' }, { t: tr('cInf'), tone: '', k: 'dSize' }];
+    return [
+      { t: tr(o.kind === 'real' ? 'cReal' : 'cVirtual'), tone: o.kind === 'real' ? 'img' : 'ghost', dtone: o.kind === 'real' ? 'real' : 'ghost', k: 'dKind' },
+      { t: tr(o.p < 0 ? 'cInverted' : 'cUpright'), tone: o.p < 0 ? 'hot' : 'cool', dtone: o.p < 0 ? 'hot' : 'cool', k: 'dOrient' },
+      { t: tr(sizeKey(o.p)), tone: sizeKey(o.p) === 'cMag' ? 'warm' : '', dtone: sizeKey(o.p) === 'cMag' ? 'warm' : '', k: 'dSize' }
+    ];
+  }
+  if (S.rsub === 'iface') {
+    const r = RI;
+    const dir = r.n2 > r.n1 + 1e-9 ? 'vDenser' : r.n2 < r.n1 - 1e-9 ? 'vRarer' : 'vSame';
+    const bend = r.tir ? 'vTIR' : S.alpha < 0.25 || dir === 'vSame' ? 'vNormal' : r.b < r.a ? 'vTowards' : 'vAway';
+    return [
+      { t: tr(dir), tone: 'cool', dtone: 'cool', k: 'dDir' },
+      { t: tr(bend), tone: r.tir ? 'solid' : 'hot', dtone: 'hot', k: 'dBend' },
+      { t: `R ${fmt(r.R * 100, 0)} % · T ${fmt(r.T * 100, 0)} %`, tone: '', dtone: '', k: 'dEnergy' }
+    ];
+  }
+  const p = PR;
+  return [
+    { t: S.white ? tr('vDisp') : `λ = ${fmt(S.lam, 0)} nm`, tone: 'warm', dtone: 'warm', k: 'dWhite' },
+    { t: p.tir ? tr('vPTIR') : p.nearMin ? tr('vMin') : `δ ${fmt(p.dv.D.d * R2D, 1)}°`, tone: p.tir ? 'solid' : p.nearMin ? 'img' : 'hot', dtone: p.nearMin ? 'real' : 'hot', k: 'dDev' },
+    { t: isFinite(p.dv.F.d) && isFinite(p.dv.C.d) ? `Δδ ${fmt((p.dv.F.d - p.dv.C.d) * R2D, 2)}°` : '—', tone: 'cool', dtone: 'cool', k: 'dSpread' }
+  ];
+}
+function updateVerdict() {
+  const it = verdictItems();
+  $('#verdict').innerHTML = it.map(v => `<span class="vchip" data-tone="${v.tone}">${v.t}</span>`).join('');
+  $('#diag').innerHTML = it.map(v => `<div class="dchip" data-tone="${v.dtone || ''}"><small>${tr(v.k)}</small><b>${v.t}</b></div>`).join('');
+}
+function storyKey() {
+  const o = O;
+  if (S.elem === 'plane') return 'stPlane';
+  if (!o.fin) return 'stFlat';
+  if (o.f < 0) return o.mirror ? 'stConvex' : 'stDiv';
+  if (o.atInf) return o.mirror ? 'stMirF' : 'stLensF';
+  const r = o.x / o.f;
+  if (r < 1) return o.mirror ? 'stMirMag' : 'stLoupe';
+  if (Math.abs(r - 2) < 0.004) return o.mirror ? 'stMir2F' : 'stLens2F';
+  if (r < 2) return o.mirror ? 'stMirProj' : 'stProj';
+  return o.mirror ? 'stMirTel' : 'stCam';
+}
+function row(th, val, note = '') { return `<tr><th>${th}</th><td>${val}</td><td class="note">${note}</td></tr>`; }
+function updateResults() {
+  let rows = '';
+  if (S.mode === 'lens') {
+    const o = O;
+    $('#res-sub').textContent = tr(o.mirror ? 'resSubMir' : 'resSubLens');
+    $('#story').innerHTML = tr(storyKey());
+    const yNote = o.atInf ? tr('nyInf') : o.kind === 'real' ? tr(o.mirror ? 'nyRealMir' : 'nyRealLens') : tr(o.mirror ? 'nyVirtMir' : 'nyVirtLens');
+    rows += row(tr('rx'), `${fmt(o.x, 1)} cm`, tr(S.elem === 'conv' ? 'elConv' : S.elem === 'div' ? 'elDiv' : S.elem === 'concave' ? 'elConcave' : S.elem === 'convex' ? 'elConvex' : 'elPlane'));
+    rows += row(tr('ry'), o.atInf ? '∞' : `${fa(o.y)} cm`, yNote);
+    rows += row(tr('rf'), o.fin ? `${fmt(o.f, 1)} cm` : '∞', o.fin ? tr(o.f > 0 ? 'nfConv' : 'nfDiv') : tr('nfInf'));
+    if (o.mirror) rows += row(tr('rR'), o.fin ? `${fmt(2 * o.f, 1)} cm` : '∞', o.fin ? tr('nRmir') : tr('nRplane'));
+    rows += row(tr('rp'), o.atInf ? '∞' : fmt(o.p, 2), o.atInf ? '' : tr(o.p < 0 ? 'npInv' : 'npUp'));
+    rows += row(tr('rh'), o.atInf ? '∞' : `${fmt(o.hi, 2)} cm`, o.atInf ? '' : `${tr('nhAbs')} ${fmt(Math.abs(o.hi), 2)} cm`);
+    rows += row(tr('rZ'), `${fmt(o.Z, 2)} D`, tr('nZ'));
+  } else if (S.rsub === 'iface') {
+    const r = RI;
+    $('#res-sub').textContent = tr('resSubIface');
+    const same = Math.abs(r.n1 - r.n2) < 1e-9;
+    $('#story').innerHTML = tr(r.tir ? 'stIfaceTIR' : same ? 'stIfaceSame' : S.alpha < 0.25 ? 'stIfaceN' : r.n2 > r.n1 ? 'stIfaceT' : 'stIfaceA');
+    rows += row(tr('rAl'), `${fmt(S.alpha, 1)}°`, '');
+    rows += row(tr('rBe'), r.tir ? '—' : `${fmt(r.b * R2D, 1)}°`, r.tir ? tr('nTIR') : same || S.alpha < 0.25 ? tr('nStraight') : tr(r.b < r.a ? 'nTowards' : 'nAway'));
+    rows += row(tr('rCrit'), isFinite(r.crit) ? `${fmt(r.crit * R2D, 1)}°` : '—', isFinite(r.crit) ? '' : tr('nCritNo'));
+    rows += row(tr('rBrew'), `${fmt(r.brew * R2D, 1)}°`, '');
+    rows += row(tr('rRefl'), `${fmt(r.R * 100, 1)} %`, '');
+    rows += row(tr('rTrans'), `${fmt(r.T * 100, 1)} %`, '');
+    rows += row(tr('rV1'), `${fmt(C_LIGHT / r.n1 / 1e8, 3)}·10⁸ m/s`, '');
+    rows += row(tr('rV2'), `${fmt(C_LIGHT / r.n2 / 1e8, 3)}·10⁸ m/s`, '');
+    rows += row(tr('rN21'), fmt(r.n2 / r.n1, 3), '');
+  } else {
+    const p = PR;
+    $('#res-sub').textContent = tr('resSubPrism');
+    $('#story').innerHTML = tr(p.tir ? 'stPrismTIR' : p.nearMin ? 'stPrismMin' : 'stPrism');
+    const dg = (v) => (isFinite(v) ? `${fmt(v * R2D, 2)}°` : '—');
+    rows += row(tr('rPa1'), `${fmt(S.a1, 1)}°`, '');
+    rows += row(tr('rPphi'), `${fmt(S.phi, 0)}°`, '');
+    rows += row(tr('rPnD'), fmt(p.n.D, 4), `n_C = ${fmt(p.n.C, 4)}, n_F = ${fmt(p.n.F, 4)}`);
+    rows += row(tr('rPdC'), dg(p.dv.C.d), isFinite(p.dv.C.d) ? '' : tr('nPtir'));
+    rows += row(tr('rPdD'), dg(p.dv.D.d), isFinite(p.dv.D.d) ? '' : tr('nPtir'));
+    rows += row(tr('rPdF'), dg(p.dv.F.d), isFinite(p.dv.F.d) ? '' : tr('nPtir'));
+    rows += row(tr('rPspread'), isFinite(p.dv.F.d) && isFinite(p.dv.C.d) ? dg(p.dv.F.d - p.dv.C.d) : '—', '');
+    rows += row(tr('rPmin'), dg(p.dmin), isFinite(p.dmin) ? `${tr('nPmin')} ${fmt(p.amin * R2D, 1)}°` : '');
+    rows += row(tr('rPV'), fmt(p.V, 1), tr('nPV'));
+  }
+  $('#res-body').innerHTML = rows;
+}
+function updateOverlays() {
+  const lg = $('#ov-legend'), msg = $('#ov-msg');
+  if (S.mode === 'lens' && S.show.principal) {
+    const o = O, rays = computeRays();
+    const l1 = !o.mirror ? tr('lg1lens') : rays.pr[0].vertex ? tr('lg1vert') : tr('lg1mir');
+    let h = `<span style="color:${col.ray1}"><b>1</b>${l1}</span>`;
+    h += `<span style="color:${col.ray2}"><b>2</b>${o.fin ? tr('lg2') : tr('lg2plane')}</span>`;
+    if (rays.pr.length > 2) h += `<span style="color:${col.ray3}"><b>3</b>${tr('lg3')}</span>`;
+    if (S.show.virt && o.kind === 'virtual') h += `<span style="color:${col.img}"><i class="ln d"></i>${tr('lgVirt')}</span>`;
+    lg.innerHTML = h; lg.hidden = false;
+  } else lg.hidden = true;
+  let m = null, cls = '';
+  if (S.mode === 'lens') {
+    if (O.atInf) m = tr(O.mirror ? 'msgInfMir' : 'msgInf');
+    else if (!O.fin && isLens()) { m = tr('msgFlat'); cls = 'cool'; }
+  } else if (S.rsub === 'iface') { if (RI.tir) { m = tr('msgTIR'); cls = 'hot'; if (lang === 'en') m = m.replace('α_gr', 'α_c'); } }
+  else if (PR.tir) { m = tr('msgPrismTIR'); cls = 'hot'; }
+  msg.hidden = !m; if (m) { msg.textContent = m; msg.className = 'ov-msg ' + cls; }
+  $('#ov-hint').textContent = S.mode === 'lens' ? tr('hint') : S.rsub === 'iface' ? tr('hintR') : tr('hintP');
+}
+
+/* ---------- panel sync ---------- */
+function setFill(el) {
+  const p = (el.value - el.min) / (el.max - el.min) * 100;
+  el.style.setProperty('--p', p + '%');
+}
+function setSlider(id, v) { const el = $('#' + id); el.value = v; setFill(el); }
+function syncPanel() {
+  const key = sceneKey();
+  $$('[data-for]').forEach(el => {
+    const f = el.dataset.for;
+    el.hidden = !(f === S.mode || f === key);
+  });
+  $$('.mode').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)));
+  $$('.etile').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.elem === S.elem)));
+  $$('#rsub button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.rs === S.rsub)));
+  $$('#ostyle button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.os === S.ostyle)));
+  $$('#toggles .tg').forEach(b => b.setAttribute('aria-pressed', String(!!S.show[b.dataset.key])));
+  $('#lede').innerHTML = tr(S.mode === 'lens' ? 'lede' : 'ledeR');
+  // focal group
+  const o = O, lens = isLens(), plane = S.elem === 'plane';
+  const fCtlOff = plane || (lens && S.lensmaker);
+  $('#f').disabled = fCtlOff; $('#ctl-f').classList.toggle('off', fCtlOff);
+  setSlider('f', clamp(o.fin ? Math.abs(o.f) : S.fAbs, 2, 30));
+  $('#f-out').textContent = o.fin ? `${fsgn(o.f, 1)} cm` : '∞';
+  $('#f-hint').textContent = plane ? tr('fHintPlane') : lens && S.lensmaker ? tr('fHintLm') : o.mirror ? `${tr('fHintMirror')} ${fmt(Math.abs(2 * o.f), 1)} cm.` : tr('fHintLens');
+  $('#lm-wrap').hidden = !lens;
+  $('#lm').checked = S.lensmaker;
+  ['n', 'r1', 'r2'].forEach(id => { $('#' + id).disabled = !S.lensmaker; $('#ctl-' + id).classList.toggle('off', !S.lensmaker); });
+  $$('#media .chip').forEach(b => { b.disabled = !S.lensmaker; b.setAttribute('aria-pressed', String(Math.abs(+b.dataset.nm - S.nm) < 0.002)); });
+  setSlider('n', S.n); setSlider('r1', S.R1); setSlider('r2', S.R2);
+  $('#n-out').textContent = fmt(S.n, 2);
+  const rTxt = (R) => (R >= RINF ? '∞' : `${fmt(R, 1)} cm`);
+  $('#r1-out').textContent = rTxt(S.R1); $('#r2-out').textContent = rTxt(S.R2);
+  setSlider('x', S.x); setSlider('h', S.h);
+  $('#x-out').textContent = `${fmt(S.x, 1)} cm`; $('#h-out').textContent = `${fmt(S.h, 1)} cm`;
+  const conv = o.fin && o.f > 0;
+  $$('#presets .chip').forEach(b => { const k = PRESETS[b.dataset.pr]; b.setAttribute('aria-pressed', String(conv && Math.abs(S.x - k * o.f) < 0.051)); });
+  // refraction
+  setSlider('al', S.alpha); $('#al-out').textContent = `${fmt(S.alpha, 1)}°`;
+  setSlider('n1', S.n1); setSlider('n2', S.n2);
+  $('#n1-out').textContent = fmt(S.n1, 2); $('#n2-out').textContent = fmt(S.n2, 2);
+  for (const [id, nv] of [['#med1', S.n1], ['#med2', S.n2]]) $$(id + ' .chip').forEach(b => b.setAttribute('aria-pressed', String(Math.abs(+b.dataset.n - nv) < 0.006)));
+  $$('#mats .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mat === S.mat)));
+  setSlider('phi', S.phi); setSlider('a1', S.a1); setSlider('lam', S.lam);
+  $('#phi-out').textContent = `${fmt(S.phi, 0)}°`; $('#a1-out').textContent = `${fmt(S.a1, 1)}°`;
+  $('#lam-out').textContent = `${fmt(S.lam, 0)} nm`; $('#lam').style.setProperty('--c', lambdaRGB(S.lam));
+  $('#white').checked = S.white; $('#boost').checked = S.boost;
+  $('#lam').disabled = S.white; $('#ctl-lam').classList.toggle('off', S.white);
+}
+function buildMediaChips() {
+  for (const id of ['#med1', '#med2']) {
+    $(id).innerHTML = MEDIA.map(m => `<button type="button" class="chip" data-n="${m.n}" aria-pressed="false"><span>${tr(m.k)}</span><small>${fmt(m.n, 2)}</small></button>`).join('');
+  }
+}
+
+/* ---------- refresh ---------- */
+let viewLock = false;
+function refresh(retarget = true) {
+  compute();
+  if (retarget && !drag) viewLock = false;
+  syncPanel(); updateHud(); updateVerdict(); updateResults(); updateOverlays();
+  $('#fgrid').innerHTML = S.mode === 'lens' ? formulasLens() : S.rsub === 'iface' ? formulasIface() : formulasPrism();
+  buildTabs();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 280, chartGeom = null;
+new ResizeObserver(() => { ccw = Math.max(1, cbox.clientWidth); cch = Math.max(1, cbox.clientHeight); ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+const TABS = { lens: ['y', 'p', 'inv'], iface: ['beta', 'refl'], prism: ['delta', 'disp'] };
+const TAB_LABEL = { y: 'tabY', p: 'tabP', inv: 'tabInv', beta: 'tabBeta', refl: 'tabRefl', delta: 'tabDelta', disp: 'tabDisp' };
+let tabsKey = '';
+function buildTabs() {
+  const key = sceneKey(), k2 = key + lang;
+  if (k2 === tabsKey) { $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === S.tab[key]))); return; }
+  tabsKey = k2;
+  $('#tabs').innerHTML = TABS[key].map(t => `<button type="button" role="tab" id="tab-${t}" data-tab="${t}" aria-selected="${t === S.tab[key]}">${tr(TAB_LABEL[t])}</button>`).join('');
+  $$('#tabs button').forEach(b => b.addEventListener('click', () => { S.tab[sceneKey()] = b.dataset.tab; S.hover = null; tip.hidden = true; buildTabs(); chartDirty = true; }));
+}
+function sampleFn(fn, x0, x1, n, breaks = []) {
+  const pts = [];
+  for (let i = 0; i <= n; i++) {
+    const x = x0 + (x1 - x0) * i / n;
+    if (breaks.some(b => Math.abs(x - b) < (x1 - x0) / n * 0.5)) { pts.push(null); continue; }
+    const y = fn(x); pts.push(isFinite(y) ? [x, y] : null);
+  }
+  return pts;
+}
+function chartConfig() {
+  const key = sceneKey(), tab = S.tab[key];
+  if (key === 'lens') {
+    const o = O, F = o.fin ? Math.abs(o.f) : 0;
+    const X1 = o.fin ? Math.max(4 * F, o.x * 1.15) : Math.max(30, o.x * 1.25);
+    if (tab === 'y') {
+      const yf = (x) => (o.fin ? x * o.f / (x - o.f) : -x);
+      let yr;
+      if (!o.fin) yr = [-X1, X1 * 0.3];
+      else if (o.f > 0) { const Ym = Math.max(4 * F, Math.min(Math.abs(o.y) * 1.15, 8 * F) || 0); yr = [-Ym, Ym]; }
+      else yr = [-1.6 * F, 0.6 * F];
+      const brk = o.fin && o.f > 0 ? [o.f] : [];
+      const cfg = {
+        xr: [0, X1], yr, xlab: 'x [cm]', ylab: 'y [cm]',
+        bands: o.fin && o.f > 0 ? [{ x0: 0, x1: o.f, color: withAlpha(col.violet, 0.07) }] : [],
+        hb: [{ y0: yr[0], y1: 0, color: withAlpha(col.violet, 0.05) }],
+        series: [{ pts: sampleFn(yf, X1 / 600, X1, 600, brk), color: col.violet, width: 2.4, name: 'y(x)' }],
+        vlines: [], hlines: [], legend: [{ name: tr('serReal') + ' (y > 0)', color: col.violet }, { name: tr('serAsym'), color: col.ink3, dash: true }],
+        marker: o.atInf ? null : { x: o.x, y: o.y, color: col.crimson },
+        note: o.fin ? tr('cnY') : tr('cnYplane'),
+        hover: (x) => { const y = yf(x); return { pts: [{ x, y, color: col.violet }], html: `<div>x = ${fmt(x, 1)} cm</div><div>y = ${isFinite(y) && Math.abs(y) < 1e5 ? fa(y) : '∞'} cm</div><div>p = ${o.fin ? fmt(o.f / (o.f - x), 2) : '1,00'}</div>` }; }
+      };
+      cfg.legend = [{ name: 'y(x) = xf/(x − f)', color: col.violet }, { name: tr('serAsym'), color: col.ink3, dash: true }];
+      if (!o.fin) cfg.legend = [{ name: 'y = −x', color: col.violet }];
+      if (o.fin) { if (o.f > 0) cfg.vlines.push({ x: o.f, color: col.ink3, dash: [5, 4], label: 'x = f' }, { x: 2 * o.f, color: col.line, dash: [2, 4], label: '2f' }); cfg.hlines.push({ y: o.f, color: col.ink3, dash: [5, 4], label: 'y = f' }); }
+      return cfg;
+    }
+    if (tab === 'p') {
+      const pf = (x) => (o.fin ? o.f / (o.f - x) : 1);
+      const yr = !o.fin ? [0, 2] : o.f > 0 ? [-4, 4] : [0, 1.1];
+      const cfg = {
+        xr: [0, X1], yr, xlab: 'x [cm]', ylab: 'p',
+        bands: o.fin && o.f > 0 ? [{ x0: 0, x1: o.f, color: withAlpha(col.violet, 0.07) }] : [],
+        series: [{ pts: sampleFn(pf, X1 / 600, X1, 600, o.fin && o.f > 0 ? [o.f] : []), color: col.amber, width: 2.4 }],
+        vlines: o.fin && o.f > 0 ? [{ x: o.f, color: col.ink3, dash: [5, 4], label: 'x = f' }, { x: 2 * o.f, color: col.line, dash: [2, 4], label: '2f' }] : [],
+        hlines: [{ y: 1, color: col.ink3, dash: [2, 4], label: 'p = 1' }, { y: -1, color: col.ink3, dash: [2, 4], label: 'p = −1' }],
+        legend: [{ name: 'p(x) = f/(f − x)', color: col.amber }],
+        marker: o.atInf ? null : { x: o.x, y: o.p, color: col.crimson },
+        note: tr('cnP'),
+        hover: (x) => { const p = pf(x); return { pts: [{ x, y: p, color: col.amber }], html: `<div>x = ${fmt(x, 1)} cm</div><div>p = ${isFinite(p) && Math.abs(p) < 1e5 ? fmt(p, 2) : '∞'}</div>` }; }
+      };
+      return cfg;
+    }
+    // 1/y vs 1/x in dioptres
+    const Z = o.Z, u = 100 / o.x;
+    const U1 = Math.max(1.3 * u, Z > 0 ? 2.2 * Z : 15, 5);
+    const vlo = Math.min(Z - U1, -2), vhi = Math.max(Z, 0) * 1.25 + 2;
+    return {
+      xr: [0, U1], yr: [vlo, vhi], xlab: '1/x [D]', ylab: '1/y [D]',
+      series: [{ pts: sampleFn((uu) => Z - uu, 0, U1, 100), color: col.blue, width: 2.4 }],
+      vlines: [], hlines: [], legend: [{ name: '1/y = Z − 1/x', color: col.blue }],
+      dots: Z > 0 ? [{ x: 0, y: Z, color: col.blue, label: `Z = ${fmt(Z, 1)} D` }, { x: Z, y: 0, color: col.blue, label: '' }] : [{ x: 0, y: Z, color: col.blue, label: `Z = ${fmt(Z, 1)} D` }],
+      marker: { x: u, y: Z - u, color: col.crimson },
+      note: tr('cnInv'),
+      hover: (uu) => ({ pts: [{ x: uu, y: Z - uu, color: col.blue }], html: `<div>1/x = ${fmt(uu, 2)} D → x = ${uu > 0 ? fa(100 / uu) : '∞'} cm</div><div>1/y = ${fmt(Z - uu, 2)} D → y = ${Math.abs(Z - uu) > 1e-9 ? fa(100 / (Z - uu)) : '∞'} cm</div>` })
+    };
+  }
+  if (key === 'iface') {
+    const r = RI;
+    if (tab === 'beta') {
+      const bf = (a) => { const s = r.n1 / r.n2 * Math.sin(a * D2R); return s > 1 ? NaN : Math.asin(s) * R2D; };
+      const cfg = {
+        xr: [0, 90], yr: [0, 90], xlab: 'α [°]', ylab: 'β [°]', xstep: 15, ystep: 15,
+        bands: isFinite(r.crit) ? [{ x0: r.crit * R2D, x1: 90, color: withAlpha(col.crimson, 0.08), label: lang === 'pl' ? 'całk. odbicie' : 'TIR' }] : [],
+        series: [{ pts: sampleFn((a) => a, 0, 90, 2), color: col.ink3, width: 1.2, dash: [4, 4] }, { pts: sampleFn(bf, 0, 90, 360), color: col.blue, width: 2.4 }],
+        vlines: isFinite(r.crit) ? [{ x: r.crit * R2D, color: col.amber, dash: [5, 4], label: (lang === 'pl' ? 'α_gr' : 'α_c') }] : [], hlines: [],
+        legend: [{ name: 'β(α)', color: col.blue }, { name: tr('serRef'), color: col.ink3, dash: true }],
+        marker: r.tir ? null : { x: S.alpha, y: r.b * R2D, color: col.crimson },
+        note: isFinite(r.crit) ? tr('cnBetaTIR') : tr('cnBeta'),
+        hover: (a) => { const b = bf(a); return { pts: isFinite(b) ? [{ x: a, y: b, color: col.blue }] : [], html: `<div>α = ${fmt(a, 1)}°</div><div>β = ${isFinite(b) ? fmt(b, 1) + '°' : '—'}</div>` }; }
+      };
+      return cfg;
+    }
+    const fr = (a) => fresnel(r.n1, r.n2, a * D2R);
+    return {
+      xr: [0, 90], yr: [0, 100], xlab: 'α [°]', ylab: 'R [%]', xstep: 15,
+      series: [
+        { pts: sampleFn((a) => fr(a).Rs * 100, 0, 89.9, 360), color: col.amber, width: 1.6 },
+        { pts: sampleFn((a) => fr(a).Rp * 100, 0, 89.9, 360), color: col.violet, width: 1.6 },
+        { pts: sampleFn((a) => fr(a).R * 100, 0, 89.9, 360), color: col.crimson, width: 2.6 }
+      ],
+      vlines: [{ x: r.brew * R2D, color: col.violet, dash: [5, 4], label: 'α_B' }].concat(isFinite(r.crit) ? [{ x: r.crit * R2D, color: col.amber, dash: [5, 4], label: lang === 'pl' ? 'α_gr' : 'α_c' }] : []),
+      hlines: [], legend: [{ name: tr('serRs'), color: col.amber }, { name: tr('serRp'), color: col.violet }, { name: tr('serR'), color: col.crimson }],
+      marker: { x: S.alpha, y: r.R * 100, color: col.crimson },
+      note: tr('cnRefl'),
+      hover: (a) => { const q = fr(a); return { pts: [{ x: a, y: q.Rs * 100, color: col.amber }, { x: a, y: q.Rp * 100, color: col.violet }, { x: a, y: q.R * 100, color: col.crimson }], html: `<div>α = ${fmt(a, 1)}°</div><div class="row"><i class="k" style="background:${col.amber}"></i>R_s = ${fmt(q.Rs * 100, 1)} %</div><div class="row"><i class="k" style="background:${col.violet}"></i>R_p = ${fmt(q.Rp * 100, 1)} %</div><div class="row"><i class="k" style="background:${col.crimson}"></i>R = ${fmt(q.R * 100, 1)} %</div>` }; }
+    };
+  }
+  // prism
+  const p = PR, phi = S.phi * D2R;
+  if (S.tab.prism === 'delta') {
+    const lines = [['C', lambdaRGB(LINES.C)], ['D', '#E0A21B'], ['F', lambdaRGB(LINES.F)]];
+    const fn = (k) => (a) => prismDev(p.n[k], a * D2R, phi).d * R2D;
+    let lo = Infinity, hi = -Infinity;
+    for (const [k] of lines) for (let a = 0; a <= 90; a += 0.5) { const v = fn(k)(a); if (isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }
+    if (!isFinite(lo)) { lo = 0; hi = 90; }
+    const pad = Math.max(2, (hi - lo) * 0.08);
+    const cs = { C: lines[0][1], D: lines[1][1], F: lines[2][1] };
+    return {
+      xr: [0, 90], yr: [Math.max(0, lo - pad), hi + pad], xlab: 'α₁ [°]', ylab: 'δ [°]', xstep: 15,
+      series: lines.map(([k, cl]) => ({ pts: sampleFn(fn(k), 0, 90, 360), color: cl, width: k === 'D' ? 2.4 : 1.6 })),
+      vlines: [], hlines: [],
+      legend: [{ name: 'C · 656 nm', color: cs.C }, { name: 'D · 589 nm', color: cs.D }, { name: 'F · 486 nm', color: cs.F }],
+      dots: isFinite(p.dmin) ? [{ x: p.amin * R2D, y: p.dmin * R2D, color: cs.D, label: `δ_min = ${fmt(p.dmin * R2D, 1)}°` }] : [],
+      marker: isFinite(p.dv.D.d) ? { x: S.a1, y: p.dv.D.d * R2D, color: col.crimson } : null,
+      note: tr('cnDelta') + (S.boost ? ' ' + tr('noteBoost') : ''),
+      hover: (a) => ({ pts: lines.map(([k, cl]) => ({ x: a, y: fn(k)(a), color: cl })).filter(q => isFinite(q.y)), html: `<div>α₁ = ${fmt(a, 1)}°</div>` + lines.map(([k, cl]) => { const v = fn(k)(a); return `<div class="row"><i class="k" style="background:${cl}"></i>δ_${k} = ${isFinite(v) ? fmt(v, 2) + '°' : '—'}</div>`; }).join('') })
+    };
+  }
+  const mats = ['crown', 'flint', 'diamond', 'water'];
+  const mcol = { crown: col.blue, flint: col.violet, diamond: col.crimson, water: col.amber };
+  const mname = { crown: 'matCrown', flint: 'matFlint', diamond: 'matDiamond', water: 'matWater' };
+  const lo = Math.min(...mats.map(m => nCauchy(m, 720))), hi = Math.max(...mats.map(m => nCauchy(m, 390)));
+  const lamMark = S.white ? LINES.D : S.lam;
+  return {
+    xr: [390, 720], yr: [lo - 0.04, hi + 0.04], xlab: 'λ [nm]', ylab: 'n', xstep: 50, ydec: 2,
+    spectrum: true,
+    series: mats.map(m => ({ pts: sampleFn((l) => nCauchy(m, l), 390, 720, 200), color: mcol[m], width: m === S.mat ? 2.6 : 1.2, alpha: m === S.mat ? 1 : 0.45 })),
+    vlines: Object.entries(LINES).map(([k, l]) => ({ x: l, color: col.line, dash: [2, 4], label: k })), hlines: [],
+    legend: mats.map(m => ({ name: tr(mname[m]), color: mcol[m] })),
+    marker: { x: lamMark, y: nCauchy(S.mat, lamMark), color: col.ink },
+    note: tr('cnDisp'),
+    hover: (l) => ({ pts: [{ x: l, y: nCauchy(S.mat, l), color: mcol[S.mat] }], html: `<div>λ = ${fmt(l, 0)} nm</div>` + mats.map(m => `<div class="row"><i class="k" style="background:${mcol[m]}"></i>${tr(mname[m])}: ${fmt(nCauchy(m, l), 4)}</div>`).join('') })
+  };
+}
+const decFor = (step) => (step >= 1 ? 0 : step >= 0.1 ? 1 : step >= 0.01 ? 2 : 3);
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const cfg = chartConfig();
+  $('#clegend').innerHTML = cfg.legend.map(l => `<span style="color:${l.color}"><i class="sw-line" style="border-top-style:${l.dash ? 'dashed' : 'solid'}"></i><span style="color:var(--ink-2)">${l.name}</span></span>`).join('');
+  $('#cnote').innerHTML = cfg.note;
+  const [x0, x1] = cfg.xr, [y0, y1] = cfg.yr;
+  const xs = cfg.xstep || niceStep(x1 - x0, 6), ys = cfg.ystep || niceStep(y1 - y0, 5);
+  const xd = decFor(xs), yd = cfg.ydec ?? decFor(ys);
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0;
+  for (let k = Math.ceil(y0 / ys); k * ys <= y1 + 1e-9; k++) labW = Math.max(labW, c.measureText(fmt(k * ys, yd)).width);
+  const L = labW + 14, R = 14, T = 22, B = 30, pw = W - L - R, ph = H - T - B;
+  const X = (v) => L + (v - x0) / (x1 - x0) * pw, Y = (v) => T + (1 - (v - y0) / (y1 - y0)) * ph;
+  chartGeom = { L, T, pw, ph, x0, x1, X, Y, cfg };
+  // spectrum strip
+  if (cfg.spectrum) {
+    for (let l = 390; l < 720; l += 2) { c.fillStyle = withAlpha(lambdaRGB(l), 0.16); c.fillRect(X(l), T, X(l + 2) - X(l) + 0.5, ph); }
+  }
+  // bands
+  for (const b of cfg.bands || []) {
+    c.fillStyle = b.color; c.fillRect(X(b.x0), T, X(b.x1) - X(b.x0), ph);
+    if (b.label) { c.fillStyle = col.ink3; c.font = `500 11px ${FONT_BODY}`; c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(b.label, (X(b.x0) + X(b.x1)) / 2, T + 6); }
+  }
+  for (const b of cfg.hb || []) { c.fillStyle = b.color; c.fillRect(L, Y(b.y1), pw, Y(b.y0) - Y(b.y1)); }
+  // grid + labels
+  c.lineWidth = 1; c.font = `500 11px ${FONT_MONO}`;
+  for (let k = Math.ceil(y0 / ys); k * ys <= y1 + 1e-9; k++) {
+    const v = k * ys, yy = Math.round(Y(v)) + 0.5;
+    c.strokeStyle = Math.abs(v) < 1e-9 ? col.ink3 : col.line; c.globalAlpha = Math.abs(v) < 1e-9 ? 1 : 0.6;
+    c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.globalAlpha = 1;
+    c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillText(fmt(v, yd), L - 8, yy);
+  }
+  for (let k = Math.ceil(x0 / xs); k * xs <= x1 + 1e-9; k++) {
+    const v = k * xs, xx = Math.round(X(v)) + 0.5;
+    c.strokeStyle = col.line; c.globalAlpha = 0.45; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.globalAlpha = 1;
+    c.fillStyle = col.ink2; c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(fmt(v, xd), xx, T + ph + 8);
+  }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(cfg.ylab, 4, 3);
+  c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText(cfg.xlab, W - R, T + ph - 4);
+  c.save(); c.beginPath(); c.rect(L, T, pw, ph); c.clip();
+  // reference lines
+  for (const v of cfg.vlines || []) {
+    c.save(); c.strokeStyle = v.color; c.setLineDash(v.dash || []); c.lineWidth = 1.2; c.beginPath(); c.moveTo(X(v.x), T); c.lineTo(X(v.x), T + ph); c.stroke(); c.restore();
+    if (v.label) { c.fillStyle = col.ink2; c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(v.label, X(v.x) + 4, T + 4); }
+  }
+  for (const h of cfg.hlines || []) {
+    if (h.y < y0 || h.y > y1) continue;
+    c.save(); c.strokeStyle = h.color; c.setLineDash(h.dash || []); c.lineWidth = 1.2; c.beginPath(); c.moveTo(L, Y(h.y)); c.lineTo(L + pw, Y(h.y)); c.stroke(); c.restore();
+    if (h.label) { c.fillStyle = col.ink2; c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText(h.label, L + pw - 4, Y(h.y) - 3); }
+  }
+  // series
+  const span = y1 - y0;
+  for (const s of cfg.series) {
+    c.save(); c.strokeStyle = s.color; c.lineWidth = s.width || 2; c.lineJoin = 'round'; c.globalAlpha = s.alpha ?? 1;
+    if (s.dash) c.setLineDash(s.dash);
+    c.beginPath(); let pen = false;
+    for (const q of s.pts) {
+      if (!q || q[1] < y0 - 20 * span || q[1] > y1 + 20 * span) { pen = false; continue; }
+      const px = X(q[0]), py = Y(q[1]);
+      if (pen) c.lineTo(px, py); else { c.moveTo(px, py); pen = true; }
+    }
+    c.stroke(); c.restore();
+  }
+  // dots
+  for (const d of cfg.dots || []) {
+    c.save(); c.fillStyle = d.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(X(d.x), Y(d.y), 4.5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+    if (d.label) { c.fillStyle = col.ink; c.font = `500 11.5px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'bottom'; c.fillText(d.label, X(d.x) + 8, Y(d.y) - 4); }
+  }
+  // current state marker
+  const m = cfg.marker;
+  if (m && m.y >= y0 && m.y <= y1 && m.x >= x0 && m.x <= x1) {
+    const mx = X(m.x), my = Y(m.y);
+    c.save(); c.strokeStyle = withAlpha(m.color, 0.5); c.setLineDash([3, 3]); c.beginPath(); c.moveTo(mx, T + ph); c.lineTo(mx, my); c.lineTo(L, my); c.stroke(); c.restore();
+    c.save(); c.fillStyle = m.color; c.strokeStyle = col.surface; c.lineWidth = 2.5; c.beginPath(); c.arc(mx, my, 6, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = withAlpha(m.color, 0.35); c.lineWidth = 6; c.beginPath(); c.arc(mx, my, 11, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  // hover
+  if (S.hover != null && S.hover >= x0 && S.hover <= x1) {
+    const hv = cfg.hover(S.hover), xx = Math.round(X(S.hover)) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    for (const q of hv.pts) { if (!isFinite(q.y) || q.y < y0 || q.y > y1) continue; c.save(); c.fillStyle = q.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, Y(q.y), 4.5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore(); }
+  }
+  c.restore();
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom;
+  if (x < g.L || x > g.L + g.pw) { S.hover = null; tip.hidden = true; chartDirty = true; return; }
+  const v = g.x0 + (x - g.L) / g.pw * (g.x1 - g.x0); S.hover = v;
+  tip.innerHTML = g.cfg.hover(v).html; tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hover = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- main loop ---------- */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.mode === 'lens' && !drag) {
+    const ts = targetScale();
+    if (!view.ready) { view.s = ts; view.ready = true; dirty = true; }
+    else if (Math.abs(Math.log(ts / view.s)) > 1e-4) {
+      const f = reduceMotion ? 1 : 1 - Math.exp(-dt * 6);
+      view.s = Math.exp(Math.log(view.s) + (Math.log(ts) - Math.log(view.s)) * f); dirty = true;
+    } else if (view.s !== ts) { view.s = ts; dirty = true; }
+  }
+  if (pulse.on) { pulse.t += dt; dirty = true; }
+  if (pulse.flash > 0) { pulse.flash = Math.max(0, pulse.flash - dt * 1.4); dirty = true; }
+  if (!reduceMotion) {
+    if (S.mode === 'lens' && S.ostyle === 'candle') dirty = true;
+    if (S.mode === 'refr' && S.rsub === 'iface' && S.show.wave) dirty = true;
+  }
+  if (dirty) { drawScene(now); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+function setElem(el) {
+  if (S.elem === el) return;
+  S.elem = el; refresh(); schedulePulse();
+}
+$$('.etile').forEach(b => b.addEventListener('click', () => setElem(b.dataset.elem)));
+$$('.mode').forEach(b => b.addEventListener('click', () => { S.mode = b.dataset.mode; tabsKey = ''; refresh(); schedulePulse(300); }));
+$$('#rsub button').forEach(b => b.addEventListener('click', () => { S.rsub = b.dataset.rs; tabsKey = ''; refresh(); schedulePulse(300); }));
+$$('#ostyle button').forEach(b => b.addEventListener('click', () => { S.ostyle = b.dataset.os; refresh(); }));
+$$('#toggles .tg').forEach(b => b.addEventListener('click', () => { const k = b.dataset.key; S.show[k] = !S.show[k]; refresh(); }));
+const sliders = {
+  f: (v) => { S.fAbs = v; }, x: (v) => { S.x = v; }, h: (v) => { S.h = v; },
+  n: (v) => { S.n = v; }, r1: (v) => { S.R1 = v; }, r2: (v) => { S.R2 = v; },
+  al: (v) => { S.alpha = v; }, n1: (v) => { S.n1 = v; }, n2: (v) => { S.n2 = v; },
+  phi: (v) => { S.phi = v; }, a1: (v) => { S.a1 = v; }, lam: (v) => { S.lam = v; }
+};
+Object.entries(sliders).forEach(([id, fn]) => {
+  const el = $('#' + id);
+  el.addEventListener('input', () => { fn(+el.value); refresh(); });
+  el.addEventListener('change', () => schedulePulse(120));
+});
+$('#lm').addEventListener('change', (e) => {
+  if (e.target.checked) {
+    // start the lensmaker from a symmetric lens that reproduces the current focal length (n = current)
+    const R = clamp(Math.round(2 * (S.n / S.nm - 1) * S.fAbs * 2) / 2, 2, 60);
+    S.R1 = S.R2 = R; S.lensmaker = true;
+  } else {
+    const f = focal(); S.lensmaker = false;
+    if (isFinite(f)) S.fAbs = clamp(round1(Math.abs(f)), 2, 30);
+  }
+  refresh(); schedulePulse();
+});
+$$('#media .chip').forEach(b => b.addEventListener('click', () => { S.nm = +b.dataset.nm; refresh(); schedulePulse(); }));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => {
+  if (S.elem === 'div' || S.elem === 'plane') S.elem = 'conv';
+  if (S.elem === 'convex') S.elem = 'concave';
+  let f = focal();
+  if (!isFinite(f) || f <= 0) { S.lensmaker = false; f = S.fAbs; }
+  let x = PRESETS[b.dataset.pr] * f;
+  if (x > 100) { S.fAbs = clamp(round1(100 / PRESETS[b.dataset.pr]), 2, 30); S.lensmaker = false; x = PRESETS[b.dataset.pr] * S.fAbs; }
+  S.x = x; refresh(); schedulePulse(200);
+}));
+function bindMediaChips() {
+  $$('#med1 .chip').forEach(b => b.addEventListener('click', () => { S.n1 = +b.dataset.n; refresh(); schedulePulse(); }));
+  $$('#med2 .chip').forEach(b => b.addEventListener('click', () => { S.n2 = +b.dataset.n; refresh(); schedulePulse(); }));
+}
+$('#swap').addEventListener('click', () => { const t = S.n1; S.n1 = S.n2; S.n2 = t; refresh(); schedulePulse(); });
+$$('#mats .chip').forEach(b => b.addEventListener('click', () => { S.mat = b.dataset.mat; refresh(); schedulePulse(); }));
+$('#setmin').addEventListener('click', () => { const p = PR; if (isFinite(p.amin)) { S.a1 = clamp(Math.round(p.amin * R2D * 2) / 2, 0, 88); refresh(); schedulePulse(100); } });
+$('#white').addEventListener('change', (e) => { S.white = e.target.checked; refresh(); schedulePulse(); });
+$('#boost').addEventListener('change', (e) => { S.boost = e.target.checked; refresh(); });
+$('#flash').addEventListener('click', firePulse);
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+}
+fsBtn.addEventListener('click', toggleFs);
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); firePulse(); return; }
+  if (tag === 'input') return;
+  let used = true;
+  if (S.mode === 'lens') {
+    if (e.key === 'ArrowLeft') S.x = clamp(round1(S.x + 0.5), 0.5, 100);
+    else if (e.key === 'ArrowRight') S.x = clamp(round1(S.x - 0.5), 0.5, 100);
+    else if (e.key === 'ArrowUp') S.h = clamp(round1(S.h + 0.2), 0.5, 10);
+    else if (e.key === 'ArrowDown') S.h = clamp(round1(S.h - 0.2), 0.5, 10);
+    else if (e.key === '[') { S.lensmaker = false; S.fAbs = clamp(round1(S.fAbs - 0.5), 2, 30); }
+    else if (e.key === ']') { S.lensmaker = false; S.fAbs = clamp(round1(S.fAbs + 0.5), 2, 30); }
+    else if (/^[1-5]$/.test(e.key)) S.elem = ['conv', 'div', 'concave', 'convex', 'plane'][+e.key - 1];
+    else used = false;
+  } else if (S.rsub === 'iface') {
+    if (e.key === 'ArrowLeft') S.alpha = clamp(S.alpha + 1, 0, 89.5);
+    else if (e.key === 'ArrowRight') S.alpha = clamp(S.alpha - 1, 0, 89.5);
+    else if (e.key === 'ArrowUp') S.n2 = clamp(Math.round((S.n2 + 0.01) * 100) / 100, 1, 2.5);
+    else if (e.key === 'ArrowDown') S.n2 = clamp(Math.round((S.n2 - 0.01) * 100) / 100, 1, 2.5);
+    else used = false;
+  } else {
+    if (e.key === 'ArrowLeft') S.a1 = clamp(S.a1 + 1, 0, 88);
+    else if (e.key === 'ArrowRight') S.a1 = clamp(S.a1 - 1, 0, 88);
+    else if (e.key === 'ArrowUp') S.phi = clamp(S.phi + 1, 20, 80);
+    else if (e.key === 'ArrowDown') S.phi = clamp(S.phi - 1, 20, 80);
+    else used = false;
+  }
+  if (!used) {
+    if (e.key === 'f' || e.key === 'F') { toggleFs(); e.preventDefault(); }
+    else if (e.key === 'm' || e.key === 'M') { S.mode = S.mode === 'lens' ? 'refr' : 'lens'; tabsKey = ''; refresh(); schedulePulse(300); }
+    return;
+  }
+  e.preventDefault(); refresh();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $$('#media small').forEach(s => { s.textContent = `n = ${fmt(+s.parentElement.dataset.nm, 2)}`; });
+  buildMediaChips(); bindMediaChips();
+  tabsKey = '';
+  refresh();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('lawa-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readTokens(); refresh(); });
+new MutationObserver(() => { readTokens(); refresh(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize();
+applyLang();
+setTimeout(firePulse, 650);
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
