@@ -1,0 +1,1172 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rozkład Maxwella</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: lab bench. A dark gas chamber and its live speed histogram form the hero,
+   control panel on the right, formulas, time plot and prompts underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --acc:#E2570F; --blue:#2F7FE0; --violet:#6A5CFF; --teal:#0B8F80;
+  --chamber:#0E1A26; --chamber-2:#162a3c; --chamber-grid:#1B2D3F; --metal:#9AA7B4;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --acc:#FF7A33; --blue:#3F8EF0; --violet:#8A7FFF; --teal:#22B8A4;
+    --chamber:#04090F; --chamber-2:#0A1724; --chamber-grid:#0F1E2D; --metal:#5E6F80;
+    --on-accent:#1E0B02; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --acc:#FF7A33; --blue:#3F8EF0; --violet:#8A7FFF; --teal:#22B8A4;
+  --chamber:#04090F; --chamber-2:#0A1724; --chamber-grid:#0F1E2D; --metal:#5E6F80;
+  --on-accent:#1E0B02; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1em; height:.7em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lede b{color:var(--ink); font-weight:600}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 16px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3); white-space:nowrap}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.6ch; color:var(--ink); white-space:nowrap}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2); white-space:nowrap}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--ink-3); color:var(--ink-2)}
+.simgrid{display:grid; grid-template-columns:minmax(0,1.5fr) minmax(0,1fr); background:var(--paper)}
+.canvas-box{position:relative; background:var(--paper); min-width:0}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+#gas-box{aspect-ratio:100 / 64}
+#hist-box{border-left:1px solid var(--line)}
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; justify-content:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease; min-width:9.5em}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:16px; height:16px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.fire.running{background:var(--ink); color:var(--paper); box-shadow:none}
+.fire.nudge{animation:nudge .9s ease 2}
+@keyframes nudge{0%,100%{box-shadow:0 6px 18px -8px var(--acc)}50%{box-shadow:0 0 0 6px color-mix(in srgb, var(--acc) 25%, transparent)}}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.grp[disabled] .ctl{opacity:.38}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label, .ctl .lab{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .ctl .lab i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+.ctl .seg{align-self:flex-start; margin-top:4px}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%; --c:var(--acc)}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+input[type=range]:disabled{cursor:not-allowed}
+.chips{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:flex; flex-direction:column; align-items:flex-start; line-height:1.25; text-align:left; min-width:0}
+.chip small{font-size:11px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--acc); color:var(--ink); box-shadow:inset 0 0 0 1px var(--acc)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pnote{font-size:12px; color:var(--ink-3); margin:0}
+
+/* Lower */
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.rightcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .m{color:var(--ink-3); font-family:var(--f-mono); font-size:13px; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.cmp{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.cmp > div{background:var(--sunk); border-radius:8px; padding:8px 10px; min-width:0}
+.cmp b{display:block; font-size:12px; color:var(--ink-2); font-weight:600}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start; flex-wrap:wrap}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.crow{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{display:inline-block; width:20px; height:0; border-top:2.5px solid var(--ink)}
+.chart-box{position:relative; height:240px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.try{display:flex; gap:12px; align-items:flex-start; text-align:left; width:100%; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--ink)}
+.try:hover{border-color:var(--acc)}
+.try .n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--on-accent); font-family:var(--f-mono); font-size:12px; display:flex; align-items:center; justify-content:center; margin-top:1px}
+.try b{display:block; font-family:var(--f-display); font-weight:700; font-size:15px; margin-bottom:1px}
+.try span.t{font-size:13px; color:var(--ink-2); line-height:1.45}
+.try i{font-family:var(--f-math)}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(270px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 760px){
+  .simgrid{grid-template-columns:minmax(0,1fr)}
+  #hist-box{border-left:0; border-top:1px solid var(--line); height:250px}
+}
+@media (max-width: 640px){
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.8ch; font-size:12.5px}
+  .cmp{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none} .fire.nudge{animation:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka statystyczna · gaz twardych kul</span>
+      <h1>
+        <svg viewBox="0 0 64 40" aria-hidden="true"><g fill="var(--acc)" opacity=".35"><rect x="6" y="26" width="6" height="12" rx="1"/><rect x="14" y="10" width="6" height="28" rx="1"/><rect x="22" y="8" width="6" height="30" rx="1"/><rect x="30" y="16" width="6" height="22" rx="1"/><rect x="38" y="26" width="6" height="12" rx="1"/><rect x="46" y="32" width="6" height="6" rx="1"/></g><path d="M3 38 C 10 38, 13 6, 21 6 S 36 26, 60 37" fill="none" stroke="var(--acc)" stroke-width="3.2" stroke-linecap="round"/></svg>
+        <span data-i18n="title">Rozkład Maxwella</span>
+      </h1>
+      <p class="lede" data-i18n-html="lede"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t"></dd></div>
+            <div><dt>T</dt><dd id="hud-T"></dd></div>
+            <div><dt id="dt-vm">⟨v⟩</dt><dd id="hud-vm"></dd></div>
+            <div><dt id="dt-vr">v<sub>rms</sub></dt><dd id="hud-vr"></dd></div>
+            <div><dt id="dt-vp">v<sub>p</sub></dt><dd id="hud-vp"></dd></div>
+            <div><dt>Z</dt><dd id="hud-z"></dd></div>
+            <div><dt>E</dt><dd id="hud-e"></dd></div>
+          </dl>
+          <span class="state" id="state" data-s="ready"></span>
+        </div>
+        <div class="simgrid">
+          <div class="canvas-box" id="gas-box"><canvas id="gas" role="img" data-i18n-aria="ariaGas"></canvas></div>
+          <div class="canvas-box" id="hist-box"><canvas id="hist" role="img" data-i18n-aria="ariaHist"></canvas></div>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="play"></button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed" data-i18n-aria="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-tag" aria-pressed="false" data-i18n="tgTag">Znaczona cząstka</button>
+            <button type="button" class="tg" id="tg-vec" aria-pressed="false" data-i18n="tgVec">Wektory prędkości</button>
+            <button type="button" class="tg" id="tg-marks" aria-pressed="false" data-i18n="tgMarks">Prędkości charakterystyczne</button>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" id="panel" data-i18n-aria="ariaPanel">
+      <fieldset class="grp">
+        <h3 data-i18n="gStart">Stan początkowy</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-preset="same" aria-pressed="true"><span data-i18n="pSame">Ta sama prędkość</span><small data-i18n="pSameS">rozkład delta</small></button>
+          <button type="button" class="chip" data-preset="hot" aria-pressed="false"><span data-i18n="pHot">Gorąca i zimna połowa</span><small data-i18n="pHotS">przepływ ciepła</small></button>
+          <button type="button" class="chip" data-preset="two" aria-pressed="false"><span data-i18n="pTwo">Dwa gatunki</span><small data-i18n="pTwoS">ekwipartycja</small></button>
+          <button type="button" class="chip" data-preset="free" aria-pressed="false"><span data-i18n="pFree">Rozprężanie swobodne</span><small data-i18n="pFreeS">fluktuacje</small></button>
+        </div>
+      </fieldset>
+      <fieldset class="grp">
+        <h3 data-i18n="gGas">Gaz</h3>
+        <div class="ctl">
+          <div class="ctl-head"><span class="lab" data-i18n-html="lN">Liczba krążków <i>N</i></span><output id="N-out"></output></div>
+          <div class="seg" role="group" id="Nseg">
+            <button type="button" data-n="150" aria-pressed="false">150</button>
+            <button type="button" data-n="300" aria-pressed="false">300</button>
+            <button type="button" data-n="400" aria-pressed="true">400</button>
+            <button type="button" data-n="600" aria-pressed="false">600</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="T" data-i18n-html="lT">Temperatura <i>T</i></label><output id="T-out" for="T"></output></div>
+          <input type="range" id="T" min="50" max="1200" step="10" value="300">
+          <span class="hint" data-i18n="hT">Przeskalowuje wszystkie prędkości, także w trakcie ruchu.</span>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="rad" data-i18n-html="lR">Promień krążka <i>r</i></label><output id="rad-out" for="rad"></output></div>
+          <input type="range" id="rad" min="0.3" max="1.0" step="0.05" value="0.7">
+          <span class="hint" data-i18n="hR">Większy promień to gęstszy gaz i częstsze zderzenia.</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pillEta">upakowanie η</small><span id="pill-eta"></span></div>
+          <div class="pill"><small data-i18n="pillLam">droga swobodna λ</small><span id="pill-lam"></span></div>
+          <div class="pill"><small data-i18n="pillTau">czas między zderz.</small><span id="pill-tau"></span></div>
+        </div>
+      </fieldset>
+      <fieldset class="grp" id="mixgrp" disabled>
+        <h3 data-i18n="gMix">Mieszanina</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="ratio" data-i18n-html="lRatio">Stosunek mas <i>m</i><sub>2</sub>/<i>m</i><sub>1</sub></label><output id="ratio-out" for="ratio"></output></div>
+          <input type="range" id="ratio" min="2" max="16" step="1" value="4">
+          <span class="hint" id="mixhint" data-i18n="hRatio">Działa w ustawieniu „Dwa gatunki”.</span>
+        </div>
+      </fieldset>
+      <fieldset class="grp">
+        <h3 data-i18n="gUnits">Skala</h3>
+        <p class="pnote" data-i18n-html="units"></p>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącego stanu gazu.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <div class="rightcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n="charts">W czasie</h2></div>
+        <div class="crow">
+          <div class="tabs" role="tablist" id="tabs">
+            <button type="button" role="tab" data-tab="h" aria-selected="true" data-i18n="tabH">Funkcja H</button>
+            <button type="button" role="tab" data-tab="T" aria-selected="false" data-i18n="tabT">Temperatury</button>
+            <button type="button" role="tab" data-tab="f" aria-selected="false" data-i18n="tabF">Lewa połowa</button>
+          </div>
+          <div class="seg" role="group" id="hsSeg">
+            <button type="button" data-hs="h" aria-pressed="true"><i style="font-family:var(--f-math);font-size:14px">H</i></button>
+            <button type="button" data-hs="s" aria-pressed="false"><i style="font-family:var(--f-math);font-size:14px">S</i> ∝ −<i style="font-family:var(--f-math);font-size:14px">H</i></button>
+          </div>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart" role="img" data-i18n-aria="ariaChart"></canvas></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <button type="button" class="try" data-try="1"><span class="n">1</span><span><b data-i18n="try1h"></b><span class="t" data-i18n-html="try1"></span></span></button>
+        <button type="button" class="try" data-try="2"><span class="n">2</span><span><b data-i18n="try2h"></b><span class="t" data-i18n-html="try2"></span></span></button>
+        <button type="button" class="try" data-try="3"><span class="n">3</span><span><b data-i18n="try3h"></b><span class="t" data-i18n-html="try3"></span></span></button>
+        <button type="button" class="try" data-try="4"><span class="n">4</span><span><b data-i18n="try4h"></b><span class="t" data-i18n-html="try4"></span></span></button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka statystyczna · gaz twardych kul', title:'Rozkład Maxwella',
+    lede:'<b>Dążenie do równowagi.</b> Wszystkie krążki startują z identyczną prędkością w losowych kierunkach. Naciśnij Start: po kilku sekundach zderzeń histogram prędkości sam układa się w rozkład Maxwella, a funkcja <i>H</i> Boltzmanna spada do minimum.',
+    ariaGas:'Komora z gazem twardych krążków pokolorowanych według prędkości', ariaHist:'Histogram prędkości z krzywą teoretyczną', ariaChart:'Wykres w funkcji czasu', ariaPanel:'Ustawienia',
+    start:'Start', pause:'Pauza', resume:'Wznów', kbd:'spacja', reset:'Od nowa', speed:'Tempo',
+    tgTag:'Znaczona cząstka', tgVec:'Wektory prędkości', tgMarks:'Prędkości charakterystyczne',
+    sReady:'gotowy', sRun:'w ruchu', sPause:'pauza',
+    gStart:'Stan początkowy', pSame:'Ta sama prędkość', pSameS:'rozkład delta', pHot:'Gorąca i zimna połowa', pHotS:'przepływ ciepła',
+    pTwo:'Dwa gatunki', pTwoS:'ekwipartycja', pFree:'Rozprężanie swobodne', pFreeS:'fluktuacje 1/√N',
+    gGas:'Gaz', lN:'Liczba krążków <i>N</i>', lT:'Temperatura <i>T</i>', hT:'Przeskalowuje wszystkie prędkości, także w trakcie ruchu.',
+    lR:'Promień krążka <i>r</i>', hR:'Większy promień to gęstszy gaz i częstsze zderzenia. Zmiana N lub r ustawia stan od nowa.',
+    pillEta:'upakowanie η', pillLam:'droga swobodna λ', pillTau:'czas między zderz.',
+    gMix:'Mieszanina', lRatio:'Stosunek mas <i>m</i><sub>2</sub>/<i>m</i><sub>1</sub>', hRatio:'Działa w ustawieniu „Dwa gatunki”.', hRatioOn:'Lekkie: masa argonu. Ciężkie rysowane jako większe krążki z obwódką.',
+    gUnits:'Skala',
+    units:'Skala argonowa: lekki krążek ma masę atomu argonu (39,95 u), prędkości w m/s, czas w ps, komora 100 × 60 nm. Krążki są dużo większe niż prawdziwe atomy, żeby zderzenia były częste i widoczne. <i>T</i> w kelwinach wynika z energii: ⟨<i>E</i><sub>k</sub>⟩ = <i>kT</i>.',
+    gas:'gaz', vacuum:'próżnia', partition:'przegroda', hot:'gorąca', cold:'zimna', light:'lekkie', heavy:'ciężkie',
+    histTitle:'Histogram prędkości', theory:'teoria', allSame:'wszystkie v = v₀', measured:'zmierzone',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego stanu gazu.',
+    fMB:'Rozkład Maxwella–Boltzmanna w 2D', fSpeeds:'Prędkości charakterystyczne', fEq:'Ekwipartycja energii', fH:'Funkcja H Boltzmanna', fColl:'Zderzenia', fFluct:'Fluktuacje', f2D:'Dlaczego 2D wygląda inaczej',
+    noteMB:'Normalizacja: ∫<i>f</i> d<i>v</i> = 1. Pole pod histogramem też wynosi 1.',
+    noteMBtwo:'Każdy gatunek ma własny rozkład z tą samą temperaturą, ale inną masą.',
+    noteSpeeds:'Stosunek <i>v</i><sub>p</sub> : ⟨<i>v</i>⟩ : <i>v</i><sub>rms</sub> = 1 : 1,253 : 1,414 (w 2D). Szare liczby to wartości zmierzone w symulacji.',
+    noteEq:'W 2D cząstka ma dwa stopnie swobody ruchu postępowego, każdy niesie średnio ½<i>kT</i>. Ściany odbijają sprężyście, więc energia całkowita jest stała co do błędu zaokrągleń.',
+    noteEqTwo:'Ekwipartycja: po wymieszaniu oba gatunki mają tę samą średnią energię kinetyczną, choć ciężkie poruszają się wolniej.',
+    noteH:'Tutaj <i>f</i> to gęstość w płaszczyźnie prędkości, <i>f</i>(<b>v</b>) = <i>F</i>(<i>v</i>)/(2π<i>v</i>), liczona z histogramu prędkości <i>F</i>. Twierdzenie <i>H</i>: d<i>H</i>/d<i>t</i> ≤ 0, minimum osiąga rozkład Maxwella. Entropia <i>S</i> = −<i>kNH</i> + const. Skończone <i>N</i> daje szum i małe przesunięcie plateau w górę.',
+    noteColl:'W 2D przekrój czynny to szerokość 2<i>d</i> (<i>d</i> = 2<i>r</i>). Wzór dla rozrzedzonego gazu poprawiony czynnikiem Enskoga <i>g</i>(2<i>r</i>) dla gęstych krążków. ν to średnia liczba zderzeń jednej cząstki na ns.',
+    noteFluct:'Każda cząstka jest w lewej połowie z prawdopodobieństwem ½, więc liczba cząstek po lewej ma rozkład dwumianowy. Względne fluktuacje maleją jak 1/√<i>N</i>.',
+    noteFluctNo:'Wybierz „Rozprężanie swobodne”, uruchom i odczekaj, aby zmierzyć odchylenie.',
+    note2D:'Komora jest dwuwymiarowa, więc liczba stanów o prędkości <i>v</i> rośnie jak obwód okręgu 2π<i>v</i> d<i>v</i>. Stąd rozkład <i>v</i>·e<sup>−<i>v</i>²</sup>, a nie znany z gazu 3D <i>v</i>²·e<sup>−<i>v</i>²</sup> (powłoka kulista 4π<i>v</i>² d<i>v</i>). Rozkład 2D startuje liniowo od zera i ma cieńszy ogon.',
+    meas:'zmierz.', twoD:'2D (ta symulacja)', threeD:'3D (gaz w pokoju)',
+    charts:'W czasie', tabH:'Funkcja H', tabT:'Temperatury', tabF:'Lewa połowa',
+    lgH:'H(t) z histogramu', lgS:'S/Nk = −H', lgHeq:'równowaga (Maxwell)', lgTL:'T lewej połowy', lgTR:'T prawej połowy', lgT1:'T lekkich', lgT2:'T ciężkich', lgTall:'T całości', lgF:'udział w lewej połowie', lgBand:'½ ± 1/(2√N)',
+    cnoteH:'Funkcja <i>H</i> spada i zatrzymuje się na plateau: gaz zapomina stan początkowy. W ustawieniu Maxwella od początku krzywa jest płaska.',
+    cnoteS:'Entropia (z dokładnością do stałej) rośnie do maksimum. To strzałka czasu wyłaniająca się z odwracalnych zderzeń.',
+    cnoteT:'Temperatura grupy to średnia energia kinetyczna jej cząstek podzielona przez <i>k</i>. Wybierz „Gorąca i zimna połowa” albo „Dwa gatunki”.',
+    cnoteTL:'Lewa i prawa połowa komory wymieniają energię przez zderzenia i dyfuzję, aż ich temperatury się zrównają.',
+    cnoteT2:'Ciężkie krążki startują z tą samą prędkością co lekkie, więc są gorętsze. Zderzenia wyrównują temperatury: to ekwipartycja.',
+    cnoteF:'Po usunięciu przegrody gaz wypełnia całą komorę. Udział po lewej waha się wokół ½ z odchyleniem 1/(2√<i>N</i>).',
+    cnoteFno:'Ten wykres ma sens w ustawieniu „Rozprężanie swobodne”.',
+    tries:'Spróbuj',
+    try1h:'Od delty do Maxwella', try1:'Wszystkie krążki mają tę samą prędkość. Naciśnij Start i patrz, jak szpilka w histogramie rozpływa się w krzywą <i>v</i>·e<sup>−<i>v</i>²</sup>.',
+    try2h:'Ciepło płynie samo', try2:'Lewa połowa gorąca, prawa zimna. Na wykresie temperatur obie krzywe zbiegają się do jednej wartości.',
+    try3h:'Ciężkie i lekkie', try3:'Stosunek mas 10. Ciężkie krążki są wolniejsze, a jednak po chwili mają tę samą temperaturę co lekkie.',
+    try4h:'Fluktuacje i 1/√N', try4:'Rozprężanie przy <i>N</i> = 150. Potem przełącz na 600 i porównaj szerokość wahań udziału w lewej połowie.',
+    perNs:'/ns'
+  },
+  en: {
+    eyebrow:'Statistical physics · hard-sphere gas', title:'Maxwell distribution',
+    lede:'<b>The road to equilibrium.</b> Every disk starts with the same speed in a random direction. Press Start: after a few seconds of collisions the speed histogram settles into the Maxwell distribution and Boltzmann’s <i>H</i> function drops to its minimum.',
+    ariaGas:'Chamber with a gas of hard disks coloured by speed', ariaHist:'Speed histogram with theoretical curve', ariaChart:'Plot versus time', ariaPanel:'Settings',
+    start:'Start', pause:'Pause', resume:'Resume', kbd:'space', reset:'Reset', speed:'Speed',
+    tgTag:'Tagged particle', tgVec:'Velocity vectors', tgMarks:'Characteristic speeds',
+    sReady:'ready', sRun:'running', sPause:'paused',
+    gStart:'Initial state', pSame:'All same speed', pSameS:'delta distribution', pHot:'Hot half, cold half', pHotS:'heat flow',
+    pTwo:'Two species', pTwoS:'equipartition', pFree:'Free expansion', pFreeS:'1/√N fluctuations',
+    gGas:'Gas', lN:'Number of disks <i>N</i>', lT:'Temperature <i>T</i>', hT:'Rescales all speeds, even while running.',
+    lR:'Disk radius <i>r</i>', hR:'A larger radius means a denser gas and more collisions. Changing N or r resets the state.',
+    pillEta:'packing η', pillLam:'mean free path λ', pillTau:'time between coll.',
+    gMix:'Mixture', lRatio:'Mass ratio <i>m</i><sub>2</sub>/<i>m</i><sub>1</sub>', hRatio:'Active in the “Two species” setup.', hRatioOn:'Light: argon mass. Heavy disks are drawn larger with an outline.',
+    gUnits:'Scale',
+    units:'Argon scale: a light disk has the mass of an argon atom (39.95 u), speeds in m/s, time in ps, chamber 100 × 60 nm. Disks are much larger than real atoms so that collisions are frequent and visible. <i>T</i> in kelvin follows from the energy: ⟨<i>E</i><sub>k</sub>⟩ = <i>kT</i>.',
+    gas:'gas', vacuum:'vacuum', partition:'partition', hot:'hot', cold:'cold', light:'light', heavy:'heavy',
+    histTitle:'Speed histogram', theory:'theory', allSame:'all v = v₀', measured:'measured',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current state of the gas.',
+    fMB:'2D Maxwell–Boltzmann distribution', fSpeeds:'Characteristic speeds', fEq:'Equipartition of energy', fH:'Boltzmann’s H function', fColl:'Collisions', fFluct:'Fluctuations', f2D:'Why 2D looks different',
+    noteMB:'Normalised: ∫<i>f</i> d<i>v</i> = 1. The area under the histogram is 1 as well.',
+    noteMBtwo:'Each species has its own distribution with the same temperature but a different mass.',
+    noteSpeeds:'Ratio <i>v</i><sub>p</sub> : ⟨<i>v</i>⟩ : <i>v</i><sub>rms</sub> = 1 : 1.253 : 1.414 (in 2D). Grey numbers are measured in the simulation.',
+    noteEq:'In 2D a particle has two translational degrees of freedom, each carrying ½<i>kT</i> on average. The walls reflect elastically, so the total energy is constant up to round-off.',
+    noteEqTwo:'Equipartition: once mixed, both species have the same mean kinetic energy even though the heavy ones move more slowly.',
+    noteH:'Here <i>f</i> is the density in the velocity plane, <i>f</i>(<b>v</b>) = <i>F</i>(<i>v</i>)/(2π<i>v</i>), taken from the speed histogram <i>F</i>. H theorem: d<i>H</i>/d<i>t</i> ≤ 0, and the minimum is the Maxwell distribution. Entropy <i>S</i> = −<i>kNH</i> + const. Finite <i>N</i> adds noise and lifts the plateau slightly.',
+    noteColl:'In 2D the cross-section is a width 2<i>d</i> (<i>d</i> = 2<i>r</i>). Dilute gas formula corrected by the Enskog factor <i>g</i>(2<i>r</i>) for dense disks. ν is the mean number of collisions per particle per ns.',
+    noteFluct:'Each particle is in the left half with probability ½, so the left count is binomial. Relative fluctuations shrink like 1/√<i>N</i>.',
+    noteFluctNo:'Choose “Free expansion”, run it and wait to measure the spread.',
+    note2D:'The chamber is two-dimensional, so the number of states with speed <i>v</i> grows like the circumference 2π<i>v</i> d<i>v</i>. Hence the distribution <i>v</i>·e<sup>−<i>v</i>²</sup>, not the familiar 3D <i>v</i>²·e<sup>−<i>v</i>²</sup> (spherical shell 4π<i>v</i>² d<i>v</i>). The 2D curve rises linearly from zero and has a thinner tail.',
+    meas:'meas.', twoD:'2D (this simulation)', threeD:'3D (gas in a room)',
+    charts:'Over time', tabH:'H function', tabT:'Temperatures', tabF:'Left half',
+    lgH:'H(t) from histogram', lgS:'S/Nk = −H', lgHeq:'equilibrium (Maxwell)', lgTL:'T of left half', lgTR:'T of right half', lgT1:'T light', lgT2:'T heavy', lgTall:'T overall', lgF:'fraction in left half', lgBand:'½ ± 1/(2√N)',
+    cnoteH:'The <i>H</i> function falls and levels off on a plateau: the gas forgets its initial state. Starting from a Maxwell state the curve is flat from the outset.',
+    cnoteS:'Entropy (up to a constant) rises to its maximum. An arrow of time emerging from reversible collisions.',
+    cnoteT:'The temperature of a group is the mean kinetic energy of its particles divided by <i>k</i>. Choose “Hot half, cold half” or “Two species”.',
+    cnoteTL:'The left and right halves exchange energy through collisions and diffusion until their temperatures match.',
+    cnoteT2:'Heavy disks start with the same speed as the light ones, so they are hotter. Collisions equalise the temperatures: that is equipartition.',
+    cnoteF:'Once the partition is gone the gas fills the whole chamber. The left fraction fluctuates around ½ with a spread of 1/(2√<i>N</i>).',
+    cnoteFno:'This plot is meaningful in the “Free expansion” setup.',
+    tries:'Try this',
+    try1h:'From delta to Maxwell', try1:'All disks share one speed. Press Start and watch the spike in the histogram melt into the curve <i>v</i>·e<sup>−<i>v</i>²</sup>.',
+    try2h:'Heat flows by itself', try2:'Left half hot, right half cold. On the temperature plot the two curves merge into one value.',
+    try3h:'Heavy and light', try3:'Mass ratio 10. The heavy disks are slower, yet soon have the same temperature as the light ones.',
+    try4h:'Fluctuations and 1/√N', try4:'Free expansion with <i>N</i> = 150. Then switch to 600 and compare how wide the left fraction wanders.',
+    perNs:'/ns'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('maxwell-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '—';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUP = (n) => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'['0123456789'.indexOf(c)] ?? (c === '-' ? '⁻' : c)).join('');
+function fsci(x, d = 2) {
+  if (!isFinite(x) || x === 0) return fmt(0, 0);
+  const s = x < 0 ? '−' : ''; x = Math.abs(x);
+  let e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  if (+m.toFixed(d) >= 10) { m /= 10; e++; }
+  return `${s}${fmt(m, d)}·10${SUP(e)}`;
+}
+
+/* ---------- physical constants & scale ----------
+   Internal units: length nm, time ps, mass u. Then speed is nm/ps = km/s,
+   and k_B = 1.380649e-23 J/K / (1 u · (nm/ps)²) = 0.0083144626 u·nm²·ps⁻²·K⁻¹. */
+const KB = 0.0083144626;
+const KB_SI = 1.380649e-23, U_SI = 1.66053907e-27;
+const E_TO_AJ = U_SI * 1e6 * 1e18;     // 1 u·(nm/ps)² in aJ
+const M_AR = 39.948;
+const BW = 100, BH = 60;               // chamber, nm
+const PS_PER_S = 60;                    // simulated ps per real second at 1×
+const R_HEAVY = 1.45;                   // heavy disks drawn/simulated with a larger radius
+const NB = 36;                          // histogram bins
+const HIST_TAU = 12;                    // ps, smoothing of the displayed histogram
+
+/* ---------- state ---------- */
+const S = {
+  preset: 'same', N: 400, T: 300, r: 0.7, ratio: 4,
+  running: false, started: false, t: 0, speed: 1,
+  tag: false, vec: false, marks: false, tab: 'h', hs: 'h'
+};
+let N = 0, X, Y, VX, VY, M, R, SP, NS = [0, 0], head, next, ncx, ncy, cwid, chei;
+let collisions = 0, collLog = [], series = [], tagTrail = [];
+let E0 = 0, Ecur = 0;
+const H = { raw: [new Float64Array(NB), new Float64Array(NB)], sm: [new Float64Array(NB), new Float64Array(NB)], vmax: 1, dv: 1 };
+const meas = {};
+
+function rnd() { return Math.random(); }
+function gauss() { let u = 0; while (u === 0) u = rnd(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * rnd()); }
+const two = () => S.preset === 'two';
+
+function init() {
+  N = S.N;
+  X = new Float64Array(N); Y = new Float64Array(N); VX = new Float64Array(N); VY = new Float64Array(N);
+  M = new Float64Array(N); R = new Float64Array(N); SP = new Uint8Array(N); next = new Int32Array(N);
+  NS = [0, 0];
+  for (let i = 0; i < N; i++) {
+    SP[i] = two() && (i % 2 === 1) ? 1 : 0;
+    M[i] = M_AR * (SP[i] ? S.ratio : 1);
+    R[i] = S.r * (SP[i] ? R_HEAVY : 1);
+    NS[SP[i]]++;
+  }
+  place(S.preset === 'free' ? BW / 2 : BW);
+  const kT = KB * S.T;
+  if (S.preset === 'same' || S.preset === 'two') {
+    let sm = 0; for (let i = 0; i < N; i++) sm += M[i];
+    const v0 = Math.sqrt(2 * N * kT / sm);            // one common speed, total energy N kT
+    for (let i = 0; i < N; i++) { const a = 2 * Math.PI * rnd(); VX[i] = v0 * Math.cos(a); VY[i] = v0 * Math.sin(a); }
+  } else {
+    for (let i = 0; i < N; i++) {
+      const Ti = S.preset === 'hot' ? (X[i] < BW / 2 ? 1.75 : 0.25) * S.T : S.T;
+      const s = Math.sqrt(KB * Ti / M[i]); VX[i] = s * gauss(); VY[i] = s * gauss();
+    }
+    rescaleTo(S.T);
+  }
+  // cell grid for neighbour search: cells at least one contact distance wide
+  let rmax = 0; for (let i = 0; i < N; i++) rmax = Math.max(rmax, R[i]);
+  ncx = Math.max(1, Math.floor(BW / (2 * rmax))); ncy = Math.max(1, Math.floor(BH / (2 * rmax)));
+  cwid = BW / ncx; chei = BH / ncy; head = new Int32Array(ncx * ncy);
+  S.t = 0; S.started = false; S.running = false;
+  collisions = 0; collLog = [{ t: 0, c: 0 }]; series = []; tagTrail = [];
+  E0 = energy(); Ecur = E0;
+  measure(0, true);
+  pushSeries();
+}
+function place(xw) {
+  let rmax = 0; for (let i = 0; i < N; i++) rmax = Math.max(rmax, R[i]);
+  const w = xw - 2 * rmax, h = BH - 2 * rmax;
+  let cols = Math.max(1, Math.round(Math.sqrt(N * w / h))), rows = Math.ceil(N / cols);
+  while (cols * rows < N) cols++;
+  const cw = w / cols, ch = h / rows;
+  const jx = Math.max(0, (cw - 2.04 * rmax) / 2), jy = Math.max(0, (ch - 2.04 * rmax) / 2);
+  const slots = [...Array(cols * rows).keys()];
+  for (let i = slots.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [slots[i], slots[j]] = [slots[j], slots[i]]; }
+  for (let i = 0; i < N; i++) {
+    const s = slots[i], c = s % cols, r = Math.floor(s / cols);
+    X[i] = rmax + (c + 0.5) * cw + (rnd() * 2 - 1) * jx;
+    Y[i] = rmax + (r + 0.5) * ch + (rnd() * 2 - 1) * jy;
+  }
+}
+function energy() { let e = 0; for (let i = 0; i < N; i++) e += 0.5 * M[i] * (VX[i] * VX[i] + VY[i] * VY[i]); return e; }
+function rescaleTo(T) {
+  const e = energy(), f = Math.sqrt(N * KB * T / e);
+  for (let i = 0; i < N; i++) { VX[i] *= f; VY[i] *= f; }
+}
+
+/* ---------- dynamics: free flight + exact elastic disk collisions ---------- */
+function advance(dt) {
+  let v2 = 0;
+  for (let i = 0; i < N; i++) { const q = VX[i] * VX[i] + VY[i] * VY[i]; if (q > v2) v2 = q; }
+  const vmax = Math.sqrt(v2);
+  const nsub = Math.min(600, Math.max(1, Math.ceil(vmax * dt / (0.3 * S.r))));
+  const h = dt / nsub;
+  for (let s = 0; s < nsub; s++) substep(h);
+}
+function substep(h) {
+  for (let i = 0; i < N; i++) {
+    let x = X[i] + VX[i] * h, y = Y[i] + VY[i] * h; const r = R[i];
+    if (x < r) { x = 2 * r - x; VX[i] = Math.abs(VX[i]); } else if (x > BW - r) { x = 2 * (BW - r) - x; VX[i] = -Math.abs(VX[i]); }
+    if (y < r) { y = 2 * r - y; VY[i] = Math.abs(VY[i]); } else if (y > BH - r) { y = 2 * (BH - r) - y; VY[i] = -Math.abs(VY[i]); }
+    X[i] = x; Y[i] = y;
+  }
+  head.fill(-1);
+  for (let i = 0; i < N; i++) {
+    const cx = Math.min(ncx - 1, Math.max(0, Math.floor(X[i] / cwid))), cy = Math.min(ncy - 1, Math.max(0, Math.floor(Y[i] / chei)));
+    const c = cy * ncx + cx; next[i] = head[c]; head[c] = i;
+  }
+  for (let cy = 0; cy < ncy; cy++) for (let cx = 0; cx < ncx; cx++) {
+    const c = cy * ncx + cx;
+    for (let i = head[c]; i >= 0; i = next[i]) {
+      for (let j = next[i]; j >= 0; j = next[j]) collide(i, j, h);
+      // half stencil: E, NW, N, NE
+      if (cx + 1 < ncx) for (let j = head[c + 1]; j >= 0; j = next[j]) collide(i, j, h);
+      if (cy + 1 < ncy) {
+        const b = c + ncx;
+        if (cx > 0) for (let j = head[b - 1]; j >= 0; j = next[j]) collide(i, j, h);
+        for (let j = head[b]; j >= 0; j = next[j]) collide(i, j, h);
+        if (cx + 1 < ncx) for (let j = head[b + 1]; j >= 0; j = next[j]) collide(i, j, h);
+      }
+    }
+  }
+}
+function collide(i, j, h) {
+  const dx = X[i] - X[j], dy = Y[i] - Y[j], Rs = R[i] + R[j], d2 = dx * dx + dy * dy;
+  if (d2 >= Rs * Rs) return;
+  const dvx = VX[i] - VX[j], dvy = VY[i] - VY[j], b = dx * dvx + dy * dvy;
+  if (b >= 0) return;                         // already separating
+  const a = dvx * dvx + dvy * dvy;
+  // rewind to the moment of contact: |dx − dv τ| = Rs
+  let tau = (b + Math.sqrt(Math.max(0, b * b - a * (d2 - Rs * Rs)))) / a;
+  if (!(tau > 0)) tau = 0; if (tau > h) tau = h;
+  X[i] -= VX[i] * tau; Y[i] -= VY[i] * tau; X[j] -= VX[j] * tau; Y[j] -= VY[j] * tau;
+  let nx = X[i] - X[j], ny = Y[i] - Y[j]; const L = Math.hypot(nx, ny) || 1; nx /= L; ny /= L;
+  const vn = dvx * nx + dvy * ny;
+  const J = 2 * M[i] * M[j] / (M[i] + M[j]) * vn;   // elastic impulse along the line of centres
+  VX[i] -= J / M[i] * nx; VY[i] -= J / M[i] * ny; VX[j] += J / M[j] * nx; VY[j] += J / M[j] * ny;
+  X[i] += VX[i] * tau; Y[i] += VY[i] * tau; X[j] += VX[j] * tau; Y[j] += VY[j] * tau;
+  collisions++;
+}
+
+/* ---------- measurement ---------- */
+const kT = () => KB * S.T;
+const vpOf = (m) => Math.sqrt(kT() / m);           // nm/ps
+function measure(dtSim, hard) {
+  Ecur = energy();
+  const Tm = Ecur / (N * KB);
+  H.vmax = 3.3 * vpOf(M_AR); H.dv = H.vmax / NB;
+  for (const a of H.raw) a.fill(0);
+  let sv = [0, 0], sv2 = [0, 0], eL = 0, eR = 0, nL = 0, e1 = [0, 0];
+  for (let i = 0; i < N; i++) {
+    const v2 = VX[i] * VX[i] + VY[i] * VY[i], v = Math.sqrt(v2), s = SP[i];
+    sv[s] += v; sv2[s] += v2; e1[s] += 0.5 * M[i] * v2;
+    if (X[i] < BW / 2) { nL++; eL += 0.5 * M[i] * v2; } else eR += 0.5 * M[i] * v2;
+    const k = Math.floor(v / H.dv); if (k < NB) H.raw[s][k]++;
+  }
+  const al = hard ? 1 : 1 - Math.exp(-dtSim / HIST_TAU);
+  for (let s = 0; s < 2; s++) for (let k = 0; k < NB; k++) H.sm[s][k] += al * (H.raw[s][k] - H.sm[s][k]);
+  meas.T = Tm;
+  meas.vm = sv[0] / NS[0]; meas.vr = Math.sqrt(sv2[0] / NS[0]);
+  meas.vm2 = NS[1] ? sv[1] / NS[1] : 0; meas.vr2 = NS[1] ? Math.sqrt(sv2[1] / NS[1]) : 0;
+  meas.TL = nL ? eL / (nL * KB) : NaN; meas.TR = N - nL ? eR / ((N - nL) * KB) : NaN;
+  meas.T1 = e1[0] / (NS[0] * KB); meas.T2 = NS[1] ? e1[1] / (NS[1] * KB) : NaN;
+  meas.fL = nL / N;
+  meas.H = hFun(H.sm); meas.Heq = hEq();
+  // collision rate over a sliding window of ~40 ps
+  collLog.push({ t: S.t, c: collisions });
+  while (collLog.length > 2 && S.t - collLog[1].t > 40) collLog.shift();
+  const c0 = collLog[0], span = S.t - c0.t;
+  meas.Z = span > 1 ? (collisions - c0.c) / span * 1000 : NaN;   // per ns
+}
+// H = Σ F ln(F / 2πv) Δv, with F the speed density in s/m and v in m/s (mixture: weighted by species)
+function hFun(arr) {
+  let Hs = 0;
+  const dvSI = H.dv * 1000;
+  for (let s = 0; s < 2; s++) {
+    if (!NS[s]) continue;
+    let tot = 0; for (let k = 0; k < NB; k++) tot += arr[s][k];
+    if (tot <= 0) continue;
+    let h = 0;
+    for (let k = 0; k < NB; k++) {
+      const n = arr[s][k]; if (n <= 1e-9) continue;
+      const F = n / (tot * dvSI), v = (k + 0.5) * dvSI;
+      h += F * Math.log(F / (2 * Math.PI * v)) * dvSI;
+    }
+    Hs += NS[s] / N * h;
+  }
+  return Hs;
+}
+function hEq() {
+  const kTs = KB_SI * S.T; let h = 0;
+  for (let s = 0; s < 2; s++) { if (!NS[s]) continue; const m = M_AR * (s ? S.ratio : 1) * U_SI; h += NS[s] / N * (Math.log(m / (2 * Math.PI * kTs)) - 1); }
+  return h;
+}
+function pushSeries() {
+  series.push({ t: S.t, H: meas.H, Heq: meas.Heq, TL: meas.TL, TR: meas.TR, T1: meas.T1, T2: meas.T2, T: meas.T, f: meas.fL });
+  if (series.length > 2400) series = series.filter((_, i) => i % 2 === 0 || i === series.length - 1);
+}
+
+/* ---------- derived gas properties ---------- */
+function gasProps() {
+  let area = 0; for (let i = 0; i < N; i++) area += Math.PI * R[i] * R[i];
+  const occupied = S.preset === 'free' && !S.started ? BW * BH / 2 : BW * BH;
+  const n = N / (BW * BH), eta = area / (BW * BH);
+  const d = 2 * S.r;
+  const g = (1 - 7 * eta / 16) / Math.pow(1 - eta, 2);       // Henderson contact value for hard disks
+  const vmean = Math.sqrt(Math.PI * kT() / (2 * M_AR));      // nm/ps
+  const lam = 1 / (2 * Math.SQRT2 * n * d * g);              // 2D cross-section is a width 2d (impact parameter −d..d)
+  const nu = 2 * Math.SQRT2 * n * d * vmean * g;              // per ps, per particle
+  return { n, eta, g, lam, nu, Zth: N * nu / 2 * 1000, tau: 1 / nu, occupied };
+}
+
+/* ---------- colours ---------- */
+const PLASMA = ['#0d0887', '#41049d', '#6a00a8', '#8f0da4', '#b12a90', '#cc4778', '#e16462', '#f2844b', '#fca636', '#fcce25', '#f0f921'];
+const hex2rgb = (h) => { const n = parseInt(h.slice(1), 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; };
+const PL = PLASMA.map(hex2rgb);
+const CMAP = [];
+for (let k = 0; k < 64; k++) {
+  const t = 0.16 + 0.84 * k / 63, u = t * 10, i = Math.min(9, Math.floor(u)), f = u - i;
+  const c = PL[i].map((a, j) => Math.round(a + (PL[i + 1][j] - a) * f));
+  CMAP.push(`rgb(${c[0]},${c[1]},${c[2]})`);
+}
+const colIdx = (v) => Math.max(0, Math.min(63, Math.floor(v / (2.9 * vpOf(M_AR)) * 64)));
+let col = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'blue', 'violet', 'teal', 'chamber', 'chamber-2', 'chamber-grid', 'metal'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true;
+}
+function withAlpha(hex, a) {
+  const [r, g, b] = hex2rgb(hex.length === 4 ? '#' + hex.slice(1).split('').map(x => x + x).join('') : hex);
+  return `rgba(${r},${g},${b},${a})`;
+}
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+
+/* ---------- canvases ---------- */
+let dpr = Math.min(window.devicePixelRatio || 1, 2.5), dirty = true;
+function mkCanvas(sel, boxSel) {
+  const cv = $(sel), box = $(boxSel), o = { cv, box, ctx: cv.getContext('2d'), w: 300, h: 200 };
+  new ResizeObserver(() => {
+    dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+    o.w = box.clientWidth; o.h = box.clientHeight;
+    cv.width = Math.round(o.w * dpr); cv.height = Math.round(o.h * dpr); dirty = true;
+  }).observe(box);
+  return o;
+}
+const G = mkCanvas('#gas', '#gas-box'), HC = mkCanvas('#hist', '#hist-box'), CC = mkCanvas('#chart', '#chart-box');
+function halo(c, text, x, y, color, font, align = 'left', base = 'middle', bg = col.paper) {
+  c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = bg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function rrect(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+let partitionFade = 0;
+function drawGas() {
+  const { ctx: c, w, h } = G;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, w, h);
+  const pad = 10, s = Math.min((w - 2 * pad) / BW, (h - 2 * pad) / BH);
+  const x0 = (w - BW * s) / 2, y0 = (h - BH * s) / 2, W = BW * s, Hh = BH * s;
+  const PX = (x) => x0 + x * s, PY = (y) => y0 + Hh - y * s;
+  // chamber
+  const gr = c.createLinearGradient(0, y0, 0, y0 + Hh); gr.addColorStop(0, col.chamber2); gr.addColorStop(1, col.chamber);
+  rrect(c, x0 - 3, y0 - 3, W + 6, Hh + 6, 6); c.fillStyle = col.metal; c.fill();
+  c.fillStyle = gr; c.fillRect(x0, y0, W, Hh);
+  c.save(); c.beginPath(); c.rect(x0, y0, W, Hh); c.clip();
+  c.strokeStyle = col.chambergrid; c.lineWidth = 1; c.beginPath();
+  for (let gx = 10; gx < BW; gx += 10) { const X = Math.round(PX(gx)) + 0.5; c.moveTo(X, y0); c.lineTo(X, y0 + Hh); }
+  for (let gy = 10; gy < BH; gy += 10) { const Yy = Math.round(PY(gy)) + 0.5; c.moveTo(x0, Yy); c.lineTo(x0 + W, Yy); }
+  c.stroke();
+  // halves
+  if (S.preset === 'hot' || S.preset === 'free') {
+    c.save(); c.setLineDash([4, 6]); c.strokeStyle = 'rgba(255,255,255,.22)'; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(PX(BW / 2), y0); c.lineTo(PX(BW / 2), y0 + Hh); c.stroke(); c.restore();
+  }
+  if (S.preset === 'free' && !S.started) {
+    c.fillStyle = 'rgba(255,255,255,.035)'; c.fillRect(PX(BW / 2), y0, W / 2, Hh);
+    halo(c, tr('vacuum'), PX(BW * 0.75), PY(BH / 2), 'rgba(255,255,255,.45)', `500 13px ${FONT_MONO}`, 'center', 'middle', col.chamber);
+  }
+  // tagged trail
+  if (S.tag && tagTrail.length > 1) {
+    c.save(); c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1.2; c.lineJoin = 'round'; c.beginPath();
+    let pen = false, last = null;
+    for (const p of tagTrail) {
+      if (!p) { pen = false; continue; }
+      if (pen && last && Math.abs(p[0] - last[0]) < 30 && Math.abs(p[1] - last[1]) < 30) c.lineTo(PX(p[0]), PY(p[1])); else c.moveTo(PX(p[0]), PY(p[1]));
+      pen = true; last = p;
+    }
+    c.stroke(); c.restore();
+  }
+  // particles bucketed by colour
+  const buckets = Array.from({ length: 64 }, () => []);
+  for (let i = 0; i < N; i++) buckets[colIdx(Math.hypot(VX[i], VY[i]))].push(i);
+  for (let k = 0; k < 64; k++) {
+    const b = buckets[k]; if (!b.length) continue;
+    c.fillStyle = CMAP[k]; c.beginPath();
+    for (const i of b) { const rr = Math.max(1.2, R[i] * s); c.moveTo(PX(X[i]) + rr, PY(Y[i])); c.arc(PX(X[i]), PY(Y[i]), rr, 0, Math.PI * 2); }
+    c.fill();
+  }
+  if (two()) {
+    c.strokeStyle = 'rgba(255,255,255,.75)'; c.lineWidth = 1.1; c.beginPath();
+    for (let i = 0; i < N; i++) if (SP[i]) { const rr = Math.max(1.2, R[i] * s); c.moveTo(PX(X[i]) + rr, PY(Y[i])); c.arc(PX(X[i]), PY(Y[i]), rr, 0, Math.PI * 2); }
+    c.stroke();
+  }
+  if (S.vec) {
+    const k = 7 * S.r * s / vpOf(M_AR);
+    c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 1; c.beginPath();
+    for (let i = 0; i < N; i++) { const X1 = PX(X[i]), Y1 = PY(Y[i]); c.moveTo(X1, Y1); c.lineTo(X1 + VX[i] * k, Y1 - VY[i] * k); }
+    c.stroke();
+  }
+  if (S.tag) {
+    const X1 = PX(X[0]), Y1 = PY(Y[0]), rr = Math.max(1.2, R[0] * s);
+    c.fillStyle = '#ffffff'; c.beginPath(); c.arc(X1, Y1, rr, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = '#ffffff'; c.lineWidth = 1.5; c.beginPath(); c.arc(X1, Y1, rr + 4, 0, Math.PI * 2); c.stroke();
+  }
+  c.restore();
+  // partition
+  const showPart = S.preset === 'free' && !S.started;
+  if (showPart) partitionFade = 1;
+  if (partitionFade > 0) {
+    c.save(); c.globalAlpha = partitionFade; c.fillStyle = col.metal;
+    c.fillRect(PX(BW / 2) - 2, y0 - 3, 4, Hh + 6); c.restore();
+  }
+  // labels
+  const lab = (t, x, y, a = 'left') => halo(c, t, x, y, 'rgba(255,255,255,.72)', `500 11px ${FONT_MONO}`, a, 'middle', col.chamber);
+  if (S.preset === 'hot') {
+    lab(`T = ${fmt(meas.TL, 0)} K`, PX(2), y0 + 12);
+    lab(`T = ${fmt(meas.TR, 0)} K`, PX(BW - 2), y0 + 12, 'right');
+  } else if (S.preset === 'free') {
+    lab(`${fmt(meas.fL * 100, 1)} %`, PX(2), y0 + 12);
+    lab(`${fmt((1 - meas.fL) * 100, 1)} %`, PX(BW - 2), y0 + 12, 'right');
+  }
+  // scale bar 10 nm
+  const sbx = x0 + W - 10 - 10 * s, sby = y0 + Hh - 10;
+  c.strokeStyle = 'rgba(255,255,255,.6)'; c.lineWidth = 2; c.beginPath(); c.moveTo(sbx, sby); c.lineTo(sbx + 10 * s, sby); c.stroke();
+  lab('10 nm', sbx + 5 * s, sby - 9, 'center');
+}
+
+/* histogram: bars coloured by the same speed colormap, theory curve(s) on top */
+function mbF(v, m) { const a = m / kT(); return a * v * Math.exp(-0.5 * a * v * v); }   // per nm/ps
+function drawHist() {
+  const { ctx: c, w, h } = HC;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, w, h);
+  const L = 46, Rr = 14, T = 34, B = 40, pw = w - L - Rr, ph = h - T - B;
+  if (pw < 40 || ph < 40) return;
+  const vmaxSI = H.vmax * 1000, dvSI = H.dv * 1000;
+  // densities in 10⁻³ s/m
+  const dens = (s, k) => { let tot = 0; for (let q = 0; q < NB; q++) tot += H.sm[s][q]; return tot > 0 ? H.sm[s][k] / (tot * dvSI) * 1000 : 0; };
+  const masses = two() ? [M_AR, M_AR * S.ratio] : [M_AR];
+  let peak = 0; for (const m of masses) peak = Math.max(peak, mbF(vpOf(m), m) / 1000 * 1000);
+  let bmax = 0; for (let q = 0; q < (two() ? 2 : 1); q++) for (let k = 0; k < NB; k++) bmax = Math.max(bmax, dens(q, k));
+  const ymax = bmax > 3 * peak ? peak * 1.3 : Math.max(peak * 1.3, Math.min(bmax * 1.08, peak * 2.2));
+  const Xv = (v) => L + v / vmaxSI * pw, Yf = (f) => T + ph - Math.min(f, ymax) / ymax * ph;
+  // grid
+  const ys = niceStep(ymax, 4), xs = niceStep(vmaxSI, 5);
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = col.ink2;
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = 0; y <= ymax + 1e-12; y += ys) { const yy = Math.round(Yf(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(L + pw, yy); c.stroke(); c.fillText(fmt(y, ys < 1 ? 1 : 0), L - 6, yy); }
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let x = 0; x <= vmaxSI + 1e-9; x += xs) { const xx = Xv(x); c.fillText(fmt(x, 0), xx, T + ph + 6); }
+  c.fillStyle = col.ink3; c.textAlign = 'right'; c.fillText('v [m/s]', L + pw, T + ph + 22);
+  c.textAlign = 'left'; c.textBaseline = 'middle';
+  c.fillText(`f(v) [10${SUP(-3)} s/m]`, 6, 12);
+  // bars
+  const spikeAt = [];
+  const drawSpecies = (s, style) => {
+    for (let k = 0; k < NB; k++) {
+      const f = dens(s, k); if (f <= 0) continue;
+      const xa = Xv(k * dvSI) + 0.5, xb = Xv((k + 1) * dvSI) - 0.5, yy = Yf(f);
+      if (style === 'fill') { c.fillStyle = CMAP[colIdx((k + 0.5) * H.dv)]; c.fillRect(xa, yy, xb - xa, T + ph - yy); }
+      else { c.fillStyle = withAlpha(col.ink2, 0.16); c.fillRect(xa, yy, xb - xa, T + ph - yy); c.strokeStyle = col.ink2; c.lineWidth = 1.2; c.strokeRect(xa + 0.5, yy + 0.5, xb - xa - 1, T + ph - yy - 0.5); }
+      if (f > 3 * peak) spikeAt.push([(xa + xb) / 2, f]);
+    }
+  };
+  if (two()) drawSpecies(1, 'outline');
+  drawSpecies(0, 'fill');
+  // axis
+  c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(L, T + ph + 0.5); c.lineTo(L + pw, T + ph + 0.5); c.stroke();
+  // theory curves
+  masses.forEach((m, s) => {
+    c.save(); c.beginPath();
+    for (let p = 0; p <= 160; p++) { const v = p / 160 * vmaxSI, f = mbF(v / 1000, m); const xx = Xv(v), yy = Yf(f); p ? c.lineTo(xx, yy) : c.moveTo(xx, yy); }
+    c.strokeStyle = col.paper; c.lineWidth = 5; c.stroke();
+    c.strokeStyle = col.ink; c.lineWidth = 2.2; if (s) c.setLineDash([6, 4]); c.stroke(); c.restore();
+  });
+  // spike markers (delta start)
+  for (const [xx, f] of spikeAt) {
+    c.fillStyle = col.acc; c.beginPath(); c.moveTo(xx, T - 4); c.lineTo(xx - 6, T + 6); c.lineTo(xx + 6, T + 6); c.closePath(); c.fill();
+    halo(c, `${fmt(f, 1)}`, xx + 10, T + 2, col.acc, `600 11px ${FONT_MONO}`, 'left', 'middle');
+  }
+  // characteristic speed marks
+  if (S.marks) {
+    const vp = vpOf(M_AR) * 1000, marks = [['v', 'p', vp], ['⟨v⟩', '', vp * Math.sqrt(Math.PI / 2)], ['v', 'rms', vp * Math.SQRT2]];
+    marks.forEach(([b, sub, v], q) => {
+      const xx = Math.round(Xv(v)) + 0.5;
+      c.save(); c.strokeStyle = [col.blue, col.teal, col.violet][q]; c.lineWidth = 1.4; c.setLineDash([3, 3]);
+      c.beginPath(); c.moveTo(xx, T + 18 + q * 15); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+      const yl = T + 10 + q * 15;
+      halo(c, b, xx + 3, yl, [col.blue, col.teal, col.violet][q], `italic 14px ${FONT_MATH}`, 'left');
+      if (sub) { c.font = `italic 14px ${FONT_MATH}`; const ww = c.measureText(b).width; halo(c, sub, xx + 4 + ww, yl + 4, [col.blue, col.teal, col.violet][q], `italic 10px ${FONT_MATH}`, 'left'); }
+    });
+  }
+  // legend (top right)
+  c.textBaseline = 'middle';
+  let ly = 12;
+  const legend = [];
+  legend.push([tr('theory') + ` T = ${fmt(S.T, 0)} K`, 'solid']);
+  if (two()) legend.push([`${tr('light')} m₁ / ${tr('heavy')} m₂`, 'dash']);
+  for (const [t, st] of legend) {
+    c.font = `500 11px ${FONT_BODY}`; const tw = c.measureText(t).width; const xr = L + pw;
+    c.save(); c.strokeStyle = col.ink; c.lineWidth = 2; if (st === 'dash') c.setLineDash([6, 4]);
+    c.beginPath(); c.moveTo(xr - tw - 30, ly); c.lineTo(xr - tw - 8, ly); c.stroke(); c.restore();
+    c.fillStyle = col.ink2; c.textAlign = 'right'; c.fillText(t, xr, ly);
+    ly += 15;
+  }
+}
+
+/* time plot */
+function chartSpec() {
+  const H_ = S.hs === 'h';
+  if (S.tab === 'h') return {
+    ylab: H_ ? 'H' : 'S/Nk', list: [
+      { name: H_ ? tr('lgH') : tr('lgS'), color: col.acc, w: 2, get: p => H_ ? p.H : -p.H },
+      { name: tr('lgHeq'), color: col.ink3, w: 1.4, dash: [5, 4], get: p => H_ ? p.Heq : -p.Heq }
+    ], note: H_ ? tr('cnoteH') : tr('cnoteS')
+  };
+  if (S.tab === 'T') {
+    if (S.preset === 'two') return { ylab: 'T [K]', list: [
+      { name: tr('lgT1'), color: col.acc, w: 2, get: p => p.T1 }, { name: tr('lgT2'), color: col.blue, w: 2, get: p => p.T2 },
+      { name: tr('lgTall'), color: col.ink3, w: 1.4, dash: [5, 4], get: p => p.T }], note: tr('cnoteT2') };
+    return { ylab: 'T [K]', list: [
+      { name: tr('lgTL'), color: col.acc, w: 2, get: p => p.TL }, { name: tr('lgTR'), color: col.blue, w: 2, get: p => p.TR },
+      { name: tr('lgTall'), color: col.ink3, w: 1.4, dash: [5, 4], get: p => p.T }], note: S.preset === 'hot' ? tr('cnoteTL') : tr('cnoteT') };
+  }
+  return { ylab: 'N_L/N', band: true, list: [{ name: tr('lgF'), color: col.acc, w: 1.6, get: p => p.f }], note: S.preset === 'free' ? tr('cnoteF') : tr('cnoteFno') };
+}
+let lastLegendKey = '';
+function drawChart() {
+  const { ctx: c, w, h } = CC;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, w, h);
+  const sp = chartSpec();
+  const lk = lang + S.tab + S.hs + S.preset + S.N;
+  if (lk !== lastLegendKey) {
+    lastLegendKey = lk;
+    let lg = sp.list.map(s => `<span><i class="sw-line" style="border-top:${s.w > 1.8 ? 2.5 : 2}px ${s.dash ? 'dashed' : 'solid'} ${s.color}"></i>${s.name}</span>`).join('');
+    if (sp.band) lg += `<span><i class="sw-line" style="border-top:8px solid ${withAlpha(col.blue, 0.22)}"></i>${tr('lgBand')}</span>`;
+    $('#clegend').innerHTML = lg; $('#cnote').innerHTML = sp.note;
+    $('#hsSeg').hidden = S.tab !== 'h';
+  }
+  const tmax = Math.max(200, S.t);
+  let lo = Infinity, hi = -Infinity;
+  for (const p of series) for (const s of sp.list) { const v = s.get(p); if (isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }
+  if (sp.band) { const sd = 0.5 / Math.sqrt(N); lo = Math.min(lo, 0.5 - 3 * sd); hi = Math.max(hi, 0.5 + 3 * sd); }
+  if (!isFinite(lo)) { lo = 0; hi = 1; }
+  if (hi - lo < 1e-6) { lo -= 0.5; hi += 0.5; }
+  const padv = (hi - lo) * 0.08; lo -= padv; hi += padv;
+  const ystep = niceStep(hi - lo, 4), ydec = ystep < 0.01 ? 3 : ystep < 0.1 ? 2 : ystep < 1 ? 1 : 0;
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0; for (let y = Math.ceil(lo / ystep) * ystep; y <= hi; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, Rr = 12, T = 20, B = 30, pw = w - L - Rr, ph = h - T - B;
+  const Xt = t => L + t / tmax * pw, Yv = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = Math.ceil(lo / ystep) * ystep; y <= hi; y += ystep) { const yy = Math.round(Yv(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(w - Rr, yy); c.stroke(); c.fillText(fmt(y, ydec), L - 8, yy); }
+  const xstep = niceStep(tmax, 5);
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let t = 0; t <= tmax + 1e-9; t += xstep) c.fillText(fmt(t, 0), Xt(t), T + ph + 7);
+  c.fillStyle = col.ink3; c.textAlign = 'right'; c.fillText('t [ps]', w - Rr, T + ph + 7 + 12 > h - 2 ? h - 13 : T + ph + 7 + 12);
+  c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(sp.ylab, 4, 2);
+  if (sp.band) {
+    const sd = 0.5 / Math.sqrt(N);
+    c.fillStyle = withAlpha(col.blue, 0.16); c.fillRect(L, Yv(0.5 + sd), pw, Yv(0.5 - sd) - Yv(0.5 + sd));
+    c.strokeStyle = col.blue; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(L, Math.round(Yv(0.5)) + 0.5); c.lineTo(L + pw, Math.round(Yv(0.5)) + 0.5); c.stroke(); c.setLineDash([]);
+  }
+  for (const s of [...sp.list].reverse()) {
+    c.save(); c.beginPath(); let pen = false;
+    for (const p of series) { const v = s.get(p); if (!isFinite(v)) { pen = false; continue; } const xx = Xt(p.t), yy = Yv(v); pen ? c.lineTo(xx, yy) : c.moveTo(xx, yy); pen = true; }
+    c.strokeStyle = s.color; c.lineWidth = s.w; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); c.stroke(); c.restore();
+  }
+  const last = series[series.length - 1];
+  if (last) for (const s of sp.list) { const v = s.get(last); if (!isFinite(v) || s.dash) continue; c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(Xt(last.t), Yv(v), 3.5, 0, Math.PI * 2); c.fill(); c.stroke(); }
+}
+
+/* ---------- HUD, panel, formulas ---------- */
+const PLAY = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>';
+const PAUSE = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/></svg>';
+function updateButton() {
+  const b = $('#play'), k = S.running ? 'pause' : S.started ? 'resume' : 'start';
+  b.innerHTML = `${S.running ? PAUSE : PLAY}<span>${tr(k)}</span><kbd>${tr('kbd')}</kbd>`;
+  b.classList.toggle('running', S.running);
+  const st = $('#state'), s = S.running ? 'run' : S.started ? 'pause' : 'ready';
+  st.dataset.s = s; st.textContent = tr(s === 'run' ? 'sRun' : s === 'pause' ? 'sPause' : 'sReady');
+}
+function updateHud() {
+  const ms = (v) => `${fmt(v * 1000, 0)} <span>m/s</span>`;
+  $('#hud-t').innerHTML = `${fmt(S.t, 0)} <span>ps</span>`;
+  $('#hud-T').innerHTML = `${fmt(meas.T, 0)} <span>K</span>`;
+  $('#hud-vm').innerHTML = ms(meas.vm);
+  $('#hud-vr').innerHTML = ms(meas.vr);
+  $('#hud-vp').innerHTML = ms(vpOf(M_AR));
+  $('#hud-z').innerHTML = isFinite(meas.Z) && S.started ? `${fmt(meas.Z, 0)} <span>${tr('perNs')}</span>` : `— <span>${tr('perNs')}</span>`;
+  $('#hud-e').innerHTML = `${fmt(Ecur * E_TO_AJ, 5)} <span>aJ</span>`;
+  const sub = two() ? '<sub>1</sub>' : '';
+  const set = (id, h) => { const el = $(id); if (el.innerHTML !== h) el.innerHTML = h; };
+  set('#dt-vm', `⟨v${sub}⟩`); set('#dt-vr', `v<sub>rms${two() ? ',1' : ''}</sub>`); set('#dt-vp', `v<sub>p${two() ? ',1' : ''}</sub>`);
+}
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function updatePanel() {
+  $('#N-out').textContent = String(S.N);
+  $('#T-out').textContent = `${fmt(S.T, 0)} K`;
+  $('#rad-out').textContent = `${fmt(S.r, 2)} nm`;
+  $('#ratio-out').textContent = `${fmt(S.ratio, 0)}×`;
+  $$('input[type=range]').forEach(setFill);
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === S.preset)));
+  $$('#Nseg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.n === S.N)));
+  $('#mixgrp').disabled = !two();
+  $('#mixhint').textContent = two() ? tr('hRatioOn') : tr('hRatio');
+  const g = gasProps();
+  $('#pill-eta').textContent = fmt(g.eta, 3);
+  $('#pill-lam').textContent = `${fmt(g.lam, 1)} nm`;
+  $('#pill-tau').textContent = `${fmt(g.tau, 0)} ps`;
+}
+
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+const kTk = () => V('k') + V('T');
+function updateFormulas() {
+  const mSI = M_AR * U_SI, kTs = KB_SI * S.T, a = mSI / kTs;
+  const vp = Math.sqrt(kTs / mSI), vm = vp * Math.sqrt(Math.PI / 2), vr = vp * Math.SQRT2;
+  const res = (x, u) => `<span class="r">${x}${u ? ' ' + u : ''}</span>`;
+  const mm = (x) => `<span class="m">(${tr('meas')} ${x})</span>`;
+  const g = gasProps();
+  const cards = [];
+  const m1 = two() ? V('m', '1') : V('m');
+  cards.push(`<div class="fcard wide"><h4>${tr('fMB')}</h4>
+    <div class="eq">${V('f')}(${V('v')})${EQ}${FR(`${V('m')}${V('v')}`, kTk())} exp(−${FR(`${V('m')}${V('v')}<sup>2</sup>`, `2${kTk()}`)})</div>
+    <div class="eq num">${FR(m1, kTk())}${EQ}${FR(`${fsci(mSI)} kg`, `${fsci(KB_SI, 3)} J/K · ${fmt(S.T, 0)} K`)}${EQ}${res(fsci(a, 3), 's²/m²')}</div>
+    <div class="eq num">${V('f')}(${V('v')})${EQ}${fsci(a, 3)} · ${V('v')} · exp(−${fsci(a / 2, 3)} · ${V('v')}<sup>2</sup>)</div>
+    <p class="fnote">${tr('noteMB')}${two() ? ' ' + tr('noteMBtwo') : ''}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fSpeeds')}</h4>
+    <div class="eq">${V('v', 'p')}${EQ}${RT(FR(kTk(), m1))}${EQ}${res(fmt(vp, 0), 'm/s')}</div>
+    <div class="eq">⟨${V('v')}⟩${EQ}${RT(FR(`π${kTk()}`, `2${m1}`))}${EQ}${res(fmt(vm, 0), 'm/s')} ${mm(fmt(meas.vm * 1000, 0))}</div>
+    <div class="eq">${V('v', 'rms')}${EQ}${RT(FR(`2${kTk()}`, m1))}${EQ}${res(fmt(vr, 0), 'm/s')} ${mm(fmt(meas.vr * 1000, 0))}</div>
+    <p class="fnote">${tr('noteSpeeds')}</p></div>`);
+  const Ezj = Ecur * E_TO_AJ * 1000;
+  let eqb = `<div class="eq">⟨${V('E', 'k')}⟩${EQ}${FR('1', '2')}${V('m')}⟨${V('v')}<sup>2</sup>⟩${EQ}2 · ${FR('1', '2')}${kTk()}${EQ}${kTk()}</div>
+    <div class="eq num">${V('T')}${EQ}${FR(V('E'), `${V('N')}${V('k')}`)}${EQ}${FR(`${fmt(Ezj, 1)} zJ`, `${N} · ${fsci(KB_SI, 3)} J/K`)}${EQ}${res(fmt(meas.T, 1), 'K')}</div>`;
+  if (two()) eqb += `<div class="eq num">${V('T', '1')}${EQ}${res(fmt(meas.T1, 0), 'K')}, ${V('T', '2')}${EQ}${res(fmt(meas.T2, 0), 'K')} <span class="m">(${FR('1', '2')}${V('m', '2')}⟨${V('v', '2')}<sup>2</sup>⟩ / ${V('k')})</span></div>`;
+  eqb += `<p class="fnote">${tr('noteEq')}${two() ? ' ' + tr('noteEqTwo') : ''}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fEq')}</h4>${eqb}</div>`);
+  cards.push(`<div class="fcard wide"><h4>${tr('fH')}</h4>
+    <div class="eq">${V('H')}${EQ}Σ ${V('f')} ln ${V('f')} Δ${V('v')}${EQ}Σ<sub>${V('i')}</sub> ${V('F', V('i'))} ln ${FR(V('F', V('i')), `2π${V('v', V('i'))}`)} Δ${V('v')}</div>
+    <div class="eq num">${V('H')}(${V('t')} = ${fmt(S.t, 0)} ps)${EQ}${res(fmt(meas.H, 3))} &nbsp; Δ${V('v')} = ${fmt(H.dv * 1000, 1)} m/s</div>
+    <div class="eq num">${V('H', 'eq')}${EQ}ln ${FR(m1, `2π${kTk()}`)} − 1${EQ}${res(fmt(meas.Heq, 3))} &nbsp;<span class="m">${V('H')} − ${V('H', 'eq')} = ${fmt(meas.H - meas.Heq, 3)}</span></div>
+    <p class="fnote">${tr('noteH')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fColl')}</h4>
+    <div class="eq">${V('λ')}${EQ}${FR('1', `2√2 ${V('n')}${V('d')} ${V('g')}`)}${EQ}${res(fmt(g.lam, 2), 'nm')}</div>
+    <div class="eq num">${V('n')}${EQ}${fsci(g.n * 1e18, 2)} m⁻², ${V('η')}${EQ}${fmt(g.eta, 3)}, ${V('g')}${EQ}${fmt(g.g, 2)}</div>
+    <div class="eq">${V('Z')}${EQ}${FR(V('N'), '2')} · 2√2 ${V('n')}${V('d')} ⟨${V('v')}⟩ ${V('g')}${EQ}${res(fmt(g.Zth, 0), tr('perNs'))}</div>
+    <div class="eq num">${V('Z')}<sub>${tr('meas')}</sub>${EQ}${isFinite(meas.Z) && S.t > 30 ? fmt(meas.Z, 0) : '—'} ${tr('perNs')}</div>
+    <p class="fnote">${tr('noteColl')}</p></div>`);
+  const sdTh = 0.5 / Math.sqrt(N);
+  let sdMeas = NaN;
+  if (S.preset === 'free' && S.t > 900) {
+    const tail = series.filter(p => p.t > S.t / 2 && p.t > 400);
+    if (tail.length > 20) { const mu = tail.reduce((s, p) => s + p.f, 0) / tail.length; sdMeas = Math.sqrt(tail.reduce((s, p) => s + (p.f - mu) * (p.f - mu), 0) / (tail.length - 1)); }
+  }
+  cards.push(`<div class="fcard"><h4>${tr('fFluct')}</h4>
+    <div class="eq">⟨${FR(V('N', 'L'), V('N'))}⟩${EQ}${FR('1', '2')}, &nbsp; ${V('σ')}${EQ}${FR('1', `2${RT(V('N'))}`)}</div>
+    <div class="eq num">${V('σ')}${EQ}${FR('1', `2${RT(String(N))}`)}${EQ}${res(fmt(sdTh, 4))}</div>
+    <div class="eq num">${V('σ')}<sub>${tr('meas')}</sub>${EQ}${isFinite(sdMeas) ? fmt(sdMeas, 4) : '—'}</div>
+    <p class="fnote">${tr('noteFluct')}${isFinite(sdMeas) ? '' : ' ' + tr('noteFluctNo')}</p></div>`);
+  cards.push(`<div class="fcard wide"><h4>${tr('f2D')}</h4>
+    <div class="cmp">
+      <div><b>${tr('twoD')}</b><div class="eq">${V('f')}<sub>2D</sub>${EQ}${FR(V('m'), kTk())} ${V('v')} e<sup>−${V('m')}${V('v')}²/2${V('k')}${V('T')}</sup></div></div>
+      <div><b>${tr('threeD')}</b><div class="eq">${V('f')}<sub>3D</sub>${EQ}4π(${FR(V('m'), `2π${kTk()}`)})<sup>3/2</sup> ${V('v')}<sup>2</sup> e<sup>−${V('m')}${V('v')}²/2${V('k')}${V('T')}</sup></div></div>
+    </div>
+    <p class="fnote">${tr('note2D')}</p></div>`);
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- actions ---------- */
+function hardReset() { init(); partitionFade = 0; updateButton(); updatePanel(); updateHud(); updateFormulas(); dirty = true; }
+function setPreset(p) {
+  S.preset = p;
+  S.tab = p === 'hot' || p === 'two' ? 'T' : p === 'free' ? 'f' : 'h';
+  $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === S.tab)));
+  hardReset();
+}
+function play() {
+  if (S.running) { S.running = false; }
+  else { S.running = true; S.started = true; }
+  $('#play').classList.remove('nudge');
+  updateButton(); dirty = true;
+}
+function setT(T) {
+  S.T = T;
+  rescaleTo(T);
+  E0 = energy();
+  measure(0, true);
+  if (!S.started) { series = []; pushSeries(); }
+  updatePanel(); updateHud(); updateFormulas(); dirty = true;
+}
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), formulaTimer = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.running && !document.hidden) {
+    const dts = dt * PS_PER_S * S.speed;
+    advance(dts);
+    S.t += dts;
+    measure(dts, false);
+    pushSeries();
+    if (S.tag) { tagTrail.push([X[0], Y[0]]); if (tagTrail.length > 900) tagTrail.shift(); }
+    updateHud();
+    formulaTimer += dt;
+    if (formulaTimer > 0.4) { formulaTimer = 0; updateFormulas(); }
+    dirty = true;
+  }
+  if (S.started && S.preset === 'free' && partitionFade > 0) { partitionFade = Math.max(0, partitionFade - dt * 3); dirty = true; }
+  if (dirty) { drawGas(); drawHist(); drawChart(); dirty = false; }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+
+/* ---------- wiring ---------- */
+$('#play').addEventListener('click', play);
+$('#reset').addEventListener('click', hardReset);
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => setPreset(b.dataset.preset)));
+$$('#Nseg button').forEach(b => b.addEventListener('click', () => { S.N = +b.dataset.n; hardReset(); }));
+$('#T').addEventListener('input', (e) => setT(+e.target.value));
+$('#rad').addEventListener('input', (e) => { S.r = +e.target.value; hardReset(); });
+$('#ratio').addEventListener('input', (e) => { S.ratio = +e.target.value; hardReset(); });
+$$('#speed button').forEach(b => b.addEventListener('click', () => { S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); }));
+const TG = { 'tg-tag': 'tag', 'tg-vec': 'vec', 'tg-marks': 'marks' };
+Object.entries(TG).forEach(([id, k]) => $('#' + id).addEventListener('click', (e) => {
+  S[k] = !S[k]; e.currentTarget.setAttribute('aria-pressed', String(S[k]));
+  if (k === 'tag') tagTrail = [];
+  dirty = true;
+}));
+$$('#tabs button').forEach(b => b.addEventListener('click', () => { S.tab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); dirty = true; }));
+$$('#hsSeg button').forEach(b => b.addEventListener('click', () => { S.hs = b.dataset.hs; $$('#hsSeg button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); dirty = true; }));
+function setRange(id, v) { $('#' + id).value = v; }
+$$('.try').forEach(b => b.addEventListener('click', () => {
+  const n = +b.dataset.try;
+  if (n === 1) { S.preset = 'same'; }
+  if (n === 2) { S.preset = 'hot'; }
+  if (n === 3) { S.preset = 'two'; S.ratio = 10; setRange('ratio', 10); }
+  if (n === 4) { S.preset = 'free'; S.N = 150; }
+  setPreset(S.preset);
+  const pb = $('#play'); pb.classList.remove('nudge'); void pb.offsetWidth; if (!reduceMotion) pb.classList.add('nudge');
+  $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}));
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); play(); }
+  else if ((e.key === 'r' || e.key === 'R') && tag !== 'input') hardReset();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  lastLegendKey = '';
+  updateButton(); updatePanel(); updateHud(); updateFormulas(); dirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('maxwell-lang', lang); } catch (e) {}
+  applyLang();
+}));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; });
+
+readTokens();
+init();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+window.__maxwell = { S, get N() { return N; }, energy, advance, measure: () => meas, E0: () => E0, gasProps, get coll() { return collisions; }, setPreset };
+})();
+</script>
+
+</body></html>
