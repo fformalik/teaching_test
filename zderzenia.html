@@ -1,0 +1,1272 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Zderzenia</title><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: air-track bench. Wide track stage with instrument strip and transport bar,
+   control panel on the right, momentum/energy ledger below, formulas and plot underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --acc:#0B8F80; --g1:#2F7FE0; --g2:#C77A2A; --heat:#E41C55; --violet:#6A5CFF; --steel:#8996A3;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --acc:#22B8A4; --g1:#4A93F2; --g2:#D58C3C; --heat:#EE3A68; --violet:#8A7FFF; --steel:#7A8896;
+    --on-accent:#04110F; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --acc:#22B8A4; --g1:#4A93F2; --g2:#D58C3C; --heat:#EE3A68; --violet:#8A7FFF; --steel:#7A8896;
+  --on-accent:#04110F; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1.1em; height:.62em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:62ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:7.2ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.hud dt.w{font-family:var(--f-body); font-style:normal; font-size:12.5px}
+.hud .c1 dt{color:var(--g1)} .hud .c2 dt{color:var(--g2)} .hud .ca dt{color:var(--acc)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2); white-space:nowrap}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--g2); color:var(--g2)}
+.state[data-s="done"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(300px, 44vh, 470px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:manipulation}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease; min-width:9.5em; justify-content:center}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg.frame button{font-family:var(--f-body); font-size:12.5px}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+
+/* Ledger (bar charts) */
+.ledger{padding:16px 18px; display:flex; flex-direction:column; gap:12px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.bgrid{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.25fr); gap:14px}
+.bpanel{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:10px 12px 8px; display:flex; flex-direction:column; gap:4px; min-width:0}
+.bpanel h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); display:flex; justify-content:space-between; gap:8px; flex-wrap:wrap}
+.bpanel h4 span{font-family:var(--f-mono); letter-spacing:0; text-transform:none; font-weight:500; color:var(--ink-2)}
+.bbox{position:relative; height:200px}
+.bbox canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.blegend{display:flex; gap:6px 16px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2); align-items:center}
+.blegend span{display:inline-flex; align-items:center; gap:7px}
+.sw-before{width:14px; height:12px; border:1.5px dashed var(--ink-3); border-radius:2px; background:repeating-linear-gradient(135deg, transparent 0 3px, color-mix(in srgb, var(--ink-3) 35%, transparent) 3px 4px)}
+.sw-now{width:14px; height:12px; border-radius:2px; background:var(--ink-2)}
+.bnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.bnote b{color:var(--ink-2); font-weight:600}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); display:flex; align-items:center; gap:8px}
+.grp h3 .dot{width:10px; height:10px; border-radius:3px; display:inline-block}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pills i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+input.signed::-webkit-slider-runnable-track{background:linear-gradient(to right, var(--line) min(var(--p),50%), var(--c) min(var(--p),50%), var(--c) max(var(--p),50%), var(--line) max(var(--p),50%))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2; text-align:left}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--acc); color:var(--ink); box-shadow:inset 0 0 0 1px var(--acc)}
+.etype{font-family:var(--f-mono); font-size:11.5px; color:var(--acc); letter-spacing:.02em}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.rightcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.fwarn{font-size:12.5px; margin:0; padding:8px 10px; border-radius:8px; background:var(--sunk); color:var(--ink-2)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .c1{color:var(--g1)} .eq .c2{color:var(--g2)} .eq .ch{color:var(--heat)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.clegend i{display:inline-block; width:20px; height:0}
+.chart-box{position:relative; height:230px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px}
+.try{display:flex; gap:12px; align-items:flex-start; text-align:left; width:100%; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--ink)}
+.try:hover{border-color:var(--acc)}
+.try .n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--on-accent); font-family:var(--f-mono); font-size:12px; display:flex; align-items:center; justify-content:center; margin-top:1px}
+.try b{display:block; font-family:var(--f-display); font-weight:700; font-size:15px; margin-bottom:1px}
+.try span.t{font-size:13px; color:var(--ink-2); line-height:1.45}
+.try i{font-family:var(--f-math)}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:260px}
+  .fgrid, .bgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.4ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .fire{min-width:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none}
+}
+</style></head><body>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Mechanika · tor powietrzny</span>
+      <h1>
+        <svg viewBox="0 0 70 38" aria-hidden="true"><rect x="2" y="12" width="24" height="16" rx="4" fill="var(--g1)"/><path d="M26 20h4l2-4 3 8 2-4h2" fill="none" stroke="var(--steel)" stroke-width="2" stroke-linejoin="round"/><rect x="40" y="12" width="24" height="16" rx="4" fill="var(--g2)"/><path d="M2 33h66" stroke="var(--acc)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span data-i18n="title">Zderzenia</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Dwa wózki na torze powietrznym, prawie bez tarcia. Ustaw masy, prędkości i sprężystość zderzenia, a potem sprawdź, co zostaje zachowane: pęd zawsze, energia kinetyczna tylko czasem.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t">0,00 <span>s</span></dd></div>
+            <div class="c1"><dt>v<sub>1</sub></dt><dd id="hud-v1">0,00 <span>m/s</span></dd></div>
+            <div class="c2"><dt>v<sub>2</sub></dt><dd id="hud-v2">0,00 <span>m/s</span></dd></div>
+            <div class="ca"><dt>Σp</dt><dd id="hud-p">0,00 <span>kg·m/s</span></dd></div>
+            <div><dt>ΣK</dt><dd id="hud-k">0,00 <span>J</span></dd></div>
+            <div><dt id="hud-n-l" class="w">n</dt><dd id="hud-n">0</dd></div>
+          </dl>
+          <span class="state" id="state" data-s="ready">gotowy</span>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" data-i18n-aria="sceneAria" aria-label="Animacja zderzenia"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="go">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="go-ic"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="go-txt">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="restart">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="restart">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed" data-i18n-aria="speedAria" aria-label="Tempo">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" data-sp="1" aria-pressed="true">1×</button>
+          </div>
+          <span class="spacer"></span>
+          <div class="seg frame" role="group" id="frame" data-i18n-aria="frameAria" aria-label="Układ odniesienia">
+            <span class="lbl" data-i18n="frame">Układ</span>
+            <button type="button" data-fr="lab" aria-pressed="true" data-i18n="frLab">laboratorium</button>
+            <button type="button" data-fr="cm" aria-pressed="false" data-i18n="frCm">środek masy</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-strobe" aria-pressed="false" data-i18n="strobe">Stroboskop</button>
+            <button type="button" class="tg" id="tg-cm" aria-pressed="false" data-i18n="cmMark">Środek masy</button>
+            <button type="button" class="tg" id="tg-walls" aria-pressed="false" data-i18n="walls">Odbijające ściany</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card ledger">
+        <div class="sec-h"><h2 data-i18n="ledger">Bilans pędu i energii</h2><p id="ledger-sub"></p></div>
+        <div class="blegend">
+          <span><i class="sw-before"></i><span data-i18n="lgBefore">przed (t = 0)</span></span>
+          <span><i class="sw-now"></i><span data-i18n="lgNow">teraz</span></span>
+        </div>
+        <div class="bgrid">
+          <div class="bpanel"><h4><span data-i18n="bP" style="font-family:var(--f-body);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-3)">Pęd</span><span>kg·m/s</span></h4><div class="bbox" id="bp-box"><canvas id="bp"></canvas></div></div>
+          <div class="bpanel"><h4><span data-i18n="bK" style="font-family:var(--f-body);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--ink-3)">Energia</span><span>J</span></h4><div class="bbox" id="bk-box"><canvas id="bk"></canvas></div></div>
+        </div>
+        <p class="bnote" id="ledger-note"></p>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="panelAria" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gPresets">Gotowe układy</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-pre="equal" aria-pressed="false"><span data-i18n="prEqual">Równe masy</span><small data-i18n="prEqualS">e = 1</small></button>
+          <button type="button" class="chip" data-pre="heavy" aria-pressed="false"><span data-i18n="prHeavy">Ciężki w lekki</span><small data-i18n="prHeavyS">m₁ ≫ m₂</small></button>
+          <button type="button" class="chip" data-pre="light" aria-pressed="false"><span data-i18n="prLight">Lekki w ciężki</span><small data-i18n="prLightS">m₁ ≪ m₂</small></button>
+          <button type="button" class="chip" data-pre="stick" aria-pressed="false"><span data-i18n="prStick">Sklejenie</span><small data-i18n="prStickS">e = 0</small></button>
+          <button type="button" class="chip" data-pre="boom" aria-pressed="false"><span data-i18n="prBoom">Wybuch</span><small data-i18n="prBoomS">Σp = 0</small></button>
+        </div>
+      </fieldset>
+      <fieldset class="grp" style="--c:var(--g1)">
+        <h3><i class="dot" style="background:var(--g1)"></i><span data-i18n="gG1">Wózek 1</span></h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m1" data-i18n-html="lm1">Masa <i>m</i><sub>1</sub></label><output id="m1-out" for="m1"></output></div>
+          <input type="range" id="m1" min="0.1" max="2" step="0.05" value="0.5">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v1" data-i18n-html="lv1">Prędkość <i>v</i><sub>1</sub></label><output id="v1-out" for="v1"></output></div>
+          <input type="range" class="signed" id="v1" min="-1.5" max="1.5" step="0.05" value="0.6">
+        </div>
+      </fieldset>
+      <fieldset class="grp" style="--c:var(--g2)">
+        <h3><i class="dot" style="background:var(--g2)"></i><span data-i18n="gG2">Wózek 2</span></h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m2" data-i18n-html="lm2">Masa <i>m</i><sub>2</sub></label><output id="m2-out" for="m2"></output></div>
+          <input type="range" id="m2" min="0.1" max="2" step="0.05" value="0.5">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v2" data-i18n-html="lv2">Prędkość <i>v</i><sub>2</sub></label><output id="v2-out" for="v2"></output></div>
+          <input type="range" class="signed" id="v2" min="-1.5" max="1.5" step="0.05" value="0">
+          <span class="hint" data-i18n="vHint">+ w prawo, − w lewo</span>
+        </div>
+      </fieldset>
+      <fieldset class="grp" style="--c:var(--acc)">
+        <h3 data-i18n="gColl">Zderzenie</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="e" data-i18n-html="le">Współczynnik restytucji <i>e</i></label><output id="e-out" for="e"></output></div>
+          <input type="range" id="e" min="0" max="1" step="0.01" value="1">
+          <span class="etype" id="etype"></span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pVcm">prędkość ŚM</small><span id="pill-vcm">—</span></div>
+          <div class="pill"><small data-i18n="pMu">masa zredukowana</small><span id="pill-mu">—</span></div>
+          <div class="pill"><small data-i18n="pDk">strata ΔK</small><span id="pill-dk">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo, z prędkości tuż przed pierwszym zderzeniem wózków.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <div class="rightcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n="charts">Wykres</h2></div>
+        <div class="tabs" role="tablist" id="tabs">
+          <button type="button" role="tab" data-tab="x" aria-selected="true" data-i18n="tabX">Położenie x(t)</button>
+          <button type="button" role="tab" data-tab="v" aria-selected="false" data-i18n="tabV">Prędkość v(t)</button>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart"></canvas></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <button type="button" class="try" data-try="1"><span class="n">1</span><span><b data-i18n="t1h">Zatrzymanie w miejscu</b><span class="t" data-i18n-html="t1">Równe masy, <i>e</i> = 1. Wózek 1 staje jak wryty, a cały jego pęd przejmuje wózek 2. Tak działa wahadło Newtona.</span></span></button>
+        <button type="button" class="try" data-try="2"><span class="n">2</span><span><b data-i18n="t2h">Prawie dwa razy szybciej</b><span class="t" data-i18n-html="t2">Ciężki wózek uderza w lekki. Lekki odlatuje z prędkością bliską 2<i>v</i><sub>1</sub>, nigdy szybciej. Porównaj strzałki.</span></span></button>
+        <button type="button" class="try" data-try="3"><span class="n">3</span><span><b data-i18n="t3h">Z punktu widzenia środka masy</b><span class="t" data-i18n-html="t3">Przełącz układ na środek masy. Każdy wózek po prostu odwraca prędkość, skróconą <i>e</i> razy. Całkowity pęd jest zerowy.</span></span></button>
+        <button type="button" class="try" data-try="4"><span class="n">4</span><span><b data-i18n="t4h">Gdzie znika energia?</b><span class="t" data-i18n-html="t4">Sklej wózki o równych masach, jeden w spoczynku. Pęd się zgadza, ale dokładnie połowa energii kinetycznej idzie w ciepło.</span></span></button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Mechanika · tor powietrzny', title:'Zderzenia',
+    lede:'Dwa wózki na torze powietrznym, prawie bez tarcia. Ustaw masy, prędkości i sprężystość zderzenia, a potem sprawdź, co zostaje zachowane: pęd zawsze, energia kinetyczna tylko czasem.',
+    sceneAria:'Animacja zderzenia dwóch wózków na torze powietrznym', speedAria:'Tempo animacji', frameAria:'Układ odniesienia', panelAria:'Ustawienia',
+    kbd:'spacja', restart:'Od nowa', speed:'Tempo', frame:'Układ', frLab:'laboratorium', frCm:'środek masy',
+    strobe:'Stroboskop', cmMark:'Środek masy', walls:'Odbijające ściany',
+    goStart:'Start', goPause:'Pauza', goResume:'Wznów', goAgain:'Jeszcze raz',
+    sReady:'gotowy', sRun:'w ruchu', sPause:'pauza', sDone:'koniec',
+    ledger:'Bilans pędu i energii', lgBefore:'przed (t = 0)', lgNow:'teraz', bP:'Pęd', bK:'Energia',
+    gPresets:'Gotowe układy', prEqual:'Równe masy', prEqualS:'e = 1', prHeavy:'Ciężki w lekki', prHeavyS:'m₁ ≫ m₂', prLight:'Lekki w ciężki', prLightS:'m₁ ≪ m₂', prStick:'Sklejenie', prStickS:'e = 0', prBoom:'Wybuch', prBoomS:'Σp = 0',
+    gG1:'Wózek 1', gG2:'Wózek 2', lm1:'Masa <i>m</i><sub>1</sub>', lm2:'Masa <i>m</i><sub>2</sub>', lv1:'Prędkość <i>v</i><sub>1</sub>', lv2:'Prędkość <i>v</i><sub>2</sub>', vHint:'+ w prawo, − w lewo',
+    gColl:'Zderzenie', le:'Współczynnik restytucji <i>e</i>',
+    eEl:'sprężyste: sprężynki, ΔK = 0', eIn:'niesprężyste: gumowe zderzaki', ePi:'doskonale niesprężyste: rzep, wózki się sklejają',
+    pVcm:'prędkość ŚM', pMu:'masa zredukowana', pDk:'strata ΔK',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo, z prędkości tuż przed pierwszym zderzeniem wózków.',
+    fP:'Zasada zachowania pędu', fE:'Współczynnik restytucji', fV1:'Prędkość wózka 1 po zderzeniu', fV2:'Prędkość wózka 2 po zderzeniu', fK:'Strata energii kinetycznej', fCm:'Środek masy', fBoom:'Wybuch: sprężyna między wózkami',
+    noteE:'<i>e</i> = 1: zderzenie sprężyste, <i>e</i> = 0: wózki się sklejają.',
+    noteV:'Dla <i>e</i> = 1 i <i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> wózki po prostu wymieniają się prędkościami.',
+    noteK:'Strata zależy tylko od prędkości względnej i masy zredukowanej <i>μ</i>. Ruch środka masy niesie energię, której zderzenie nie może ruszyć.',
+    noteCm:'W układzie środka masy całkowity pęd jest zerowy, a zderzenie tylko odwraca prędkości i mnoży je przez <i>e</i>.',
+    noteBoom:'Wózki startują w spoczynku, więc Σ<i>p</i> = 0 przed i po. Lżejszy wózek dostaje większą prędkość, ale oba pędy są równe co do wartości.',
+    noColl:'Przy tych ustawieniach wózki się nie zderzą (wózek 1 nie dogania wózka 2). Wzory pokazują, co by się stało, gdyby się zderzyły.',
+    wallColl:'Pierwsze zderzenie następuje po odbiciu od ściany, więc podstawiamy prędkości tuż przed nim.',
+    boomNoColl:'Bez ścian wózki po wybuchu już się nie spotkają.',
+    charts:'Wykres', tabX:'Położenie x(t)', tabV:'Prędkość v(t)', g1:'wózek 1', g2:'wózek 2', cm:'środek masy',
+    cnoteX:'Załamania linii to zderzenia. Linia środka masy jest prosta: zderzenie jej nie zgina.', cnoteV:'Skoki prędkości to zderzenia. Prędkość środka masy się nie zmienia, chyba że wózek uderzy w ścianę.',
+    cnoteCm:' W układzie ŚM środek masy stoi w miejscu.',
+    tries:'Spróbuj', t1h:'Zatrzymanie w miejscu', t1:'Równe masy, <i>e</i> = 1. Wózek 1 staje jak wryty, a cały jego pęd przejmuje wózek 2. Tak działa wahadło Newtona.',
+    t2h:'Prawie dwa razy szybciej', t2:'Ciężki wózek uderza w lekki. Lekki odlatuje z prędkością bliską 2<i>v</i><sub>1</sub>, nigdy szybciej. Porównaj strzałki.',
+    t3h:'Z punktu widzenia środka masy', t3:'Przełącz układ na środek masy. Każdy wózek po prostu odwraca prędkość, skróconą <i>e</i> razy. Całkowity pęd jest zerowy.',
+    t4h:'Gdzie znika energia?', t4:'Sklej wózki o równych masach, jeden w spoczynku. Pęd się zgadza, ale dokładnie połowa energii kinetycznej idzie w ciepło.',
+    heat:'ciepło', spring:'sprężyna',
+    ledSubLab:'Układ laboratorium. Kreskowane słupki: stan początkowy, pełne: chwila obecna.', ledSubCm:'Układ środka masy: całkowity pęd jest tu zawsze zerowy.',
+    noteKeep:'Σ<i>p</i> nie zmienia się w zderzeniu', noteWalls:'Ściany działają siłą zewnętrzną, więc przy odbiciu od ściany Σp się zmienia. Energia przy odbiciu od ściany jest zachowana.',
+    noteHeat:'ciepło i odkształcenie', noteSum:'ΣK + Q', noteSumBoom:'ΣK + Q + E<sub>spr</sub>', lostPct:'stracono',
+    canLab:'układ laboratorium', canCm:'układ środka masy, porusza się z',
+    canThread:'nić', canWall:'ściana', canAt:'w chwili',
+    hudN:'zderzenia'
+  },
+  en: {
+    eyebrow:'Mechanics · air track', title:'Collisions',
+    lede:'Two gliders on an air track, almost frictionless. Set the masses, speeds and bounciness of the collision, then check what is conserved: momentum always, kinetic energy only sometimes.',
+    sceneAria:'Animation of two gliders colliding on an air track', speedAria:'Animation speed', frameAria:'Reference frame', panelAria:'Settings',
+    kbd:'space', restart:'Restart', speed:'Speed', frame:'Frame', frLab:'lab', frCm:'centre of mass',
+    strobe:'Strobe', cmMark:'Centre of mass', walls:'Bouncy walls',
+    goStart:'Start', goPause:'Pause', goResume:'Resume', goAgain:'Again',
+    sReady:'ready', sRun:'running', sPause:'paused', sDone:'done',
+    ledger:'Momentum and energy ledger', lgBefore:'before (t = 0)', lgNow:'now', bP:'Momentum', bK:'Energy',
+    gPresets:'Presets', prEqual:'Equal masses', prEqualS:'e = 1', prHeavy:'Heavy hits light', prHeavyS:'m₁ ≫ m₂', prLight:'Light hits heavy', prLightS:'m₁ ≪ m₂', prStick:'Stick together', prStickS:'e = 0', prBoom:'Explosion', prBoomS:'Σp = 0',
+    gG1:'Glider 1', gG2:'Glider 2', lm1:'Mass <i>m</i><sub>1</sub>', lm2:'Mass <i>m</i><sub>2</sub>', lv1:'Velocity <i>v</i><sub>1</sub>', lv2:'Velocity <i>v</i><sub>2</sub>', vHint:'+ to the right, − to the left',
+    gColl:'Collision', le:'Coefficient of restitution <i>e</i>',
+    eEl:'elastic: spring bumpers, ΔK = 0', eIn:'inelastic: rubber bumpers', ePi:'perfectly inelastic: velcro, the gliders stick',
+    pVcm:'CM velocity', pMu:'reduced mass', pDk:'loss ΔK',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live, using the velocities just before the first glider collision.',
+    fP:'Conservation of momentum', fE:'Coefficient of restitution', fV1:'Velocity of glider 1 after', fV2:'Velocity of glider 2 after', fK:'Kinetic energy lost', fCm:'Centre of mass', fBoom:'Explosion: spring between the gliders',
+    noteE:'<i>e</i> = 1: elastic collision, <i>e</i> = 0: the gliders stick together.',
+    noteV:'For <i>e</i> = 1 and <i>m</i><sub>1</sub> = <i>m</i><sub>2</sub> the gliders simply swap velocities.',
+    noteK:'The loss depends only on the relative velocity and the reduced mass <i>μ</i>. The motion of the centre of mass carries energy that no collision can touch.',
+    noteCm:'In the centre of mass frame the total momentum is zero, and the collision just reverses each velocity and scales it by <i>e</i>.',
+    noteBoom:'The gliders start at rest, so Σ<i>p</i> = 0 before and after. The lighter glider gets the larger speed, but both momenta have equal size.',
+    noColl:'With these settings the gliders never collide (glider 1 does not catch up with glider 2). The formulas show what would happen if they did.',
+    wallColl:'The first collision comes after a wall bounce, so we use the velocities just before it.',
+    boomNoColl:'Without walls the gliders never meet again after the explosion.',
+    charts:'Plot', tabX:'Position x(t)', tabV:'Velocity v(t)', g1:'glider 1', g2:'glider 2', cm:'centre of mass',
+    cnoteX:'Kinks in the lines are collisions. The centre of mass line stays straight: collisions do not bend it.', cnoteV:'Jumps in velocity are collisions. The centre of mass velocity does not change unless a glider hits a wall.',
+    cnoteCm:' In the CM frame the centre of mass stands still.',
+    tries:'Try this', t1h:'Dead stop', t1:'Equal masses, <i>e</i> = 1. Glider 1 stops dead and glider 2 takes all of its momentum. This is how Newton’s cradle works.',
+    t2h:'Almost twice as fast', t2:'A heavy glider hits a light one. The light one flies off at nearly 2<i>v</i><sub>1</sub>, never faster. Compare the arrows.',
+    t3h:'Seen from the centre of mass', t3:'Switch to the centre of mass frame. Each glider just reverses its velocity, shrunk by a factor <i>e</i>. Total momentum is zero.',
+    t4h:'Where does the energy go?', t4:'Make equal gliders stick, one at rest. Momentum checks out, but exactly half of the kinetic energy turns into heat.',
+    heat:'heat', spring:'spring',
+    ledSubLab:'Lab frame. Hatched bars: initial state, solid bars: right now.', ledSubCm:'Centre of mass frame: total momentum here is always zero.',
+    noteKeep:'Σ<i>p</i> does not change in a collision', noteWalls:'The walls exert an external force, so Σp changes at a wall bounce. Energy is conserved at the walls.',
+    noteHeat:'heat and deformation', noteSum:'ΣK + Q', noteSumBoom:'ΣK + Q + E<sub>spring</sub>', lostPct:'lost',
+    canLab:'lab frame', canCm:'centre of mass frame, moving at',
+    canThread:'thread', canWall:'wall', canAt:'at',
+    hudN:'collisions'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('zderzenia-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const fs = (x, dec = 2) => (x > 0 && Math.abs(x) >= 0.5 * Math.pow(10, -dec) ? '+' : '') + fmt(x, dec);
+const par = (s) => (s.startsWith('−') ? `(${s})` : s);
+
+/* ---------- parameters ---------- */
+const L = 2.0;                 // track length [m]
+const BUMP = 0.035;            // bumper length [m]
+const TREL = 0.6;              // explosion release time [s]
+const ES = 0.08;               // spring energy for the explosion [J]
+const width = (m) => 0.15 + 0.05 * m;
+const P = { m1: 0.5, m2: 0.5, v1: 0.6, v2: 0, e: 1, mode: 'normal', x1: 0, x2: 0 };
+const S = { t: 0, playing: false, speed: 1, frame: 'lab', strobe: false, walls: false, cm: false, tab: 'x', preset: 'equal' };
+
+function boomVel() {
+  const mu = P.m1 * P.m2 / (P.m1 + P.m2), p = Math.sqrt(2 * ES * mu);
+  return { p, v1: -p / P.m1, v2: p / P.m2 };
+}
+function readParams() {
+  P.m1 = +$('#m1').value; P.m2 = +$('#m2').value; P.e = +$('#e').value;
+  P.w1 = width(P.m1); P.w2 = width(P.m2);
+  if (P.mode === 'boom') {
+    const b = boomVel(); P.v1 = b.v1; P.v2 = b.v2;
+    P.x1 = L / 2 - P.w1 / 2; P.x2 = L / 2 + P.w2 / 2;
+  } else {
+    P.v1 = +$('#v1').value; P.v2 = +$('#v2').value;
+    P.x1 = 0.5; P.x2 = 1.3;
+  }
+}
+
+/* ---------- physics: exact event-driven timeline ---------- */
+// Between events both gliders move uniformly (frictionless track). Events: glider-glider contact,
+// glider-wall contact (optional, elastic), explosion release. Each event is resolved exactly.
+function collide(m1, m2, u1, u2, e) {
+  const M = m1 + m2;
+  return [((m1 - e * m2) * u1 + (1 + e) * m2 * u2) / M, ((m2 - e * m1) * u2 + (1 + e) * m1 * u1) / M];
+}
+const kin = (m, v) => 0.5 * m * v * v;
+let TL = null;
+function buildTimeline() {
+  const { m1, m2, e, w1, w2 } = P, walls = S.walls, boom = P.mode === 'boom';
+  const TMAX = walls ? 15 : 12;
+  let st = { t: 0, x1: P.x1, x2: P.x2, v1: boom ? 0 : P.v1, v2: boom ? 0 : P.v2, stuck: false, heat: 0, spring: boom ? ES : 0, n: 0, released: !boom };
+  const segs = [{ ...st }], events = [];
+  for (let guard = 0; guard < 4000; guard++) {
+    const cand = [];
+    const gap = st.x2 - st.x1 - (w1 + w2) / 2;
+    if (!st.released) cand.push([TREL - st.t, 'rel']);
+    if (st.released && !st.stuck && st.v1 > st.v2 + 1e-12) cand.push([Math.max(0, gap) / (st.v1 - st.v2), 'pair']);
+    if (walls) {
+      if (st.v1 < -1e-12) cand.push([Math.max(0, st.x1 - w1 / 2) / -st.v1, 'w1']);
+      if (st.v2 > 1e-12) cand.push([Math.max(0, L - st.x2 - w2 / 2) / st.v2, 'w2']);
+    }
+    if (!cand.length) break;
+    cand.sort((a, b) => a[0] - b[0]);
+    const [dt, type] = cand[0];
+    if (st.t + dt > TMAX) break;
+    const n = { ...st, t: st.t + dt, x1: st.x1 + st.v1 * dt, x2: st.x2 + st.v2 * dt };
+    const K0 = kin(m1, n.v1) + kin(m2, n.v2);
+    const ev = { t: n.t, type, u1: n.v1, u2: n.v2, x: 0 };
+    if (type === 'rel') {
+      const b = boomVel(); n.v1 = b.v1; n.v2 = b.v2; n.released = true; n.spring = 0;
+      ev.x = n.x1 + w1 / 2;
+    } else if (type === 'pair') {
+      n.x2 = n.x1 + (w1 + w2) / 2;
+      let ee = e;
+      const rel = n.v1 - n.v2;
+      if (ee * rel < 2e-3) ee = 0;                     // tiny rebound: treat as sticking (avoids inelastic collapse)
+      const [a, b] = collide(m1, m2, n.v1, n.v2, ee);
+      n.v1 = a; n.v2 = b; n.n++;
+      if (ee === 0) { n.stuck = true; const V = (m1 * a + m2 * b) / (m1 + m2); n.v1 = n.v2 = V; }
+      n.heat += Math.max(0, K0 - kin(m1, n.v1) - kin(m2, n.v2));
+      ev.x = n.x1 + w1 / 2; ev.e = ee;
+    } else if (type === 'w1') {
+      n.x1 = w1 / 2;
+      if (n.stuck) { n.v1 = -n.v1; n.v2 = n.v1; } else n.v1 = -n.v1;
+      ev.x = 0;
+    } else {
+      n.x2 = L - w2 / 2;
+      if (n.stuck) { n.v2 = -n.v2; n.v1 = n.v2; } else n.v2 = -n.v2;
+      ev.x = L;
+    }
+    ev.w1 = n.v1; ev.w2 = n.v2;
+    events.push(ev); segs.push(n); st = n;
+  }
+  // end time
+  let Tend = TMAX;
+  if (!walls) {
+    const last = segs[segs.length - 1];
+    let te = last.t + 1.2;
+    const lo = -0.35 - 0.3, hi = L + 0.35 + 0.3;
+    for (const [x, v] of [[last.x1, last.v1], [last.x2, last.v2]]) {
+      if (v > 1e-9) te = Math.max(te, last.t + (hi - x) / v);
+      else if (v < -1e-9) te = Math.max(te, last.t + (x - lo) / -v);
+    }
+    Tend = Math.min(TMAX, Math.max(2, te));
+  }
+  TL = { segs, events, Tend };
+  // scales for bars
+  let pmax = 0.05, kmax = 0.02;
+  for (const s of segs) {
+    const fr = frameV(s);
+    pmax = Math.max(pmax, Math.abs(m1 * (s.v1 - fr)), Math.abs(m2 * (s.v2 - fr)), Math.abs(m1 * (s.v1 - fr) + m2 * (s.v2 - fr)));
+    kmax = Math.max(kmax, kin(m1, s.v1 - fr) + kin(m2, s.v2 - fr) + s.heat + s.spring);
+  }
+  if (boom) { const b = boomVel(); pmax = Math.max(pmax, b.p); }
+  TL.pmax = pmax; TL.kmax = kmax;
+}
+function segAt(t) {
+  const s = TL.segs; let lo = 0, hi = s.length - 1;
+  while (lo < hi) { const mid = (lo + hi + 1) >> 1; if (s[mid].t <= t) lo = mid; else hi = mid - 1; }
+  return s[lo];
+}
+function stateAt(t) {
+  const s = segAt(t), d = t - s.t;
+  return { ...s, t, x1: s.x1 + s.v1 * d, x2: s.x2 + s.v2 * d };
+}
+const xcmOf = (s) => (P.m1 * s.x1 + P.m2 * s.x2) / (P.m1 + P.m2);
+const vcmOf = (s) => (P.m1 * s.v1 + P.m2 * s.v2) / (P.m1 + P.m2);
+const frameV = (s) => (S.frame === 'cm' ? vcmOf(s) : 0);
+let XCM0 = 0;
+const frameShift = (s) => (S.frame === 'cm' ? xcmOf(s) - XCM0 : 0);
+function firstPair() { return TL.events.find(e => e.type === 'pair') || null; }
+
+/* ---------- UI ---------- */
+function setFill(el) {
+  const p = (el.value - el.min) / (el.max - el.min) * 100;
+  el.style.setProperty('--p', p + '%');
+}
+function updateOutputs() {
+  $('#m1-out').textContent = `${fmt(P.m1, 2)} kg`; $('#m2-out').textContent = `${fmt(P.m2, 2)} kg`;
+  $('#v1-out').textContent = `${fs(P.v1, 2)} m/s`; $('#v2-out').textContent = `${fs(P.v2, 2)} m/s`;
+  $('#e-out').textContent = fmt(P.e, 2);
+  $('#etype').textContent = P.e >= 0.995 ? tr('eEl') : P.e <= 0.005 ? tr('ePi') : tr('eIn');
+  $$('input[type=range]').forEach(setFill);
+  const M = P.m1 + P.m2, mu = P.m1 * P.m2 / M;
+  const fp = firstPair();
+  const u1 = fp ? fp.u1 : P.v1, u2 = fp ? fp.u2 : P.v2, ee = fp ? fp.e : P.e;
+  $('#pill-vcm').textContent = `${fs((P.m1 * P.v1 + P.m2 * P.v2) / M, 2)} m/s`;
+  $('#pill-mu').textContent = `${fmt(mu, 3)} kg`;
+  $('#pill-dk').textContent = fp ? `${fmt(-0.5 * mu * (1 - ee * ee) * (u1 - u2) ** 2, 3)} J` : '—';
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pre === S.preset)));
+}
+
+const STATE_LABEL = { ready: 'sReady', run: 'sRun', pause: 'sPause', done: 'sDone' };
+const ICON_PLAY = '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+const ICON_PAUSE = '<path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+const ICON_AGAIN = '<path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+function stateKey() { return S.playing ? 'run' : S.t <= 0 ? 'ready' : S.t >= TL.Tend ? 'done' : 'pause'; }
+let lastUiKey = '';
+function updateTransport() {
+  const k = stateKey(), key = k + lang;
+  if (key === lastUiKey) return; lastUiKey = key;
+  const el = $('#state'); el.dataset.s = k; el.textContent = tr(STATE_LABEL[k]);
+  $('#go-txt').textContent = tr(k === 'run' ? 'goPause' : k === 'pause' ? 'goResume' : k === 'done' ? 'goAgain' : 'goStart');
+  $('#go-ic').innerHTML = k === 'run' ? ICON_PAUSE : k === 'done' ? ICON_AGAIN : ICON_PLAY;
+}
+let hudLast = '';
+function updateHud() {
+  const s = stateAt(S.t), fv = frameV(s);
+  const v1 = s.v1 - fv, v2 = s.v2 - fv, p = P.m1 * v1 + P.m2 * v2, K = kin(P.m1, v1) + kin(P.m2, v2);
+  const key = [S.t, v1, v2, p, K, s.n, lang].map(x => typeof x === 'number' ? x.toFixed(4) : x).join('|');
+  if (key === hudLast) return; hudLast = key;
+  const set = (id, v, u, d = 2) => { $('#hud-' + id).innerHTML = `${typeof v === 'number' ? fmt(v, d) : v} <span>${u}</span>`; };
+  set('t', S.t, 's'); set('v1', v1, 'm/s'); set('v2', v2, 'm/s'); set('p', p, 'kg·m/s', 3); set('k', K, 'J', 3);
+  $('#hud-n').textContent = String(s.n);
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s, cls) => `<i${cls ? ` class="${cls}"` : ''}>${b}</i>${s != null ? `<sub${cls ? ` class="${cls}"` : ''}>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+function updateFormulas() {
+  const { m1, m2 } = P, M = m1 + m2, mu = m1 * m2 / M;
+  const fp = firstPair();
+  const u1 = fp ? fp.u1 : P.v1, u2 = fp ? fp.u2 : P.v2, e = fp ? fp.e : P.e;
+  const [w1, w2] = collide(m1, m2, u1, u2, e);
+  const n2 = (x) => par(fmt(x, 2)), n3 = (x) => fmt(x, 3);
+  const r = (x, u, d = 3) => `<span class="r">${fmt(x, d)} ${u}</span>`;
+  const cards = [];
+  let warn = '';
+  if (P.mode === 'boom') warn = fp ? tr('wallColl') : tr('boomNoColl');
+  else if (!fp) warn = tr('noColl');
+  else if (fp.t > 0 && TL.events[0] !== fp) warn = tr('wallColl');
+  if (P.mode === 'boom') {
+    const b = boomVel();
+    cards.push(`<div class="fcard wide"><h4>${tr('fBoom')}</h4>
+      <div class="eq">0${EQ}${V('m', '1')}${V('v', '1', 'c1')}′ + ${V('m', '2')}${V('v', '2', 'c2')}′ &nbsp;⇒&nbsp; ${V('p')}${EQ}${RT(`2${V('μ')}${V('E', 'spr')}`)}${EQ}${RT(`2 · ${n3(mu)} · ${fmt(ES, 2)}`)}${EQ}${r(b.p, 'kg·m/s')}</div>
+      <div class="eq num">${V('v', '1', 'c1')}′${EQ}−${FR(V('p'), V('m', '1'))}${EQ}${r(b.v1, 'm/s', 2)} &nbsp;&nbsp; ${V('v', '2', 'c2')}′${EQ}${FR(V('p'), V('m', '2'))}${EQ}${r(b.v2, 'm/s', 2)}</div>
+      <p class="fnote">${tr('noteBoom')}</p></div>`);
+  }
+  if (warn) cards.push(`<p class="fwarn fcard wide" style="padding:8px 12px">${warn}</p>`);
+  if (P.mode !== 'boom' || fp) {
+    cards.push(`<div class="fcard wide"><h4>${tr('fP')}</h4>
+      <div class="eq">${V('m', '1')}${V('v', '1', 'c1')} + ${V('m', '2')}${V('v', '2', 'c2')}${EQ}${V('m', '1')}${V('v', '1', 'c1')}′ + ${V('m', '2')}${V('v', '2', 'c2')}′</div>
+      <div class="eq num">${n2(m1)} · ${n2(u1)} + ${n2(m2)} · ${n2(u2)}${EQ}${n2(m1)} · ${n2(w1)} + ${n2(m2)} · ${n2(w2)}${EQ}${r(m1 * u1 + m2 * u2, 'kg·m/s')}</div></div>`);
+    cards.push(`<div class="fcard"><h4>${tr('fE')}</h4>
+      <div class="eq">${V('e')}${EQ}−${FR(`${V('v', '1', 'c1')}′ − ${V('v', '2', 'c2')}′`, `${V('v', '1', 'c1')} − ${V('v', '2', 'c2')}`)}${EQ}−${FR(`${n2(w1)} − ${n2(w2)}`, `${n2(u1)} − ${n2(u2)}`)}${EQ}<span class="r">${fmt(e, 2)}</span></div>
+      <p class="fnote">${tr('noteE')}</p></div>`);
+    cards.push(`<div class="fcard"><h4>${tr('fCm')}</h4>
+      <div class="eq">${V('v', 'ŚM')}${EQ}${FR(`${V('m', '1')}${V('v', '1', 'c1')} + ${V('m', '2')}${V('v', '2', 'c2')}`, `${V('m', '1')} + ${V('m', '2')}`)}${EQ}${r((m1 * u1 + m2 * u2) / M, 'm/s', 2)}</div>
+      <div class="eq num">${V('u', 'i')}${EQ}${V('v', 'i')} − ${V('v', 'ŚM')}, &nbsp; ${V('u', 'i')}′${EQ}−${V('e')} ${V('u', 'i')}</div>
+      <p class="fnote">${tr('noteCm')}</p></div>`);
+    cards.push(`<div class="fcard wide"><h4>${tr('fV1')}</h4>
+      <div class="eq">${V('v', '1', 'c1')}′${EQ}${FR(`(${V('m', '1')} − ${V('e')}${V('m', '2')})${V('v', '1', 'c1')} + (1 + ${V('e')})${V('m', '2')}${V('v', '2', 'c2')}`, `${V('m', '1')} + ${V('m', '2')}`)}</div>
+      <div class="eq num">${V('v', '1', 'c1')}′${EQ}${FR(`(${fmt(m1, 2)} − ${fmt(e, 2)} · ${fmt(m2, 2)}) · ${n2(u1)} + ${fmt(1 + e, 2)} · ${fmt(m2, 2)} · ${n2(u2)}`, fmt(M, 2))}${EQ}${r(w1, 'm/s')}</div></div>`);
+    cards.push(`<div class="fcard wide"><h4>${tr('fV2')}</h4>
+      <div class="eq">${V('v', '2', 'c2')}′${EQ}${FR(`(${V('m', '2')} − ${V('e')}${V('m', '1')})${V('v', '2', 'c2')} + (1 + ${V('e')})${V('m', '1')}${V('v', '1', 'c1')}`, `${V('m', '1')} + ${V('m', '2')}`)}</div>
+      <div class="eq num">${V('v', '2', 'c2')}′${EQ}${FR(`(${fmt(m2, 2)} − ${fmt(e, 2)} · ${fmt(m1, 2)}) · ${n2(u2)} + ${fmt(1 + e, 2)} · ${fmt(m1, 2)} · ${n2(u1)}`, fmt(M, 2))}${EQ}${r(w2, 'm/s')}</div>
+      <p class="fnote">${tr('noteV')}</p></div>`);
+    const dK = -0.5 * mu * (1 - e * e) * (u1 - u2) ** 2, K0 = kin(m1, u1) + kin(m2, u2);
+    cards.push(`<div class="fcard wide"><h4>${tr('fK')}</h4>
+      <div class="eq">Δ${V('K')}${EQ}−${FR('1', '2')}${V('μ')}(1 − ${V('e')}<sup>2</sup>)(${V('v', '1', 'c1')} − ${V('v', '2', 'c2')})<sup>2</sup>, &nbsp; ${V('μ')}${EQ}${FR(`${V('m', '1')}${V('m', '2')}`, `${V('m', '1')} + ${V('m', '2')}`)}${EQ}${fmt(mu, 3)} kg</div>
+      <div class="eq num">Δ${V('K')}${EQ}−${FR('1', '2')} · ${fmt(mu, 3)} · (1 − ${fmt(e, 2)}<sup>2</sup>) · (${fmt(u1 - u2, 2)})<sup>2</sup>${EQ}<span class="r" style="color:var(--heat)">${fmt(dK, 4)} J</span>${K0 > 1e-9 ? ` <span style="font-family:var(--f-body);font-size:13px;color:var(--ink-3)">(${tr('lostPct')} ${fmt(-dK / K0 * 100, 0)} %)</span>` : ''}</div>
+      <p class="fnote">${tr('noteK')}</p></div>`);
+  }
+  let html = cards.join('');
+  if (lang === 'en') html = html.replaceAll('ŚM', 'cm').replaceAll('<sub>spr</sub>', '<sub>spring</sub>');
+  $('#fgrid').innerHTML = html;
+}
+
+/* ---------- canvas ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 400, dpr = 1, dirty = true;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'g1', 'g2', 'heat', 'violet', 'steel'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true; barsDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+
+function withAlpha(hex, a) {
+  const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(c, x1, y1, x2, y2, color, w = 2, head = 9) {
+  const a = Math.atan2(y2 - y1, x2 - x1), Ln = Math.hypot(x2 - x1, y2 - y1);
+  if (Ln < 2) return;
+  head = Math.min(head, Ln * 0.7);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.42) * head, y2 - Math.sin(a - 0.42) * head);
+  c.lineTo(x2 - Math.cos(a + 0.42) * head, y2 - Math.sin(a + 0.42) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function rrect(c, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+  c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h);
+  c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath();
+}
+
+// geometry in px
+const G = { s: 300, x0: 20, TY: 250 };
+function layout() {
+  const padX = 18;
+  G.s = (cw - 2 * padX) / (L + 0.5);
+  G.x0 = padX + 0.25 * G.s;
+  G.TY = Math.round(ch * 0.64);
+  G.H = Math.max(24, Math.min(50, 0.13 * G.s));     // glider body height
+  G.kv = Math.min(0.42 * G.s, 170);                   // px per m/s for arrows
+}
+const X = (x) => G.x0 + x * G.s;
+
+const parts = [], flashes = [];
+function burst(x, y, color, n = 18) {
+  if (reduceMotion) return;
+  for (let i = 0; i < n; i++) {
+    const a = -Math.PI * Math.random(), sp = 40 + Math.random() * 140;
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 1.4 + Math.random(), r: 1 + Math.random() * 2, color });
+  }
+  flashes.push({ x, y, r: 6, life: 1, color });
+}
+
+function bumperKind() { return P.e >= 0.75 ? 'spring' : P.e <= 0.05 ? 'velcro' : 'rubber'; }
+function drawBumper(c, xEdge, dir, yMid, h, kind, squash, color) {
+  // xEdge: body edge px, dir: +1 bumper extends right, -1 left
+  const len = BUMP * G.s * (1 - 0.55 * squash);
+  const x2 = xEdge + dir * len;
+  c.save();
+  if (kind === 'spring') {
+    c.strokeStyle = col.steel; c.lineWidth = 1.6; c.lineJoin = 'round';
+    const n = 6, amp = Math.min(7, h * 0.18);
+    c.beginPath(); c.moveTo(xEdge, yMid);
+    for (let i = 1; i < n; i++) c.lineTo(xEdge + dir * len * i / n, yMid + (i % 2 ? -amp : amp));
+    c.lineTo(x2 - dir * 2, yMid); c.stroke();
+    c.fillStyle = col.ink2; c.fillRect(Math.min(x2, x2 - dir * 3), yMid - amp - 2, 3, 2 * amp + 4);
+  } else if (kind === 'rubber') {
+    c.fillStyle = withAlpha(col.ink, 0.72);
+    const hh = h * 0.5;
+    rrect(c, Math.min(xEdge, x2), yMid - hh / 2, Math.abs(x2 - xEdge), hh, Math.min(6, hh / 2)); c.fill();
+  } else {
+    const hh = h * 0.62, x = Math.min(xEdge, x2), w = Math.abs(x2 - xEdge);
+    c.fillStyle = withAlpha(color, 0.35); c.fillRect(x, yMid - hh / 2, w, hh);
+    c.strokeStyle = withAlpha(col.ink, 0.55); c.lineWidth = 1;
+    c.beginPath();
+    for (let k = 0; k < 9; k++) {
+      const yy = yMid - hh / 2 + 2 + k * (hh - 4) / 8;
+      const xa = dir > 0 ? x : x + w, xb = dir > 0 ? x + w : x;
+      c.moveTo(xa, yy); c.lineTo(xb + dir * -1, yy + (k % 2 ? 2 : -2));
+    }
+    c.stroke();
+  }
+  c.restore();
+}
+function drawGlider(c, xc, w, color, side, label, mass, kind, squash, ghost = false) {
+  const wpx = w * G.s, bpx = BUMP * G.s, H = G.H, bottom = G.TY - 3, top = bottom - H;
+  const left = xc - wpx / 2, right = xc + wpx / 2;
+  const bl = side > 0 ? left : left + bpx, br = side > 0 ? right - bpx : right;   // body extents
+  if (ghost) {
+    c.save(); c.globalAlpha = 0.28; c.strokeStyle = color; c.lineWidth = 1.4;
+    rrect(c, bl, top, br - bl, H, 5); c.stroke(); c.restore();
+    return;
+  }
+  // air cushion shimmer
+  c.save(); c.strokeStyle = withAlpha(color, 0.35); c.lineWidth = 1;
+  c.beginPath(); c.moveTo(bl + 4, bottom + 1.5); c.lineTo(br - 4, bottom + 1.5); c.stroke(); c.restore();
+  // skirt (wraps the triangular beam)
+  c.save();
+  c.fillStyle = withAlpha(color, 0.55);
+  c.beginPath(); c.moveTo(bl, bottom - H * 0.32); c.lineTo(br, bottom - H * 0.32); c.lineTo(br - 3, bottom + 9); c.lineTo(bl + 3, bottom + 9); c.closePath(); c.fill();
+  // body
+  const g = c.createLinearGradient(0, top, 0, bottom);
+  g.addColorStop(0, color); g.addColorStop(1, withAlpha(color, 0.82));
+  c.fillStyle = g; rrect(c, bl, top, br - bl, H * 0.7, 5); c.fill();
+  // highlight
+  c.fillStyle = 'rgba(255,255,255,.22)'; rrect(c, bl + 3, top + 3, br - bl - 6, H * 0.16, 3); c.fill();
+  // photogate flag
+  c.fillStyle = col.ink2; c.fillRect(xc + (side > 0 ? -bpx / 2 : bpx / 2) - 1.5, top - H * 0.42, 3, H * 0.42);
+  // label
+  const bw = br - bl;
+  c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle';
+  c.font = `500 ${Math.max(9.5, Math.round(H * 0.24))}px ${FONT_MONO}`;
+  const mw = c.measureText(mass).width;
+  if (mass && bw > mw + 34) {
+    c.textAlign = 'left'; c.font = `700 ${Math.round(H * 0.34)}px ${FONT_MONO}`;
+    c.fillText(label, bl + 8, top + H * 0.37);
+    c.textAlign = 'right'; c.font = `500 ${Math.max(9.5, Math.round(H * 0.24))}px ${FONT_MONO}`;
+    c.fillText(mass, br - 7, top + H * 0.38);
+  } else {
+    c.font = `700 ${Math.round(H * 0.34)}px ${FONT_MONO}`; c.fillText(label, (bl + br) / 2, top + H * 0.37);
+  }
+  c.restore();
+  return { bl, br, top, bottom, yMid: top + H * 0.35 };
+}
+
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  layout();
+  const st = stateAt(S.t), sh = frameShift(st), fv = frameV(st);
+  const DX = (x) => X(x - sh);
+  const TY = G.TY;
+
+  // graph-paper grid (moves with the track in the CM frame)
+  const minor = 0.05, major = 0.25;
+  const xa = (0 - G.x0) / G.s + sh, xb = (cw - G.x0) / G.s + sh;
+  c.lineWidth = 1;
+  c.strokeStyle = col.grid; c.beginPath();
+  for (let x = Math.ceil(xa / minor) * minor; x <= xb; x += minor) { const Xp = Math.round(DX(x)) + 0.5; c.moveTo(Xp, 0); c.lineTo(Xp, ch); }
+  for (let y = TY; y > 0; y -= minor * G.s) { const Yp = Math.round(y) + 0.5; c.moveTo(0, Yp); c.lineTo(cw, Yp); }
+  for (let y = TY + minor * G.s; y < ch; y += minor * G.s) { const Yp = Math.round(y) + 0.5; c.moveTo(0, Yp); c.lineTo(cw, Yp); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let x = Math.ceil(xa / major) * major; x <= xb + 1e-9; x += major) { const Xp = Math.round(DX(x)) + 0.5; c.moveTo(Xp, 0); c.lineTo(Xp, ch); }
+  c.stroke();
+
+  // track beam
+  const tl = DX(-0.12), tr_ = DX(L + 0.12);
+  c.save();
+  c.fillStyle = col.sunk; c.strokeStyle = col.ink3; c.lineWidth = 1.2;
+  c.beginPath(); c.moveTo(tl, TY); c.lineTo(tr_, TY); c.lineTo(tr_, TY + 16); c.lineTo(tl, TY + 16); c.closePath(); c.fill(); c.stroke();
+  c.fillStyle = col.ink; c.fillRect(tl, TY - 1, tr_ - tl, 2.2);
+  // air holes
+  c.fillStyle = col.ink3;
+  for (let x = 0; x <= L + 1e-9; x += 0.04) { const Xp = DX(x); c.beginPath(); c.arc(Xp, TY + 7, 1.1, 0, Math.PI * 2); c.fill(); }
+  // legs
+  c.fillStyle = col.ink2;
+  for (const x of [0.08, L - 0.08]) { const Xp = DX(x); c.fillRect(Xp - 3, TY + 16, 6, 20); c.fillRect(Xp - 14, TY + 36, 28, 4); }
+  c.restore();
+  // ruler
+  const RY = TY + 52;
+  c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath();
+  for (let i = 0; i <= Math.round(L / 0.1); i++) {
+    const x = i * 0.1, Xp = Math.round(DX(x)) + 0.5, big = i % 5 === 0;
+    c.moveTo(Xp, RY); c.lineTo(Xp, RY + (big ? 9 : 5));
+  }
+  c.moveTo(DX(0), RY + 0.5); c.lineTo(DX(L), RY + 0.5); c.stroke(); c.restore();
+  for (let i = 0; i <= Math.round(L / 0.5); i++) {
+    const Xp = DX(i * 0.5); if (Xp < 10 || Xp > cw - 10) continue;
+    halo(fmt(i * 0.5, 1), Xp, RY + 20, col.ink2, `500 11px ${FONT_MONO}`, 'center');
+  }
+  halo('x [m]', Math.min(cw - 8, DX(L) + 4), RY + 36, col.ink3, `500 11px ${FONT_MONO}`, 'right');
+
+  // walls
+  if (S.walls) {
+    for (const [x, d] of [[0, -1], [L, 1]]) {
+      const Xp = DX(x), wpx = 10;
+      c.save();
+      c.fillStyle = col.ink2; c.fillRect(d < 0 ? Xp - wpx : Xp, TY - G.H * 1.25, wpx, G.H * 1.25 + 2);
+      c.strokeStyle = col.steel; c.lineWidth = 1.4; c.beginPath();
+      const yb = TY - G.H * 0.62;
+      c.moveTo(Xp, yb); for (let i = 1; i <= 4; i++) c.lineTo(Xp - d * 2.5 * i / 4 * 1.2, yb + (i % 2 ? -4 : 4));
+      c.stroke(); c.restore();
+    }
+    halo(tr('canWall'), DX(0) - 4, TY - G.H * 1.25 - 10, col.ink3, `500 10.5px ${FONT_MONO}`, 'left');
+  }
+
+  // strobe ghosts
+  if (S.strobe && S.t > 0) {
+    const dt = 0.2;
+    for (let tk = 0; tk < S.t - 1e-6; tk += dt) {
+      const q = stateAt(tk), shk = frameShift(q);
+      drawGlider(c, X(q.x1 - shk), P.w1, col.g1, 1, '1', '', '', 0, true);
+      drawGlider(c, X(q.x2 - shk), P.w2, col.g2, -1, '2', '', '', 0, true);
+      if (S.cm || S.frame === 'cm') { c.save(); c.globalAlpha = 0.45; c.fillStyle = col.acc; c.beginPath(); c.arc(X(xcmOf(q) - shk), TY + 24, 2.6, 0, Math.PI * 2); c.fill(); c.restore(); }
+    }
+  }
+
+  // squash after recent pair collision
+  let squash = 0;
+  const lastPair = [...TL.events].reverse().find(e => e.type === 'pair' && e.t <= S.t + 1e-9);
+  if (lastPair && !reduceMotion) { const a = (S.t - lastPair.t) / 0.12; if (a < 1) squash = Math.sin(Math.PI * Math.min(1, a + 0.5)) * 0.9; }
+  const kind = bumperKind();
+  const x1p = DX(st.x1), x2p = DX(st.x2);
+  const g1 = drawGlider(c, x1p, P.w1, col.g1, 1, '1', `${fmt(P.m1, 2)} kg`, kind, squash);
+  const g2 = drawGlider(c, x2p, P.w2, col.g2, -1, '2', `${fmt(P.m2, 2)} kg`, kind, squash);
+  const boomPending = P.mode === 'boom' && !st.released;
+  if (boomPending) {
+    // compressed spring between the bodies + thread holding them
+    const xa2 = g1.br, xb2 = g2.bl, ym = g1.yMid;
+    c.save(); c.strokeStyle = col.steel; c.lineWidth = 1.8; c.beginPath(); c.moveTo(xa2, ym);
+    const n = 10; for (let i = 1; i < n; i++) c.lineTo(xa2 + (xb2 - xa2) * i / n, ym + (i % 2 ? -7 : 7)); c.lineTo(xb2, ym); c.stroke();
+    c.strokeStyle = col.heat; c.lineWidth = 1.6; c.beginPath();
+    c.moveTo(g1.br - 10, g1.top + 4); c.quadraticCurveTo((g1.br + g2.bl) / 2, g1.top - 14, g2.bl + 10, g2.top + 4); c.stroke();
+    c.restore();
+    halo(tr('canThread'), (g1.br + g2.bl) / 2, g1.top - 18, col.heat, `500 10.5px ${FONT_MONO}`, 'center');
+  } else {
+    drawBumper(c, g1.br, 1, g1.yMid, G.H, kind, squash, col.g1);
+    drawBumper(c, g2.bl, -1, g2.yMid, G.H, kind, squash, col.g2);
+  }
+
+  // centre of mass marker
+  if (S.cm || S.frame === 'cm') {
+    const Xc = DX(xcmOf(st)), Yc = TY + 24;
+    c.save(); c.fillStyle = col.acc; c.strokeStyle = col.paper; c.lineWidth = 2;
+    c.beginPath(); c.moveTo(Xc, Yc - 9); c.lineTo(Xc + 7, Yc + 4); c.lineTo(Xc - 7, Yc + 4); c.closePath(); c.stroke(); c.fill();
+    c.strokeStyle = withAlpha(col.acc, 0.5); c.setLineDash([3, 4]); c.lineWidth = 1;
+    c.beginPath(); c.moveTo(Xc, Yc - 10); c.lineTo(Xc, TY - G.H * 1.7); c.stroke(); c.restore();
+    halo(lang === 'pl' ? 'ŚM' : 'CM', Xc + 9, Yc + 1, col.acc, `600 11px ${FONT_MONO}`, 'left');
+    const vc = vcmOf(st) - fv;
+    if (Math.abs(vc) > 0.005) arrow(c, Xc, Yc + 12, Xc + vc * G.kv, Yc + 12, col.acc, 2, 8);
+  }
+
+  // velocity arrows (rows above gliders)
+  const rows = [[st.v1 - fv, x1p, col.g1, '1', g1.top - G.H * 0.42 - 34], [st.v2 - fv, x2p, col.g2, '2', g1.top - G.H * 0.42 - 12]];
+  for (const [v, xp, color, idx, y] of rows) {
+    c.save(); c.strokeStyle = withAlpha(color, 0.45); c.lineWidth = 1; c.setLineDash([2, 3]);
+    c.beginPath(); c.moveTo(xp, y); c.lineTo(xp, g1.top - G.H * 0.42); c.stroke(); c.restore();
+    c.save(); c.fillStyle = color; c.beginPath(); c.arc(xp, y, 2.6, 0, Math.PI * 2); c.fill(); c.restore();
+    const xe = xp + v * G.kv;
+    if (Math.abs(v) > 0.004) arrow(c, xp, y, xe, y, color, 3, 11);
+    const txt = `${fs(v, 2)} m/s`;
+    const right = v >= 0;
+    c.font = `italic 16px ${FONT_MATH}`; const wv = c.measureText('v').width;
+    c.font = `500 12px ${FONT_MONO}`; const wt = c.measureText(' = ' + txt).width;
+    const tw = wv + 8 + wt;
+    const lR = Math.max(xe, xp) + 8, lL = Math.min(xe, xp) - 8 - tw;
+    let lx = right ? (lR + tw > cw - 4 && lL > 4 ? lL : lR) : (lL < 4 && lR + tw < cw - 4 ? lR : lL);
+    lx = Math.max(4, Math.min(cw - tw - 4, lx));
+    halo('v', lx, y - 1, color, `italic 16px ${FONT_MATH}`, 'left');
+    halo(idx, lx + wv + 1, y + 4, color, `italic 11px ${FONT_MATH}`, 'left');
+    halo(' = ' + txt, lx + wv + 8, y, color, `500 12px ${FONT_MONO}`, 'left');
+  }
+
+  // frame banner
+  const banner = S.frame === 'cm' ? `${tr('canCm')} ${fs(vcmOf(st), 2)} m/s` : tr('canLab');
+  halo(banner, 12, 16, S.frame === 'cm' ? col.acc : col.ink3, `500 11.5px ${FONT_MONO}`, 'left');
+
+  // flashes & particles
+  for (const f of flashes) {
+    c.save(); c.globalAlpha = f.life * 0.7; c.strokeStyle = f.color; c.lineWidth = 2;
+    c.beginPath(); c.arc(f.x, f.y, f.r, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  for (const q of parts) {
+    c.save(); c.globalAlpha = Math.max(0, q.life) * 0.9; c.fillStyle = q.color;
+    c.beginPath(); c.arc(q.x, q.y, q.r, 0, Math.PI * 2); c.fill(); c.restore();
+  }
+}
+function stepParticles(dt) {
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const q = parts[i]; q.life -= dt * q.decay; q.vy += 300 * dt; q.x += q.vx * dt; q.y += q.vy * dt;
+    if (q.life <= 0) parts.splice(i, 1);
+  }
+  for (let i = flashes.length - 1; i >= 0; i--) { const f = flashes[i]; f.r += 110 * dt; f.life -= dt * 2.2; if (f.life <= 0) flashes.splice(i, 1); }
+}
+
+/* ---------- bar charts ---------- */
+let barsDirty = true;
+const bars = {
+  p: { cv: $('#bp'), box: $('#bp-box'), w: 300, h: 200 },
+  k: { cv: $('#bk'), box: $('#bk-box'), w: 300, h: 200 }
+};
+for (const b of Object.values(bars)) {
+  new ResizeObserver(() => { b.w = b.box.clientWidth; b.h = b.box.clientHeight; b.cv.width = Math.round(b.w * dpr); b.cv.height = Math.round(b.h * dpr); barsDirty = true; }).observe(b.box);
+}
+function hatchRect(c, x, y, w, h, color) {
+  c.save(); c.beginPath(); c.rect(x, y, w, h); c.clip();
+  c.strokeStyle = withAlpha(color, 0.45); c.lineWidth = 1; c.beginPath();
+  for (let k = -h; k < w + h; k += 5) { c.moveTo(x + k, y + h); c.lineTo(x + k + h, y); }
+  c.stroke(); c.restore();
+  c.save(); c.strokeStyle = withAlpha(color, 0.8); c.setLineDash([3, 2]); c.lineWidth = 1.2; c.strokeRect(x + 0.5, y + 0.5, Math.max(0, w - 1), h - (h >= 0 ? 1 : -1)); c.restore();
+}
+function drawBarChart(b, groups, lo, hi, dec) {
+  const c = b.cv.getContext('2d'), W = b.w, H = b.h;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const T = 18, B = 30, Lp = 6, R = 6, ph = H - T - B, pw = W - Lp - R;
+  const Y = (v) => T + (1 - (v - lo) / (hi - lo)) * ph;
+  const y0 = Y(0);
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.beginPath();
+  for (let k = 0; k <= 4; k++) { const yy = Math.round(T + k * ph / 4) + 0.5; c.moveTo(Lp, yy); c.lineTo(W - R, yy); } c.stroke();
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(Lp, Math.round(y0) + 0.5); c.lineTo(W - R, Math.round(y0) + 0.5); c.stroke();
+  const gw = pw / groups.length, bw = Math.min(30, gw * 0.3);
+  groups.forEach((g, i) => {
+    const cx = Lp + gw * (i + 0.5);
+    // before
+    const yb = Y(g.before);
+    hatchRect(c, cx - bw - 2, Math.min(yb, y0), bw, Math.max(1, Math.abs(yb - y0)), g.color);
+    // now
+    const yn = Y(g.now);
+    c.fillStyle = g.color; rrect(c, cx + 2, Math.min(yn, y0), bw, Math.max(1.5, Math.abs(yn - y0)), 2); c.fill();
+    // value label
+    c.font = `500 10.5px ${FONT_MONO}`; c.textAlign = 'center'; c.fillStyle = col.ink;
+    const up = g.now >= 0;
+    c.textBaseline = up ? 'bottom' : 'top';
+    let ly = up ? Math.min(yn, y0) - 3 : Math.max(yn, y0) + 3;
+    ly = Math.max(12, Math.min(H - B - 2, ly));
+    c.fillText(fmt(g.now, dec), cx + 2 + bw / 2, ly);
+    // group label
+    c.textBaseline = 'top'; c.fillStyle = g.color === col.ink2 ? col.ink : g.color;
+    c.font = `italic 15px ${FONT_MATH}`;
+    c.fillText(g.label, cx, H - B + 8);
+  });
+}
+function drawBars() {
+  const st = stateAt(S.t), s0 = TL.segs[0], fv = frameV(st), fv0 = frameV(s0);
+  const { m1, m2 } = P;
+  const p = (s, f) => [m1 * (s.v1 - f), m2 * (s.v2 - f)];
+  const [a0, b0] = p(s0, fv0), [a, b] = p(st, fv);
+  const pm = TL.pmax * 1.12;
+  drawBarChart(bars.p, [
+    { label: 'p₁', before: a0, now: a, color: col.g1 },
+    { label: 'p₂', before: b0, now: b, color: col.g2 },
+    { label: 'Σp', before: a0 + b0, now: a + b, color: col.acc }
+  ], -pm, pm, 3);
+  const K = (s, f) => [kin(m1, s.v1 - f), kin(m2, s.v2 - f)];
+  const [k10, k20] = K(s0, fv0), [k1, k2] = K(st, fv);
+  const groups = [
+    { label: 'K₁', before: k10, now: k1, color: col.g1 },
+    { label: 'K₂', before: k20, now: k2, color: col.g2 },
+    { label: 'ΣK', before: k10 + k20, now: k1 + k2, color: col.acc },
+    { label: 'Q', before: 0, now: st.heat, color: col.heat }
+  ];
+  if (P.mode === 'boom') groups.push({ label: 'Eₛ', before: s0.spring, now: st.spring, color: col.violet });
+  drawBarChart(bars.k, groups, 0, TL.kmax * 1.15, 3);
+  // notes
+  $('#ledger-sub').textContent = S.frame === 'cm' ? tr('ledSubCm') : tr('ledSubLab');
+  const sum = k1 + k2 + st.heat + st.spring;
+  let note = `<b>${tr('noteKeep')}.</b> Q: ${tr('noteHeat')} = ${fmt(st.heat, 3)} J. ${P.mode === 'boom' ? tr('noteSumBoom') : tr('noteSum')} = ${fmt(sum, 3)} J.`;
+  if (S.walls) note += ' ' + tr('noteWalls');
+  $('#ledger-note').innerHTML = note;
+}
+
+/* ---------- x(t) / v(t) chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box');
+let ccw = 400, cch = 230, chartDirty = true;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function seriesData() {
+  // sample times: uniform + event times (both sides)
+  const Tm = TL.Tend, ts = [];
+  for (let i = 0; i <= 300; i++) ts.push(i / 300 * Tm);
+  for (const e of TL.events) if (e.t < Tm) { ts.push(Math.max(0, e.t - 1e-6), e.t + 1e-6); }
+  ts.sort((a, b) => a - b);
+  const out = { t: ts, a: [], b: [], c: [] };
+  for (const t of ts) {
+    const s = stateAt(t), sh = frameShift(s), fv = frameV(s);
+    if (S.tab === 'x') { out.a.push(s.x1 - sh); out.b.push(s.x2 - sh); out.c.push(xcmOf(s) - sh); }
+    else { out.a.push(s.v1 - fv); out.b.push(s.v2 - fv); out.c.push(vcmOf(s) - fv); }
+  }
+  return out;
+}
+let chartCache = null, chartKey = '';
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const key = [S.tab, S.frame, S.walls, P.m1, P.m2, P.v1, P.v2, P.e, P.mode].join('|');
+  if (key !== chartKey) { chartCache = seriesData(); chartKey = key; }
+  const d = chartCache, Tm = TL.Tend;
+  let lo = Infinity, hi = -Infinity;
+  for (const arr of [d.a, d.b, d.c]) for (const v of arr) { if (v < lo) lo = v; if (v > hi) hi = v; }
+  if (S.tab === 'x') { lo = Math.max(lo, -0.6); hi = Math.min(hi, L + 0.6); }
+  if (S.tab === 'v') { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+  if (!(hi - lo > 0.05)) { hi += 0.1; lo -= 0.1; }
+  const ystep = niceStep(hi - lo, 4);
+  hi = Math.ceil(hi / ystep - 1e-9) * ystep; lo = Math.floor(lo / ystep + 1e-9) * ystep;
+  if (hi - lo < ystep) hi = lo + ystep;
+  c.font = `500 11px ${FONT_MONO}`;
+  const ydec = ystep < 0.1 ? 2 : ystep < 1 ? 1 : 0;
+  let labW = 0; for (let y = lo; y <= hi + 1e-9; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const Lp = labW + 14, R = 12, T = 22, B = 26, pw = W - Lp - R, ph = H - T - B;
+  const Xt = t => Lp + t / Tm * pw, Yv = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = lo; y <= hi + 1e-9; y += ystep) { const yy = Math.round(Yv(y)) + 0.5; c.beginPath(); c.moveTo(Lp, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fmt(y, ydec), Lp - 8, yy); }
+  if (S.tab === 'v') { c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(Lp, Math.round(Yv(0)) + 0.5); c.lineTo(W - R, Math.round(Yv(0)) + 0.5); c.stroke(); }
+  const xstep = niceStep(Tm, 5), xdec = xstep < 1 ? 1 : 0;
+  c.textAlign = 'center'; c.textBaseline = 'top'; c.fillStyle = col.ink2;
+  for (let t = 0; t <= Tm + 1e-9; t += xstep) c.fillText(fmt(t, xdec), Xt(t), H - B + 8);
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.fillText(S.tab === 'x' ? 'x [m]' : 'v [m/s]', 4, 2);
+  c.textAlign = 'right'; c.fillText('t [s]', W - R, 2);
+  // clip to plot
+  c.save(); c.beginPath(); c.rect(Lp, T - 2, pw, ph + 4); c.clip();
+  const showCm = S.cm || S.frame === 'cm';
+  const series = [[d.a, col.g1, 2.2, null], [d.b, col.g2, 2.2, null]];
+  if (showCm) series.push([d.c, col.acc, 1.8, [6, 4]]);
+  const tNow = S.t;
+  for (const [arr, color, w, dash] of series) {
+    // full (faint) then progress (solid)
+    for (const pass of [0, 1]) {
+      c.beginPath(); let started = false;
+      for (let i = 0; i < d.t.length; i++) {
+        const t = d.t[i]; if (pass === 1 && t > tNow) break;
+        const xx = Xt(t), yy = Yv(arr[i]);
+        started ? c.lineTo(xx, yy) : (c.moveTo(xx, yy), started = true);
+      }
+      if (pass === 1 && tNow > 0) { const s = stateAt(tNow); const sh = frameShift(s), fv = frameV(s); const val = arr === d.a ? (S.tab === 'x' ? s.x1 - sh : s.v1 - fv) : arr === d.b ? (S.tab === 'x' ? s.x2 - sh : s.v2 - fv) : (S.tab === 'x' ? xcmOf(s) - sh : vcmOf(s) - fv); c.lineTo(Xt(tNow), Yv(val)); }
+      c.save(); c.strokeStyle = color; c.lineWidth = pass ? w : 1.3; c.globalAlpha = pass ? 1 : 0.28; c.lineJoin = 'round';
+      if (dash) c.setLineDash(dash); c.stroke(); c.restore();
+    }
+  }
+  // collision ticks
+  for (const e of TL.events) if (e.type === 'pair' && e.t <= Tm) {
+    const xx = Math.round(Xt(e.t)) + 0.5; c.save(); c.strokeStyle = withAlpha(col.heat, e.t <= tNow ? 0.5 : 0.2); c.setLineDash([2, 3]);
+    c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+  }
+  if (tNow > 0) { const xx = Math.round(Xt(Math.min(tNow, Tm))) + 0.5; c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); }
+  c.restore();
+  // legend + note
+  let lg = `<span><i style="border-top:2.5px solid ${col.g1}"></i>${tr('g1')}</span><span><i style="border-top:2.5px solid ${col.g2}"></i>${tr('g2')}</span>`;
+  if (showCm) lg += `<span><i style="border-top:2px dashed ${col.acc}"></i>${tr('cm')}</span>`;
+  $('#clegend').innerHTML = lg;
+  $('#cnote').innerHTML = (S.tab === 'x' ? tr('cnoteX') : tr('cnoteV')) + (S.frame === 'cm' ? tr('cnoteCm') : '');
+}
+
+/* ---------- actions ---------- */
+function recompute(keepTime = false) {
+  readParams();
+  buildTimeline();
+  XCM0 = xcmOf(TL.segs[0]);
+  if (!keepTime) { S.t = 0; S.playing = false; parts.length = 0; flashes.length = 0; }
+  else S.t = Math.min(S.t, TL.Tend);
+  updateOutputs(); updateFormulas(); updateHud(); updateTransport();
+  dirty = true; chartDirty = true; barsDirty = true;
+}
+function go() {
+  const k = stateKey();
+  if (k === 'run') S.playing = false;
+  else if (k === 'done') { S.t = 0; S.playing = true; parts.length = 0; flashes.length = 0; }
+  else S.playing = true;
+  updateTransport(); dirty = true;
+}
+function restart() { S.t = 0; S.playing = false; parts.length = 0; flashes.length = 0; updateHud(); updateTransport(); dirty = true; chartDirty = true; barsDirty = true; }
+
+const PRESETS = {
+  equal: { m1: 0.5, m2: 0.5, v1: 0.6, v2: 0, e: 1 },
+  heavy: { m1: 1.6, m2: 0.2, v1: 0.6, v2: 0, e: 1 },
+  light: { m1: 0.2, m2: 1.6, v1: 0.8, v2: 0, e: 1 },
+  stick: { m1: 0.5, m2: 0.5, v1: 0.8, v2: 0, e: 0 },
+  boom: { m1: 0.4, m2: 1.0, e: 1, boom: true }
+};
+function applyPreset(name) {
+  const q = PRESETS[name]; S.preset = name;
+  $('#m1').value = q.m1; $('#m2').value = q.m2; $('#e').value = q.e;
+  if (q.boom) { P.mode = 'boom'; } else { P.mode = 'normal'; $('#v1').value = q.v1; $('#v2').value = q.v2; }
+  recompute();
+  if (q.boom) { $('#v1').value = Math.max(-1.5, Math.min(1.5, P.v1)); $('#v2').value = Math.max(-1.5, Math.min(1.5, P.v2)); updateOutputs(); }
+}
+
+/* ---------- main loop ---------- */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.playing && !document.hidden) {
+    const t0 = S.t;
+    S.t = Math.min(TL.Tend, S.t + dt * S.speed);
+    layout();
+    for (const e of TL.events) {
+      if (e.t > t0 && e.t <= S.t) {
+        const s = stateAt(e.t), sh = frameShift(s);
+        if (e.type === 'pair') burst(X(e.x - sh), G.TY - G.H * 0.45, col.heat, Math.round(8 + 18 * (1 - (e.e ?? 1) * 0.5)));
+        else if (e.type === 'rel') burst(X(e.x - sh), G.TY - G.H, col.heat, 14);
+        else burst(X(e.x - sh), G.TY - G.H * 0.5, col.steel, 8);
+      }
+    }
+    if (S.t >= TL.Tend) S.playing = false;
+    updateHud(); updateTransport();
+    dirty = true; chartDirty = true; barsDirty = true;
+  }
+  if (parts.length || flashes.length) { stepParticles(dt); dirty = true; }
+  if (dirty) { drawScene(); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  if (barsDirty) { drawBars(); barsDirty = false; }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+
+/* ---------- wiring ---------- */
+['m1', 'm2'].forEach(id => $('#' + id).addEventListener('input', () => { S.preset = null; recompute(); if (P.mode === 'boom') { $('#v1').value = Math.max(-1.5, Math.min(1.5, P.v1)); $('#v2').value = Math.max(-1.5, Math.min(1.5, P.v2)); updateOutputs(); } }));
+['v1', 'v2', 'e'].forEach(id => $('#' + id).addEventListener('input', () => {
+  S.preset = null;
+  if (P.mode === 'boom' && id !== 'e') P.mode = 'normal';
+  recompute();
+}));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.pre)));
+$('#go').addEventListener('click', go);
+$('#restart').addEventListener('click', restart);
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+$$('#frame button').forEach(b => b.addEventListener('click', () => {
+  S.frame = b.dataset.fr; $$('#frame button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  recompute(true);
+}));
+const toggles = { 'tg-strobe': 'strobe', 'tg-cm': 'cm', 'tg-walls': 'walls' };
+Object.entries(toggles).forEach(([id, k]) => $('#' + id).addEventListener('click', (e) => {
+  S[k] = !S[k]; e.currentTarget.setAttribute('aria-pressed', String(S[k]));
+  if (k === 'walls') recompute(); else { dirty = true; chartDirty = true; }
+}));
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  S.tab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); chartDirty = true;
+}));
+function setFrame(f) { S.frame = f; $$('#frame button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.fr === f))); }
+$$('.try').forEach(b => b.addEventListener('click', () => {
+  const n = b.dataset.try;
+  if (n === '1') { setFrame('lab'); applyPreset('equal'); }
+  else if (n === '2') { setFrame('lab'); applyPreset('heavy'); }
+  else if (n === '3') { setFrame('cm'); if (S.preset === 'boom' || S.preset == null) applyPreset('light'); else recompute(); }
+  else { setFrame('lab'); applyPreset('stick'); }
+  $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  go();
+}));
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); go(); }
+  else if ((e.key === 'r' || e.key === 'R') && tag !== 'input') restart();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#speed button[data-sp="0.1"]').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  $('#hud-n-l').textContent = tr('hudN');
+  hudLast = ''; lastUiKey = ''; chartKey = '';
+  recompute(true);
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('zderzenia-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; barsDirty = true; });
+
+readTokens();
+resize();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
