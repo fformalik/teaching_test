@@ -1,0 +1,1128 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Model Isinga</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: lab bench. Lattice on graph paper with instrument strip on top, m(t), e(t) trace and
+   transport bar below; thermostat panel on the right; formulas, notes and plots underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --acc:#6A45E0; --up:#F2AE3D; --down:#26336B; --teal:#0B8F86;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --acc:#9D86FF; --up:#F0B04C; --down:#3A4A9A; --teal:#2EC4B6;
+    --on-accent:#120A2E;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --acc:#9D86FF; --up:#F0B04C; --down:#3A4A9A; --teal:#2EC4B6;
+  --on-accent:#120A2E;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:.78em; height:.78em; flex:none; border-radius:4px}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:62ch}
+.lede i{font-family:var(--f-math); font-size:1.08em}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt.pl{font-family:var(--f-body); font-style:normal; font-size:12px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.4ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sq{width:11px; height:11px; border-radius:2px; display:inline-block; box-shadow:inset 0 0 0 1px rgba(0,0,0,.12)}
+.sq.up{background:var(--up)} .sq.down{background:var(--down)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--ink-3); color:var(--ink-2)}
+.canvas-box{position:relative; height:clamp(360px, 62vh, 660px); background-color:var(--paper);
+  background-image:linear-gradient(var(--grid-major) 1px, transparent 1px), linear-gradient(90deg, var(--grid-major) 1px, transparent 1px),
+    linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size:100px 100px, 100px 100px, 20px 20px, 20px 20px; background-position:-1px -1px}
+.canvas-box canvas{position:absolute; display:block; touch-action:manipulation; box-shadow:0 0 0 1px var(--line), 0 10px 30px -14px rgba(18,32,44,.45)}
+.canvas-box canvas.pick{cursor:crosshair}
+.cap{position:absolute; left:12px; right:12px; bottom:8px; display:flex; justify-content:space-between; gap:12px; font-family:var(--f-mono); font-size:11.5px; color:var(--ink-3); pointer-events:none}
+.cap span{background:color-mix(in srgb, var(--paper) 82%, transparent); padding:1px 6px; border-radius:6px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0}
+.cap .hint{color:var(--acc)}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.tbox{position:relative; height:150px; border-top:1px solid var(--line); background:var(--paper)}
+.tbox canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease; min-width:9.2em; justify-content:center}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn .sq{width:10px; height:10px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label, .ctl .lab{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .ctl .lab i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ctl .hint{font-size:11.5px; color:var(--ink-3); line-height:1.4}
+.ctl .hint i{font-family:var(--f-math); font-size:13px}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%; --c:var(--acc); position:relative; z-index:1}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+input[type=range].center::-webkit-slider-runnable-track{background:var(--line)}
+.sl{position:relative}
+.sl .tick{position:absolute; top:5px; width:2px; height:14px; margin-left:-1px; background:var(--ink-3); border-radius:1px; left:calc(9px + (100% - 18px) * var(--at)); pointer-events:none; z-index:0}
+.marks{position:relative; height:20px}
+.marks button{position:absolute; transform:translateX(-50%); left:calc(9px + (100% - 18px) * var(--at)); border:1px solid var(--line); background:var(--paper); border-radius:6px; padding:0 6px; font-family:var(--f-math); font-style:italic; font-size:13px; line-height:17px; cursor:pointer; color:var(--ink-2); white-space:nowrap}
+.marks button:hover{border-color:var(--acc); color:var(--acc)}
+.marks button sub{font-size:.7em}
+.marks .end{position:absolute; top:2px; font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chips{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.25; text-align:left}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--acc); color:var(--ink); box-shadow:inset 0 0 0 1px var(--acc)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill small i{font-family:var(--f-math); font-size:12px}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.lowleft, .rightcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.big{font-size:1.35em; vertical-align:-.12em; line-height:1}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.fnote b{font-family:var(--f-mono); font-weight:500; color:var(--ink-2)}
+.notes{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px}
+.notes h3{margin:4px 0 0; font-family:var(--f-display); font-weight:700; font-size:16px}
+.notes p{margin:0; color:var(--ink-2); font-size:14px; max-width:78ch}
+.notes i{font-family:var(--f-math); font-size:1.08em}
+.notes .feq{font-family:var(--f-math); font-size:20px; text-align:center; padding:6px 0; color:var(--ink)}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2); font-family:var(--f-math); font-style:italic; font-size:15px}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.chead{display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{width:20px; height:0; border-top:2.5px solid var(--ink); display:inline-block}
+.sw-dot{width:10px; height:10px; border-radius:50%; display:inline-block}
+.chart-box{position:relative; height:270px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px}
+.try{display:flex; gap:12px; align-items:flex-start; text-align:left; width:100%; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:10px 12px; cursor:pointer; color:var(--ink)}
+.try:hover{border-color:var(--acc)}
+.try .n{flex:none; width:24px; height:24px; border-radius:50%; background:var(--acc); color:var(--on-accent); font-family:var(--f-mono); font-size:12px; display:flex; align-items:center; justify-content:center; margin-top:1px}
+.try b{display:block; font-family:var(--f-display); font-weight:700; font-size:15px; margin-bottom:1px}
+.try span.t{font-size:13px; color:var(--ink-2); line-height:1.45}
+.try i{font-family:var(--f-math)}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:1 / 1.08}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.8ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .tbox{height:140px}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka statystyczna · przejście fazowe</span>
+      <h1>
+        <svg viewBox="0 0 4 4" aria-hidden="true" shape-rendering="crispEdges"><rect width="4" height="4" fill="var(--down)"/><path d="M0 0h2v1H0zM1 1h2v1H1zM3 0h1v1H3zM0 2h1v2H0zM3 2h1v1H3zM2 3h1v1H2z" fill="var(--up)"/></svg>
+        <span data-i18n="title">Model Isinga</span>
+      </h1>
+      <p class="lede" data-i18n-html="lede">Siatka maleńkich magnesów: każdy chce być zgodny z sąsiadami, a temperatura ciągle nim potrząsa. Ochłodź układ poniżej <i>T</i><sub>c</sub> i zobacz, jak z szumu rodzą się domeny.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>T</dt><dd id="hud-T">1,50</dd></div>
+            <div><dt>h</dt><dd id="hud-h">0,00</dd></div>
+            <div><dt>m</dt><dd id="hud-m">0,000</dd></div>
+            <div><dt>e</dt><dd id="hud-e">0,000</dd></div>
+            <div><dt>t</dt><dd id="hud-t">0 <span>MCS</span></dd></div>
+            <div><dt class="pl" data-i18n="hudRate">tempo</dt><dd id="hud-r">0 <span>MCS/s</span></dd></div>
+          </dl>
+          <div class="legend">
+            <span><i class="sq up"></i><span data-i18n="lgUp">spin w górę, s = +1</span></span>
+            <span><i class="sq down"></i><span data-i18n="lgDown">spin w dół, s = −1</span></span>
+            <span class="state" id="state" data-s="pause" data-i18n="sPause">pauza</span>
+          </div>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="lat" data-i18n-aria="aLat" aria-label="Siatka spinów"></canvas>
+          <div class="cap"><span id="cap-l"></span><span id="cap-r" class="hint"></span></div>
+        </div>
+        <div class="tbox" id="tbox"><canvas id="tplot" data-i18n-aria="aTplot" aria-label="Wykres m i e w funkcji czasu"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="run">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="run-ico"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="run-txt">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset-rand">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="resetRand">Losowo (T = ∞)</span>
+          </button>
+          <button type="button" class="btn" id="reset-up"><i class="sq up"></i><span data-i18n="resetUp">Wszystkie w górę</span></button>
+          <div class="seg" role="group" id="speed" data-i18n-aria="speedLbl" aria-label="MCS na klatkę">
+            <span class="lbl" data-i18n="speedLbl">MCS na klatkę</span>
+            <button type="button" data-sp="0.25" aria-pressed="false">¼</button>
+            <button type="button" data-sp="1" aria-pressed="false">1</button>
+            <button type="button" data-sp="4" aria-pressed="true">4</button>
+            <button type="button" data-sp="16" aria-pressed="false">16</button>
+            <button type="button" data-sp="64" aria-pressed="false">64</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-emap" aria-pressed="false" data-i18n="emap">Mapa energii</button>
+            <button type="button" class="tg" id="tg-clus" aria-pressed="false" data-i18n="clus">Klastry</button>
+            <button type="button" class="tg" id="tg-auto" aria-pressed="false" data-i18n="auto">Pętla h</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="aPanel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gTherm">Termostat i pole</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="T" data-i18n-html="lT">Temperatura <i>kT</i>/<i>J</i></label><output id="T-out" for="T"></output></div>
+          <div class="sl"><span class="tick" id="tc-tick"></span><input type="range" id="T" min="0.5" max="5" step="0.001" value="1.5"></div>
+          <div class="marks" id="T-marks"><span class="end" style="left:0">0,5</span><button type="button" id="tc-snap" data-i18n-aria="aTc" aria-label="Ustaw T = Tc"><i>T</i><sub>c</sub></button><span class="end" style="right:0">5</span></div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h" data-i18n-html="lh">Pole zewnętrzne <i>h</i>/<i>J</i></label><output id="h-out" for="h"></output></div>
+          <div class="sl"><span class="tick" style="--at:.5"></span><input type="range" class="center" id="h" min="-1" max="1" step="0.01" value="0"></div>
+          <div class="marks"><span class="end" style="left:0">−1</span><button type="button" id="h0-snap" style="--at:.5" data-i18n-aria="aH0" aria-label="Ustaw h = 0"><i>h</i> = 0</button><span class="end" style="right:0">+1</span></div>
+        </div>
+        <div class="pills">
+          <div class="pill"><small><i>T</i>/<i>T</i><sub>c</sub></small><span id="pill-ttc"></span></div>
+          <div class="pill"><small data-i18n-html="pM0">Onsager <i>m</i><sub>0</sub></small><span id="pill-m0"></span></div>
+          <div class="pill"><small data-i18n-html="pMavg">symulacja ⟨|<i>m</i>|⟩</small><span id="pill-mavg"></span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gLat">Siatka i algorytm</h3>
+        <div class="ctl">
+          <div class="ctl-head"><span class="lab" data-i18n-html="lL">Rozmiar siatki <i>L</i></span><output id="N-out"></output></div>
+          <div class="seg" role="group" id="Lseg" style="align-self:flex-start">
+            <button type="button" data-L="64" aria-pressed="false">64</button>
+            <button type="button" data-L="128" aria-pressed="false">128</button>
+            <button type="button" data-L="256" aria-pressed="true">256</button>
+          </div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><span class="lab" data-i18n="lAlgo">Algorytm</span></div>
+          <div class="seg" role="group" id="algo" style="align-self:flex-start">
+            <button type="button" data-algo="metro" aria-pressed="true">Metropolis</button>
+            <button type="button" data-algo="wolff" aria-pressed="false">Wolff</button>
+          </div>
+          <span class="hint" id="algo-hint"></span>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gPre">Scenariusze</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-pre="quench" aria-pressed="true"><span data-i18n="pQuench">Gaszenie</span><small></small></button>
+          <button type="button" class="chip" data-pre="crit" aria-pressed="false"><span data-i18n="pCrit">Punkt krytyczny</span><small></small></button>
+          <button type="button" class="chip" data-pre="hot" aria-pressed="false"><span data-i18n="pHot">Gorąco</span><small></small></button>
+          <button type="button" class="chip" data-pre="hyst" aria-pressed="false"><span data-i18n="pHyst">Histereza</span><small></small></button>
+        </div>
+        <span class="hint" style="font-size:11.5px; color:var(--ink-3)" data-i18n="preHint">Scenariusz ustawia parametry i stan początkowy. Symulacja czeka na Start.</span>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <div class="lowleft">
+      <section class="card formulas">
+        <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n-html="formulasSub">Liczby podstawiane na żywo z bieżącego stanu siatki.</p></div>
+        <div class="fgrid" id="fgrid"></div>
+      </section>
+      <section class="card notes">
+        <div class="sec-h"><h2 data-i18n="notesH">Dla studentów</h2></div>
+        <h3 data-i18n-html="whyH">Dlaczego poniżej <i>T</i><sub>c</sub> pojawia się porządek?</h3>
+        <p data-i18n-html="why1"></p>
+        <div class="feq"><i>F</i> = <i>E</i> − <i>T</i><i>S</i></div>
+        <p data-i18n-html="why2"></p>
+        <h3 data-i18n="finH">Skończona siatka</h3>
+        <p data-i18n-html="fin1"></p>
+      </section>
+    </div>
+    <div class="rightcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n="charts">Wykres</h2></div>
+        <div class="chead">
+          <div class="tabs" role="tablist" id="tabs">
+            <button type="button" role="tab" data-tab="mT" aria-selected="true">m(T)</button>
+            <button type="button" role="tab" data-tab="mh" aria-selected="false">m(h)</button>
+          </div>
+          <button type="button" class="btn" id="clear"><span data-i18n="clear">Wyczyść</span></button>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart"></canvas></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <button type="button" class="try" data-try="quench"><span class="n">1</span><span><b data-i18n="t1h"></b><span class="t" data-i18n-html="t1"></span></span></button>
+        <button type="button" class="try" data-try="crit"><span class="n">2</span><span><b data-i18n="t2h"></b><span class="t" data-i18n-html="t2"></span></span></button>
+        <button type="button" class="try" data-try="hyst"><span class="n">3</span><span><b data-i18n="t3h"></b><span class="t" data-i18n-html="t3"></span></span></button>
+        <button type="button" class="try" data-try="curve"><span class="n">4</span><span><b data-i18n="t4h"></b><span class="t" data-i18n-html="t4"></span></span></button>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const TC = 2 / Math.log(1 + Math.SQRT2);           // exact critical temperature, kTc/J = 2.269185...
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka statystyczna · przejście fazowe', title:'Model Isinga',
+    lede:'Siatka maleńkich magnesów: każdy chce być zgodny z sąsiadami, a temperatura ciągle nim potrząsa. Ochłodź układ poniżej <i>T</i><sub>c</sub> i zobacz, jak z szumu rodzą się domeny.',
+    hudRate:'tempo', lgUp:'spin w górę, s = +1', lgDown:'spin w dół, s = −1', sRun:'działa', sPause:'pauza',
+    aLat:'Siatka spinów', aTplot:'Wykres m i e w funkcji czasu', aPanel:'Ustawienia', aTc:'Ustaw T = Tc', aH0:'Ustaw h = 0',
+    start:'Start', pause:'Pauza', resume:'Wznów', kbd:'spacja',
+    resetRand:'Losowo (T = ∞)', resetUp:'Wszystkie w górę', speedLbl:'MCS na klatkę',
+    emap:'Mapa energii', clus:'Klastry', auto:'Pętla h', fullscreen:'Pełny ekran',
+    spins:'spinów', capHint:'Naciśnij Start lub spację', capClus:'klaster', capPin:'kliknij spin, by wybrać jego klaster', capPinned:'wybrany klaster',
+    capEmap:'jaśniej = więcej niezgodnych sąsiadów',
+    gTherm:'Termostat i pole', lT:'Temperatura <i>kT</i>/<i>J</i>', lh:'Pole zewnętrzne <i>h</i>/<i>J</i>',
+    pM0:'Onsager <i>m</i><sub>0</sub>', pMavg:'symulacja ⟨|<i>m</i>|⟩',
+    gLat:'Siatka i algorytm', lL:'Rozmiar siatki <i>L</i>', lAlgo:'Algorytm',
+    hMetro:'Metropolis: pojedyncze spiny, na przemian pola „białe” i „czarne” szachownicy. 1 MCS = jedna próba na każdy spin.',
+    hWolff:'Wolff: odwraca całe klastry naraz, więc przy <i>T</i><sub>c</sub> równowaga przychodzi szybko. Przy <i>h</i> = 0 obraz trzyma znak z poprzedniej klatki (symetria <i>s</i> → −<i>s</i>).',
+    gPre:'Scenariusze', pQuench:'Gaszenie', pCrit:'Punkt krytyczny', pHot:'Gorąco', pHyst:'Histereza',
+    preHint:'Scenariusz ustawia parametry i stan początkowy. Symulacja czeka na Start.',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego stanu siatki. Jednostki: <i>J</i> = 1, <i>k</i><sub>B</sub> = 1.',
+    fH:'Energia układu', fFlip:'Koszt odwrócenia spinu', fMet:'Reguła Metropolisa', fBoltz:'Rozkład Boltzmanna', fTc:'Temperatura krytyczna', fOns:'Namagnesowanie spontaniczne (Onsager, Yang)',
+    noteH:'Suma ⟨<i>ij</i>⟩ biegnie po parach najbliższych sąsiadów, każde z 2<i>N</i> wiązań liczone raz.',
+    noteFlip:'Spin w środku domeny: ΔE = 8<i>J</i>. Na prostej ściance (3 zgodnych, 1 przeciwny): 4<i>J</i>. W rogu ścianki (2 i 2): 0, dlatego ścianki domen pełzają bez kosztu.',
+    noteMet:'Ruchy obniżające energię są zawsze akceptowane, podnoszące tylko z prawdopodobieństwem Boltzmanna. Zmierzony odsetek akceptacji:',
+    noteMetH:'Pole przesuwa koszt o ±2<i>h</i>.', noteWolff:'Tryb Wolffa: średni rozmiar klastra',
+    noteBoltz:'<i>Z</i> to suma po wszystkich konfiguracjach. Dla tej siatki ma ona', noteBoltz2:'składników, więc nie liczymy <i>Z</i>, tylko losujemy konfiguracje z wagą Boltzmanna (Monte Carlo).',
+    noteBoltz3:'Samotny odwrócony spin w domenie (ΔE = 8<i>J</i>) ma względną wagę',
+    noteTc:'Dokładny wynik Onsagera (1944) dla nieskończonej siatki kwadratowej.',
+    noteOns:'Wzór dla <i>L</i> → ∞ i <i>h</i> = 0. Powyżej <i>T</i><sub>c</sub> mamy <i>m</i><sub>0</sub> = 0, a tuż poniżej <i>m</i><sub>0</sub> ∝ (<i>T</i><sub>c</sub> − <i>T</i>)<sup>1/8</sup>.',
+    above:'powyżej T<sub>c</sub>: m<sub>0</sub> = 0', measured:'symulacja',
+    notesH:'Dla studentów', whyH:'Dlaczego poniżej <i>T</i><sub>c</sub> pojawia się porządek?',
+    why1:'O stanie układu w temperaturze <i>T</i> decyduje minimum energii swobodnej. Porządek (sąsiedzi zgodni) obniża energię <i>E</i>. Nieporządek ma ogromną entropię <i>S</i>, bo losowych konfiguracji jest nieporównanie więcej niż uporządkowanych.',
+    why2:'W niskiej temperaturze człon <i>TS</i> jest mały i wygrywa energia: rosną domeny, a |<i>m</i>| jest bliskie 1. W wysokiej wygrywa entropia i <i>m</i> ≈ 0. Na siatce kwadratowej oba człony równoważą się dokładnie przy <i>kT</i><sub>c</sub>/<i>J</i> = 2/ln(1 + √2) ≈ 2,269. Tam fluktuacje mają wszystkie rozmiary naraz i klastry są fraktalne.',
+    finH:'Skończona siatka',
+    fin1:'Ostre przejście fazowe istnieje tylko dla <i>L</i> → ∞. Na siatce <i>L</i> × <i>L</i> krzywa <i>m</i>(<i>T</i>) jest wygładzona i przy <i>T</i><sub>c</sub> zostaje „ogon”. Bez pola stany +<i>m</i> i −<i>m</i> mają tę samą energię, więc po bardzo długim czasie układ przeskakuje między nimi i średnie <i>m</i> wynosi zero. Dlatego mierzymy ⟨|<i>m</i>|⟩. Dla <i>L</i> = 256 poniżej <i>T</i><sub>c</sub> taki przeskok trwałby astronomicznie długo, ale dla <i>L</i> = 64 tuż pod <i>T</i><sub>c</sub> zobaczysz go na wykresie <i>m</i>(<i>t</i>).',
+    charts:'Wykres', clear:'Wyczyść',
+    lgOns:'Onsager (L → ∞)', lgNow:'teraz ⟨|m|⟩', lgRec:'zapisane punkty', lgLoop:'ślad m(h)', lgNowH:'teraz',
+    cnoteMT:'Zmień <i>T</i>, a bieżący punkt zostanie zapisany (po co najmniej 100 MCS przy <i>h</i> = 0). Tak zbudujesz krzywą punkt po punkcie.',
+    cnoteMH:'Przesuwaj <i>h</i> tam i z powrotem albo włącz „Pętla <i>h</i>”. Poniżej <i>T</i><sub>c</sub> namagnesowanie spóźnia się za polem: to histereza.',
+    tpM:'m', tpE:'e', tpX:'MCS',
+    tries:'Spróbuj',
+    t1h:'Gaszenie w zimnie', t1:'Losowa siatka wrzucona do <i>T</i> = 1,5. Naciśnij Start: domeny rosną, ścianki skracają się, a <i>e</i>(<i>t</i>) powoli spada ku −2.',
+    t2h:'Fraktal na krawędzi', t2:'<i>T</i> = <i>T</i><sub>c</sub>, algorytm Wolffa. Wyspy w wyspach na wszystkich skalach. Włącz „Klastry”, by zobaczyć największy z nich.',
+    t3h:'Pętla histerezy', t3:'<i>T</i> = 1,8, wszystkie spiny w górę. Ciągnij <i>h</i> w lewo i z powrotem albo włącz „Pętla <i>h</i>” i patrz na wykres <i>m</i>(<i>h</i>).',
+    t4h:'Zbuduj krzywą Onsagera', t4:'<i>L</i> = 64, Wolff. Startuj, a co kilka sekund obniżaj lub podnoś <i>T</i>. Każdy punkt ląduje na wykresie <i>m</i>(<i>T</i>) obok wyniku dokładnego.'
+  },
+  en: {
+    eyebrow:'Statistical physics · phase transition', title:'Ising model',
+    lede:'A grid of tiny magnets: each one wants to agree with its neighbours, and temperature keeps shaking it. Cool the system below <i>T</i><sub>c</sub> and watch domains grow out of noise.',
+    hudRate:'rate', lgUp:'spin up, s = +1', lgDown:'spin down, s = −1', sRun:'running', sPause:'paused',
+    aLat:'Spin lattice', aTplot:'Plot of m and e versus time', aPanel:'Settings', aTc:'Set T = Tc', aH0:'Set h = 0',
+    start:'Start', pause:'Pause', resume:'Resume', kbd:'space',
+    resetRand:'Random (T = ∞)', resetUp:'All up', speedLbl:'MCS per frame',
+    emap:'Energy map', clus:'Clusters', auto:'h loop', fullscreen:'Full screen',
+    spins:'spins', capHint:'Press Start or Space', capClus:'cluster', capPin:'click a spin to pick its cluster', capPinned:'picked cluster',
+    capEmap:'brighter = more unlike neighbours',
+    gTherm:'Thermostat and field', lT:'Temperature <i>kT</i>/<i>J</i>', lh:'External field <i>h</i>/<i>J</i>',
+    pM0:'Onsager <i>m</i><sub>0</sub>', pMavg:'simulation ⟨|<i>m</i>|⟩',
+    gLat:'Lattice and algorithm', lL:'Lattice size <i>L</i>', lAlgo:'Algorithm',
+    hMetro:'Metropolis: single spins, alternating the “white” and “black” squares of a checkerboard. 1 MCS = one attempt per spin.',
+    hWolff:'Wolff: flips whole clusters at once, so equilibrium near <i>T</i><sub>c</sub> arrives fast. At <i>h</i> = 0 the picture keeps the sign of the previous frame (symmetry <i>s</i> → −<i>s</i>).',
+    gPre:'Scenarios', pQuench:'Quench', pCrit:'Critical point', pHot:'Hot', pHyst:'Hysteresis',
+    preHint:'A scenario sets the parameters and the initial state. The simulation waits for Start.',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current lattice. Units: <i>J</i> = 1, <i>k</i><sub>B</sub> = 1.',
+    fH:'Energy of the system', fFlip:'Cost of flipping a spin', fMet:'Metropolis rule', fBoltz:'Boltzmann distribution', fTc:'Critical temperature', fOns:'Spontaneous magnetization (Onsager, Yang)',
+    noteH:'The sum ⟨<i>ij</i>⟩ runs over nearest neighbour pairs, each of the 2<i>N</i> bonds counted once.',
+    noteFlip:'Spin inside a domain: ΔE = 8<i>J</i>. On a straight wall (3 alike, 1 opposite): 4<i>J</i>. At a wall corner (2 and 2): 0, which is why domain walls creep for free.',
+    noteMet:'Moves that lower the energy are always accepted, moves that raise it only with the Boltzmann probability. Measured acceptance rate:',
+    noteMetH:'The field shifts the cost by ±2<i>h</i>.', noteWolff:'Wolff mode: mean cluster size',
+    noteBoltz:'<i>Z</i> is a sum over all configurations. For this lattice it has', noteBoltz2:'terms, so we never compute <i>Z</i>; we sample configurations with Boltzmann weight instead (Monte Carlo).',
+    noteBoltz3:'A lone flipped spin inside a domain (ΔE = 8<i>J</i>) has relative weight',
+    noteTc:'Onsager’s exact result (1944) for the infinite square lattice.',
+    noteOns:'Valid for <i>L</i> → ∞ and <i>h</i> = 0. Above <i>T</i><sub>c</sub>, <i>m</i><sub>0</sub> = 0; just below, <i>m</i><sub>0</sub> ∝ (<i>T</i><sub>c</sub> − <i>T</i>)<sup>1/8</sup>.',
+    above:'above T<sub>c</sub>: m<sub>0</sub> = 0', measured:'simulation',
+    notesH:'For students', whyH:'Why does order appear below <i>T</i><sub>c</sub>?',
+    why1:'At temperature <i>T</i> the system settles where the free energy is lowest. Order (neighbours agreeing) lowers the energy <i>E</i>. Disorder has a huge entropy <i>S</i>, because random configurations vastly outnumber ordered ones.',
+    why2:'At low temperature the <i>TS</i> term is small and energy wins: domains grow and |<i>m</i>| is close to 1. At high temperature entropy wins and <i>m</i> ≈ 0. On the square lattice the two balance exactly at <i>kT</i><sub>c</sub>/<i>J</i> = 2/ln(1 + √2) ≈ 2.269. There, fluctuations come in all sizes at once and the clusters are fractal.',
+    finH:'Finite lattice',
+    fin1:'A sharp phase transition exists only for <i>L</i> → ∞. On an <i>L</i> × <i>L</i> lattice the curve <i>m</i>(<i>T</i>) is smoothed and leaves a “tail” above <i>T</i><sub>c</sub>. Without a field the states +<i>m</i> and −<i>m</i> have the same energy, so over very long times the system hops between them and the average <i>m</i> is zero. That is why we measure ⟨|<i>m</i>|⟩. For <i>L</i> = 256 below <i>T</i><sub>c</sub> such a hop would take astronomically long, but for <i>L</i> = 64 just below <i>T</i><sub>c</sub> you can catch it on the <i>m</i>(<i>t</i>) plot.',
+    charts:'Plot', clear:'Clear',
+    lgOns:'Onsager (L → ∞)', lgNow:'now ⟨|m|⟩', lgRec:'saved points', lgLoop:'m(h) trace', lgNowH:'now',
+    cnoteMT:'Change <i>T</i> and the current point is saved (after at least 100 MCS at <i>h</i> = 0). Build the curve point by point.',
+    cnoteMH:'Drag <i>h</i> back and forth or turn on “<i>h</i> loop”. Below <i>T</i><sub>c</sub> the magnetization lags behind the field: that is hysteresis.',
+    tpM:'m', tpE:'e', tpX:'MCS',
+    tries:'Try this',
+    t1h:'Quench into the cold', t1:'A random lattice dropped to <i>T</i> = 1.5. Press Start: domains grow, walls shorten, and <i>e</i>(<i>t</i>) creeps down towards −2.',
+    t2h:'Fractal on the edge', t2:'<i>T</i> = <i>T</i><sub>c</sub>, Wolff algorithm. Islands within islands at every scale. Turn on “Clusters” to see the largest one.',
+    t3h:'Hysteresis loop', t3:'<i>T</i> = 1.8, all spins up. Drag <i>h</i> to the left and back, or turn on “<i>h</i> loop” and watch the <i>m</i>(<i>h</i>) plot.',
+    t4h:'Build the Onsager curve', t4:'<i>L</i> = 64, Wolff. Start, then every few seconds lower or raise <i>T</i>. Each point lands on the <i>m</i>(<i>T</i>) plot next to the exact result.'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('ising-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const fint = (x) => fmt(Math.round(x), 0);
+const fsgn = (x, d) => (x > 0 ? '+' : '') + fmt(x, d);
+function fsci(x) {
+  if (!(x > 0)) return fmt(0, 0);
+  if (x >= 0.01) return fmt(x, x >= 0.1 ? 3 : 4);
+  const e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  return `${fmt(m, 2)}·10<sup>${fsgn(e, 0)}</sup>`;
+}
+const fT = (T) => fmt(T, Math.abs(T - TC) < 0.0006 ? 3 : 2);
+
+/* ---------- physics helpers ---------- */
+function onsager(T) {           // spontaneous magnetization of the infinite lattice, h = 0
+  if (T >= TC) return 0;
+  const sh = Math.sinh(2 / T);
+  return Math.pow(1 - Math.pow(sh, -4), 0.125);
+}
+
+/* ---------- state ---------- */
+const S = {
+  L: 256, N: 65536, T: 1.5, h: 0, algo: 'metro', speed: 4,
+  running: false, emap: false, clus: false, auto: false, autoDir: -1, pin: -1, tab: 'mT', preset: 'quench'
+};
+let spins, lab, queue, mark, stamp = 0;
+let M = 0, B = 0;                        // total magnetization and bond sum
+let sweeps = 0, sweepAcc = 0;
+let accRate = 0, wolffMean = 0;
+let samples = [];                        // {t, m, e}
+let hyst = [];                           // [h, m]
+let recorded = [];                       // {T, m}
+let avgStart = 0;
+let started = false;
+let rs = ((Math.random() * 4294967296) >>> 0) || 123456789;
+
+function alloc(L) {
+  S.L = L; S.N = L * L;
+  spins = new Int8Array(S.N); lab = new Int32Array(S.N); queue = new Int32Array(S.N); mark = new Int32Array(S.N); stamp = 0;
+  img = null;
+}
+function rnd() { rs ^= rs << 13; rs ^= rs >>> 17; rs ^= rs << 5; return (rs >>> 0) * 2.3283064365386963e-10; }
+
+/* acceptance table: index (s>0 ? 5 : 0) + (nb + 4)/2, dE = 2 s (J nb + h) */
+const accTab = new Float64Array(10);
+function buildAcc() {
+  for (let k = 0; k < 10; k++) {
+    const s = k >= 5 ? 1 : -1, nb = 2 * (k % 5) - 4, dE = 2 * s * (nb + S.h);
+    accTab[k] = dE <= 0 ? 1 : Math.exp(-dE / S.T);
+  }
+}
+
+function metroSweep() {
+  const L = S.L, s = spins, A = accTab; let r = rs, acc = 0;
+  for (let par = 0; par < 2; par++) {
+    for (let y = 0; y < L; y++) {
+      const row = y * L, up = (y === 0 ? L - 1 : y - 1) * L, dn = (y === L - 1 ? 0 : y + 1) * L;
+      for (let x = (y + par) & 1; x < L; x += 2) {
+        const i = row + x, si = s[i];
+        const nb = s[row + (x === 0 ? L - 1 : x - 1)] + s[row + (x === L - 1 ? 0 : x + 1)] + s[up + x] + s[dn + x];
+        const p = A[(si > 0 ? 5 : 0) + ((nb + 4) >> 1)];
+        if (p >= 1) { s[i] = -si; acc++; }
+        else { r ^= r << 13; r ^= r >>> 17; r ^= r << 5; if ((r >>> 0) * 2.3283064365386963e-10 < p) { s[i] = -si; acc++; } }
+      }
+    }
+  }
+  rs = r; return acc;
+}
+
+/* Wolff cluster step. Bonds between aligned neighbours are added with p = 1 − e^(−2J/kT);
+   the field term is then handled by a Metropolis accept/reject of the whole cluster flip. */
+function wolffStep(pAdd) {
+  const L = S.L, N = S.N, Lm = L - 1, Nm = N - 1, s = spins, q = queue;
+  stamp++; if (stamp > 2e9) { mark.fill(0); stamp = 1; }
+  const i0 = Math.floor(rnd() * N), s0 = s[i0];
+  mark[i0] = stamp; q[0] = i0; let n = 1, k = 0;
+  while (k < n) {
+    const i = q[k++], x = i & Lm, row = i - x;
+    let j = row + ((x + Lm) & Lm);
+    if (s[j] === s0 && mark[j] !== stamp && rnd() < pAdd) { mark[j] = stamp; q[n++] = j; }
+    j = row + ((x + 1) & Lm);
+    if (s[j] === s0 && mark[j] !== stamp && rnd() < pAdd) { mark[j] = stamp; q[n++] = j; }
+    j = (i - L) & Nm;
+    if (s[j] === s0 && mark[j] !== stamp && rnd() < pAdd) { mark[j] = stamp; q[n++] = j; }
+    j = (i + L) & Nm;
+    if (s[j] === s0 && mark[j] !== stamp && rnd() < pAdd) { mark[j] = stamp; q[n++] = j; }
+  }
+  const dE = 2 * S.h * s0 * n;
+  if (dE <= 0 || rnd() < Math.exp(-dE / S.T)) { for (let a = 0; a < n; a++) s[q[a]] = -s0; }
+  return n;
+}
+
+function measure() {
+  const L = S.L, Lm = L - 1, N = S.N, Nm = N - 1, s = spins; let m = 0, b = 0;
+  for (let i = 0; i < N; i++) {
+    const si = s[i], x = i & Lm;
+    m += si; b += si * (s[i - x + ((x + 1) & Lm)] + s[(i + L) & Nm]);
+  }
+  M = m; B = b;
+}
+const mNow = () => M / S.N;
+const eNow = () => (-B - S.h * M) / S.N;
+
+function pushSample() {
+  samples.push({ t: sweeps, m: mNow(), e: eNow(), h: S.h });
+  if (samples.length > 3000) samples.splice(0, samples.length - 3000);
+}
+function avgAbsM() {
+  const lo = Math.max(avgStart + 20, sweeps - 400);
+  let sum = 0, n = 0;
+  for (let k = samples.length - 1; k >= 0; k--) { const q = samples[k]; if (q.t < lo) break; sum += Math.abs(q.m); n++; }
+  if (n < 3) return null;
+  return sum / n;
+}
+function paramChanged(kind) {
+  // when T changes, keep the finished measurement as a saved point
+  if (kind === 'T' && sweeps - avgStart >= 100 && Math.abs(S.h) < 0.005) {
+    const a = avgAbsM(); if (a != null) { recorded.push({ T: S.T, m: a, L: S.L }); if (recorded.length > 60) recorded.shift(); }
+  }
+  avgStart = sweeps;
+}
+
+function reset(kind) {
+  if (kind === 'up') spins.fill(1);
+  else for (let i = 0; i < S.N; i++) spins[i] = rnd() < 0.5 ? 1 : -1;
+  sweeps = 0; sweepAcc = 0; samples = []; hyst = []; avgStart = 0; started = false; S.pin = -1; accRate = 0; wolffMean = 0;
+  measure(); pushSample();
+  latDirty = true; tpDirty = true; chartDirty = true; formDirty = true; hudDirty = true;
+}
+
+/* ---------- colours ---------- */
+let col = {};
+function hexRGB(hex) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+const pack = (r, g, b) => ((255 << 24) | (b << 16) | (g << 8) | r) >>> 0;
+const mix = (a, b, t) => [0, 1, 2].map(k => Math.round(a[k] + (b[k] - a[k]) * t));
+let PAL = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'up', 'down', 'teal'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  const up = hexRGB(col.up), dn = hexRGB(col.down), pa = hexRGB(col.paper), ac = hexRGB(col.acc);
+  PAL.up = pack(...up); PAL.down = pack(...dn);
+  const fadeU = mix(up, pa, 0.72), fadeD = mix(dn, pa, 0.72);
+  PAL.fadeUp = pack(...fadeU); PAL.fadeDown = pack(...fadeD);
+  PAL.acc = pack(...ac);
+  // energy map: k unlike neighbours (0..4) -> from faded spin colour to accent
+  PAL.eUp = []; PAL.eDn = [];
+  for (let k = 0; k <= 4; k++) {
+    const t = k === 0 ? 0 : 0.45 + 0.55 * (k / 4);
+    PAL.eUp.push(pack(...mix(fadeU, ac, t))); PAL.eDn.push(pack(...mix(fadeD, ac, t)));
+  }
+  latDirty = true; tpDirty = true; chartDirty = true;
+}
+
+/* ---------- lattice rendering ---------- */
+const box = $('#canvas-box'), lat = $('#lat'), lctx = lat.getContext('2d');
+const off = document.createElement('canvas'), octx = off.getContext('2d');
+let img = null, img32 = null, latCss = 300, dpr = 1, latDirty = true;
+function layoutLattice() {
+  dpr = Math.min(window.devicePixelRatio || 1, 3);
+  const w = box.clientWidth, h = box.clientHeight;
+  const avail = Math.max(60, Math.min(w - 24, h - 52));
+  const sc = Math.floor(avail * dpr / S.L);
+  const dev = sc >= 3 ? sc * S.L : Math.floor(avail * dpr);   // integer zoom when it is big enough, else fill the box
+  lat.width = dev; lat.height = dev;
+  latCss = dev / dpr;
+  lat.style.width = latCss + 'px'; lat.style.height = latCss + 'px';
+  lat.style.left = Math.round((w - latCss) / 2) + 'px';
+  lat.style.top = Math.round(Math.max(10, (h - 40 - latCss) / 2 + 6)) + 'px';
+  latDirty = true;
+}
+new ResizeObserver(layoutLattice).observe(box);
+
+let clusSize = 0, clusId = 0;
+function findCluster() {
+  const L = S.L, Lm = L - 1, N = S.N, Nm = N - 1, s = spins, q = queue;
+  lab.fill(0); clusSize = 0; clusId = 0;
+  const bfs = (i0, id) => {
+    const sg = s[i0]; lab[i0] = id; q[0] = i0; let n = 1, k = 0;
+    while (k < n) {
+      const i = q[k++], x = i & Lm, row = i - x;
+      const a = row + ((x + Lm) & Lm), b = row + ((x + 1) & Lm), c = (i - L) & Nm, d = (i + L) & Nm;
+      if (!lab[a] && s[a] === sg) { lab[a] = id; q[n++] = a; }
+      if (!lab[b] && s[b] === sg) { lab[b] = id; q[n++] = b; }
+      if (!lab[c] && s[c] === sg) { lab[c] = id; q[n++] = c; }
+      if (!lab[d] && s[d] === sg) { lab[d] = id; q[n++] = d; }
+    }
+    return n;
+  };
+  if (S.pin >= 0 && S.pin < N) { clusId = 1; clusSize = bfs(S.pin, 1); return; }
+  const sign = M > 0 ? -1 : 1;      // largest cluster of the minority spin
+  let id = 0;
+  for (let i = 0; i < N; i++) {
+    if (s[i] === sign && !lab[i]) { id++; const n = bfs(i, id); if (n > clusSize) { clusSize = n; clusId = id; } }
+  }
+}
+
+function drawLattice() {
+  const L = S.L, N = S.N, s = spins;
+  if (!img || img.width !== L) { off.width = L; off.height = L; img = octx.createImageData(L, L); img32 = new Uint32Array(img.data.buffer); }
+  const out = img32;
+  if (S.clus) {
+    findCluster();
+    for (let i = 0; i < N; i++) out[i] = lab[i] === clusId && clusId ? PAL.acc : (s[i] > 0 ? PAL.fadeUp : PAL.fadeDown);
+  } else if (S.emap) {
+    const Lm = L - 1, Nm = N - 1;
+    for (let i = 0; i < N; i++) {
+      const si = s[i], x = i & Lm, row = i - x;
+      const nb = s[row + ((x + Lm) & Lm)] + s[row + ((x + 1) & Lm)] + s[(i - L) & Nm] + s[(i + L) & Nm];
+      const k = (4 - si * nb) >> 1;              // number of unlike neighbours
+      out[i] = si > 0 ? PAL.eUp[k] : PAL.eDn[k];
+    }
+  } else {
+    const u = PAL.up, d = PAL.down;
+    for (let i = 0; i < N; i++) out[i] = s[i] > 0 ? u : d;
+  }
+  octx.putImageData(img, 0, 0);
+  lctx.imageSmoothingEnabled = false;
+  lctx.drawImage(off, 0, 0, lat.width, lat.height);
+  updateCaption();
+}
+function updateCaption() {
+  $('#cap-l').textContent = `${S.L} × ${S.L} = ${fint(S.N)} ${tr('spins')}`;
+  let r = '';
+  if (!S.running && sweeps === 0) r = tr('capHint');
+  else if (S.clus) r = `${S.pin >= 0 ? tr('capPinned') : tr('capClus')}: ${fint(clusSize)} ${tr('spins')} · ${tr('capPin')}`;
+  else if (S.emap) r = tr('capEmap');
+  const el = $('#cap-r'); if (el.textContent !== r) el.textContent = r;
+}
+lat.addEventListener('click', (e) => {
+  if (!S.clus) return;
+  const r = lat.getBoundingClientRect();
+  const x = Math.floor((e.clientX - r.left) / r.width * S.L), y = Math.floor((e.clientY - r.top) / r.height * S.L);
+  if (x < 0 || y < 0 || x >= S.L || y >= S.L) return;
+  const i = y * S.L + x;
+  S.pin = S.pin >= 0 && lab[i] === clusId ? -1 : i;
+  latDirty = true;
+});
+
+/* ---------- time plot ---------- */
+const tbox = $('#tbox'), tcv = $('#tplot'), tctx = tcv.getContext('2d');
+let tw = 600, th = 150, tpDirty = true;
+new ResizeObserver(() => { tw = tbox.clientWidth; th = tbox.clientHeight; tcv.width = Math.round(tw * dpr); tcv.height = Math.round(th * dpr); tpDirty = true; }).observe(tbox);
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function drawTplot() {
+  const c = tctx, W = tw, H = th;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const n = Math.min(samples.length, 500), arr = samples.slice(samples.length - n);
+  const L = 46, R = 14, T = 10, Bm = 22, gap = 20;
+  const ph = (H - T - Bm - gap) / 2, pw = W - L - R;
+  const t0 = arr.length ? arr[0].t : 0, t1 = Math.max(arr.length ? arr[arr.length - 1].t : 1, t0 + 1);
+  const X = (t) => L + (t - t0) / (t1 - t0) * pw;
+  let hmax = 0; for (const q of arr) hmax = Math.max(hmax, Math.abs(q.h));
+  let emin = -2 - hmax, emax = 0; for (const q of arr) { if (q.e > emax) emax = q.e; if (q.e < emin) emin = q.e; }
+  emin = Math.floor(emin * 2) / 2; emax = Math.ceil(emax * 2) / 2; if (emax - emin < 1) emax = emin + 1;
+  const panels = [
+    { key: 'm', lo: -1, hi: 1, y0: T, color: col.acc, ticks: [-1, 0, 1], dec: 0, label: tr('tpM') },
+    { key: 'e', lo: emin, hi: emax, y0: T + ph + gap, color: col.teal, ticks: [emin, (emin + emax) / 2, emax], dec: 1, label: tr('tpE') }
+  ];
+  c.font = `500 10.5px ${FONT_MONO}`;
+  for (const p of panels) {
+    const Y = (v) => p.y0 + (1 - (v - p.lo) / (p.hi - p.lo)) * ph;
+    c.lineWidth = 1;
+    for (const tv of p.ticks) {
+      const yy = Math.round(Y(tv)) + 0.5;
+      c.strokeStyle = tv === 0 ? col.gridmajor : col.grid; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke();
+      c.fillStyle = col.ink3; c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillText(fmt(tv, Number.isInteger(tv) ? 0 : p.dec), L - 6, yy);
+    }
+    c.font = `italic 15px ${FONT_MATH}`; c.fillStyle = p.color; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.fillText(p.label, 6, p.y0 + ph / 2); c.font = `500 10.5px ${FONT_MONO}`;
+    if (arr.length > 1) {
+      c.save(); c.beginPath(); c.rect(L, p.y0 - 2, pw, ph + 4); c.clip();
+      c.beginPath();
+      arr.forEach((q, i) => { const x = X(q.t), y = Y(q[p.key]); i ? c.lineTo(x, y) : c.moveTo(x, y); });
+      c.strokeStyle = p.color; c.lineWidth = 1.8; c.lineJoin = 'round'; c.stroke(); c.restore();
+    }
+    if (arr.length) {
+      const q = arr[arr.length - 1];
+      c.fillStyle = p.color; c.strokeStyle = col.paper; c.lineWidth = 2;
+      c.beginPath(); c.arc(X(q.t), Y(q[p.key]), 3.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    }
+  }
+  c.fillStyle = col.ink3; c.textBaseline = 'top'; c.textAlign = 'left';
+  c.fillText(fmt(t0, t1 - t0 < 20 ? 1 : 0), L, H - Bm + 6);
+  c.textAlign = 'right';
+  c.fillText(`${fmt(t1, t1 - t0 < 20 ? 1 : 0)} ${tr('tpX')}`, W - R, H - Bm + 6);
+}
+
+/* ---------- chart m(T) / m(h) ---------- */
+const cbox = $('#chart-box'), ccv = $('#chart'), cctx = ccv.getContext('2d');
+let ccw = 400, cch = 270, chartDirty = true;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+
+function axes(c, W, H, xlo, xhi, ylo, yhi, xticks, yticks, xlab, ylab, xdec, ydec) {
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0; for (const y of yticks) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 14, T = 18, Bm = 28, pw = W - L - R, ph = H - T - Bm;
+  const X = (x) => L + (x - xlo) / (xhi - xlo) * pw, Y = (y) => T + (1 - (y - ylo) / (yhi - ylo)) * ph;
+  c.lineWidth = 1;
+  for (const y of yticks) {
+    const yy = Math.round(Y(y)) + 0.5; c.strokeStyle = y === 0 ? col.gridmajor : col.grid;
+    c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke();
+    c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillText(fmt(y, ydec), L - 8, yy);
+  }
+  for (const x of xticks) {
+    const xx = Math.round(X(x)) + 0.5; c.strokeStyle = x === 0 ? col.gridmajor : col.grid;
+    c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke();
+    c.fillStyle = col.ink2; c.textAlign = 'center'; c.textBaseline = 'top'; c.fillText(fmt(x, xdec), xx, T + ph + 8);
+  }
+  c.fillStyle = col.ink3; c.font = `italic 14px ${FONT_MATH}`;
+  c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(ylab, 4, 0);
+  c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText(xlab, W - R, T + ph - 4);
+  return { L, R, T, Bm, pw, ph, X, Y };
+}
+function dot(c, x, y, r, fill, stroke, lw = 2) {
+  c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  if (stroke) { c.strokeStyle = stroke; c.lineWidth = lw; c.stroke(); }
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  if (S.tab === 'mT') {
+    const g = axes(c, W, H, 0.5, 5, 0, 1.05, [1, 2, 3, 4, 5], [0, 0.25, 0.5, 0.75, 1], 'kT/J', '⟨|m|⟩', 0, 2);
+    // Tc line
+    const xc = g.X(TC);
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(xc, g.T); c.lineTo(xc, g.T + g.ph); c.stroke(); c.restore();
+    c.fillStyle = col.ink2; c.font = `italic 14px ${FONT_MATH}`; c.textAlign = 'left'; c.textBaseline = 'top';
+    c.fillText('T', xc + 5, g.T + 2); c.font = `italic 10px ${FONT_MATH}`; c.fillText('c', xc + 14, g.T + 9);
+    // Onsager curve
+    c.beginPath();
+    for (let k = 0; k <= 400; k++) {
+      const T = 0.5 + (TC - 0.5) * (1 - Math.pow(1 - k / 400, 3));
+      const x = g.X(T), y = g.Y(onsager(T)); k ? c.lineTo(x, y) : c.moveTo(x, y);
+    }
+    c.lineTo(g.X(TC), g.Y(0)); c.lineTo(g.X(5), g.Y(0));
+    c.strokeStyle = col.ink; c.lineWidth = 2.2; c.lineJoin = 'round'; c.stroke();
+    // saved points
+    for (const p of recorded) dot(c, g.X(p.T), g.Y(p.m), 4.5, col.paper, col.acc, 1.8);
+    // current point
+    const a = avgAbsM(), mv = a != null ? a : Math.abs(mNow());
+    const x = g.X(S.T), y = g.Y(mv);
+    c.save(); c.globalAlpha = 0.18; dot(c, x, y, 11, col.acc); c.restore();
+    dot(c, x, y, 6, col.acc, col.surface, 2);
+    c.font = `500 11px ${FONT_MONO}`; c.fillStyle = col.ink; c.textBaseline = 'middle';
+    const lbl = fmt(mv, 3); const lw = c.measureText(lbl).width;
+    c.textAlign = x + 14 + lw > W - 14 ? 'right' : 'left';
+    c.fillText(lbl, c.textAlign === 'right' ? x - 14 : x + 14, y - 10);
+  } else {
+    const g = axes(c, W, H, -1, 1, -1.08, 1.08, [-1, -0.5, 0, 0.5, 1], [-1, -0.5, 0, 0.5, 1], 'h/J', 'm', 1, 1);
+    const n = hyst.length;
+    if (n > 1) {
+      c.save(); c.lineWidth = 1.8; c.lineJoin = 'round'; c.strokeStyle = col.acc;
+      const seg = 60;
+      for (let s0 = 0; s0 < n - 1; s0 += seg) {
+        c.globalAlpha = 0.25 + 0.75 * (s0 / n);
+        c.beginPath();
+        for (let k = s0; k <= Math.min(n - 1, s0 + seg); k++) { const x = g.X(hyst[k][0]), y = g.Y(hyst[k][1]); k === s0 ? c.moveTo(x, y) : c.lineTo(x, y); }
+        c.stroke();
+      }
+      c.restore();
+    }
+    const x = g.X(S.h), y = g.Y(mNow());
+    c.save(); c.globalAlpha = 0.18; dot(c, x, y, 11, col.acc); c.restore();
+    dot(c, x, y, 6, col.acc, col.surface, 2);
+  }
+}
+function updateChartLegend() {
+  let h;
+  if (S.tab === 'mT') h = `<span><i class="sw-line"></i>${tr('lgOns')}</span><span><i class="sw-dot" style="background:var(--acc)"></i>${tr('lgNow')}</span><span><i class="sw-dot" style="border:1.8px solid var(--acc)"></i>${tr('lgRec')}</span>`;
+  else h = `<span><i class="sw-line" style="border-color:var(--acc)"></i>${tr('lgLoop')}</span><span><i class="sw-dot" style="background:var(--acc)"></i>${tr('lgNowH')}</span>`;
+  $('#clegend').innerHTML = h;
+  $('#cnote').innerHTML = tr(S.tab === 'mT' ? 'cnoteMT' : 'cnoteMH');
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+const SUM = (sub) => `<span class="big">Σ</span><sub>${sub}</sub>`;
+const R = (x) => `<span class="r">${x}</span>`;
+let formDirty = true;
+function updateFormulas() {
+  const T = S.T, h = S.h, N = S.N, n = (x, d = 3) => fmt(x, d);
+  const E = -B - h * M;
+  const cards = [];
+  cards.push(`<div class="fcard wide"><h4>${tr('fH')}</h4>
+    <div class="eq">${V('H')}${EQ}−${V('J')} ${SUM('⟨<i>ij</i>⟩')} ${V('s', 'i')}${V('s', 'j')} − ${V('h')} ${SUM('<i>i</i>')} ${V('s', 'i')}</div>
+    <div class="eq num">${V('E')}${EQ}−1 · (${fint(B)}) − (${fmt(h, 2)}) · (${fint(M)})${EQ}${R(fint(E))}, &nbsp; ${V('e')}${EQ}${FR(V('E'), V('N'))}${EQ}${R(n(E / N))}</div>
+    <p class="fnote">${tr('noteH')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fFlip')}</h4>
+    <div class="eq">Δ${V('E')}${EQ}2${V('s', 'i')}(${V('J')} ${SUM('nn')} ${V('s', 'j')} + ${V('h')})</div>
+    <p class="fnote">${tr('noteFlip')}</p></div>`);
+  let met = `<div class="eq">${V('P')}<sub>acc</sub>${EQ}min(1, ${V('e')}<sup>−Δ<i>E</i>/<i>kT</i></sup>)</div>`;
+  if (Math.abs(h) < 0.005) {
+    met += `<div class="eq num">${V('e')}<sup>−4/${n(T, 2)}</sup>${EQ}${R(fsci(Math.exp(-4 / T)))}, &nbsp; ${V('e')}<sup>−8/${n(T, 2)}</sup>${EQ}${R(fsci(Math.exp(-8 / T)))}</div>`;
+  } else {
+    const ah = Math.abs(h);
+    met += `<div class="eq num">Δ${V('E')} = 4 ± ${n(2 * ah, 2)}: &nbsp;${R(fsci(Math.min(1, Math.exp(-(4 + 2 * ah) / T))))}; ${R(fsci(Math.min(1, Math.exp(-(4 - 2 * ah) / T))))}</div>`;
+    met += `<div class="eq num">Δ${V('E')} = 8 ± ${n(2 * ah, 2)}: &nbsp;${R(fsci(Math.exp(-(8 + 2 * ah) / T)))}; ${R(fsci(Math.exp(-(8 - 2 * ah) / T)))}</div>`;
+  }
+  met += `<p class="fnote">${Math.abs(h) >= 0.005 ? tr('noteMetH') + ' ' : ''}${S.algo === 'metro' ? `${tr('noteMet')} <b>${sweeps > 0 ? fmt(accRate * 100, 1) + ' %' : '…'}</b>` : `${tr('noteWolff')}: <b>${sweeps > 0 ? fint(wolffMean) : '…'}</b>`}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fMet')}</h4>${met}</div>`);
+  const expo = N * Math.LOG10E * Math.log(2);
+  cards.push(`<div class="fcard wide"><h4>${tr('fBoltz')}</h4>
+    <div class="eq">${V('P')}(σ)${EQ}${FR(`${V('e')}<sup>−<i>E</i>(σ)/<i>kT</i></sup>`, V('Z'))}, &nbsp; ${FR(`${V('P')}(σ′)`, `${V('P')}(σ)`)}${EQ}${V('e')}<sup>−Δ<i>E</i>/<i>kT</i></sup></div>
+    <p class="fnote">${tr('noteBoltz3')} <b>${fsci(Math.exp(-8 / T))}</b>. ${tr('noteBoltz')} 2<sup>${fint(N)}</sup> ≈ 10<sup>${fint(expo)}</sup> ${tr('noteBoltz2')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fTc')}</h4>
+    <div class="eq">${FR(`${V('k')}${V('T')}<sub>c</sub>`, V('J'))}${EQ}${FR('2', 'ln(1 + √2)')}${EQ}${R(fmt(TC, 4))}</div>
+    <div class="eq num">${FR(V('T'), `${V('T')}<sub>c</sub>`)}${EQ}${FR(n(T, 3), fmt(TC, 3))}${EQ}${R(n(T / TC, 3))}</div>
+    <p class="fnote">${tr('noteTc')}</p></div>`);
+  const m0 = onsager(T), a = avgAbsM();
+  let ons = `<div class="eq">${V('m')}<sub>0</sub>${EQ}[1 − sinh<sup>−4</sup>(2${V('J')}/${V('k')}${V('T')})]<sup>1/8</sup></div>`;
+  if (T < TC) ons += `<div class="eq num">sinh(2/${n(T, 2)})${EQ}${n(Math.sinh(2 / T))} &nbsp;→&nbsp; ${V('m')}<sub>0</sub>${EQ}${R(n(m0))}</div>`;
+  else ons += `<div class="eq num">${V('T')} ≥ ${V('T')}<sub>c</sub> &nbsp;→&nbsp; ${V('m')}<sub>0</sub>${EQ}${R(n(0))}</div>`;
+  ons += `<p class="fnote">${tr('measured')} ⟨|<i>m</i>|⟩ = <b>${a != null ? n(a) : '…'}</b> (<i>L</i> = ${S.L}). ${tr('noteOns')}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fOns')}</h4>${ons}</div>`);
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- UI ---------- */
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+let hudDirty = true;
+function updateOutputs() {
+  $('#T-out').textContent = fT(S.T);
+  $('#h-out').textContent = fsgn(S.h, 2);
+  $('#N-out').textContent = `N = ${fint(S.N)}`;
+  $('#T').value = S.T; $('#h').value = S.h; setFill($('#T'));
+  $$('#Lseg button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.L === S.L)));
+  $$('#algo button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.algo === S.algo)));
+  $$('#speed button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.sp === S.speed)));
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pre === S.preset)));
+  $('#algo-hint').innerHTML = tr(S.algo === 'metro' ? 'hMetro' : 'hWolff');
+  $('#pill-ttc').textContent = fmt(S.T / TC, 3);
+  $('#pill-m0').textContent = fmt(onsager(S.T), 3);
+  hudDirty = true; formDirty = true; chartDirty = true;
+}
+function updateHud() {
+  $('#hud-T').textContent = fT(S.T);
+  $('#hud-h').textContent = fsgn(S.h, 2);
+  $('#hud-m').textContent = fsgn(mNow(), 3);
+  $('#hud-e').textContent = fmt(eNow(), 3);
+  $('#hud-t').innerHTML = `${fint(sweeps)} <span>MCS</span>`;
+  $('#hud-r').innerHTML = `${fint(S.running ? rate : 0)} <span>MCS/s</span>`;
+  const a = avgAbsM(); $('#pill-mavg').textContent = a != null ? fmt(a, 3) : '…';
+}
+const ICON_PLAY = '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+const ICON_PAUSE = '<path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+function updateRunBtn() {
+  $('#run-ico').innerHTML = S.running ? ICON_PAUSE : ICON_PLAY;
+  $('#run-txt').textContent = tr(S.running ? 'pause' : (sweeps > 0 ? 'resume' : 'start'));
+  const st = $('#state'); st.dataset.s = S.running ? 'run' : 'pause'; st.textContent = tr(S.running ? 'sRun' : 'sPause');
+}
+function setRunning(on) { S.running = on; if (on) { started = true; lastT = performance.now(); rateWin = []; } updateRunBtn(); latDirty = true; hudDirty = true; }
+
+const PRESETS = {
+  quench: { L: 256, T: 1.5, h: 0, algo: 'metro', speed: 4, init: 'rand' },
+  crit:   { L: 256, T: TC, h: 0, algo: 'wolff', speed: 4, init: 'rand' },
+  hot:    { L: 256, T: 4, h: 0, algo: 'metro', speed: 4, init: 'rand' },
+  hyst:   { L: 128, T: 1.8, h: 0, algo: 'metro', speed: 16, init: 'up', tab: 'mh' },
+  curve:  { L: 64, T: 1.6, h: 0, algo: 'wolff', speed: 4, init: 'up', tab: 'mT' }
+};
+function applyPreset(key) {
+  const p = PRESETS[key];
+  setRunning(false);
+  S.preset = PRESETS[key] && key !== 'curve' ? key : null;
+  if (p.L !== S.L) { alloc(p.L); layoutLattice(); }
+  S.T = p.T; S.h = p.h; S.algo = p.algo; S.speed = p.speed; S.auto = false; S.autoDir = -1;
+  $('#tg-auto').setAttribute('aria-pressed', 'false');
+  if (p.tab) setTab(p.tab);
+  buildAcc(); reset(p.init); updateOutputs(); updateRunBtn();
+}
+function setTab(t) {
+  S.tab = t; $$('#tabs button').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === t)));
+  updateChartLegend(); chartDirty = true;
+}
+function presetSmall() {
+  const sm = { quench: `T = ${fmt(1.5, 1)}`, crit: `T = ${fmt(TC, 3)}`, hot: `T = ${fmt(4, 1)}`, hyst: `T = ${fmt(1.8, 1)}, h ↔` };
+  $$('#presets .chip').forEach(b => { b.querySelector('small').textContent = sm[b.dataset.pre]; });
+}
+
+/* wiring */
+$('#T').addEventListener('input', (e) => { paramChanged('T'); S.T = +e.target.value; if (Math.abs(S.T - TC) < 0.004) S.T = TC; S.preset = null; buildAcc(); updateOutputs(); });
+$('#h').addEventListener('input', (e) => { paramChanged('h'); S.h = +e.target.value; if (Math.abs(S.h) < 0.015) S.h = 0; S.preset = null; buildAcc(); updateOutputs(); });
+$('#tc-snap').addEventListener('click', () => { paramChanged('T'); S.T = TC; S.preset = null; buildAcc(); updateOutputs(); });
+$('#h0-snap').addEventListener('click', () => { paramChanged('h'); S.h = 0; S.preset = null; buildAcc(); updateOutputs(); });
+$$('#Lseg button').forEach(b => b.addEventListener('click', () => {
+  const L = +b.dataset.L; if (L === S.L) return;
+  const was = S.running; setRunning(false);
+  alloc(L); layoutLattice(); recorded = []; S.preset = null; reset('rand'); updateOutputs(); updateRunBtn();
+  if (was) setRunning(true);
+}));
+$$('#algo button').forEach(b => b.addEventListener('click', () => { S.algo = b.dataset.algo; S.preset = null; paramChanged('algo'); updateOutputs(); }));
+$$('#speed button').forEach(b => b.addEventListener('click', () => { S.speed = +b.dataset.sp; sweepAcc = 0; updateOutputs(); }));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.pre)));
+$$('.try').forEach(b => b.addEventListener('click', () => {
+  applyPreset(b.dataset.try);
+  const st = $('#stage'), r = st.getBoundingClientRect();
+  if (r.top < 0 || r.top > innerHeight * 0.5) st.scrollIntoView({ behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start' });
+}));
+$('#run').addEventListener('click', () => setRunning(!S.running));
+$('#reset-rand').addEventListener('click', () => { reset('rand'); updateRunBtn(); });
+$('#reset-up').addEventListener('click', () => { reset('up'); updateRunBtn(); });
+function bindToggle(id, key, after) {
+  $('#' + id).addEventListener('click', (e) => {
+    S[key] = !S[key]; e.currentTarget.setAttribute('aria-pressed', String(S[key]));
+    if (after) after(); latDirty = true;
+  });
+}
+bindToggle('tg-emap', 'emap', () => { if (S.emap && S.clus) { S.clus = false; $('#tg-clus').setAttribute('aria-pressed', 'false'); } });
+bindToggle('tg-clus', 'clus', () => { S.pin = -1; lat.classList.toggle('pick', S.clus); if (S.clus && S.emap) { S.emap = false; $('#tg-emap').setAttribute('aria-pressed', 'false'); } });
+bindToggle('tg-auto', 'auto', () => { S.autoDir = S.h > 0 ? -1 : (S.h < 0 ? 1 : -1); if (S.auto) setTab('mh'); });
+$$('#tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+$('#clear').addEventListener('click', () => { if (S.tab === 'mT') recorded = []; else hyst = []; chartDirty = true; });
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+fsBtn.addEventListener('click', () => {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+});
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); setRunning(!S.running); return; }
+  if (tag === 'input') return;
+  if (e.key === 'r' || e.key === 'R') { reset('rand'); updateRunBtn(); }
+});
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), rate = 0, rateWin = [], lastHud = 0, lastForm = 0, lastFlipSign = 0;
+function work() {
+  const t0 = performance.now(), budget = 13;
+  const before = sweeps;
+  if (S.algo === 'metro') {
+    sweepAcc += S.speed;
+    let acc = 0, n = 0;
+    while (sweepAcc >= 1) {
+      acc += metroSweep(); n++; sweepAcc -= 1; sweeps += 1;
+      if (performance.now() - t0 > budget) { sweepAcc = Math.min(sweepAcc, 1); break; }
+    }
+    if (n) accRate = accRate ? 0.8 * accRate + 0.2 * (acc / (n * S.N)) : acc / (n * S.N);
+  } else {
+    const pAdd = 1 - Math.exp(-2 / S.T), target = S.speed * S.N;
+    const signBefore = Math.sign(M);
+    let done = 0, cnt = 0;
+    while (done < target) {
+      done += wolffStep(pAdd); cnt++;
+      if ((cnt & 15) === 0 && performance.now() - t0 > budget) break;
+    }
+    sweeps += done / S.N;
+    if (cnt) wolffMean = wolffMean ? 0.8 * wolffMean + 0.2 * (done / cnt) : done / cnt;
+    // display gauge: with h = 0, s -> -s is an exact symmetry; keep the sign stable so the picture does not strobe
+    if (S.h === 0 && signBefore !== 0) {
+      measure();
+      if (Math.sign(M) === -signBefore) { for (let i = 0; i < S.N; i++) spins[i] = -spins[i]; }
+    }
+  }
+  return sweeps - before;
+}
+function frame(now) {
+  const dtw = now - lastT; lastT = now;
+  if (S.running) {
+    const ds = work();
+    measure();
+    if (S.auto) {
+      let h = S.h + S.autoDir * 0.001 * ds;
+      if (h <= -1) { h = -1; S.autoDir = 1; } else if (h >= 1) { h = 1; S.autoDir = -1; }
+      S.h = Math.round(h * 1e4) / 1e4; buildAcc();
+      $('#h').value = S.h; $('#h-out').textContent = fsgn(S.h, 2); avgStart = sweeps;
+    }
+    pushSample();
+    hyst.push([S.h, mNow()]); if (hyst.length > 6000) hyst.splice(0, hyst.length - 6000);
+    rateWin.push([now, ds]); while (rateWin.length && now - rateWin[0][0] > 1000) rateWin.shift();
+    if (rateWin.length > 1) { let s = 0; for (const q of rateWin) s += q[1]; rate = s / Math.max(0.2, (now - rateWin[0][0]) / 1000); }
+    latDirty = true; tpDirty = true; chartDirty = true;
+    if (now - lastHud > 120) hudDirty = true;
+    if (now - lastForm > 400) formDirty = true;
+  }
+  if (latDirty) { drawLattice(); latDirty = false; }
+  if (tpDirty) { drawTplot(); tpDirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  if (hudDirty) { updateHud(); hudDirty = false; lastHud = now; }
+  if (formDirty) { updateFormulas(); formDirty = false; lastForm = now; }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); rateWin = []; });
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#T-marks .end').textContent = fmt(0.5, 1);
+  presetSmall(); updateOutputs(); updateRunBtn(); updateChartLegend(); updateCaption();
+  // the state chip carries data-i18n but must reflect the running state
+  const st = $('#state'); st.textContent = tr(S.running ? 'sRun' : 'sPause');
+  hudDirty = true; formDirty = true; chartDirty = true; tpDirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('ising-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { tpDirty = true; chartDirty = true; });
+
+$('#tc-tick').style.setProperty('--at', String((TC - 0.5) / 4.5));
+$('#tc-snap').style.setProperty('--at', String((TC - 0.5) / 4.5));
+alloc(256);
+readTokens();
+buildAcc();
+reset('rand');
+layoutLattice();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
