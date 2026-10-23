@@ -242,7 +242,7 @@ function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]')
 function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
 document.addEventListener('DOMContentLoaded',function(){upd();
 document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
-var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});}
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
   <header class="top">
     <div class="brand">
       <span class="eyebrow" data-i18n="eyebrow">Elektromagnetyzm · pracownia indukcji</span>
