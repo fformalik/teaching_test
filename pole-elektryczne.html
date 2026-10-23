@@ -1,0 +1,2113 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pole elektryczne</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: field lab. A dot-grid stage with a floating tool palette, probe readouts on top and a
+   transport bar below; settings on the right; live formulas and plots underneath. */
+:root{
+  --bg:#E7E9F1; --surface:#F8F9FC; --paper:#FCFCFE; --sunk:#EDEFF6;
+  --ink:#141A2E; --ink-2:#48506D; --ink-3:#7D849E; --line:#D1D5E2; --dot:#BCC2D6;
+  --pos:#E41C55; --neg:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(20,26,46,.04), 0 8px 24px -12px rgba(20,26,46,.2);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#080A13; --surface:#10131F; --paper:#0B0E19; --sunk:#161A2A;
+    --ink:#E6E9F4; --ink-2:#A5ACC5; --ink-3:#6C7390; --line:#242A40; --dot:#2C3350;
+    --pos:#EE3A68; --neg:#4E9DFF; --amber:#D08A3A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080A13; --surface:#10131F; --paper:#0B0E19; --sunk:#161A2A;
+  --ink:#E6E9F4; --ink-2:#A5ACC5; --ink-3:#6C7390; --line:#242A40; --dot:#2C3350;
+  --pos:#EE3A68; --neg:#4E9DFF; --amber:#D08A3A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--neg); outline-offset:2px}
+.mono{font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 56px); line-height:.98; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.28em}
+.brand h1 svg{width:1.3em; height:.8em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt.pr{color:var(--amber)}
+.hud dt.pt{color:var(--violet)}
+.hud dd{margin:0; font-size:13.5px; min-width:8.6ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend > span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.cbar i{display:inline-block; width:74px; height:8px; border-radius:4px; background:linear-gradient(90deg, var(--neg), var(--paper) 50%, var(--pos)); border:1px solid var(--line)}
+.cbar small{font-family:var(--f-mono); font-size:11px; color:var(--ink-3)}
+.bchip{font-family:var(--f-mono); font-size:11.5px; color:var(--violet); border:1px solid var(--violet); border-radius:999px; padding:2px 8px}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--violet); color:var(--violet)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="hit"], .state[data-s="left"], .state[data-s="plane"], .state[data-s="max"], .state[data-s="rest"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(360px, 60vh, 660px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.palette{position:absolute; left:10px; top:10px; display:flex; flex-direction:column; gap:3px; padding:4px; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); z-index:2}
+.tool{position:relative; width:36px; height:36px; border:0; border-radius:9px; background:transparent; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-2); padding:0}
+.tool:hover{background:var(--sunk); color:var(--ink)}
+.tool[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.tool svg{width:18px; height:18px}
+.tool kbd{position:absolute; right:2px; bottom:1px; font-family:var(--f-mono); font-size:8.5px; opacity:.55}
+.tool-hint{position:absolute; left:60px; bottom:10px; right:110px; font-size:12.5px; color:var(--ink-2); pointer-events:none; z-index:1}
+.tool-hint span{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:4px 9px; display:inline-block; max-width:100%}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--violet); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--violet); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn.danger:hover{border-color:var(--pos); color:var(--pos)}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 10px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--d, var(--violet)); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--violet)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:14ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.rgrid{display:grid; grid-template-columns:repeat(auto-fit, minmax(210px, 1fr)); gap:10px}
+.ro{background:var(--sunk); border-radius:10px; padding:10px 12px 10px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.ro h3{margin:0; display:flex; align-items:center; gap:7px; font-family:var(--f-mono); font-weight:500; font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ro h3 i{width:8px; height:8px; border-radius:50%; background:var(--k, var(--ink-3)); flex:none}
+.ro dl{margin:0; display:grid; grid-template-columns:minmax(0,1fr) auto; gap:3px 12px; font-size:13px}
+.ro dt{color:var(--ink-2); min-width:0}
+.ro dt i{font-family:var(--f-math); font-size:15px; color:var(--ink)}
+.ro dd{margin:0; font-family:var(--f-mono); font-size:13px; font-variant-numeric:tabular-nums; text-align:right; white-space:nowrap}
+.ro dd.big{font-size:15px; font-weight:500}
+.ro .warn{font-size:12px; color:var(--amber); margin:0}
+.tbl-wrap{overflow:auto; max-height:380px}
+.res thead th{position:sticky; top:0; background:var(--surface); z-index:1}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:520px}
+.res th, .res td{padding:7px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res td{font-family:var(--f-mono); font-size:13.5px}
+.res tbody tr{cursor:pointer}
+.res tbody tr:hover td, .res tbody tr:hover th{background:var(--sunk)}
+.res tbody tr[aria-selected="true"] th, .res tbody tr[aria-selected="true"] td{background:var(--sunk); color:var(--ink)}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+.qdot{display:inline-flex; align-items:center; justify-content:center; width:20px; height:20px; border-radius:50%; color:var(--on-accent); font-family:var(--f-mono); font-size:11px; margin-right:8px; vertical-align:middle}
+.qdot.p{background:var(--pos)} .qdot.n{background:var(--neg)}
+.res .empty{color:var(--ink-3); text-align:left; font-family:var(--f-body)}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.grp.off .dim{opacity:.4}
+.row2{display:flex; gap:8px; align-items:center; flex-wrap:wrap; justify-content:space-between}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13px; font-variant-numeric:tabular-nums; color:var(--ink); text-align:right}
+.hint{font-size:12px; color:var(--ink-3); margin:0}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+input[type=range]:disabled{cursor:default}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.switch{display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500}
+.switch input{position:absolute; opacity:0; width:1px; height:1px}
+.switch .sw{width:38px; height:22px; border-radius:999px; background:var(--line); position:relative; transition:background .15s; flex:none}
+.switch .sw::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--paper); transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .sw{background:var(--violet)}
+.switch input:checked + .sw::after{transform:translateX(16px)}
+.switch input:focus-visible + .sw{outline:2px solid var(--neg); outline-offset:2px}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill.warn span{color:var(--amber)}
+.selhead{display:flex; align-items:center; gap:10px; font-size:13px; color:var(--ink-2)}
+.badge{font-family:var(--f-mono); font-size:12px; color:var(--on-accent); border-radius:999px; padding:1px 9px; background:var(--ink-3)}
+.badge.p{background:var(--pos)} .badge.n{background:var(--neg)}
+.selbody{display:flex; flex-direction:column; gap:10px}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:15.5px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--violet); font-family:var(--f-mono); font-size:14.5px; font-weight:500; font-style:normal}
+.eq .r.pr{color:var(--amber)}
+.eq .more{font-family:var(--f-body); font-size:12px; color:var(--ink-3)}
+.vec{position:relative; display:inline-block}
+.vec::before{content:"→"; position:absolute; left:50%; top:-.78em; transform:translateX(-50%) scaleX(.8); font-size:.62em; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; flex-wrap:wrap; gap:2px; border:1px solid var(--line); border-radius:18px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2); min-height:19px}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{display:inline-block; width:20px; height:0; border-top:2.5px solid var(--ink)}
+.chart-box{position:relative; height:270px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+.keys{font-size:12.5px; color:var(--ink-3); margin:0}
+.keys kbd{font-family:var(--f-mono); font-size:11px; border:1px solid var(--line); border-radius:4px; padding:0 5px; background:var(--surface); color:var(--ink-2)}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.9; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:7.6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .tool{width:32px; height:32px}
+  .palette{left:8px; top:8px}
+  .tool-hint{left:52px; right:8px; bottom:36px; font-size:11.5px}
+  .pills{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .switch .sw, .switch .sw::after{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Elektrostatyka · pracownia pola</span>
+      <h1>
+        <svg viewBox="0 0 66 40" aria-hidden="true">
+          <path d="M15 20 C 25 2, 41 2, 51 20" fill="none" stroke="var(--ink-3)" stroke-width="2"/>
+          <path d="M15 20 C 25 38, 41 38, 51 20" fill="none" stroke="var(--ink-3)" stroke-width="2"/>
+          <path d="M15 20 H 51" fill="none" stroke="var(--ink-3)" stroke-width="2"/>
+          <circle cx="13" cy="20" r="8" fill="var(--pos)"/><circle cx="53" cy="20" r="8" fill="var(--neg)"/>
+          <path d="M9 20h8M13 16v8M49 20h8" stroke="var(--on-accent)" stroke-width="2.2" stroke-linecap="round"/>
+        </svg>
+        <span data-i18n="title">Pole elektryczne ładunków</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Przeciągaj ładunki, dodawaj nowe i obserwuj linie pola, powierzchnie ekwipotencjalne oraz ruch naładowanej cząstki w polach E i B.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt class="pr">x</dt><dd id="hud-x">—</dd></div>
+            <div><dt class="pr">y</dt><dd id="hud-y">—</dd></div>
+            <div><dt class="pr">|E|</dt><dd id="hud-e">—</dd></div>
+            <div><dt class="pr">V</dt><dd id="hud-v">—</dd></div>
+            <div><dt class="pt">t</dt><dd id="hud-t">—</dd></div>
+            <div><dt class="pt">|v|</dt><dd id="hud-s">—</dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="scene" aria-label="Pole elektryczne ładunków punktowych"></canvas>
+          <div class="palette" role="toolbar" id="palette" aria-label="Narzędzia">
+            <button type="button" class="tool" id="tool-move" data-tool="move" aria-pressed="true" data-i18n-title="tMove">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5v15M2.5 10h15M10 2.5 7.6 4.9M10 2.5l2.4 2.4M10 17.5l-2.4-2.4M10 17.5l2.4-2.4M2.5 10l2.4-2.4M2.5 10l2.4 2.4M17.5 10l-2.4-2.4M17.5 10l-2.4 2.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><kbd>1</kbd>
+            </button>
+            <button type="button" class="tool" id="tool-pos" data-tool="pos" aria-pressed="false" data-i18n-title="tPos">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="var(--pos)"/><path d="M6.3 10h7.4M10 6.3v7.4" stroke="var(--on-accent)" stroke-width="2" stroke-linecap="round"/></svg><kbd>2</kbd>
+            </button>
+            <button type="button" class="tool" id="tool-neg" data-tool="neg" aria-pressed="false" data-i18n-title="tNeg">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="var(--neg)"/><path d="M6.3 10h7.4" stroke="var(--on-accent)" stroke-width="2" stroke-linecap="round"/></svg><kbd>3</kbd>
+            </button>
+            <button type="button" class="tool" id="tool-del" data-tool="del" aria-pressed="false" data-i18n-title="tDel">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M8 6V4h4v2M5.5 6l.8 10.5h7.4L14.5 6M8.5 9v5M11.5 9v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><kbd>4</kbd>
+            </button>
+            <button type="button" class="tool" id="tool-part" data-tool="part" aria-pressed="false" data-i18n-title="tPart">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="5.5" cy="14.5" r="2.6" fill="var(--violet)"/><path d="M8 12 15.5 4.5M15.5 4.5H11M15.5 4.5V9" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg><kbd>5</kbd>
+            </button>
+            <button type="button" class="tool" id="tool-probe" data-tool="probe" aria-pressed="false" data-i18n-title="tProbe">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="5" fill="none" stroke="var(--amber)" stroke-width="2"/><path d="M10 1.8v4M10 14.2v4M1.8 10h4M14.2 10h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg><kbd>6</kbd>
+            </button>
+          </div>
+          <div class="tool-hint" id="tool-hint"><span></span></div>
+        </div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Odtwórz"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0 / 0 s</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="fire">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span data-i18n="launch">Wystrzel</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-lines" data-layer="lines" aria-pressed="true" style="--d:var(--pos)" data-i18n="lLines">Linie pola</button>
+            <button type="button" class="tg" id="tg-equi" data-layer="equi" aria-pressed="true" style="--d:var(--ink-2)" data-i18n="lEqui">Ekwipotencjalne</button>
+            <button type="button" class="tg" id="tg-heat" data-layer="heat" aria-pressed="true" style="--d:var(--neg)" data-i18n="lHeat">Mapa potencjału</button>
+            <button type="button" class="tg" id="tg-vec" data-layer="vec" aria-pressed="false" style="--d:var(--ink-2)" data-i18n="lVec">Wektory E</button>
+            <button type="button" class="tg" id="tg-prev" data-layer="prev" aria-pressed="true" style="--d:var(--violet)" data-i18n="lPrev">Podgląd toru</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="rgrid" id="rgrid"></div>
+        <div class="tbl-wrap">
+          <table class="res">
+            <thead><tr>
+              <th data-i18n="thQ">Ładunek</th><th>x</th><th>y</th>
+              <th data-i18n="thV">V od pozostałych</th><th data-i18n="thF">|F| wypadkowa</th><th data-i18n="thDir">kierunek F</th>
+            </tr></thead>
+            <tbody id="cbody"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia" id="panel">
+      <fieldset class="grp">
+        <h3 data-i18n="gConfig">Układ ładunków</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" id="pr-single" data-preset="single" aria-pressed="false"><span data-i18n="pSingle">Pojedynczy</span><small>+q</small></button>
+          <button type="button" class="chip" id="pr-dipole" data-preset="dipole" aria-pressed="true"><span data-i18n="pDipole">Dipol</span><small>+q −q</small></button>
+          <button type="button" class="chip" id="pr-like" data-preset="like" aria-pressed="false"><span data-i18n="pLike">Jednoimienne</span><small>+q +q</small></button>
+          <button type="button" class="chip" id="pr-quad" data-preset="quad" aria-pressed="false"><span data-i18n="pQuad">Kwadrupol</span><small>2+ 2−</small></button>
+          <button type="button" class="chip" id="pr-cap" data-preset="cap" aria-pressed="false"><span data-i18n="pCap">Kondensator</span><small>15+ 15−</small></button>
+          <button type="button" class="chip" id="pr-plane" data-preset="plane" aria-pressed="false"><span data-i18n="pPlane">Przewodnik</span><small data-i18n="pPlaneS">+q i obraz</small></button>
+          <button type="button" class="chip" id="pr-bonly" data-preset="bonly" aria-pressed="false"><span data-i18n="pB">Tylko pole B</span><small data-i18n="pBS">cyklotron</small></button>
+        </div>
+        <div class="row2">
+          <div class="seg" role="group" id="unit">
+            <span class="lbl" data-i18n="unit">Jednostka</span>
+            <button type="button" id="u-nc" data-unit="nC" aria-pressed="true">nC</button>
+            <button type="button" id="u-uc" data-unit="uC" aria-pressed="false">µC</button>
+          </div>
+          <button type="button" class="btn danger" id="clear-all"><span data-i18n="clearAll">Usuń wszystkie</span></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="selgrp">
+        <h3 data-i18n="gSel">Wybrany ładunek</h3>
+        <p class="hint" id="sel-none" data-i18n="selNone">Kliknij ładunek na planszy albo w tabeli, żeby go edytować.</p>
+        <div class="selbody" id="sel-body" hidden>
+          <div class="selhead"><span class="badge" id="sel-badge">#1</span><span class="mono" id="sel-pos"></span></div>
+          <div class="ctl" style="--c:var(--ink)">
+            <div class="ctl-head"><label for="sq" data-i18n-html="lq">Wartość |<i>q</i>|</label><output id="sq-out" for="sq"></output></div>
+            <input type="range" id="sq" min="0.1" max="10" step="0.1" value="2">
+          </div>
+          <div class="row2">
+            <div class="seg" role="group" id="sel-sign">
+              <span class="lbl" data-i18n="sign">Znak</span>
+              <button type="button" id="ss-p" data-s="1" aria-pressed="true">+</button>
+              <button type="button" id="ss-n" data-s="-1" aria-pressed="false">−</button>
+            </div>
+            <button type="button" class="btn danger" id="sel-del"><span data-i18n="del">Usuń ładunek</span></button>
+          </div>
+          <p class="hint" id="sel-img" data-i18n="imageNote">Ładunek obrazowy (−q za płaszczyzną) porusza się razem z oryginałem.</p>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="partgrp" style="--c:var(--violet)">
+        <h3 data-i18n="gPart">Cząstka próbna</h3>
+        <div class="chips" id="parts">
+          <button type="button" class="chip" id="pt-proton" data-part="proton" aria-pressed="true"><span data-i18n="proton">Proton</span><small>+e</small></button>
+          <button type="button" class="chip" id="pt-electron" data-part="electron" aria-pressed="false"><span data-i18n="electron">Elektron</span><small>−e</small></button>
+          <button type="button" class="chip" id="pt-alpha" data-part="alpha" aria-pressed="false"><span data-i18n="alpha">Cząstka α</span><small>+2e</small></button>
+          <button type="button" class="chip" id="pt-ball" data-part="ball" aria-pressed="false"><span data-i18n="ball">Kulka</span><small>1 mg · 1 nC</small></button>
+        </div>
+        <div class="seg" role="group" id="psign">
+          <span class="lbl" data-i18n="sign">Znak</span>
+          <button type="button" id="ps-p" data-s="1" aria-pressed="true">+</button>
+          <button type="button" id="ps-n" data-s="-1" aria-pressed="false">−</button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="qt" data-i18n-html="lqt">Ładunek |<i>q</i>|</label><output id="qt-out" for="qt"></output></div>
+          <input type="range" id="qt" min="0" max="1300" step="1" value="1">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="pm" data-i18n-html="lm">Masa <i>m</i></label><output id="pm-out" for="pm"></output></div>
+          <input type="range" id="pm" min="0" max="2800" step="1" value="378">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v0" data-i18n-html="lv0">Prędkość <i>v</i><sub>0</sub></label><output id="v0-out" for="v0"></output></div>
+          <input type="range" id="v0" min="0" max="300" step="1" value="200">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="pang" data-i18n-html="lang0">Kierunek <i>φ</i></label><output id="pang-out" for="pang"></output></div>
+          <input type="range" id="pang" min="-180" max="180" step="1" value="0">
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pEk0">E kin. na starcie</small><span id="pill-ek0">—</span></div>
+          <div class="pill"><small data-i18n="pqV">q·V na starcie</small><span id="pill-qv">—</span></div>
+          <div class="pill" id="pill-vc-box"><small>v₀ / c</small><span id="pill-vc">—</span></div>
+        </div>
+        <p class="hint" data-i18n="partHint">Narzędzie „Cząstka”: wciśnij w miejscu startu i przeciągnij. Grot strzałki prędkości można chwycić w każdym trybie.</p>
+      </fieldset>
+
+      <fieldset class="grp" id="bgrp" style="--c:var(--violet)">
+        <h3 data-i18n="gB">Pole magnetyczne</h3>
+        <label class="switch"><input type="checkbox" id="bon"><span class="sw"></span><span data-i18n="bOn">Jednorodne pole B</span></label>
+        <div class="seg dim" role="group" id="bdir">
+          <button type="button" id="bd-out" data-d="1" aria-pressed="true">⊙ <span data-i18n="bOut">z kartki</span></button>
+          <button type="button" id="bd-in" data-d="-1" aria-pressed="false">⊗ <span data-i18n="bIn">za kartkę</span></button>
+        </div>
+        <div class="ctl dim">
+          <div class="ctl-head"><label for="bm" data-i18n-html="lB">Indukcja <i>B</i></label><output id="bm-out" for="bm"></output></div>
+          <input type="range" id="bm" min="0" max="700" step="1" value="400">
+        </div>
+        <div class="row2 dim">
+          <button type="button" class="btn" id="fitb"><span data-i18n="fitB">Dobierz B (r = 8 cm)</span></button>
+        </div>
+        <div class="pills dim">
+          <div class="pill"><small data-i18n="pRc">promień r</small><span id="pill-rc">—</span></div>
+          <div class="pill"><small data-i18n="pTc">okres T</small><span id="pill-tc">—</span></div>
+          <div class="pill"><small data-i18n="pWc">częstość ω</small><span id="pill-wc">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącego układu, sondy i cząstki (jednostki SI).</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" id="tab-v" data-tab="v" aria-selected="true" data-i18n="tabV">Potencjał V(x)</button>
+        <button type="button" role="tab" id="tab-e" data-tab="e" aria-selected="false" data-i18n="tabE">Natężenie E(x)</button>
+        <button type="button" role="tab" id="tab-en" data-tab="en" aria-selected="false" data-i18n="tabEn">Energia</button>
+        <button type="button" role="tab" id="tab-spd" data-tab="spd" aria-selected="false" data-i18n="tabSpd">Prędkość</button>
+        <button type="button" role="tab" id="tab-dist" data-tab="dist" aria-selected="false" data-i18n="tabDist">Odległość</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+  <p class="keys" id="keys"></p>
+</div>
+
+<script>
+(() => {
+'use strict';
+const K = 8.9875517923e9, QE = 1.602176634e-19, CL = 2.99792458e8;
+const TAU = Math.PI * 2, D2R = Math.PI / 180;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Elektrostatyka · pracownia pola', title:'Pole elektryczne ładunków',
+    lede:'Przeciągaj ładunki, dodawaj nowe i obserwuj linie pola, powierzchnie ekwipotencjalne oraz ruch naładowanej cząstki w polach E i B.',
+    tMove:'Przesuwanie (1)', tPos:'Dodaj ładunek dodatni (2)', tNeg:'Dodaj ładunek ujemny (3)', tDel:'Usuń ładunek (4)', tPart:'Start cząstki (5)', tProbe:'Sonda (6)',
+    hMove:'Przeciągnij ładunek, sondę, start cząstki albo grot strzałki prędkości.', hPos:'Kliknij na planszy, żeby dodać ładunek dodatni.', hNeg:'Kliknij na planszy, żeby dodać ładunek ujemny.',
+    hDel:'Kliknij ładunek, żeby go usunąć.', hPart:'Wciśnij w miejscu startu i przeciągnij: strzałka to prędkość początkowa v₀.', hProbe:'Kliknij albo przeciągnij, żeby przenieść sondę.',
+    hPlaneBlock:'Za płaszczyzną jest przewodnik. Postaw ładunek po prawej stronie.', hFull:'Osiągnięto limit 40 ładunków.',
+    lLines:'Linie pola', lEqui:'Ekwipotencjalne', lHeat:'Mapa potencjału', lVec:'Wektory E', lPrev:'Podgląd toru',
+    launch:'Wystrzel', kbd:'spacja', reset:'Od nowa', speed:'Tempo', fullscreen:'Pełny ekran', pause:'Pauza', play:'Odtwórz',
+    sIdle:'gotowy', sRun:'w ruchu', sPause:'pauza', sHit:'uderzył w ładunek', sLeft:'opuścił obszar', sPlane:'trafił w przewodnik', sMax:'koniec symulacji', sRest:'w spoczynku',
+    gConfig:'Układ ładunków', pSingle:'Pojedynczy', pDipole:'Dipol', pLike:'Jednoimienne', pQuad:'Kwadrupol', pCap:'Kondensator', pPlane:'Przewodnik', pPlaneS:'+q i obraz', pB:'Tylko pole B', pBS:'cyklotron',
+    unit:'Jednostka', clearAll:'Usuń wszystkie',
+    gSel:'Wybrany ładunek', selNone:'Kliknij ładunek na planszy albo w tabeli, żeby go edytować.', lq:'Wartość |<i>q</i>|', sign:'Znak', del:'Usuń ładunek',
+    imageNote:'Ładunek obrazowy (−q za płaszczyzną) porusza się razem z oryginałem.',
+    gPart:'Cząstka próbna', proton:'Proton', electron:'Elektron', alpha:'Cząstka α', ball:'Kulka',
+    lqt:'Ładunek |<i>q</i>|', lm:'Masa <i>m</i>', lv0:'Prędkość <i>v</i><sub>0</sub>', lang0:'Kierunek <i>φ</i>',
+    pEk0:'E kin. na starcie', pqV:'q·V na starcie',
+    partHint:'Narzędzie „Cząstka”: wciśnij w miejscu startu i przeciągnij. Grot strzałki prędkości można chwycić w każdym trybie.',
+    gB:'Pole magnetyczne', bOn:'Jednorodne pole B', bOut:'z kartki', bIn:'za kartkę', lB:'Indukcja <i>B</i>', fitB:'Dobierz B (r = 8 cm)',
+    pRc:'promień r', pTc:'okres T', pWc:'częstość ω', fitClamp:'Wymagane B przekracza 10 T: dla tej cząstki pole B praktycznie nie zakrzywia toru.',
+    results:'Wyniki', resSub:'Sonda, cząstka w bieżącej chwili i cały układ.',
+    roProbe:'Sonda', roTest:'Ładunek próbny w sondzie', roPart:'Cząstka', roSys:'Układ ładunków',
+    rEabs:'natężenie |<i>E</i>|', rEx:'składowa <i>E</i><sub>x</sub>', rEy:'składowa <i>E</i><sub>y</sub>', rDir:'kierunek <i>E</i>', rV:'potencjał <i>V</i>',
+    rF:'siła |<i>F</i>| = |<i>q</i>|·<i>E</i>', rFdir:'kierunek <i>F</i>', rEp:'energia <i>qV</i>', rSame:'zgodny z E', rOpp:'przeciwny do E',
+    rT:'czas <i>t</i>', rSpd:'prędkość |<i>v</i>|', rEk:'E kinetyczna', rEpot:'E potencjalna <i>qV</i>', rEtot:'E całkowita', rDrift:'dryf energii', rW:'praca <i>W</i> = <i>q</i>Δ<i>V</i>',
+    rU:'energia układu <i>U</i>', rSum:'suma ładunków Σ<i>q</i>', rN:'liczba ładunków', rNimg:'+ obrazy', rPlaneE:'sonda w przewodniku',
+    warnRel:'v > 0,1c: model nierelatywistyczny traci dokładność.',
+    thQ:'Ładunek', thV:'V od pozostałych', thF:'|F| wypadkowa', thDir:'kierunek F', noCharges:'Brak ładunków. Wybierz układ w panelu albo dodaj ładunek narzędziem +/−.',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego układu, sondy i cząstki (jednostki SI).',
+    fCoul:'Prawo Coulomba', fE1:'Pole ładunku punktowego', fSup:'Superpozycja w sondzie', fV:'Potencjał w sondzie', fGrad:'Pole jako gradient potencjału',
+    fW:'Praca sił pola', fLor:'Siła Lorentza', fCyc:'Ruch w polu B', fU:'Energia układu ładunków', fCons:'Zasada zachowania energii',
+    attract:'przyciąganie', repel:'odpychanie', noteCoulNone:'Potrzebne są co najmniej dwa ładunki.', noteCoulPair:'Para: ładunek {a} i najbliższy mu ładunek {b}.',
+    noteE1:'Ładunek najbliższy sondzie: {a}. Kierunek: od ładunku dodatniego, do ujemnego.', noteSup:'Każdy ładunek daje swój wektor; sumujemy składowe.', image:'obraz',
+    noteV:'Potencjał to skalar: dodajemy liczby ze znakiem, bez kierunków.', noteGrad:'Różnica centralna z krokiem h = 1 mm. Wartość z superpozycji:',
+    noteW:'Od startu A do bieżącego położenia B. Siła magnetyczna nie wykonuje pracy, więc W = ΔE<sub>k</sub>.',
+    noteLor:'W bieżącym położeniu cząstki. Pole B jest prostopadłe do kartki: <i>B</i><sub>z</sub> = {b}.', noteBoff:'Pole B jest wyłączone. Włącz je w panelu, żeby zobaczyć promień i okres.',
+    noteCyc:'Promień liczony dla bieżącej prędkości. W samym polu B tor jest okręgiem, a okres nie zależy od prędkości.',
+    noteU:'Praca potrzebna, by zbudować układ z ładunków rozsuniętych do nieskończoności.', noteUPlane:'Z przewodnikiem: U = Σ par + ½ Σ qᵢ·V<sub>obraz</sub>(rᵢ).',
+    noteCons:'Suma energii kinetycznej i potencjalnej qV jest stała (dryf całkowania RK4 poniżej).', noteNoProbe:'Sonda leży w przewodniku: E = 0, V = 0.', noteNone:'Brak ładunków źródłowych.',
+    more:'i jeszcze', pairs:'par',
+    charts:'Wykresy', tabV:'Potencjał V(x)', tabE:'Natężenie E(x)', tabEn:'Energia', tabSpd:'Prędkość', tabDist:'Odległość',
+    sV:'V', sEabs:'|E|', sEx:'Eₓ', ek:'E kinetyczna', ep:'E potencjalna qV', et:'E całkowita', spd:'|v|', dist:'odległość od startu', path:'droga s',
+    cnoteV:'Potencjał wzdłuż poziomej linii przez sondę (y = {y}). Pionowa kreska: położenie sondy.',
+    cnoteE:'Natężenie i składowa Eₓ wzdłuż tej samej linii. Przy ładunkach wykres jest obcięty.',
+    cnoteEn:'Energia kinetyczna zamienia się w potencjalną i z powrotem; ich suma stoi w miejscu.',
+    cnoteSpd:'Wartość prędkości cząstki w czasie. W samym polu B jest stała.', cnoteDist:'Odległość od punktu startu i przebyta droga.',
+    cnoteNoTraj:'Ustaw prędkość cząstki, żeby zobaczyć wykres.', clipped:'obcięto',
+    keys:'Skróty: <kbd>spacja</kbd> start/pauza · <kbd>1</kbd>–<kbd>6</kbd> narzędzia · <kbd>L</kbd> <kbd>E</kbd> <kbd>H</kbd> <kbd>W</kbd> warstwy · <kbd>B</kbd> pole B · <kbd>Del</kbd> usuń ładunek · strzałki przesuwają ładunek lub sondę · <kbd>,</kbd> <kbd>.</kbd> krok · <kbd>R</kbd> od nowa',
+    conductor:'przewodnik uziemiony, V = 0', probe:'sonda', none:'—',
+    aScene:'Plansza z ładunkami i liniami pola', aPalette:'Narzędzia', aTimeline:'Oś czasu', aSettings:'Ustawienia'
+  },
+  en: {
+    eyebrow:'Electrostatics · field lab', title:'Electric field of charges',
+    lede:'Drag charges, add new ones and watch field lines, equipotentials and a charged particle moving through the E and B fields.',
+    tMove:'Move (1)', tPos:'Add positive charge (2)', tNeg:'Add negative charge (3)', tDel:'Delete charge (4)', tPart:'Particle launch (5)', tProbe:'Probe (6)',
+    hMove:'Drag a charge, the probe, the particle start or the tip of the velocity arrow.', hPos:'Click on the board to add a positive charge.', hNeg:'Click on the board to add a negative charge.',
+    hDel:'Click a charge to delete it.', hPart:'Press at the start point and drag: the arrow is the initial velocity v₀.', hProbe:'Click or drag to move the probe.',
+    hPlaneBlock:'The conductor fills the left side. Place charges on the right.', hFull:'Limit of 40 charges reached.',
+    lLines:'Field lines', lEqui:'Equipotentials', lHeat:'Potential map', lVec:'E vectors', lPrev:'Path preview',
+    launch:'Launch', kbd:'space', reset:'Reset', speed:'Speed', fullscreen:'Full screen', pause:'Pause', play:'Play',
+    sIdle:'ready', sRun:'moving', sPause:'paused', sHit:'hit a charge', sLeft:'left the area', sPlane:'hit the conductor', sMax:'end of run', sRest:'at rest',
+    gConfig:'Charge setup', pSingle:'Single', pDipole:'Dipole', pLike:'Like charges', pQuad:'Quadrupole', pCap:'Capacitor', pPlane:'Conductor', pPlaneS:'+q and image', pB:'B field only', pBS:'cyclotron',
+    unit:'Unit', clearAll:'Delete all',
+    gSel:'Selected charge', selNone:'Click a charge on the board or in the table to edit it.', lq:'Magnitude |<i>q</i>|', sign:'Sign', del:'Delete charge',
+    imageNote:'The image charge (−q behind the plane) moves with the original.',
+    gPart:'Test particle', proton:'Proton', electron:'Electron', alpha:'Alpha particle', ball:'Bead',
+    lqt:'Charge |<i>q</i>|', lm:'Mass <i>m</i>', lv0:'Speed <i>v</i><sub>0</sub>', lang0:'Direction <i>φ</i>',
+    pEk0:'starting KE', pqV:'starting q·V',
+    partHint:'Particle tool: press at the start point and drag. The tip of the velocity arrow can be grabbed in any mode.',
+    gB:'Magnetic field', bOn:'Uniform B field', bOut:'out of page', bIn:'into page', lB:'Flux density <i>B</i>', fitB:'Fit B (r = 8 cm)',
+    pRc:'radius r', pTc:'period T', pWc:'frequency ω', fitClamp:'The required B exceeds 10 T: for this particle the B field barely bends the path.',
+    results:'Results', resSub:'Probe, particle at the current moment, and the whole setup.',
+    roProbe:'Probe', roTest:'Test charge at the probe', roPart:'Particle', roSys:'Charge setup',
+    rEabs:'field strength |<i>E</i>|', rEx:'component <i>E</i><sub>x</sub>', rEy:'component <i>E</i><sub>y</sub>', rDir:'direction of <i>E</i>', rV:'potential <i>V</i>',
+    rF:'force |<i>F</i>| = |<i>q</i>|·<i>E</i>', rFdir:'direction of <i>F</i>', rEp:'energy <i>qV</i>', rSame:'along E', rOpp:'against E',
+    rT:'time <i>t</i>', rSpd:'speed |<i>v</i>|', rEk:'kinetic E', rEpot:'potential E <i>qV</i>', rEtot:'total E', rDrift:'energy drift', rW:'work <i>W</i> = <i>q</i>Δ<i>V</i>',
+    rU:'setup energy <i>U</i>', rSum:'total charge Σ<i>q</i>', rN:'number of charges', rNimg:'+ images', rPlaneE:'probe inside conductor',
+    warnRel:'v > 0.1c: the non-relativistic model loses accuracy.',
+    thQ:'Charge', thV:'V from the others', thF:'net |F|', thDir:'direction of F', noCharges:'No charges. Pick a setup in the panel or add one with the +/− tool.',
+    formulas:'Formulas', formulasSub:'Numbers filled in live from the current setup, probe and particle (SI units).',
+    fCoul:'Coulomb’s law', fE1:'Field of a point charge', fSup:'Superposition at the probe', fV:'Potential at the probe', fGrad:'Field as the gradient of potential',
+    fW:'Work done by the field', fLor:'Lorentz force', fCyc:'Motion in the B field', fU:'Energy of the charge setup', fCons:'Energy conservation',
+    attract:'attraction', repel:'repulsion', noteCoulNone:'At least two charges are needed.', noteCoulPair:'Pair: charge {a} and its nearest charge {b}.',
+    noteE1:'Charge nearest to the probe: {a}. Direction: away from a positive charge, toward a negative one.', noteSup:'Each charge contributes its own vector; we add the components.', image:'image',
+    noteV:'Potential is a scalar: add signed numbers, no directions.', noteGrad:'Central difference with step h = 1 mm. Value from superposition:',
+    noteW:'From the start A to the current position B. The magnetic force does no work, so W = ΔE<sub>k</sub>.',
+    noteLor:'At the particle’s current position. B is perpendicular to the page: <i>B</i><sub>z</sub> = {b}.', noteBoff:'The B field is off. Turn it on in the panel to see the radius and period.',
+    noteCyc:'Radius for the current speed. In a pure B field the path is a circle and the period does not depend on speed.',
+    noteU:'Work needed to assemble the setup from charges spread out to infinity.', noteUPlane:'With the conductor: U = Σ pairs + ½ Σ qᵢ·V<sub>image</sub>(rᵢ).',
+    noteCons:'Kinetic plus potential energy qV stays constant (RK4 integration drift below).', noteNoProbe:'The probe is inside the conductor: E = 0, V = 0.', noteNone:'No source charges.',
+    more:'and', pairs:'pairs',
+    charts:'Charts', tabV:'Potential V(x)', tabE:'Field E(x)', tabEn:'Energy', tabSpd:'Speed', tabDist:'Distance',
+    sV:'V', sEabs:'|E|', sEx:'Eₓ', ek:'kinetic E', ep:'potential E qV', et:'total E', spd:'|v|', dist:'distance from start', path:'path length s',
+    cnoteV:'Potential along the horizontal line through the probe (y = {y}). Vertical mark: probe position.',
+    cnoteE:'Field strength and its Eₓ component along the same line. Clipped near the charges.',
+    cnoteEn:'Kinetic energy turns into potential energy and back; their sum stays put.',
+    cnoteSpd:'Particle speed over time. In a pure B field it stays constant.', cnoteDist:'Distance from the start point and path length travelled.',
+    cnoteNoTraj:'Give the particle a velocity to see this chart.', clipped:'clipped',
+    keys:'Shortcuts: <kbd>space</kbd> launch/pause · <kbd>1</kbd>–<kbd>6</kbd> tools · <kbd>L</kbd> <kbd>E</kbd> <kbd>H</kbd> <kbd>W</kbd> layers · <kbd>B</kbd> B field · <kbd>Del</kbd> delete charge · arrows move the charge or probe · <kbd>,</kbd> <kbd>.</kbd> step · <kbd>R</kbd> reset',
+    conductor:'grounded conductor, V = 0', probe:'probe', none:'—',
+    aScene:'Board with charges and field lines', aPalette:'Tools', aTimeline:'Timeline', aSettings:'Settings'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('pole-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const trf = (k, o) => tr(k).replace(/\{(\w+)\}/g, (_, n) => o[n]);
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUPD = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+const sup = (e) => String(e).split('').map(ch => (ch === '-' ? '⁻' : SUPD[+ch])).join('');
+// Signed number, plain for moderate magnitudes and a·10ⁿ otherwise.
+function fsci(x, sig = 3) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  let e = Math.floor(Math.log10(Math.abs(x)));
+  if (Math.abs(+(x / Math.pow(10, e)).toFixed(sig - 1)) >= 10) e += 1;
+  if (e >= -2 && e <= 3) return fmt(x, Math.max(0, sig - 1 - e));
+  return `${fmt(x / Math.pow(10, e), sig - 1)}·10${sup(e)}`;
+}
+const PREF = [[1e9, 'G'], [1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n'], [1e-12, 'p'], [1e-15, 'f']];
+function pickPrefix(a) {
+  a = Math.abs(a);
+  if (!(a > 0) || !isFinite(a)) return { f: 1, p: '' };
+  for (const [f, p] of PREF) if (a >= f * 0.9995) return { f, p };
+  return { f: 1e-15, p: 'f' };
+}
+// Value with SI prefix and 3 significant digits, e.g. "7,19 kN/C".
+function fsi(x, unit, sig = 3) {
+  if (!isFinite(x)) return `∞ ${unit}`;
+  if (x === 0) return `0 ${unit}`;
+  if (Math.abs(x) < 1e-15 || Math.abs(x) >= 1e12) return `${fsci(x, sig)} ${unit}`;
+  const { f, p } = pickPrefix(x), v = x / f;
+  const e = Math.floor(Math.log10(Math.abs(v) * 1.0005));
+  return `${fmt(v, clamp(sig - 1 - e, 0, 3))} ${p}${unit}`;
+}
+const fcm = (x) => `${fmt(x * 100, 1)} cm`;
+const microPart = () => S.part.qmag < 1e-15;
+const fen = (E) => (microPart() ? fsi(E / QE, 'eV') : fsi(E, 'J'));
+const fang = (a) => `${fmt(a, 0)}°`;
+const kStr = () => `${fmt(8.99, 2)}·10⁹`;
+
+/* ---------- model ---------- */
+const WORLD = { x0: -0.5, x1: 0.5, y0: -0.36, y1: 0.36 };   // particle simulation box [m]
+const MAXQ = 40;
+const PARTS = {
+  proton:   { qmag: QE, sign: 1, m: 1.67262192e-27 },
+  electron: { qmag: QE, sign: -1, m: 9.1093837e-31 },
+  alpha:    { qmag: 2 * QE, sign: 1, m: 6.6446573e-27 },
+  ball:     { qmag: 1e-9, sign: 1, m: 1e-6 }
+};
+const plates = [];
+for (let i = 0; i < 15; i++) { const x = -0.14 + 0.02 * i; plates.push([0.4, x, 0.05]); }
+for (let i = 0; i < 15; i++) { const x = -0.14 + 0.02 * i; plates.push([-0.4, x, -0.05]); }
+// charges: [q (display units), x, y]; part: [x0, y0, angle, v0 / v_ref]
+const PRESETS = {
+  single: { ch: [[2, 0, 0]], probe: [0.09, 0.05], part: [-0.25, 0.035, 0, 1.5] },
+  dipole: { ch: [[2, -0.08, 0], [-2, 0.08, 0]], probe: [0, 0.07], part: [-0.25, 0.1, 0, 1.0] },
+  like:   { ch: [[2, -0.08, 0], [2, 0.08, 0]], probe: [0, 0.06], part: [0.025, -0.22, 90, 1.7] },
+  quad:   { ch: [[2, -0.07, 0.07], [-2, 0.07, 0.07], [2, 0.07, -0.07], [-2, -0.07, -0.07]], probe: [0.14, 0.03], part: [-0.25, 0.02, 0, 1.2] },
+  cap:    { ch: plates, probe: [0, 0.01], part: [-0.25, 0, 0, 7] },
+  plane:  { plane: true, ch: [[2, 0.08, 0]], probe: [0.05, 0.08], part: [0.25, 0.12, 180, 0.9] },
+  bonly:  { ch: [], probe: [0.12, -0.1], part: [0, 0.08, 0, 1], B: true }
+};
+const S = {
+  charges: [], unit: 'nC', plane: false, sel: null, tool: 'move', preset: 'dipole', lastQ: 2,
+  layers: { lines: true, equi: true, heat: true, vec: false, prev: true },
+  probe: { x: 0, y: 0.07 },
+  part: { kind: 'proton', sign: 1, qmag: QE, m: 1.67262192e-27, x0: -0.25, y0: 0.1, v0: 1e5, ang: 0 },
+  vScale: 1e-3,                       // px per (m/s) for the velocity arrow
+  B: { on: false, dir: 1, mag: 0.01 },
+  mode: 'idle', t: 0, paused: false, speed: 1, chartTab: 'v', hoverI: null, fitNote: false, hint: null
+};
+let nextId = 1;
+const UF = () => (S.unit === 'nC' ? 1e-9 : 1e-6);
+const unitLabel = () => (S.unit === 'nC' ? 'nC' : 'µC');
+const vref = () => Math.sqrt(2 * S.part.qmag * K * UF() * 20 / S.part.m);
+const radiusW = (qu) => (S.charges.length > 12 ? 0.7 : 1) * (8 + 3.6 * Math.sqrt(Math.min(Math.abs(qu), 10))) / 1400;
+
+/* ---------- sources (real charges + image charges) ---------- */
+const MAXS = 2 * MAXQ + 4;
+const SX = new Float64Array(MAXS), SY = new Float64Array(MAXS), SQ = new Float64Array(MAXS), SC = new Float64Array(MAXS), SRW = new Float64Array(MAXS);
+const SIMG = new Uint8Array(MAXS), SREF = [];
+let NS = 0, maxQu = 1, Vref = 1, Eref = 1, geomVer = 0;
+function rebuildSources() {
+  NS = 0; SREF.length = 0; maxQu = 0;
+  const uf = UF();
+  const push = (x, y, qu, img, ref) => {
+    SX[NS] = x; SY[NS] = y; SC[NS] = qu * uf; SQ[NS] = K * qu * uf; SRW[NS] = radiusW(qu); SIMG[NS] = img; SREF[NS] = ref; NS++;
+  };
+  for (const c of S.charges) {
+    maxQu = Math.max(maxQu, Math.abs(c.q));
+    push(c.x, c.y, c.q, 0, c);
+    if (S.plane) push(-c.x, c.y, -c.q, 1, c);
+  }
+  if (!maxQu) maxQu = 1;
+  Vref = K * maxQu * uf / 0.05;          // potential 5 cm from the largest charge
+  Eref = K * maxQu * uf / 0.0025;        // field 5 cm from the largest charge
+  geomVer++;
+}
+const srcIndex = (c) => SREF.findIndex((r, i) => r === c && !SIMG[i]);
+
+// F = [Ex, Ey, V, min r/R over sources, index of that source, distance to the nearest centre]
+const F = new Float64Array(6);
+function field(x, y) {
+  let ex = 0, ey = 0, v = 0, rr = Infinity, ni = -1, nd = Infinity;
+  for (let i = 0; i < NS; i++) {
+    const dx = x - SX[i], dy = y - SY[i];
+    const r2 = Math.max(dx * dx + dy * dy, 1e-14), r = Math.sqrt(r2), kq = SQ[i];
+    v += kq / r;
+    const f = kq / (r2 * r);
+    ex += f * dx; ey += f * dy;
+    const rat = r / SRW[i];
+    if (rat < rr) { rr = rat; ni = i; }
+    if (r < nd) nd = r;
+  }
+  if (S.plane && x < 0) { ex = 0; ey = 0; v = 0; }
+  F[0] = ex; F[1] = ey; F[2] = v; F[3] = rr; F[4] = ni; F[5] = nd;
+  return F;
+}
+function potential(x, y) {
+  if (S.plane && x < 0) return 0;
+  let v = 0;
+  for (let i = 0; i < NS; i++) { const dx = x - SX[i], dy = y - SY[i]; v += SQ[i] / Math.sqrt(Math.max(dx * dx + dy * dy, 1e-14)); }
+  return v;
+}
+
+/* ---------- view ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+const scv = document.createElement('canvas'), sctx = scv.getContext('2d');
+const hcv = document.createElement('canvas'), hctx = hcv.getContext('2d');
+let cw = 800, ch = 480, dpr = 1;
+const view = { s: 1400, cx: 400, cy: 240 };
+const sx = (x) => view.cx + x * view.s, sy = (y) => view.cy - y * view.s;
+const wx = (X) => (X - view.cx) / view.s, wy = (Y) => (view.cy - Y) / view.s;
+
+/* ---------- colours ---------- */
+let col = {};
+function hexRgb(h) {
+  h = h.replace('#', '');
+  if (h.length === 3) h = h.split('').map(c => c + c).join('');
+  const n = parseInt(h, 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const rgbStr = (c, a = 1) => `rgba(${Math.round(c[0])},${Math.round(c[1])},${Math.round(c[2])},${a})`;
+const mixRgb = (a, b, t) => [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t];
+const withAlpha = (hex, a) => rgbStr(hexRgb(hex), a);
+const LBINS = 25;
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'dot', 'pos', 'neg', 'amber', 'violet', 'on-accent'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim() || '#888888';
+  col.rgb = { pos: hexRgb(col.pos), neg: hexRgb(col.neg), paper: hexRgb(col.paper), ink: hexRgb(col.ink) };
+  // field-line colour bins: negative potential -> blue, positive -> crimson, through their mix
+  col.bins = [];
+  for (let b = 0; b < LBINS; b++) col.bins.push(rgbStr(mixRgb(col.rgb.neg, col.rgb.pos, b / (LBINS - 1))));
+  staticReq = true; geomVer++; dirty = true; chartDirty = true;
+}
+
+/* ---------- flags ---------- */
+let staticReq = true, pendingFull = false, lastFast = 0, dirty = true, chartDirty = true;
+let trajReq = true, lastSim = 0, uiReq = true, lastUi = 0, autoLaunch = !reduceMotion;
+let drag = null;
+
+/* ---------- field lines ---------- */
+let LINES = [], linesKey = '', GRID = null;
+function traceLine(x, y, dir, self, maxSteps, hMin, hMax, bx) {
+  const pts = [x, y], vs = [];
+  let end = -1, pkx = 0, pky = 0;
+  for (let s = 0; s < maxSteps; s++) {
+    field(x, y);
+    vs.push(F[2]);
+    if (s > 0 && F[4] >= 0 && F[4] !== self && F[3] < 0.9) { end = F[4]; break; }
+    if (x < bx[0] || x > bx[1] || y < bx[2] || y > bx[3]) break;
+    const h = clamp(0.25 * F[5], hMin, hMax);
+    let e = Math.hypot(F[0], F[1]);
+    if (!(e > 0)) break;
+    const k1x = dir * F[0] / e, k1y = dir * F[1] / e;
+    if (s > 0 && k1x * pkx + k1y * pky < -0.2) break;        // direction flipped: null point
+    pkx = k1x; pky = k1y;
+    field(x + 0.5 * h * k1x, y + 0.5 * h * k1y); e = Math.hypot(F[0], F[1]) || 1e-300;
+    const k2x = dir * F[0] / e, k2y = dir * F[1] / e;
+    field(x + 0.5 * h * k2x, y + 0.5 * h * k2y); e = Math.hypot(F[0], F[1]) || 1e-300;
+    const k3x = dir * F[0] / e, k3y = dir * F[1] / e;
+    field(x + h * k3x, y + h * k3y); e = Math.hypot(F[0], F[1]) || 1e-300;
+    const k4x = dir * F[0] / e, k4y = dir * F[1] / e;
+    const nx = x + h / 6 * (k1x + 2 * k2x + 2 * k3x + k4x), ny = y + h / 6 * (k1y + 2 * k2y + 2 * k3y + k4y);
+    if (S.plane && nx < 0) {
+      const f = x / (x - nx);
+      pts.push(0, y + f * (ny - y)); vs.push(0);
+      break;
+    }
+    x = nx; y = ny;
+    pts.push(x, y);
+  }
+  while (vs.length < pts.length / 2) vs.push(potential(pts[pts.length - 2], pts[pts.length - 1]));
+  return { pts, vs, end };
+}
+function angDist(a, b) { let d = Math.abs(a - b) % TAU; return d > Math.PI ? TAU - d : d; }
+function traceAll(fast) {
+  LINES = [];
+  if (!NS) return;
+  const hMin = 0.5 / view.s, hMax = (fast ? 9 : 4.5) / view.s, maxSteps = fast ? 450 : 1800;
+  const W = cw / view.s, H = ch / view.s, mx = wx(cw / 2), my = wy(ch / 2);
+  const bx = [mx - W * 1.1, mx + W * 1.1, my - H * 1.1, my + H * 1.1];
+  let qp = 0, qn = 0, qm = 0;
+  for (let i = 0; i < NS; i++) {
+    if (SIMG[i]) continue;
+    const q = SC[i]; if (q > 0) qp += q; else qn -= q;
+    qm = Math.max(qm, Math.abs(q));
+  }
+  if (!qm) return;
+  const D = Math.min(16 / qm, 64 / Math.max(qp, qn));       // lines per coulomb, same for every charge
+  const nearestAngle = (i) => {
+    let best = Infinity, a = 0;
+    for (let j = 0; j < NS; j++) {
+      if (j === i) continue;
+      const d = Math.hypot(SX[j] - SX[i], SY[j] - SY[i]);
+      if (d < best) { best = d; a = Math.atan2(SY[j] - SY[i], SX[j] - SX[i]); }
+    }
+    return a;
+  };
+  const arrivals = {};
+  for (let i = 0; i < NS; i++) {
+    if (SIMG[i] || SC[i] <= 0) continue;
+    const n = Math.max(1, Math.round(SC[i] * D)), th0 = nearestAngle(i) + Math.PI / n, r0 = SRW[i] * 1.08;
+    for (let k = 0; k < n; k++) {
+      const th = th0 + TAU * k / n;
+      const L = traceLine(SX[i] + r0 * Math.cos(th), SY[i] + r0 * Math.sin(th), 1, i, maxSteps, hMin, hMax, bx);
+      LINES.push(L);
+      if (L.end >= 0 && SC[L.end] < 0) {
+        const p = L.pts, ex = p[p.length - 2], ey = p[p.length - 1];
+        (arrivals[L.end] = arrivals[L.end] || []).push(Math.atan2(ey - SY[L.end], ex - SX[L.end]));
+      }
+    }
+  }
+  for (let j = 0; j < NS; j++) {
+    if (SIMG[j] || SC[j] >= 0) continue;
+    const n = Math.max(1, Math.round(-SC[j] * D)), arr = arrivals[j] || [];
+    const rem = n - arr.length;
+    if (rem <= 0) continue;
+    const th0 = nearestAngle(j) + Math.PI / n, r0 = SRW[j] * 1.08;
+    const cands = [];
+    for (let k = 0; k < n; k++) {
+      const th = th0 + TAU * k / n;
+      let d = Math.PI;
+      for (const a of arr) d = Math.min(d, angDist(th, a));
+      cands.push([d, th]);
+    }
+    cands.sort((a, b) => b[0] - a[0]);
+    const minGap = arr.length ? 0.55 * TAU / n : -1;
+    for (let m = 0; m < rem && m < cands.length; m++) {
+      if (cands[m][0] < minGap) break;
+      const th = cands[m][1];
+      const L = traceLine(SX[j] + r0 * Math.cos(th), SY[j] + r0 * Math.sin(th), -1, j, maxSteps, hMin, hMax, bx);
+      // reverse so every line runs along E
+      const p = L.pts, rp = [], rv = [];
+      for (let q = p.length / 2 - 1; q >= 0; q--) { rp.push(p[2 * q], p[2 * q + 1]); rv.push(L.vs[q]); }
+      LINES.push({ pts: rp, vs: rv, end: -1 });
+    }
+  }
+}
+
+/* ---------- potential grid, heat map, contours ---------- */
+function computeGrid(fast) {
+  const gs = fast ? 8 : 4;
+  const gw = Math.ceil(cw / gs) + 1, gh = Math.ceil(ch / gs) + 1;
+  const V = new Float32Array(gw * gh);
+  for (let j = 0; j < gh; j++) {
+    const y = wy(j * gs);
+    for (let i = 0; i < gw; i++) V[j * gw + i] = potential(wx(i * gs), y);
+  }
+  return { key: geomVer + '|' + fast, gs, gw, gh, V };
+}
+function drawHeat(c) {
+  const G = GRID;
+  if (hcv.width !== G.gw || hcv.height !== G.gh) { hcv.width = G.gw; hcv.height = G.gh; }
+  const img = hctx.createImageData(G.gw, G.gh), d = img.data;
+  const P = col.rgb.pos, N = col.rgb.neg, Z = col.rgb.paper, inv = 1 / Vref;
+  for (let k = 0; k < G.V.length; k++) {
+    const v = G.V[k], a = 0.86 * (1 - Math.exp(-Math.abs(v) * inv)), B = v >= 0 ? P : N, o = k * 4;
+    d[o] = Z[0] + (B[0] - Z[0]) * a; d[o + 1] = Z[1] + (B[1] - Z[1]) * a; d[o + 2] = Z[2] + (B[2] - Z[2]) * a; d[o + 3] = 255;
+  }
+  hctx.putImageData(img, 0, 0);
+  c.save(); c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+  c.drawImage(hcv, -G.gs / 2, -G.gs / 2, G.gw * G.gs, G.gh * G.gs);
+  c.restore();
+}
+function contourLevels() {
+  const L = [];
+  for (let k = 1; k <= 9; k++) { const v = -Vref * Math.log(1 - k / 10); L.push(v, -v); }
+  let hp = false, hn = false;
+  for (let i = 0; i < NS; i++) { if (SC[i] > 0) hp = true; else if (SC[i] < 0) hn = true; }
+  if ((hp && hn) || S.plane) L.push(0);
+  return L;
+}
+function drawContours(c) {
+  const G = GRID, { gw, gh, gs, V } = G;
+  const heat = S.layers.heat;
+  c.save(); c.lineWidth = 1; c.lineCap = 'round';
+  for (const lv of contourLevels()) {
+    c.beginPath();
+    for (let j = 0; j < gh - 1; j++) {
+      for (let i = 0; i < gw - 1; i++) {
+        const a = V[j * gw + i], b = V[j * gw + i + 1], cc = V[(j + 1) * gw + i + 1], d = V[(j + 1) * gw + i];
+        const idx = (a > lv ? 8 : 0) | (b > lv ? 4 : 0) | (cc > lv ? 2 : 0) | (d > lv ? 1 : 0);
+        if (idx === 0 || idx === 15) continue;
+        const X = i * gs, Y = j * gs;
+        const T = () => [X + gs * (lv - a) / (b - a), Y];
+        const R = () => [X + gs, Y + gs * (lv - b) / (cc - b)];
+        const Bm = () => [X + gs * (lv - d) / (cc - d), Y + gs];
+        const Lf = () => [X, Y + gs * (lv - a) / (d - a)];
+        const seg = (p, q) => { c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); };
+        switch (idx) {
+          case 1: case 14: seg(Lf(), Bm()); break;
+          case 2: case 13: seg(Bm(), R()); break;
+          case 3: case 12: seg(Lf(), R()); break;
+          case 4: case 11: seg(T(), R()); break;
+          case 5: seg(Lf(), T()); seg(Bm(), R()); break;
+          case 6: case 9: seg(T(), Bm()); break;
+          case 7: case 8: seg(Lf(), T()); break;
+          case 10: seg(T(), R()); seg(Lf(), Bm()); break;
+        }
+      }
+    }
+    if (lv === 0) { c.setLineDash([7, 5]); c.strokeStyle = withAlpha(col.ink, 0.6); c.lineWidth = 1.3; }
+    else { c.setLineDash([3, 3]); c.strokeStyle = heat ? withAlpha(col.ink, 0.38) : withAlpha(lv > 0 ? col.pos : col.neg, 0.6); c.lineWidth = 1; }
+    c.stroke();
+  }
+  c.restore();
+}
+function drawDots(c) {
+  let st = 0.01;
+  if (st * view.s < 9) st = 0.02;
+  const x0 = Math.ceil(wx(0) / st) * st, x1 = wx(cw), y0 = Math.ceil(wy(ch) / st) * st, y1 = wy(0);
+  c.save(); c.fillStyle = col.dot;
+  for (let x = x0; x <= x1; x += st) {
+    const X = Math.round(sx(x));
+    for (let y = y0; y <= y1; y += st) {
+      const Y = Math.round(sy(y));
+      const major = Math.abs(Math.round(x / 0.05) * 0.05 - x) < 1e-6 && Math.abs(Math.round(y / 0.05) * 0.05 - y) < 1e-6;
+      if (major) { c.fillRect(X - 3, Y - 0.6, 6, 1.2); c.fillRect(X - 0.6, Y - 3, 1.2, 6); }
+      else c.fillRect(X - 0.8, Y - 0.8, 1.6, 1.6);
+    }
+  }
+  c.strokeStyle = withAlpha(col.ink3, 0.35); c.lineWidth = 1; c.beginPath();
+  const OX = Math.round(sx(0)) + 0.5, OY = Math.round(sy(0)) + 0.5;
+  c.moveTo(0, OY); c.lineTo(cw, OY); c.moveTo(OX, 0); c.lineTo(OX, ch); c.stroke();
+  c.restore();
+}
+function drawVectors(c) {
+  const sp = cw < 520 ? 34 : 40;
+  c.save(); c.lineCap = 'round';
+  for (let Y = sp / 2; Y < ch; Y += sp) {
+    for (let X = sp / 2; X < cw; X += sp) {
+      const x = wx(X), y = wy(Y);
+      if (S.plane && x < 0) continue;
+      field(x, y);
+      if (NS && F[3] < 1.7) continue;
+      const e = Math.hypot(F[0], F[1]);
+      if (!(e > 0)) continue;
+      const m = Math.min(1, Math.pow(e / Eref, 0.3)), L = 6 + 15 * m;
+      const ux = F[0] / e, uy = -F[1] / e;
+      const x1 = X - ux * L / 2, y1 = Y - uy * L / 2, x2 = X + ux * L / 2, y2 = Y + uy * L / 2;
+      c.globalAlpha = 0.3 + 0.6 * m; c.strokeStyle = col.ink2; c.fillStyle = col.ink2; c.lineWidth = 1.3;
+      c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - ux * 3, y2 - uy * 3); c.stroke();
+      c.beginPath(); c.moveTo(x2, y2); c.lineTo(x2 - ux * 5 - uy * 2.6, y2 - uy * 5 + ux * 2.6); c.lineTo(x2 - ux * 5 + uy * 2.6, y2 - uy * 5 - ux * 2.6); c.closePath(); c.fill();
+    }
+  }
+  c.restore();
+}
+function lineBin(v) {
+  const t = Math.sign(v) * (1 - Math.exp(-Math.abs(v) / Vref));
+  return clamp(Math.round((t + 1) / 2 * (LBINS - 1)), 0, LBINS - 1);
+}
+function drawLines(c) {
+  const heat = S.layers.heat, inkC = withAlpha(col.ink, 0.72);
+  c.save(); c.lineWidth = 1.5; c.lineJoin = 'round'; c.lineCap = 'round';
+  for (const L of LINES) {
+    const p = L.pts, n = p.length / 2;
+    if (n < 2) continue;
+    if (heat) {
+      c.strokeStyle = inkC; c.beginPath(); c.moveTo(sx(p[0]), sy(p[1]));
+      for (let k = 1; k < n; k++) c.lineTo(sx(p[2 * k]), sy(p[2 * k + 1]));
+      c.stroke();
+    } else {
+      let bin = lineBin(L.vs[0]);
+      c.beginPath(); c.moveTo(sx(p[0]), sy(p[1]));
+      for (let k = 1; k < n; k++) {
+        const X = sx(p[2 * k]), Y = sy(p[2 * k + 1]);
+        c.lineTo(X, Y);
+        const b = lineBin(L.vs[k]);
+        if (b !== bin || k === n - 1) { c.strokeStyle = col.bins[bin]; c.stroke(); c.beginPath(); c.moveTo(X, Y); bin = b; }
+      }
+    }
+    // arrowheads along the line
+    let tot = 0;
+    const seg = new Float32Array(n);
+    for (let k = 1; k < n; k++) { tot += Math.hypot(p[2 * k] - p[2 * k - 2], p[2 * k + 1] - p[2 * k - 1]) * view.s; seg[k] = tot; }
+    if (tot < 40) continue;
+    const na = Math.max(1, Math.round(tot / 230));
+    let k = 1;
+    for (let a = 0; a < na; a++) {
+      const target = (a + 0.5) * tot / na;
+      while (k < n - 1 && seg[k] < target) k++;
+      const X1 = sx(p[2 * k - 2]), Y1 = sy(p[2 * k - 1]), X2 = sx(p[2 * k]), Y2 = sy(p[2 * k + 1]);
+      const ang = Math.atan2(Y2 - Y1, X2 - X1), Xm = (X1 + X2) / 2, Ym = (Y1 + Y2) / 2;
+      c.fillStyle = heat ? inkC : col.bins[lineBin(L.vs[k])];
+      c.beginPath();
+      c.moveTo(Xm + Math.cos(ang) * 4.5, Ym + Math.sin(ang) * 4.5);
+      c.lineTo(Xm - Math.cos(ang) * 4.5 - Math.sin(ang) * 3.8, Ym - Math.sin(ang) * 4.5 + Math.cos(ang) * 3.8);
+      c.lineTo(Xm - Math.cos(ang) * 4.5 + Math.sin(ang) * 3.8, Ym - Math.sin(ang) * 4.5 - Math.cos(ang) * 3.8);
+      c.closePath(); c.fill();
+    }
+  }
+  c.restore();
+}
+function hatch(c, x0, y0, w, h, color, step = 8) {
+  c.save(); c.beginPath(); c.rect(x0, y0, w, h); c.clip();
+  c.strokeStyle = color; c.lineWidth = 1; c.beginPath();
+  for (let x = x0 - h; x < x0 + w + h; x += step) { c.moveTo(x, y0 + h); c.lineTo(x + h, y0); }
+  c.stroke(); c.restore();
+}
+function drawBField(c) {
+  const sp = 64, out = S.B.dir > 0;
+  c.save(); c.strokeStyle = withAlpha(col.violet, 0.4); c.fillStyle = withAlpha(col.violet, 0.4); c.lineWidth = 1.2;
+  for (let Y = sp / 2; Y < ch; Y += sp) for (let X = sp / 2 + (Math.round(Y / sp) % 2) * sp / 2; X < cw; X += sp) {
+    c.beginPath(); c.arc(X, Y, 5.5, 0, TAU); c.stroke();
+    if (out) { c.beginPath(); c.arc(X, Y, 1.6, 0, TAU); c.fill(); }
+    else { c.beginPath(); c.moveTo(X - 3.2, Y - 3.2); c.lineTo(X + 3.2, Y + 3.2); c.moveTo(X + 3.2, Y - 3.2); c.lineTo(X - 3.2, Y + 3.2); c.stroke(); }
+  }
+  c.restore();
+}
+function renderStatic(fast) {
+  const needGrid = S.layers.heat || S.layers.equi, gkey = geomVer + '|' + fast;
+  if (needGrid && (!GRID || GRID.key !== gkey)) GRID = computeGrid(fast);
+  if (S.layers.lines && linesKey !== gkey) { traceAll(fast); linesKey = gkey; }
+  const c = sctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  if (S.layers.heat && NS) drawHeat(c);
+  drawDots(c);
+  if (S.B.on) drawBField(c);
+  if (S.layers.equi && NS) drawContours(c);
+  if (S.layers.vec && NS) drawVectors(c);
+  if (S.layers.lines) drawLines(c);
+  if (S.plane) {
+    const X = sx(0);
+    if (X > 0) {
+      c.fillStyle = col.sunk; c.fillRect(0, 0, X, ch);
+      hatch(c, 0, 0, X, ch, withAlpha(col.ink3, 0.45), 9);
+      c.strokeStyle = col.ink; c.lineWidth = 2; c.beginPath(); c.moveTo(X, 0); c.lineTo(X, ch); c.stroke();
+    }
+  }
+  dirty = true;
+}
+
+/* ---------- test particle ---------- */
+let TR = null, trId = 0;
+function simulateParticle(maxSteps) {
+  const p = S.part, q = p.sign * p.qmag, m = p.m, qm = q / m;
+  const Bz = S.B.on ? S.B.dir * S.B.mag : 0, wB = Math.abs(qm * Bz);
+  const a0 = p.ang * D2R;
+  let x = p.x0, y = p.y0, vx = p.v0 * Math.cos(a0), vy = p.v0 * Math.sin(a0), t = 0, len = 0, vmax = 0;
+  const T = [], X = [], Y = [], VX = [], VY = [], EK = [], EP = [], LEN = [];
+  let status = 'max', lx = x, ly = y, ax = 0, ay = 0;
+  const dsMax = 6e-4, dsMin = 2e-5, store = 8e-4, maxLen = 6;
+  const rec = (V) => { T.push(t); X.push(x); Y.push(y); VX.push(vx); VY.push(vy); EK.push(0.5 * m * (vx * vx + vy * vy)); EP.push(q * V); LEN.push(len); lx = x; ly = y; };
+  const accel = (px, py, pvx, pvy) => { field(px, py); ax = qm * (F[0] + pvy * Bz); ay = qm * (F[1] - pvx * Bz); };
+  for (let s = 0; ; s++) {
+    field(x, y);
+    const V = F[2], rat = F[3], near = F[5];
+    const inPlane = S.plane && x < 0;
+    const out = x < WORLD.x0 || x > WORLD.x1 || y < WORLD.y0 || y > WORLD.y1;
+    const hit = NS > 0 && rat < 0.5;
+    const stop = hit || inPlane || out || s >= maxSteps || len > maxLen;
+    if (s === 0 || stop || Math.hypot(x - lx, y - ly) >= store) rec(V);
+    if (hit) { status = 'hit'; break; }
+    if (inPlane) { status = 'plane'; break; }
+    if (out) { status = 'left'; break; }
+    if (stop) { status = 'max'; break; }
+    const aX = qm * (F[0] + vy * Bz), aY = qm * (F[1] - vx * Bz);
+    const v = Math.hypot(vx, vy), a = Math.hypot(aX, aY);
+    if (v > vmax) vmax = v;
+    const ds = clamp(0.04 * (isFinite(near) ? near : 1), dsMin, dsMax);
+    let dt = Infinity;
+    if (v > 0) dt = ds / v;
+    if (a > 0) dt = Math.min(dt, Math.sqrt(2 * ds / a));
+    if (wB > 0) dt = Math.min(dt, 0.03 / wB);
+    if (!isFinite(dt) || !(dt > 0)) { status = 'rest'; break; }
+    const k1x = vx, k1y = vy, k1u = aX, k1w = aY;
+    accel(x + 0.5 * dt * k1x, y + 0.5 * dt * k1y, vx + 0.5 * dt * k1u, vy + 0.5 * dt * k1w);
+    const k2x = vx + 0.5 * dt * k1u, k2y = vy + 0.5 * dt * k1w, k2u = ax, k2w = ay;
+    accel(x + 0.5 * dt * k2x, y + 0.5 * dt * k2y, vx + 0.5 * dt * k2u, vy + 0.5 * dt * k2w);
+    const k3x = vx + 0.5 * dt * k2u, k3y = vy + 0.5 * dt * k2w, k3u = ax, k3w = ay;
+    accel(x + dt * k3x, y + dt * k3y, vx + dt * k3u, vy + dt * k3w);
+    const k4x = vx + dt * k3u, k4y = vy + dt * k3w, k4u = ax, k4w = ay;
+    const nx = x + dt / 6 * (k1x + 2 * k2x + 2 * k3x + k4x), ny = y + dt / 6 * (k1y + 2 * k2y + 2 * k3y + k4y);
+    vx += dt / 6 * (k1u + 2 * k2u + 2 * k3u + k4u); vy += dt / 6 * (k1w + 2 * k2w + 2 * k3w + k4w);
+    len += Math.hypot(nx - x, ny - y); x = nx; y = ny; t += dt;
+  }
+  const n = T.length;
+  const E0 = EK[0] + EP[0];
+  let dmax = 0, sc = 0;
+  for (let i = 0; i < n; i++) {
+    dmax = Math.max(dmax, Math.abs(EK[i] + EP[i] - E0));
+    sc = Math.max(sc, EK[i], Math.abs(EP[i] - EP[0]));
+    vmax = Math.max(vmax, Math.sqrt(2 * EK[i] / m));
+  }
+  const Tend = T[n - 1], wall = clamp(len * 1400 / 190, 1.2, 30);
+  TR = {
+    id: ++trId, n, t: Float64Array.from(T), x: Float64Array.from(X), y: Float64Array.from(Y), vx: Float64Array.from(VX), vy: Float64Array.from(VY),
+    ek: Float64Array.from(EK), ep: Float64Array.from(EP), len: Float64Array.from(LEN),
+    T: Tend, status, drift: sc > 0 ? dmax / sc : 0, rate: Tend > 0 ? Tend / wall : 1, vmax, q, m
+  };
+}
+function sampleAt(t) {
+  const R = TR, n = R.n;
+  if (n === 1 || t <= 0) return { i: 0, t: 0, x: R.x[0], y: R.y[0], vx: R.vx[0], vy: R.vy[0], ek: R.ek[0], ep: R.ep[0], len: 0 };
+  if (t >= R.T) { const i = n - 1; return { i, t: R.T, x: R.x[i], y: R.y[i], vx: R.vx[i], vy: R.vy[i], ek: R.ek[i], ep: R.ep[i], len: R.len[i] }; }
+  let lo = 0, hi = n - 1;
+  while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (R.t[mid] <= t) lo = mid; else hi = mid; }
+  const u = (t - R.t[lo]) / (R.t[hi] - R.t[lo] || 1);
+  const L = (a) => a[lo] + u * (a[hi] - a[lo]);
+  return { i: lo, t, x: L(R.x), y: L(R.y), vx: L(R.vx), vy: L(R.vy), ek: L(R.ek), ep: L(R.ep), len: L(R.len) };
+}
+const partNow = () => sampleAt(S.mode === 'idle' ? 0 : S.t);
+
+/* ---------- edits ---------- */
+function resetRun() { S.mode = 'idle'; S.t = 0; S.paused = false; }
+function chargesChanged(custom = true) {
+  if (custom) S.preset = null;
+  rebuildSources();
+  staticReq = true; trajReq = true; uiReq = true; chartDirty = true; dirty = true;
+  resetRun();
+}
+function particleChanged() { trajReq = true; uiReq = true; chartDirty = true; dirty = true; resetRun(); }
+function probeChanged() { uiReq = true; chartDirty = true; dirty = true; }
+function fitB() {
+  const need = S.part.m * S.part.v0 / (S.part.qmag * 0.08);
+  S.B.mag = clamp(need, 1e-6, 10);
+  S.fitNote = need > 10;
+}
+function loadPreset(name) {
+  const P = PRESETS[name];
+  S.plane = !!P.plane;
+  S.charges = P.ch.map(([q, x, y]) => ({ id: nextId++, q, x, y }));
+  S.sel = null;
+  S.probe = { x: P.probe[0], y: P.probe[1] };
+  const [x0, y0, ang, vr] = P.part;
+  Object.assign(S.part, { x0, y0, ang, v0: vr * vref() });
+  S.vScale = 90 / S.part.v0;
+  S.B.on = !!P.B; S.fitNote = false;
+  if (P.B) { S.B.dir = S.part.sign >= 0 ? 1 : -1; fitB(); }
+  S.preset = name;
+  chargesChanged(false);
+}
+function addCharge(x, y, sign) {
+  if (S.charges.length >= MAXQ) { S.hint = 'hFull'; uiReq = true; return; }
+  if (S.plane && x < 0.012) { S.hint = 'hPlaneBlock'; uiReq = true; return; }
+  const c = { id: nextId++, q: sign * S.lastQ, x, y };
+  S.charges.push(c); S.sel = c;
+  chargesChanged();
+}
+function deleteCharge(c) {
+  S.charges = S.charges.filter(k => k !== c);
+  if (S.sel === c) S.sel = null;
+  chargesChanged();
+}
+function setTool(t) {
+  S.tool = t; S.hint = null;
+  $$('#palette .tool').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t)));
+  updateHint();
+}
+function updateHint() { $('#tool-hint span').textContent = tr(S.hint || ('h' + { move: 'Move', pos: 'Pos', neg: 'Neg', del: 'Del', part: 'Part', probe: 'Probe' }[S.tool])); }
+
+/* ---------- drawing helpers ---------- */
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function halo(c, text, x, y, color, font, align = 'left', base = 'middle') {
+  c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(c, x1, y1, x2, y2, color, w = 2, head = 9) {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.4) * head, y2 - Math.sin(a - 0.4) * head);
+  c.lineTo(x2 - Math.cos(a + 0.4) * head, y2 - Math.sin(a + 0.4) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+const chargeR = (i) => Math.max(SRW[i] * view.s, 7);
+function glyph(c, X, Y, R, pos, color) {
+  const a = R * 0.45;
+  c.save(); c.strokeStyle = color; c.lineWidth = Math.max(1.6, R * 0.16); c.lineCap = 'round';
+  c.beginPath(); c.moveTo(X - a, Y); c.lineTo(X + a, Y);
+  if (pos) { c.moveTo(X, Y - a); c.lineTo(X, Y + a); }
+  c.stroke(); c.restore();
+}
+const qLabel = (q) => `${q > 0 ? '+' : '−'}${fmt(Math.abs(q), 1)} ${unitLabel()}`;
+
+/* ---------- scene ---------- */
+function drawScene(now) {
+  const c = ctx;
+  c.setTransform(1, 0, 0, 1, 0, 0);
+  c.drawImage(scv, 0, 0);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (S.plane) {
+    const X = sx(0);
+    if (X > 24) { c.save(); c.translate(X - 12, ch / 2); c.rotate(-Math.PI / 2); halo(c, tr('conductor'), 0, 0, col.ink2, `500 11px ${FONT_MONO}`, 'center'); c.restore(); }
+  }
+  drawTrajectory(c);
+  drawCharges(c, now);
+  drawLaunch(c);
+  drawParticle(c);
+  drawProbe(c);
+  drawScaleBar(c);
+}
+function pathTo(c, i1, tEnd) {
+  const R = TR;
+  c.beginPath(); c.moveTo(sx(R.x[0]), sy(R.y[0]));
+  const stride = Math.max(1, Math.floor(R.n / 4000));
+  for (let i = stride; i <= i1; i += stride) c.lineTo(sx(R.x[i]), sy(R.y[i]));
+  if (tEnd != null) { const q = sampleAt(tEnd); c.lineTo(sx(q.x), sy(q.y)); }
+  else c.lineTo(sx(R.x[R.n - 1]), sy(R.y[R.n - 1]));
+}
+function drawTrajectory(c) {
+  if (!TR || TR.n < 2) return;
+  c.save(); c.lineJoin = 'round'; c.lineCap = 'round';
+  if (S.layers.prev) {
+    pathTo(c, TR.n - 1, null);
+    c.setLineDash([2, 6]); c.lineWidth = 2; c.strokeStyle = withAlpha(col.violet, S.mode === 'idle' ? 0.85 : 0.35); c.stroke();
+    c.setLineDash([]);
+  }
+  if (S.mode !== 'idle') {
+    const q = sampleAt(S.t);
+    pathTo(c, q.i, S.t);
+    c.lineWidth = 2.6; c.strokeStyle = col.violet; c.shadowColor = col.violet; c.shadowBlur = reduceMotion ? 0 : 8; c.stroke();
+  }
+  c.restore();
+  if (S.mode === 'done' && TR.status !== 'max') {
+    const X = sx(TR.x[TR.n - 1]), Y = sy(TR.y[TR.n - 1]);
+    c.save(); c.strokeStyle = col.ink; c.lineWidth = 2; c.beginPath();
+    c.moveTo(X - 5, Y - 5); c.lineTo(X + 5, Y + 5); c.moveTo(X + 5, Y - 5); c.lineTo(X - 5, Y + 5); c.stroke(); c.restore();
+  }
+}
+function drawCharges(c, now) {
+  const many = S.charges.length > 12;
+  for (let i = 0; i < NS; i++) {
+    const X = sx(SX[i]), Y = sy(SY[i]), R = chargeR(i), pos = SC[i] > 0, base = pos ? col.pos : col.neg;
+    if (X < -R || X > cw + R) continue;
+    if (SIMG[i]) {
+      c.save(); c.setLineDash([3, 3]); c.lineWidth = 1.6; c.strokeStyle = base; c.fillStyle = withAlpha(base, 0.16);
+      c.beginPath(); c.arc(X, Y, R, 0, TAU); c.fill(); c.stroke(); c.restore();
+      glyph(c, X, Y, R, pos, base);
+      if (!many) halo(c, tr('image'), X, Y + R + 11, base, `500 10.5px ${FONT_MONO}`, 'center');
+      continue;
+    }
+    c.save();
+    c.shadowColor = base; c.shadowBlur = 16;
+    const g = c.createRadialGradient(X - R * 0.35, Y - R * 0.35, R * 0.1, X, Y, R);
+    g.addColorStop(0, rgbStr(mixRgb(hexRgb(base), [255, 255, 255], 0.42)));
+    g.addColorStop(1, base);
+    c.fillStyle = g; c.beginPath(); c.arc(X, Y, R, 0, TAU); c.fill();
+    c.restore();
+    glyph(c, X, Y, R, pos, col.onaccent);
+    const sel = SREF[i] === S.sel;
+    if (sel) {
+      c.save(); c.strokeStyle = col.ink; c.lineWidth = 1.6; c.setLineDash([4, 4]);
+      c.lineDashOffset = reduceMotion ? 0 : -now / 60;
+      c.beginPath(); c.arc(X, Y, R + 5, 0, TAU); c.stroke(); c.restore();
+    }
+    if (!many || sel) halo(c, qLabel(SREF[i].q), X, Y + R + (sel ? 17 : 12), col.ink, `600 11px ${FONT_MONO}`, 'center');
+  }
+}
+function launchGeom() {
+  const p = S.part, X = sx(p.x0), Y = sy(p.y0), L = p.v0 * S.vScale, a = p.ang * D2R;
+  return { X, Y, TX: X + Math.cos(a) * L, TY: Y - Math.sin(a) * L, L };
+}
+function drawLaunch(c) {
+  const g = launchGeom(), idle = S.mode === 'idle';
+  c.save(); c.globalAlpha = idle ? 1 : 0.45;
+  if (g.L > 3) arrow(c, g.X, g.Y, g.TX, g.TY, col.violet, 2.4, 11);
+  c.fillStyle = col.paper; c.strokeStyle = col.violet; c.lineWidth = 2;
+  c.beginPath(); c.arc(g.X, g.Y, 6.5, 0, TAU); c.fill(); c.stroke();
+  if (idle) {
+    c.beginPath(); c.arc(g.TX, g.TY, 5, 0, TAU); c.fillStyle = col.violet; c.fill();
+    c.strokeStyle = col.paper; c.lineWidth = 1.5; c.stroke();
+    const right = Math.cos(S.part.ang * D2R) >= 0;
+    halo(c, `v₀ = ${fsi(S.part.v0, 'm/s')}`, g.TX + (right ? 10 : -10), g.TY - 12, col.violet, `600 11.5px ${FONT_MONO}`, right ? 'left' : 'right');
+  }
+  c.restore();
+}
+function drawParticle(c) {
+  if (S.mode === 'idle' || !TR) return;
+  const q = sampleAt(S.t), X = sx(q.x), Y = sy(q.y), base = S.part.sign > 0 ? col.pos : col.neg;
+  // velocity arrow
+  const L = Math.hypot(q.vx, q.vy) * S.vScale;
+  if (L > 4) { const k = Math.min(1, 220 / L); arrow(c, X, Y, X + q.vx * S.vScale * k, Y - q.vy * S.vScale * k, col.violet, 2, 9); }
+  // force direction (fixed length)
+  field(q.x, q.y);
+  const Bz = S.B.on ? S.B.dir * S.B.mag : 0, qq = S.part.sign * S.part.qmag;
+  const fx = qq * (F[0] + q.vy * Bz), fy = qq * (F[1] - q.vx * Bz), fm = Math.hypot(fx, fy);
+  if (fm > 0) {
+    const ex = X + fx / fm * 38, ey = Y - fy / fm * 38;
+    arrow(c, X, Y, ex, ey, col.amber, 2, 8);
+    halo(c, 'F', ex + fx / fm * 9, ey - fy / fm * 9, col.amber, `italic 15px ${FONT_MATH}`, 'center');
+  }
+  c.save(); c.shadowColor = base; c.shadowBlur = reduceMotion ? 0 : 14;
+  c.fillStyle = base; c.beginPath(); c.arc(X, Y, 6, 0, TAU); c.fill(); c.restore();
+  c.save(); c.strokeStyle = col.violet; c.lineWidth = 1.6; c.beginPath(); c.arc(X, Y, 9, 0, TAU); c.stroke(); c.restore();
+  glyph(c, X, Y, 6, S.part.sign > 0, col.onaccent);
+}
+function drawProbe(c) {
+  const p = S.probe, X = sx(p.x), Y = sy(p.y);
+  field(p.x, p.y);
+  const ex = F[0], ey = F[1], e = Math.hypot(ex, ey), V = F[2];
+  if (e > 0) {
+    const L = 22 + 34 * Math.min(1, Math.pow(e / Eref, 0.35));
+    const tx = X + ex / e * L, ty = Y - ey / e * L;
+    arrow(c, X, Y, tx, ty, col.amber, 2.6, 10);
+    halo(c, 'E', tx + ex / e * 10, ty - ey / e * 10, col.amber, `italic 17px ${FONT_MATH}`, 'center');
+  }
+  c.save(); c.strokeStyle = col.amber; c.lineWidth = 2;
+  c.beginPath(); c.arc(X, Y, 8, 0, TAU); c.stroke();
+  c.beginPath(); c.moveTo(X - 13, Y); c.lineTo(X - 4, Y); c.moveTo(X + 4, Y); c.lineTo(X + 13, Y); c.moveTo(X, Y - 13); c.lineTo(X, Y - 4); c.moveTo(X, Y + 4); c.lineTo(X, Y + 13); c.stroke();
+  c.restore();
+  // readout box
+  const l1 = `|E| = ${fsi(e, 'N/C')}`, l2 = `V = ${fsi(V, 'V')}`;
+  c.font = `500 11.5px ${FONT_MONO}`;
+  const w = Math.max(c.measureText(l1).width, c.measureText(l2).width) + 16, h = 38;
+  const dx = ex >= 0 ? -1 : 1;
+  let bx = X + (dx > 0 ? 16 : -16 - w), by = Y - h - 14;
+  if (bx < 52) bx = X + 16;
+  if (bx + w > cw - 4) bx = X - 16 - w;
+  if (by < 4) by = Y + 16;
+  c.save(); c.fillStyle = withAlpha(col.surface, 0.92); c.strokeStyle = col.amber; c.lineWidth = 1;
+  c.beginPath(); c.roundRect ? c.roundRect(bx, by, w, h, 7) : c.rect(bx, by, w, h); c.fill(); c.stroke();
+  c.fillStyle = col.ink; c.textAlign = 'left'; c.textBaseline = 'middle';
+  c.fillText(l1, bx + 8, by + 12); c.fillText(l2, bx + 8, by + 27);
+  c.restore();
+}
+function drawScaleBar(c) {
+  const opts = [0.01, 0.02, 0.05, 0.1];
+  let L = opts[0];
+  for (const o of opts) if (o * view.s <= 150) L = o;
+  const px = L * view.s, X1 = cw - 14, X0 = X1 - px, Y = ch - 16;
+  c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(X0, Y - 4); c.lineTo(X0, Y); c.lineTo(X1, Y); c.lineTo(X1, Y - 4); c.stroke(); c.restore();
+  halo(c, `${fmt(L * 100, 0)} cm`, (X0 + X1) / 2, Y - 9, col.ink2, `500 11px ${FONT_MONO}`, 'center');
+}
+
+/* ---------- pointer ---------- */
+function evPos(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function hitTest(X, Y) {
+  const g = launchGeom();
+  if (Math.hypot(X - g.TX, Y - g.TY) < 12 && g.L > 3) return { type: 'vel' };
+  if (Math.hypot(X - sx(S.probe.x), Y - sy(S.probe.y)) < 14) return { type: 'probe' };
+  for (let i = NS - 1; i >= 0; i--) {
+    if (Math.hypot(X - sx(SX[i]), Y - sy(SY[i])) < Math.max(chargeR(i), 10) + 3) return { type: 'charge', ref: SREF[i], img: !!SIMG[i] };
+  }
+  if (Math.hypot(X - g.X, Y - g.Y) < 11) return { type: 'start' };
+  return null;
+}
+function clampWorldX(x) { const m = 8 / view.s; return clamp(x, wx(0) + m, wx(cw) - m); }
+function clampWorldY(y) { const m = 8 / view.s; return clamp(y, wy(ch) + m, wy(0) - m); }
+cv.addEventListener('pointerdown', (e) => {
+  const [X, Y] = evPos(e);
+  const h = hitTest(X, Y);
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  S.hint = null;
+  if (S.tool === 'del') {
+    if (h && h.type === 'charge') deleteCharge(h.ref);
+    updateHint(); return;
+  }
+  if (h) {
+    if (h.type === 'charge') {
+      S.sel = h.ref; uiReq = true; dirty = true;
+      if (!h.img) drag = { type: 'charge', ref: h.ref, dx: h.ref.x - wx(X), dy: h.ref.y - wy(Y) };
+    } else if (h.type === 'probe') drag = { type: 'probe', dx: S.probe.x - wx(X), dy: S.probe.y - wy(Y) };
+    else if (h.type === 'vel') drag = { type: 'vel' };
+    else if (h.type === 'start') drag = { type: 'start', dx: S.part.x0 - wx(X), dy: S.part.y0 - wy(Y) };
+    updateHint(); return;
+  }
+  const x = wx(X), y = wy(Y);
+  if (S.tool === 'pos' || S.tool === 'neg') addCharge(x, y, S.tool === 'pos' ? 1 : -1);
+  else if (S.tool === 'part') {
+    S.part.x0 = clamp(x, WORLD.x0, WORLD.x1); S.part.y0 = clamp(y, WORLD.y0, WORLD.y1);
+    drag = { type: 'vel', fresh: true, X, Y };
+    particleChanged();
+  } else if (S.tool === 'probe') { S.probe.x = x; S.probe.y = y; drag = { type: 'probe', dx: 0, dy: 0 }; probeChanged(); }
+  else if (S.sel) { S.sel = null; uiReq = true; dirty = true; }
+  updateHint();
+});
+cv.addEventListener('pointermove', (e) => {
+  const [X, Y] = evPos(e);
+  if (!drag) {
+    const h = hitTest(X, Y);
+    cv.style.cursor = S.tool === 'del' ? (h && h.type === 'charge' ? 'pointer' : 'default')
+      : h ? 'grab' : (S.tool === 'move' ? 'default' : 'crosshair');
+    return;
+  }
+  cv.style.cursor = 'grabbing';
+  const x = wx(X), y = wy(Y);
+  if (drag.type === 'charge') {
+    let nx = clampWorldX(x + drag.dx);
+    if (S.plane) nx = Math.max(nx, 0.012);
+    drag.ref.x = nx; drag.ref.y = clampWorldY(y + drag.dy);
+    chargesChanged();
+  } else if (drag.type === 'probe') {
+    S.probe.x = clampWorldX(x + drag.dx); S.probe.y = clampWorldY(y + drag.dy); probeChanged();
+  } else if (drag.type === 'start') {
+    S.part.x0 = clamp(x + drag.dx, WORLD.x0, WORLD.x1); S.part.y0 = clamp(y + drag.dy, WORLD.y0, WORLD.y1); particleChanged();
+  } else if (drag.type === 'vel') {
+    const ox = sx(S.part.x0), oy = sy(S.part.y0), dX = X - ox, dY = oy - Y, L = Math.hypot(dX, dY);
+    if (drag.fresh && L < 6) return;
+    S.part.v0 = L / S.vScale;
+    S.part.ang = Math.round(Math.atan2(dY, dX) / D2R);
+    particleChanged();
+  }
+});
+function endDrag() {
+  if (!drag) return;
+  const t = drag.type;
+  drag = null; cv.style.cursor = '';
+  if (t === 'charge') { staticReq = true; trajReq = true; }
+  if (t === 'vel' || t === 'start') trajReq = true;
+  uiReq = true;
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ---------- transport ---------- */
+function launch() {
+  if (!TR || TR.n < 2 || !(TR.T > 0)) return;
+  S.mode = 'run'; S.t = 0; S.paused = false; dirty = true; chartDirty = true; uiReq = true;
+}
+function togglePause() {
+  if (S.mode === 'run') { S.paused = !S.paused; uiReq = true; }
+  else launch();
+}
+function seek(t) {
+  if (!TR || !(TR.T > 0)) return;
+  S.t = clamp(t, 0, TR.T); S.paused = true;
+  S.mode = S.t >= TR.T ? 'done' : 'run';
+  dirty = true; chartDirty = true; uiReq = true;
+}
+const stepSize = () => (TR ? TR.T / 100 : 0);
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIcon = null;
+function updateScrub() {
+  const T = TR ? TR.T : 0, tt = S.mode === 'idle' ? 0 : Math.min(S.t, T);
+  const el = $('#scrub');
+  el.value = T > 0 ? Math.round(tt / T * 1000) : 0; setFill(el);
+  const { f, p } = pickPrefix(T);
+  $('#scrub-time').textContent = `${fmt(tt / f, 2)} / ${fmt(T / f, 2)} ${p}s`;
+  const playing = S.mode === 'run' && !S.paused;
+  if (pauseIcon !== playing + lang) {
+    pauseIcon = playing + lang;
+    const pb = $('#pause'); pb.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(playing ? 'pause' : 'play'));
+  }
+}
+const stateKey = () => (S.mode === 'run' ? (S.paused ? 'pause' : 'run') : S.mode === 'done' ? TR.status : 'idle');
+const STATE_LABEL = { idle: 'sIdle', run: 'sRun', pause: 'sPause', hit: 'sHit', left: 'sLeft', plane: 'sPlane', max: 'sMax', rest: 'sRest' };
+
+/* ---------- panel ---------- */
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+const fq = (q) => (q < 1e-15 ? `${fmt(q / QE, q / QE < 10 ? 2 : 1)} e` : fsi(q, 'C'));
+const fm = (m) => (m < 1e-9 ? `${fsci(m)} kg` : fsi(m * 1000, 'g'));
+function updatePanel() {
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === S.preset)));
+  $$('#unit button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.unit === S.unit)));
+  const c = S.sel;
+  $('#sel-none').hidden = !!c; $('#sel-body').hidden = !c;
+  if (c) {
+    const idx = S.charges.indexOf(c) + 1, bd = $('#sel-badge');
+    bd.textContent = `#${idx}`; bd.className = 'badge ' + (c.q > 0 ? 'p' : 'n');
+    $('#sel-pos').textContent = `x = ${fcm(c.x)} · y = ${fcm(c.y)}`;
+    $('#sq').value = Math.abs(c.q); $('#sq-out').textContent = qLabel(c.q);
+    $$('#sel-sign button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.s === Math.sign(c.q))));
+    $('#sel-img').hidden = !S.plane;
+  }
+  const p = S.part, vr = vref();
+  $$('#parts .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.part === p.kind)));
+  $$('#psign button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.s === p.sign)));
+  $('#qt').value = Math.round((Math.log10(p.qmag) + 19) * 100); $('#qt-out').textContent = `${p.sign > 0 ? '+' : '−'}${fq(p.qmag)}`;
+  $('#pm').value = Math.round((Math.log10(p.m) + 31) * 100); $('#pm-out').textContent = fm(p.m);
+  $('#v0').value = clamp(Math.round((Math.log10(p.v0 / vr) + 2) * 100), 0, 300); $('#v0-out').textContent = fsi(p.v0, 'm/s');
+  $('#pang').value = p.ang; $('#pang-out').textContent = fang(p.ang);
+  $('#pill-ek0').textContent = fen(0.5 * p.m * p.v0 * p.v0);
+  $('#pill-qv').textContent = fen(p.sign * p.qmag * potential(p.x0, p.y0));
+  const vc = (TR ? TR.vmax : p.v0) / CL;
+  $('#pill-vc').textContent = fsci(p.v0 / CL, 2) + (TR && TR.vmax > p.v0 * 1.05 ? ` → ${fsci(TR.vmax / CL, 2)}` : '');
+  $('#pill-vc-box').classList.toggle('warn', vc > 0.1);
+  // magnetic field
+  const B = S.B;
+  $('#bon').checked = B.on;
+  $('#bgrp').classList.toggle('off', !B.on);
+  $$('#bdir button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.d === B.dir)));
+  $('#bm').value = Math.round((Math.log10(B.mag) + 6) * 100); $('#bm-out').textContent = fsi(B.mag, 'T');
+  const w = p.qmag * B.mag / p.m;
+  $('#pill-rc').textContent = fsi(p.v0 / w, 'm'); $('#pill-tc').textContent = fsi(TAU / w, 's'); $('#pill-wc').textContent = fsi(w, 'rad/s');
+  $$('input[type=range]').forEach(setFill);
+}
+function updateLegend() {
+  let h = '';
+  if (S.layers.heat && NS) h += `<span class="cbar"><small>${fsi(Vref * Math.log(10) * -1, 'V')}</small><i></i><small>+${fsi(Vref * Math.log(10), 'V')}</small></span>`;
+  if (S.B.on) h += `<span class="bchip">B ${S.B.dir > 0 ? '⊙' : '⊗'} ${fsi(S.B.mag, 'T')}</span>`;
+  const sk = stateKey();
+  h += `<span class="state" data-s="${sk}">${tr(STATE_LABEL[sk])}</span>`;
+  $('#legend').innerHTML = h;
+}
+let hudKey = '';
+function updateHud() {
+  const p = S.probe;
+  field(p.x, p.y);
+  const e = Math.hypot(F[0], F[1]), V = F[2];
+  const q = TR ? partNow() : null, tt = S.mode === 'idle' ? 0 : S.t;
+  const sp = q ? Math.hypot(q.vx, q.vy) : 0;
+  const key = [p.x, p.y, e, V, tt, sp, lang].join('|');
+  if (key === hudKey) return;
+  hudKey = key;
+  const split = (s) => { const i = s.lastIndexOf(' '); return `${s.slice(0, i)} <span>${s.slice(i + 1)}</span>`; };
+  $('#hud-x').innerHTML = split(fcm(p.x)); $('#hud-y').innerHTML = split(fcm(p.y));
+  $('#hud-e').innerHTML = split(fsi(e, 'N/C')); $('#hud-v').innerHTML = split(fsi(V, 'V'));
+  $('#hud-t').innerHTML = split(fsi(tt, 's')); $('#hud-s').innerHTML = split(fsi(sp, 'm/s'));
+}
+
+/* ---------- results ---------- */
+function systemEnergy() {
+  let U = 0;
+  for (let i = 0; i < NS; i++) {
+    if (SIMG[i]) continue;
+    for (let j = i + 1; j < NS; j++) {
+      if (SIMG[j]) continue;
+      U += SQ[i] * SC[j] / Math.hypot(SX[i] - SX[j], SY[i] - SY[j]);
+    }
+    if (S.plane) {
+      let vi = 0;
+      for (let j = 0; j < NS; j++) if (SIMG[j]) vi += SQ[j] / Math.hypot(SX[i] - SX[j], SY[i] - SY[j]);
+      U += 0.5 * SC[i] * vi;
+    }
+  }
+  return U;
+}
+function chargeStats(i) {
+  let v = 0, fx = 0, fy = 0;
+  for (let j = 0; j < NS; j++) {
+    if (j === i) continue;
+    const dx = SX[i] - SX[j], dy = SY[i] - SY[j], r = Math.hypot(dx, dy);
+    v += SQ[j] / r;
+    const f = SC[i] * SQ[j] / (r * r * r);
+    fx += f * dx; fy += f * dy;
+  }
+  return { v, fx, fy };
+}
+const dirDeg = (x, y) => (x === 0 && y === 0 ? '—' : fang(Math.atan2(y, x) / D2R));
+function updateResults() {
+  const p = S.probe;
+  field(p.x, p.y);
+  const Ex = F[0], Ey = F[1], E = Math.hypot(Ex, Ey), V = F[2];
+  const qt = S.part.sign * S.part.qmag;
+  const row = (k, v, big) => `<dt>${tr(k)}</dt><dd${big ? ' class="big"' : ''}>${v}</dd>`;
+  let h = '';
+  h += `<div class="ro" style="--k:var(--amber)"><h3><i></i>${tr('roProbe')}</h3><dl>
+    ${row('rEabs', fsi(E, 'N/C'), true)}${row('rEx', fsi(Ex, 'N/C'))}${row('rEy', fsi(Ey, 'N/C'))}${row('rDir', dirDeg(Ex, Ey))}${row('rV', fsi(V, 'V'), true)}</dl>
+    ${S.plane && p.x < 0 ? `<p class="hint">${tr('noteNoProbe')}</p>` : ''}</div>`;
+  h += `<div class="ro" style="--k:var(--violet)"><h3><i></i>${tr('roTest')} · ${qt > 0 ? '+' : '−'}${fq(S.part.qmag)}</h3><dl>
+    ${row('rF', fsi(Math.abs(qt) * E, 'N'), true)}${row('rFdir', E > 0 ? `${dirDeg(qt * Ex, qt * Ey)} (${tr(qt > 0 ? 'rSame' : 'rOpp')})` : '—')}${row('rEp', fen(qt * V))}</dl></div>`;
+  if (TR) {
+    const q = partNow(), et = q.ek + q.ep;
+    h += `<div class="ro" style="--k:var(--violet)"><h3><i></i>${tr('roPart')} · ${tr(STATE_LABEL[stateKey()])}</h3><dl>
+      ${row('rT', fsi(S.mode === 'idle' ? 0 : S.t, 's'))}${row('rSpd', fsi(Math.hypot(q.vx, q.vy), 'm/s'), true)}${row('rEk', fen(q.ek))}${row('rEpot', fen(q.ep))}
+      ${row('rEtot', fen(et), true)}${row('rW', fen(TR.ep[0] - q.ep))}${row('rDrift', `${fmt(TR.drift * 100, TR.drift < 0.001 ? 4 : 2)} %`)}</dl>
+      ${TR.vmax > 0.1 * CL ? `<p class="warn">${tr('warnRel')}</p>` : ''}</div>`;
+  }
+  let sumQ = 0; for (const c of S.charges) sumQ += c.q;
+  h += `<div class="ro" style="--k:var(--ink-2)"><h3><i></i>${tr('roSys')}</h3><dl>
+    ${row('rU', fsi(systemEnergy(), 'J'), true)}${row('rSum', `${sumQ > 0 ? '+' : ''}${fmt(sumQ, 1)} ${unitLabel()}`)}${row('rN', `${S.charges.length}${S.plane ? ` ${tr('rNimg')}` : ''}`)}</dl></div>`;
+  $('#rgrid').innerHTML = h;
+  $('#res-sub').textContent = tr('resSub');
+  // charge table
+  let rows = '';
+  for (let i = 0; i < NS; i++) {
+    if (SIMG[i]) continue;
+    const c = SREF[i], st = chargeStats(i), Fm = Math.hypot(st.fx, st.fy), n = S.charges.indexOf(c) + 1;
+    rows += `<tr data-id="${c.id}" aria-selected="${c === S.sel}"><th><span class="qdot ${c.q > 0 ? 'p' : 'n'}">${n}</span>${qLabel(c.q)}</th><td>${fcm(c.x)}</td><td>${fcm(c.y)}</td><td>${fsi(st.v, 'V')}</td><td>${fsi(Fm, 'N')}</td><td>${dirDeg(st.fx, st.fy)}</td></tr>`;
+  }
+  $('#cbody').innerHTML = rows || `<tr><td colspan="6" class="empty">${tr('noCharges')}</td></tr>`;
+}
+
+/* ---------- formulas ---------- */
+const Vv = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const VEC = (b, s) => `<span class="vec"><i>${b}</i></span>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+const par = (x) => (x < 0 ? `(${fsci(x)})` : fsci(x));
+const res = (s, cls = '') => `<span class="r ${cls}">${s}</span>`;
+function sumTerms(vals, max = 4) {
+  let s = '';
+  vals.slice(0, max).forEach((v, k) => { s += k === 0 ? fsci(v) : (v < 0 ? ` − ${fsci(-v)}` : ` + ${fsci(v)}`); });
+  if (vals.length > max) s += ` + … <span class="more">(${tr('more')} ${vals.length - max})</span>`;
+  return s;
+}
+const srcName = (i) => (i < 0 ? '?' : SIMG[i] ? `${tr('image')} #${S.charges.indexOf(SREF[i]) + 1}` : `#${S.charges.indexOf(SREF[i]) + 1}`);
+function updateFormulas() {
+  const cards = [];
+  const p = S.probe, inCond = S.plane && p.x < 0;
+  field(p.x, p.y);
+  const Ex = F[0], Ey = F[1], Em = Math.hypot(Ex, Ey), Vp = F[2];
+  // Coulomb
+  {
+    let body = `<div class="eq">${Vv('F')}${EQ}${Vv('k')}${FR(`|${Vv('q', '1')}${Vv('q', '2')}|`, `${Vv('r')}<sup>2</sup>`)}, &nbsp; ${Vv('k')} = ${FR('1', `4π${Vv('ε', '0')}`)} = ${kStr()} ${FR('N·m²', 'C²')}</div>`;
+    let a = S.sel ? srcIndex(S.sel) : -1;
+    if (a < 0) for (let i = 0; i < NS; i++) if (!SIMG[i]) { a = i; break; }
+    let b = -1, rb = Infinity;
+    if (a >= 0) for (let j = 0; j < NS; j++) { if (j === a) continue; const r = Math.hypot(SX[j] - SX[a], SY[j] - SY[a]); if (r < rb) { rb = r; b = j; } }
+    if (a >= 0 && b >= 0) {
+      const Fc = K * Math.abs(SC[a] * SC[b]) / (rb * rb);
+      body += `<div class="eq num">${Vv('F')}${EQ}${kStr()} · ${FR(`|${fsci(SC[a])} · ${par(SC[b])}|`, `${fsci(rb)}<sup>2</sup>`)}${EQ}${res(fsi(Fc, 'N'))} <span class="more">(${tr(SC[a] * SC[b] < 0 ? 'attract' : 'repel')})</span></div>`;
+      body += `<p class="fnote">${trf('noteCoulPair', { a: srcName(a), b: srcName(b) })}</p>`;
+    } else body += `<p class="fnote">${tr('noteCoulNone')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fCoul')}</h4>${body}</div>`);
+  }
+  // single point charge field
+  {
+    let body = `<div class="eq">${Vv('E')}${EQ}${Vv('k')}${FR(`|${Vv('q')}|`, `${Vv('r')}<sup>2</sup>`)}${EQ}${FR(Vv('F'), Vv('q', '0'))}</div>`;
+    if (NS && !inCond) {
+      let n = -1, rn = Infinity;
+      for (let i = 0; i < NS; i++) { const r = Math.hypot(p.x - SX[i], p.y - SY[i]); if (r < rn) { rn = r; n = i; } }
+      body += `<div class="eq num">${Vv('E')}${EQ}${kStr()} · ${FR(fsci(Math.abs(SC[n])), `${fsci(rn)}<sup>2</sup>`)}${EQ}${res(fsi(K * Math.abs(SC[n]) / (rn * rn), 'N/C'), 'pr')}</div>`;
+      body += `<p class="fnote">${trf('noteE1', { a: srcName(n) })}</p>`;
+    } else body += `<p class="fnote">${tr(NS ? 'noteNoProbe' : 'noteNone')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fE1')}</h4>${body}</div>`);
+  }
+  // superposition at the probe
+  {
+    let body = `<div class="eq">${VEC('E')}${EQ}Σ<sub>i</sub> ${Vv('k')}${FR(Vv('q', 'i'), `${Vv('r', 'i')}<sup>2</sup>`)}${Vv('r̂', 'i')}, &nbsp; ${Vv('E', 'x')}${EQ}Σ ${Vv('k')}${FR(`${Vv('q', 'i')}(${Vv('x')} − ${Vv('x', 'i')})`, `${Vv('r', 'i')}<sup>3</sup>`)}</div>`;
+    if (NS && !inCond) {
+      const tx = [], ty = [];
+      for (let i = 0; i < NS; i++) {
+        const dx = p.x - SX[i], dy = p.y - SY[i], r = Math.hypot(dx, dy), f = SQ[i] / (r * r * r);
+        tx.push(f * dx); ty.push(f * dy);
+      }
+      body += `<div class="eq num">${Vv('E', 'x')}${EQ}${sumTerms(tx)}${EQ}${res(fsi(Ex, 'N/C'), 'pr')}</div>`;
+      body += `<div class="eq num">${Vv('E', 'y')}${EQ}${sumTerms(ty)}${EQ}${res(fsi(Ey, 'N/C'), 'pr')}</div>`;
+      body += `<div class="eq num">|${VEC('E')}|${EQ}${RT(`${Vv('E', 'x')}<sup>2</sup> + ${Vv('E', 'y')}<sup>2</sup>`)}${EQ}${RT(`${par(Ex)}<sup>2</sup> + ${par(Ey)}<sup>2</sup>`)}${EQ}${res(fsi(Em, 'N/C'), 'pr')}</div>`;
+      body += `<p class="fnote">${tr('noteSup')}</p>`;
+    } else body += `<p class="fnote">${tr(NS ? 'noteNoProbe' : 'noteNone')}</p>`;
+    cards.push(`<div class="fcard wide"><h4>${tr('fSup')}</h4>${body}</div>`);
+  }
+  // potential
+  {
+    let body = `<div class="eq">${Vv('V')}${EQ}Σ<sub>i</sub> ${Vv('k')}${FR(Vv('q', 'i'), Vv('r', 'i'))}${EQ}${Vv('k')}(${FR(Vv('q', '1'), Vv('r', '1'))} + ${FR(Vv('q', '2'), Vv('r', '2'))} + …)</div>`;
+    if (NS && !inCond) {
+      let s = '';
+      const max = 4;
+      for (let i = 0; i < Math.min(NS, max); i++) {
+        const r = Math.hypot(p.x - SX[i], p.y - SY[i]), f = FR(fsci(Math.abs(SC[i])), fsci(r));
+        s += i === 0 ? (SC[i] < 0 ? `− ${f}` : f) : (SC[i] < 0 ? ` − ${f}` : ` + ${f}`);
+      }
+      if (NS > max) s += ` + … <span class="more">(${tr('more')} ${NS - max})</span>`;
+      body += `<div class="eq num">${Vv('V')}${EQ}${kStr()} · (${s})${EQ}${res(fsi(Vp, 'V'), 'pr')}</div>`;
+      body += `<p class="fnote">${tr('noteV')}</p>`;
+    } else body += `<p class="fnote">${tr(NS ? 'noteNoProbe' : 'noteNone')}</p>`;
+    cards.push(`<div class="fcard wide"><h4>${tr('fV')}</h4>${body}</div>`);
+  }
+  // gradient
+  {
+    let body = `<div class="eq">${VEC('E')}${EQ}−∇${Vv('V')}, &nbsp; ${Vv('E', 'x')} ≈ −${FR(`${Vv('V')}(${Vv('x')} + ${Vv('h')}) − ${Vv('V')}(${Vv('x')} − ${Vv('h')})`, `2${Vv('h')}`)}</div>`;
+    if (NS && !inCond) {
+      const h = 1e-3;
+      const v1 = potential(p.x + h, p.y), v2 = potential(p.x - h, p.y), v3 = potential(p.x, p.y + h), v4 = potential(p.x, p.y - h);
+      const gx = -(v1 - v2) / (2 * h), gy = -(v3 - v4) / (2 * h);
+      body += `<div class="eq num">${Vv('E', 'x')} ≈ −${FR(`${fsci(v1, 4)} − ${par(v2)}`, `2 · ${fmt(0.001, 3)}`)}${EQ}${res(fsi(gx, 'N/C'), 'pr')}</div>`;
+      body += `<div class="eq num">${Vv('E', 'y')} ≈ −${FR(`${fsci(v3, 4)} − ${par(v4)}`, `2 · ${fmt(0.001, 3)}`)}${EQ}${res(fsi(gy, 'N/C'), 'pr')}</div>`;
+      body += `<p class="fnote">${tr('noteGrad')} ${Vv('E', 'x')} = ${fsi(Ex, 'N/C')}, ${Vv('E', 'y')} = ${fsi(Ey, 'N/C')}.</p>`;
+    } else body += `<p class="fnote">${tr(NS ? 'noteNoProbe' : 'noteNone')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fGrad')}</h4>${body}</div>`);
+  }
+  // work
+  if (TR) {
+    const q = partNow(), qq = TR.q;
+    const VA = TR.ep[0] / qq, VB = q.ep / qq;
+    let body = `<div class="eq">${Vv('W', 'AB')}${EQ}${Vv('q')}(${Vv('V', 'A')} − ${Vv('V', 'B')})${EQ}Δ${Vv('E', 'k')}</div>`;
+    body += `<div class="eq num">${Vv('W')}${EQ}${par(qq)} · (${fsci(VA)} − ${par(VB)})${EQ}${res(fsi(qq * (VA - VB), 'J'))}</div>`;
+    body += `<div class="eq num">Δ${Vv('E', 'k')}${EQ}${fsci(q.ek)} − ${fsci(TR.ek[0])}${EQ}${res(fsi(q.ek - TR.ek[0], 'J'))}</div>`;
+    body += `<p class="fnote">${tr('noteW')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fW')}</h4>${body}</div>`);
+  }
+  // Lorentz force
+  if (TR) {
+    const q = partNow(), qq = TR.q, Bz = S.B.on ? S.B.dir * S.B.mag : 0;
+    field(q.x, q.y);
+    const ex = F[0], ey = F[1], fx = qq * (ex + q.vy * Bz), fy = qq * (ey - q.vx * Bz);
+    let body = `<div class="eq">${VEC('F')}${EQ}${Vv('q')}(${VEC('E')} + ${VEC('v')} × ${VEC('B')}), &nbsp; ${Vv('F', 'x')}${EQ}${Vv('q')}(${Vv('E', 'x')} + ${Vv('v', 'y')}${Vv('B', 'z')}), &nbsp; ${Vv('F', 'y')}${EQ}${Vv('q')}(${Vv('E', 'y')} − ${Vv('v', 'x')}${Vv('B', 'z')})</div>`;
+    body += `<div class="eq num">${Vv('F', 'x')}${EQ}${par(qq)} · (${fsci(ex)} + ${par(q.vy)} · ${par(Bz)})${EQ}${res(fsi(fx, 'N'))}</div>`;
+    body += `<div class="eq num">${Vv('F', 'y')}${EQ}${par(qq)} · (${fsci(ey)} − ${par(q.vx)} · ${par(Bz)})${EQ}${res(fsi(fy, 'N'))}</div>`;
+    body += `<div class="eq num">|${VEC('F')}|${EQ}${res(fsi(Math.hypot(fx, fy), 'N'))}</div>`;
+    body += `<p class="fnote">${trf('noteLor', { b: fsi(Bz, 'T') })}</p>`;
+    cards.push(`<div class="fcard wide"><h4>${tr('fLor')}</h4>${body}</div>`);
+  }
+  // cyclotron
+  {
+    let body = `<div class="eq">${Vv('r')}${EQ}${FR(`${Vv('m')}${Vv('v')}`, `|${Vv('q')}|${Vv('B')}`)}, &nbsp; ${Vv('T')}${EQ}${FR(`2π${Vv('m')}`, `|${Vv('q')}|${Vv('B')}`)}</div>`;
+    if (S.B.on) {
+      const q = TR ? partNow() : { vx: S.part.v0, vy: 0 }, v = Math.hypot(q.vx, q.vy), m = S.part.m, qa = S.part.qmag, B = S.B.mag;
+      body += `<div class="eq num">${Vv('r')}${EQ}${FR(`${fsci(m)} · ${fsci(v)}`, `${fsci(qa)} · ${fsci(B)}`)}${EQ}${res(fsi(m * v / (qa * B), 'm'))}</div>`;
+      body += `<div class="eq num">${Vv('T')}${EQ}${FR(`2π · ${fsci(m)}`, `${fsci(qa)} · ${fsci(B)}`)}${EQ}${res(fsi(TAU * m / (qa * B), 's'))}</div>`;
+      body += `<p class="fnote">${tr('noteCyc')}</p>`;
+    } else body += `<p class="fnote">${tr('noteBoff')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fCyc')}</h4>${body}</div>`);
+  }
+  // energy conservation
+  if (TR) {
+    const q = partNow(), e0 = TR.ek[0] + TR.ep[0];
+    let body = `<div class="eq">${Vv('E')}${EQ}${FR('1', '2')}${Vv('m')}${Vv('v')}<sup>2</sup> + ${Vv('q')}${Vv('V')}${EQ}const</div>`;
+    body += `<div class="eq num">${Vv('E')}(0)${EQ}${fsci(TR.ek[0])} + ${par(TR.ep[0])}${EQ}${res(fsi(e0, 'J'))}</div>`;
+    body += `<div class="eq num">${Vv('E')}(${Vv('t')})${EQ}${fsci(q.ek)} + ${par(q.ep)}${EQ}${res(fsi(q.ek + q.ep, 'J'))}</div>`;
+    body += `<p class="fnote">${tr('noteCons')} ${tr('rDrift').replace(/<[^>]+>/g, '')}: ${fmt(TR.drift * 100, TR.drift < 0.001 ? 4 : 2)} %.</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fCons')}</h4>${body}</div>`);
+  }
+  // system energy
+  {
+    let body = `<div class="eq">${Vv('U')}${EQ}Σ<sub>i&lt;j</sub> ${Vv('k')}${FR(`${Vv('q', 'i')}${Vv('q', 'j')}`, Vv('r', 'ij'))}</div>`;
+    const terms = [];
+    for (let i = 0; i < NS; i++) {
+      if (SIMG[i]) continue;
+      for (let j = i + 1; j < NS; j++) { if (SIMG[j]) continue; terms.push(K * SC[i] * SC[j] / Math.hypot(SX[i] - SX[j], SY[i] - SY[j])); }
+    }
+    const U = systemEnergy();
+    if (terms.length || S.plane) {
+      body += `<div class="eq num">${Vv('U')}${EQ}${terms.length ? sumTerms(terms, 3) : '0'}${S.plane ? ' + …' : ''}${EQ}${res(fsi(U, 'J'))}</div>`;
+      body += `<p class="fnote">${tr('noteU')} ${S.plane ? tr('noteUPlane') : ''} ${terms.length > 3 ? `(${terms.length} ${tr('pairs')})` : ''}</p>`;
+    } else body += `<p class="fnote">${tr('noteCoulNone')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fU')}</h4>${body}</div>`);
+  }
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 270, chartGeom = null, XC = null;
+function xcut() {
+  const key = [geomVer, S.probe.y, cw].join('|');
+  if (XC && XC.key === key) return XC;
+  const n = 360, xa = wx(0), xb = wx(cw);
+  const xs = new Float64Array(n), V = new Float64Array(n), Ea = new Float64Array(n), Exs = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    const x = xa + (xb - xa) * i / (n - 1);
+    field(x, S.probe.y);
+    xs[i] = x * 100; V[i] = F[2]; Ea[i] = Math.hypot(F[0], F[1]); Exs[i] = F[0];
+  }
+  XC = { key, xs, V, Ea, Exs };
+  return XC;
+}
+function robust(arrs, qq, f) {
+  const all = [];
+  for (const a of arrs) for (const v of a) if (isFinite(v)) all.push(Math.abs(v));
+  all.sort((a, b) => a - b);
+  const cap = (all[Math.floor(qq * (all.length - 1))] || 1) * f;
+  let lo = 0, hi = 0, clipped = false;
+  for (const a of arrs) for (const v of a) { if (Math.abs(v) > cap) clipped = true; const w = clamp(v, -cap, cap); lo = Math.min(lo, w); hi = Math.max(hi, w); }
+  return { lo, hi, clipped };
+}
+function chartData() {
+  const tab = S.chartTab;
+  if (tab === 'v' || tab === 'e') {
+    if (!NS) return null;
+    const X = xcut();
+    if (tab === 'v') {
+      const r = robust([X.V], 0.9, 1.5), { f, p } = pickPrefix(Math.max(Math.abs(r.lo), Math.abs(r.hi)));
+      return { xs: X.xs, xlab: 'x [cm]', xunit: 'cm', unit: p + 'V', ylab: `V [${p}V]`, lo: r.lo / f, hi: r.hi / f, clipped: r.clipped, mark: S.probe.x * 100,
+        list: [{ name: tr('sV'), color: col.ink, ys: X.V, k: 1 / f, fill: true, width: 2.2 }] };
+    }
+    const r = robust([X.Ea, X.Exs], 0.85, 1.6), { f, p } = pickPrefix(Math.max(Math.abs(r.lo), Math.abs(r.hi)));
+    return { xs: X.xs, xlab: 'x [cm]', xunit: 'cm', unit: p + 'N/C', ylab: `E [${p}N/C]`, lo: r.lo / f, hi: r.hi / f, clipped: r.clipped, mark: S.probe.x * 100,
+      list: [{ name: tr('sEabs'), color: col.amber, ys: X.Ea, k: 1 / f, width: 2.4 }, { name: tr('sEx'), color: col.violet, ys: X.Exs, k: 1 / f, dash: [5, 4] }] };
+  }
+  if (!TR || TR.n < 2 || !(TR.T > 0)) return null;
+  const tp = pickPrefix(TR.T), xs = Array.from(TR.t, (t) => t / tp.f);
+  const base = { xs, xlab: `t [${tp.p}s]`, xunit: tp.p + 's', tcursor: true, tk: 1 / tp.f };
+  if (tab === 'en') {
+    const micro = microPart(), bu = micro ? 'eV' : 'J', bf = micro ? 1 / QE : 1;
+    const et = Array.from(TR.ek, (v, i) => v + TR.ep[i]);
+    let lo = Infinity, hi = -Infinity;
+    for (const a of [TR.ek, TR.ep, et]) for (const v of a) { lo = Math.min(lo, v * bf); hi = Math.max(hi, v * bf); }
+    lo = Math.min(lo, 0); hi = Math.max(hi, 0);
+    const { f, p } = pickPrefix(Math.max(Math.abs(lo), Math.abs(hi)));
+    return Object.assign(base, { unit: p + bu, ylab: `E [${p}${bu}]`, lo: lo / f, hi: hi / f,
+      list: [{ name: tr('ek'), color: col.amber, ys: TR.ek, k: bf / f }, { name: tr('ep'), color: col.violet, ys: TR.ep, k: bf / f }, { name: tr('et'), color: col.ink, ys: et, k: bf / f, width: 2.6 }] });
+  }
+  if (tab === 'spd') {
+    const sp = Array.from(TR.vx, (v, i) => Math.hypot(v, TR.vy[i]));
+    let hi = 0; for (const v of sp) hi = Math.max(hi, v);
+    const { f, p } = pickPrefix(hi);
+    return Object.assign(base, { unit: p + 'm/s', ylab: `|v| [${p}m/s]`, lo: 0, hi: hi / f, list: [{ name: tr('spd'), color: col.violet, ys: sp, k: 1 / f, width: 2.4 }] });
+  }
+  const d = Array.from(TR.x, (x, i) => Math.hypot(x - TR.x[0], TR.y[i] - TR.y[0]) * 100);
+  const L = Array.from(TR.len, (v) => v * 100);
+  let hi = 0; for (const v of L) hi = Math.max(hi, v);
+  return Object.assign(base, { unit: 'cm', ylab: 'r, s [cm]', lo: 0, hi, list: [{ name: tr('dist'), color: col.violet, ys: d, k: 1, width: 2.4 }, { name: tr('path'), color: col.ink3, ys: L, k: 1, dash: [5, 4] }] });
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+const decFor = (step) => (step >= 1 ? 0 : clamp(Math.ceil(-Math.log10(step) - 1e-9), 0, 4));
+function chartNote() {
+  const t = S.chartTab;
+  if (t === 'v') return trf('cnoteV', { y: fcm(S.probe.y) });
+  return tr({ e: 'cnoteE', en: 'cnoteEn', spd: 'cnoteSpd', dist: 'cnoteDist' }[t]);
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, W, H);
+  const d = chartData();
+  $('#cnote').innerHTML = chartNote();
+  if (!d) {
+    chartGeom = null; $('#clegend').innerHTML = '';
+    c.fillStyle = col.ink3; c.font = `500 12.5px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    c.fillText(tr(S.chartTab === 'v' || S.chartTab === 'e' ? 'noteNone' : 'cnoteNoTraj'), W / 2, H / 2);
+    return;
+  }
+  $('#clegend').innerHTML = d.list.map(s => `<span><i class="sw-line" style="border-top:${s.width ? 3 : 2.5}px ${s.dash ? 'dashed' : 'solid'} ${s.color}"></i>${s.name}</span>`).join('')
+    + (d.clipped ? `<span style="color:var(--ink-3)">· ${tr('clipped')}</span>` : '');
+  let lo = d.lo, hi = d.hi;
+  if (!(hi > lo)) { hi = lo + 1; }
+  const ystep = niceStep(hi - lo, 4);
+  hi = Math.ceil(hi * 1.02 / ystep - 1e-9) * ystep; lo = Math.floor(lo * 1.02 / ystep + 1e-9) * ystep;
+  if (lo === hi) hi = lo + ystep;
+  const ydec = decFor(ystep);
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0;
+  for (let y = lo; y <= hi + ystep * 1e-6; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 12, T = 20, B = 26, pw = W - L - R, ph = H - T - B;
+  const x0 = d.xs[0], x1 = d.xs[d.xs.length - 1];
+  const X = (x) => L + (x - x0) / (x1 - x0 || 1) * pw, Y = (v) => T + (1 - (v - lo) / (hi - lo)) * ph;
+  chartGeom = { L, pw, x0, x1, d };
+  c.strokeStyle = col.line; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = lo; y <= hi + ystep * 1e-6; y += ystep) {
+    const yy = Math.round(Y(y)) + 0.5;
+    c.setLineDash([2, 3]); c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.setLineDash([]);
+    c.fillText(fmt(y, ydec), L - 8, yy);
+  }
+  const xstep = niceStep(x1 - x0, 5), xdec = decFor(xstep);
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let x = Math.ceil(x0 / xstep) * xstep; x <= x1 + 1e-9; x += xstep) c.fillText(fmt(x, xdec), X(x), H - B + 8);
+  if (lo < 0 && hi > 0) { c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Math.round(Y(0)) + 0.5); c.lineTo(W - R, Math.round(Y(0)) + 0.5); c.stroke(); }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(d.ylab, 4, 2);
+  c.textAlign = 'right'; c.fillText(d.xlab, W - R, 2);
+  c.save(); c.beginPath(); c.rect(L, T - 1, pw, ph + 2); c.clip();
+  for (const s of d.list) {
+    const n = d.xs.length, st = Math.max(1, Math.floor(n / 700));
+    c.beginPath();
+    for (let i = 0; i < n; i += st) { const xx = X(d.xs[i]), yy = Y(clamp(s.ys[i] * s.k, lo - (hi - lo), hi + (hi - lo))); i ? c.lineTo(xx, yy) : c.moveTo(xx, yy); }
+    c.lineTo(X(d.xs[n - 1]), Y(clamp(s.ys[n - 1] * s.k, lo - (hi - lo), hi + (hi - lo))));
+    if (s.fill) {
+      const y0 = Y(0);
+      c.save(); c.lineTo(X(d.xs[n - 1]), y0); c.lineTo(X(d.xs[0]), y0); c.closePath();
+      c.save(); c.clip(); c.fillStyle = withAlpha(col.pos, 0.2); c.fillRect(L, T, pw, y0 - T); c.fillStyle = withAlpha(col.neg, 0.2); c.fillRect(L, y0, pw, T + ph - y0); c.restore();
+      c.restore();
+      c.beginPath();
+      for (let i = 0; i < n; i += st) { const xx = X(d.xs[i]), yy = Y(clamp(s.ys[i] * s.k, lo - (hi - lo), hi + (hi - lo))); i ? c.lineTo(xx, yy) : c.moveTo(xx, yy); }
+    }
+    c.save(); c.strokeStyle = s.color; c.lineWidth = s.width || 2; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); c.stroke(); c.restore();
+  }
+  if (d.mark != null) {
+    const xx = Math.round(X(d.mark)) + 0.5;
+    c.save(); c.strokeStyle = col.amber; c.lineWidth = 1.5; c.setLineDash([4, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+  }
+  let ci = S.hoverI;
+  if (ci == null && d.tcursor && S.mode !== 'idle') ci = sampleAt(S.t).i;
+  if (ci != null && ci < d.xs.length) {
+    const xx = d.tcursor && S.hoverI == null && S.mode !== 'idle' ? X(S.t * d.tk) : X(d.xs[ci]);
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    for (const s of d.list) {
+      const yy = Y(clamp(s.ys[ci] * s.k, lo, hi));
+      c.save(); c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, yy, 4.5, 0, TAU); c.fill(); c.stroke(); c.restore();
+    }
+  }
+  c.restore();
+}
+function nearestIndex(xs, x) {
+  let lo = 0, hi = xs.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (xs[m] <= x) lo = m; else hi = m; }
+  return Math.abs(xs[lo] - x) <= Math.abs(xs[hi] - x) ? lo : hi;
+}
+cbox.addEventListener('pointermove', (e) => {
+  const g = chartGeom;
+  if (!g) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left;
+  if (x < g.L || x > g.L + g.pw) { S.hoverI = null; tip.hidden = true; chartDirty = true; return; }
+  const xv = g.x0 + (x - g.L) / g.pw * (g.x1 - g.x0), i = nearestIndex(g.d.xs, xv);
+  S.hoverI = i;
+  const rows = g.d.list.map(s => `<div class="row"><i class="k" style="background:${s.color}"></i>${s.name}: ${fmt(s.ys[i] * s.k, 2)} ${g.d.unit}</div>`).join('');
+  tip.innerHTML = `<div>${g.d.xlab.split(' ')[0]} = ${fmt(g.d.xs[i], 2)} ${g.d.xunit}</div>${rows}`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverI = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- layout ---------- */
+function fitView() { view.s = Math.min(cw / 0.62, ch / 0.40); view.cx = cw / 2; view.cy = ch / 2; }
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2);
+  cw = Math.max(1, box.clientWidth); ch = Math.max(1, box.clientHeight);
+  cv.width = scv.width = Math.round(cw * dpr); cv.height = scv.height = Math.round(ch * dpr);
+  fitView(); rebuildSources();
+  staticReq = true; dirty = true; chartDirty = true; uiReq = true;
+}
+new ResizeObserver(resize).observe(box);
+new ResizeObserver(() => {
+  ccw = Math.max(1, cbox.clientWidth); cch = Math.max(1, cbox.clientHeight);
+  ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true;
+}).observe(cbox);
+
+/* ---------- main loop ---------- */
+function updateAll() {
+  updatePanel(); updateResults(); updateFormulas(); updateLegend(); updateScrub(); updateHint();
+}
+let lastT = performance.now(), lastLive = 0;
+function frame(now) {
+  const dtw = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  const dragging = !!drag;
+  if (trajReq && (!dragging || now - lastSim > 60)) {
+    simulateParticle(dragging ? 20000 : 90000);
+    trajReq = false; lastSim = now; uiReq = true; chartDirty = true; dirty = true;
+    if (autoLaunch) { autoLaunch = false; launch(); }
+  }
+  const fastDrag = !!(drag && drag.type === 'charge');
+  if (staticReq && (!fastDrag || now - lastFast > 45)) {
+    renderStatic(fastDrag); staticReq = false; lastFast = now;
+    if (fastDrag) pendingFull = true;
+  }
+  if (pendingFull && !fastDrag) { renderStatic(false); pendingFull = false; }
+  if (S.mode === 'run' && !S.paused && TR) {
+    S.t += dtw * TR.rate * S.speed;
+    if (S.t >= TR.T) { S.t = TR.T; S.mode = 'done'; uiReq = true; }
+    dirty = true; chartDirty = true;
+    if (now - lastLive > 110) { updateResults(); updateFormulas(); updateScrub(); updateLegend(); lastLive = now; }
+  }
+  if (uiReq && now - lastUi > (dragging ? 90 : 0)) { updateAll(); uiReq = false; lastUi = now; }
+  updateHud();
+  if (S.sel && !reduceMotion) dirty = true;
+  if (dirty) { drawScene(now); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+$$('#palette .tool').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
+$$('#unit button').forEach(b => b.addEventListener('click', () => {
+  if (S.unit === b.dataset.unit) return;
+  const r = S.part.v0 / vref();
+  S.unit = b.dataset.unit;
+  S.part.v0 = r * vref(); S.vScale = 90 / S.part.v0;
+  chargesChanged(false);
+}));
+$('#clear-all').addEventListener('click', () => { S.charges = []; S.sel = null; chargesChanged(); });
+$('#sq').addEventListener('input', (e) => {
+  if (!S.sel) return;
+  S.sel.q = Math.sign(S.sel.q) * +e.target.value; S.lastQ = +e.target.value;
+  chargesChanged();
+});
+$$('#sel-sign button').forEach(b => b.addEventListener('click', () => {
+  if (!S.sel) return;
+  S.sel.q = +b.dataset.s * Math.abs(S.sel.q); chargesChanged();
+}));
+$('#sel-del').addEventListener('click', () => { if (S.sel) deleteCharge(S.sel); });
+$('#cbody').addEventListener('click', (e) => {
+  const tr_ = e.target.closest('tr[data-id]');
+  if (!tr_) return;
+  S.sel = S.charges.find(c => c.id === +tr_.dataset.id) || null; uiReq = true; dirty = true;
+});
+$$('#parts .chip').forEach(b => b.addEventListener('click', () => {
+  const P = PARTS[b.dataset.part], r = S.part.v0 / vref(), L = S.part.v0 * S.vScale;
+  Object.assign(S.part, { kind: b.dataset.part, qmag: P.qmag, sign: P.sign, m: P.m });
+  S.part.v0 = r * vref(); S.vScale = L / S.part.v0;
+  if (S.B.on && S.preset === 'bonly') { S.B.dir = P.sign; fitB(); }
+  particleChanged();
+}));
+$$('#psign button').forEach(b => b.addEventListener('click', () => { S.part.sign = +b.dataset.s; S.part.kind = null; particleChanged(); }));
+function setV0(v) {
+  const L = v * S.vScale;
+  S.part.v0 = v;
+  if (L < 24 || L > 220) S.vScale = 90 / v;
+}
+$('#qt').addEventListener('input', (e) => { S.part.qmag = Math.pow(10, -19 + e.target.value / 100); S.part.kind = null; particleChanged(); });
+$('#pm').addEventListener('input', (e) => { S.part.m = Math.pow(10, -31 + e.target.value / 100); S.part.kind = null; particleChanged(); });
+$('#v0').addEventListener('input', (e) => { setV0(vref() * Math.pow(10, -2 + e.target.value / 100)); particleChanged(); });
+$('#pang').addEventListener('input', (e) => { S.part.ang = +e.target.value; particleChanged(); });
+$('#bon').addEventListener('change', (e) => { S.B.on = e.target.checked; S.preset = S.preset === 'bonly' ? null : S.preset; staticReq = true; particleChanged(); });
+$$('#bdir button').forEach(b => b.addEventListener('click', () => { S.B.dir = +b.dataset.d; staticReq = true; particleChanged(); }));
+$('#bm').addEventListener('input', (e) => { S.B.mag = Math.pow(10, -6 + e.target.value / 100); S.fitNote = false; particleChanged(); });
+$('#fitb').addEventListener('click', () => {
+  S.B.on = true; fitB(); staticReq = true; particleChanged();
+  if (S.fitNote) { S.hint = 'fitClamp'; }
+});
+$('#fire').addEventListener('click', () => { if (S.mode === 'run' && !S.paused) return; launch(); });
+$('#reset').addEventListener('click', () => { resetRun(); dirty = true; chartDirty = true; uiReq = true; });
+$('#pause').addEventListener('click', togglePause);
+$('#step-back').addEventListener('click', () => seek((S.mode === 'idle' ? 0 : S.t) - stepSize()));
+$('#step-fwd').addEventListener('click', () => seek((S.mode === 'idle' ? 0 : S.t) + stepSize()));
+$('#scrub').addEventListener('input', (e) => { if (TR) seek(+e.target.value / 1000 * TR.T); });
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+function toggleLayer(k) {
+  S.layers[k] = !S.layers[k];
+  $$('.tg[data-layer]').forEach(b => b.setAttribute('aria-pressed', String(!!S.layers[b.dataset.layer])));
+  if (k !== 'prev') staticReq = true;
+  dirty = true; uiReq = true;
+}
+$$('.tg[data-layer]').forEach(b => b.addEventListener('click', () => toggleLayer(b.dataset.layer)));
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  S.chartTab = b.dataset.tab; S.hoverI = null; tip.hidden = true;
+  $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); chartDirty = true;
+}));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+fsBtn.addEventListener('click', () => {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+});
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePause(); return; }
+  if (tag === 'input' || tag === 'textarea') return;
+  const tools = { '1': 'move', '2': 'pos', '3': 'neg', '4': 'del', '5': 'part', '6': 'probe' };
+  if (tools[e.key]) { setTool(tools[e.key]); return; }
+  const k = e.key.toLowerCase();
+  if (k === 'l') toggleLayer('lines');
+  else if (k === 'e') toggleLayer('equi');
+  else if (k === 'h') toggleLayer('heat');
+  else if (k === 'w') toggleLayer('vec');
+  else if (k === 'b') { S.B.on = !S.B.on; staticReq = true; particleChanged(); }
+  else if (k === 'r') { resetRun(); dirty = true; chartDirty = true; uiReq = true; }
+  else if (e.key === ',') seek((S.mode === 'idle' ? 0 : S.t) - stepSize());
+  else if (e.key === '.') seek((S.mode === 'idle' ? 0 : S.t) + stepSize());
+  else if ((e.key === 'Delete' || e.key === 'Backspace') && S.sel) { e.preventDefault(); deleteCharge(S.sel); }
+  else if (e.key.startsWith('Arrow')) {
+    const d = (e.shiftKey ? 0.02 : 0.005), dx = e.key === 'ArrowLeft' ? -d : e.key === 'ArrowRight' ? d : 0, dy = e.key === 'ArrowUp' ? d : e.key === 'ArrowDown' ? -d : 0;
+    e.preventDefault();
+    if (S.sel) {
+      let nx = clampWorldX(S.sel.x + dx); if (S.plane) nx = Math.max(nx, 0.012);
+      S.sel.x = nx; S.sel.y = clampWorldY(S.sel.y + dy); chargesChanged();
+    } else { S.probe.x = clampWorldX(S.probe.x + dx); S.probe.y = clampWorldY(S.probe.y + dy); probeChanged(); }
+  }
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-title]').forEach(el => { const t = tr(el.dataset.i18nTitle); el.title = t; el.setAttribute('aria-label', t); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#keys').innerHTML = tr('keys');
+  cv.setAttribute('aria-label', tr('aScene')); $('#palette').setAttribute('aria-label', tr('aPalette'));
+  $('#scrub').setAttribute('aria-label', tr('aTimeline')); $('#panel').setAttribute('aria-label', tr('aSettings'));
+  hudKey = ''; pauseIcon = null;
+  uiReq = true; chartDirty = true; dirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang;
+  try { localStorage.setItem('pole-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize();
+loadPreset('dipole');
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
