@@ -1,0 +1,1356 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Rzut ukośny</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: lab bench. Graph-paper stage with an instrument strip on top and transport bar below,
+   control panel on the right, live derivations and plots underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --drag:#E41C55; --vac:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --drag:#EE3A68; --vac:#3F8EF0; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --drag:#EE3A68; --vac:#3F8EF0; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--vac); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:.95em; height:.62em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:62ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:7.2ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-line{width:22px; height:0; border-top:2.5px solid var(--drag)}
+.sw-line.vac{border-top:2.5px dashed var(--vac)}
+.sw-dot{width:10px; height:10px; border-radius:50%; border:1.5px solid var(--ink-2); background:var(--paper)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="fly"]{border-color:var(--drag); color:var(--drag)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="land"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(340px, 58vh, 640px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--drag); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--drag); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--drag); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--drag)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:13ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:460px}
+.res th, .res td{padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res thead th .sw-line{display:inline-block; vertical-align:middle; margin-right:7px; width:16px}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res tbody th i{font-family:var(--f-math); font-size:16px}
+.res td{font-family:var(--f-mono); font-size:14px}
+.res td.delta{color:var(--ink-3)}
+.res td.muted{color:var(--ink-3)}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+.opt{display:flex; gap:10px 18px; align-items:center; flex-wrap:wrap; padding:10px 12px; border-radius:10px; background:var(--sunk)}
+.opt b{font-family:var(--f-display); font-weight:700; font-size:15px}
+.opt .val{font-family:var(--f-mono); font-size:14px; display:inline-flex; align-items:center; gap:8px}
+.opt .val small{font-family:var(--f-body); color:var(--ink-3); font-size:12.5px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.grp[disabled] .ctl, .grp[disabled] .chips, .grp[disabled] .pills{opacity:.38}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i, .pills i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.switch{display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500}
+.switch input{position:absolute; opacity:0; width:1px; height:1px}
+.switch .sw{width:38px; height:22px; border-radius:999px; background:var(--line); position:relative; transition:background .15s; flex:none}
+.switch .sw::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--paper); transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .sw{background:var(--drag)}
+.switch input:checked + .sw::after{transform:translateX(16px)}
+.switch input:focus-visible + .sw{outline:2px solid var(--vac); outline-offset:2px}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--drag); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .vac{color:var(--vac)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.fcard .act{align-self:flex-start}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.chart-box{position:relative; height:260px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static}
+  .panel{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.4; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.4ch; font-size:12.5px}
+  .bar .spacer{display:none}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .switch .sw, .switch .sw::after{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Kinematyka · pracownia rzutu</span>
+      <h1>
+        <svg viewBox="0 0 60 38" aria-hidden="true"><path d="M3 35 Q 30 -18 57 35" fill="none" stroke="var(--drag)" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 7"/><circle cx="57" cy="35" r="3" fill="var(--drag)"/></svg>
+        <span data-i18n="title">Rzut ukośny</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Ustaw prędkość, kąt i planetę. Włącz opór powietrza i zobacz, jak tor odkleja się od idealnej paraboli.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t">0,00 <span>s</span></dd></div>
+            <div><dt>x</dt><dd id="hud-x">0,00 <span>m</span></dd></div>
+            <div><dt>y</dt><dd id="hud-y">0,00 <span>m</span></dd></div>
+            <div><dt>|v|</dt><dd id="hud-v">0,00 <span>m/s</span></dd></div>
+            <div><dt>v<sub>x</sub></dt><dd id="hud-vx">0,00 <span>m/s</span></dd></div>
+            <div><dt>v<sub>y</sub></dt><dd id="hud-vy">0,00 <span>m/s</span></dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" aria-label="Animacja rzutu"></canvas></div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0,00 / 0,00 s</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="fire">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span data-i18n="fire">Strzał</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-01" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-vectors" aria-pressed="true" data-i18n="vectors">Wektory</button>
+            <button type="button" class="tg" id="tg-strobe" aria-pressed="true" data-i18n="strobe">Stroboskop</button>
+            <button type="button" class="tg" id="tg-ideal" aria-pressed="true" data-i18n="ideal">Tor w próżni</button>
+            <button type="button" class="tg" id="tg-preview" aria-pressed="true" data-i18n="preview">Podgląd toru</button>
+            <button type="button" class="tg" id="tg-trails" aria-pressed="false" data-i18n="trails">Ślady</button>
+          </div>
+          <button type="button" class="btn" id="clear" hidden><span data-i18n="clear">Wyczyść ślady</span></button>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs" aria-label="Pełny ekran">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="tbl-wrap">
+          <table class="res">
+            <thead><tr><th></th><th><span class="sw-line vac"></span><span data-i18n="cVac">W próżni</span></th><th><span class="sw-line"></span><span data-i18n="cDrag">Z oporem</span></th><th data-i18n="cDelta">Różnica</th></tr></thead>
+            <tbody id="res-body"></tbody>
+          </table>
+        </div>
+        <div class="opt">
+          <b data-i18n="opt">Kąt optymalny</b>
+          <span class="val"><small data-i18n="optVac">w próżni</small><span id="opt-vac">45,0°</span></span>
+          <span class="val"><small data-i18n="optDrag">z oporem</small><span id="opt-drag">—</span></span>
+          <button type="button" class="btn" id="set-opt"><span data-i18n="setOpt">Ustaw θ*</span></button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gLaunch">Wystrzał</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v0" data-i18n-html="lv0">Prędkość początkowa <i>v</i><sub>0</sub></label><output id="v0-out" for="v0"></output></div>
+          <input type="range" id="v0" min="1" max="120" step="0.5" value="28">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="th" data-i18n-html="lth">Kąt wystrzału <i>θ</i></label><output id="th-out" for="th"></output></div>
+          <input type="range" id="th" min="0" max="90" step="0.5" value="45">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h0" data-i18n-html="lh0">Wysokość startu <i>h</i><sub>0</sub></label><output id="h0-out" for="h0"></output></div>
+          <input type="range" id="h0" min="0" max="80" step="0.5" value="0">
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gGrav">Grawitacja</h3>
+        <div class="chips" id="planets">
+          <button type="button" class="chip" id="pl-earth" data-planet="earth" aria-pressed="true"><span data-i18n="earth">Ziemia</span><small>9,81</small></button>
+          <button type="button" class="chip" id="pl-moon" data-planet="moon" aria-pressed="false"><span data-i18n="moon">Księżyc</span><small>1,62</small></button>
+          <button type="button" class="chip" id="pl-mars" data-planet="mars" aria-pressed="false"><span data-i18n="mars">Mars</span><small>3,71</small></button>
+          <button type="button" class="chip" id="pl-jupiter" data-planet="jupiter" aria-pressed="false"><span data-i18n="jupiter">Jowisz</span><small>24,79</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="g" data-i18n-html="lg">Przyspieszenie <i>g</i></label><output id="g-out" for="g"></output></div>
+          <input type="range" id="g" min="0.5" max="30" step="0.01" value="9.81">
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="airset" style="--c:var(--drag)">
+        <h3 data-i18n="gAir">Opór powietrza</h3>
+        <label class="switch"><input type="checkbox" id="drag" checked><span class="sw"></span><span data-i18n="dragOn">Uwzględnij opór powietrza</span></label>
+        <div class="chips" id="balls">
+          <button type="button" class="chip" id="b-soccer" data-ball="soccer" aria-pressed="true"><span data-i18n="soccer">Piłka nożna</span><small>430 g</small></button>
+          <button type="button" class="chip" id="b-baseball" data-ball="baseball" aria-pressed="false"><span data-i18n="baseball">Baseball</span><small>145 g</small></button>
+          <button type="button" class="chip" id="b-golf" data-ball="golf" aria-pressed="false"><span data-i18n="golf">Golf</span><small>46 g</small></button>
+          <button type="button" class="chip" id="b-pingpong" data-ball="pingpong" aria-pressed="false"><span data-i18n="pingpong">Ping-pong</span><small>2,7 g</small></button>
+          <button type="button" class="chip" id="b-cannon" data-ball="cannon" aria-pressed="false"><span data-i18n="cannon">Kula armatnia</span><small>6 kg</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m" data-i18n-html="lm">Masa <i>m</i></label><output id="m-out" for="m"></output></div>
+          <input type="range" id="m" min="0" max="1000" step="1" value="658">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="d" data-i18n-html="ld">Średnica <i>d</i></label><output id="d-out" for="d"></output></div>
+          <input type="range" id="d" min="0.01" max="0.5" step="0.001" value="0.22">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="cd" data-i18n-html="lcd">Współczynnik oporu <i>C</i><sub>D</sub></label><output id="cd-out" for="cd"></output></div>
+          <input type="range" id="cd" min="0.05" max="1.2" step="0.01" value="0.25">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="rho" data-i18n-html="lrho">Gęstość powietrza <i>ρ</i></label><output id="rho-out" for="rho"></output></div>
+          <input type="range" id="rho" min="0" max="2" step="0.005" value="1.225">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="wind" data-i18n-html="lwind">Wiatr <i>w</i></label><output id="wind-out" for="wind"></output></div>
+          <input type="range" id="wind" min="-25" max="25" step="0.5" value="0">
+          <span class="hint" data-i18n="windHint">+ z wiatrem, − pod wiatr</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="vt">prędkość graniczna</small><span id="pill-vt">—</span></div>
+          <div class="pill"><small data-i18n="kpar">stała oporu k</small><span id="pill-k">—</span></div>
+          <div class="pill"><small data-i18n="re">liczba Reynoldsa</small><span id="pill-re">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżących ustawień.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" id="tab-y" data-tab="y" aria-selected="true" data-i18n="tabY">Wysokość</button>
+        <button type="button" role="tab" id="tab-v" data-tab="v" aria-selected="false" data-i18n="tabV">Prędkość</button>
+        <button type="button" role="tab" id="tab-e" data-tab="e" aria-selected="false" data-i18n="tabE">Energia</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const D2R = Math.PI / 180;
+const MU_AIR = 1.81e-5;            // dynamic viscosity of air, Pa·s
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Kinematyka · pracownia rzutu', title:'Rzut ukośny',
+    lede:'Ustaw prędkość, kąt i planetę. Włącz opór powietrza i zobacz, jak tor odkleja się od idealnej paraboli.',
+    gLaunch:'Wystrzał', lv0:'Prędkość początkowa <i>v</i><sub>0</sub>', lth:'Kąt wystrzału <i>θ</i>', lh0:'Wysokość startu <i>h</i><sub>0</sub>',
+    gGrav:'Grawitacja', earth:'Ziemia', moon:'Księżyc', mars:'Mars', jupiter:'Jowisz', lg:'Przyspieszenie <i>g</i>',
+    gAir:'Opór powietrza', dragOn:'Uwzględnij opór powietrza', soccer:'Piłka nożna', baseball:'Baseball', golf:'Golf', pingpong:'Ping-pong', cannon:'Kula armatnia',
+    lm:'Masa <i>m</i>', ld:'Średnica <i>d</i>', lcd:'Współczynnik oporu <i>C</i><sub>D</sub>', lrho:'Gęstość powietrza <i>ρ</i>', lwind:'Wiatr <i>w</i>', windHint:'+ z wiatrem, − pod wiatr',
+    vt:'prędkość graniczna', kpar:'stała oporu k', re:'liczba Reynoldsa',
+    fire:'Strzał', kbd:'spacja', reset:'Od nowa', speed:'Tempo', vectors:'Wektory', strobe:'Stroboskop', ideal:'Tor w próżni', preview:'Podgląd toru', trails:'Ślady', clear:'Wyczyść ślady', fullscreen:'Pełny ekran',
+    sIdle:'gotowy', sFly:'w locie', sLand:'wylądował', sPause:'pauza', pause:'Pauza', play:'Odtwórz',
+    lgDrag:'z oporem', lgVac:'w próżni', lgStrobe:'zdjęcie co', lgWind:'wiatr',
+    results:'Wyniki', cVac:'W próżni', cDrag:'Z oporem', cDelta:'Różnica',
+    rR:'Zasięg <i>R</i>', rH:'Wysokość maks. <i>H</i>', rT:'Czas lotu <i>T</i>', rV:'Prędkość uderzenia', rA:'Kąt uderzenia', rE:'Energia rozproszona',
+    resSubOn:'Opór zmniejsza zasięg o', resSubOff:'Opór wyłączony. Włącz go w panelu, żeby porównać tory.',
+    opt:'Kąt optymalny', setOpt:'Ustaw θ*', optVac:'w próżni', optDrag:'z oporem',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżących ustawień. Rzut w próżni ma rozwiązanie analityczne, z oporem liczymy numerycznie.',
+    fVel:'Składowe prędkości', fMotion:'Równania ruchu', fPath:'Równanie toru', fT:'Czas lotu', fH:'Wysokość maksymalna', fR:'Zasięg', fDrag:'Opór powietrza', fOpt:'Kąt optymalny',
+    noteR0:'Dla <i>h</i><sub>0</sub> = 0 upraszcza się do', noteParab:'Tor jest parabolą: kwadratową funkcją <i>y</i>(<i>x</i>).',
+    noteDrag:'Brak rozwiązania analitycznego. Całkowanie numeryczne metodą RK4, krok', noteDragOff:'Opór jest wyłączony. Włącz go w panelu, żeby zobaczyć liczby.',
+    noteVt:'Prędkość graniczna to prędkość spadku, przy której opór równoważy ciężar.',
+    noteOpt:'Z oporem kąt optymalny to maksimum funkcji <i>R</i>(<i>θ</i>), wyznaczone numerycznie.',
+    charts:'Wykresy', tabY:'Wysokość', tabV:'Prędkość', tabE:'Energia', ek:'E kinetyczna', ep:'E potencjalna', et:'E całkowita',
+    cnoteY:'Wysokość <i>y</i>(<i>t</i>). Linia przerywana: lot w próżni.', cnoteV:'Wartość prędkości |<i>v</i>|(<i>t</i>). Minimum przypada w najwyższym punkcie toru.',
+    cnoteEon:'Energia toru z oporem. Spadek energii całkowitej to praca siły oporu.', cnoteEoff:'W próżni energia całkowita jest stała: kinetyczna zamienia się w potencjalną i z powrotem.',
+    deg:'°', none:'—'
+  },
+  en: {
+    eyebrow:'Kinematics · projectile lab', title:'Projectile motion',
+    lede:'Set the speed, angle and planet. Turn on air drag and watch the path peel away from the ideal parabola.',
+    gLaunch:'Launch', lv0:'Initial speed <i>v</i><sub>0</sub>', lth:'Launch angle <i>θ</i>', lh0:'Launch height <i>h</i><sub>0</sub>',
+    gGrav:'Gravity', earth:'Earth', moon:'Moon', mars:'Mars', jupiter:'Jupiter', lg:'Acceleration <i>g</i>',
+    gAir:'Air drag', dragOn:'Include air drag', soccer:'Soccer ball', baseball:'Baseball', golf:'Golf', pingpong:'Ping-pong', cannon:'Cannonball',
+    lm:'Mass <i>m</i>', ld:'Diameter <i>d</i>', lcd:'Drag coefficient <i>C</i><sub>D</sub>', lrho:'Air density <i>ρ</i>', lwind:'Wind <i>w</i>', windHint:'+ tailwind, − headwind',
+    vt:'terminal speed', kpar:'drag constant k', re:'Reynolds number',
+    fire:'Fire', kbd:'space', reset:'Reset', speed:'Speed', vectors:'Vectors', strobe:'Strobe', ideal:'Vacuum path', preview:'Path preview', trails:'Trails', clear:'Clear trails', fullscreen:'Full screen',
+    sIdle:'ready', sFly:'in flight', sLand:'landed', sPause:'paused', pause:'Pause', play:'Play',
+    lgDrag:'with drag', lgVac:'in vacuum', lgStrobe:'snapshot every', lgWind:'wind',
+    results:'Results', cVac:'Vacuum', cDrag:'With drag', cDelta:'Difference',
+    rR:'Range <i>R</i>', rH:'Max height <i>H</i>', rT:'Flight time <i>T</i>', rV:'Impact speed', rA:'Impact angle', rE:'Energy dissipated',
+    resSubOn:'Drag cuts the range by', resSubOff:'Drag is off. Turn it on in the panel to compare paths.',
+    opt:'Optimal angle', setOpt:'Set θ*', optVac:'vacuum', optDrag:'with drag',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current settings. The vacuum case has a closed form; with drag we integrate numerically.',
+    fVel:'Velocity components', fMotion:'Equations of motion', fPath:'Trajectory', fT:'Flight time', fH:'Maximum height', fR:'Range', fDrag:'Air drag', fOpt:'Optimal angle',
+    noteR0:'For <i>h</i><sub>0</sub> = 0 this reduces to', noteParab:'The path is a parabola: a quadratic function <i>y</i>(<i>x</i>).',
+    noteDrag:'No closed-form solution. Integrated numerically with RK4, step', noteDragOff:'Drag is off. Turn it on in the panel to see the numbers.',
+    noteVt:'Terminal speed is the falling speed at which drag balances weight.',
+    noteOpt:'With drag the optimal angle is the maximum of <i>R</i>(<i>θ</i>), found numerically.',
+    charts:'Charts', tabY:'Height', tabV:'Speed', tabE:'Energy', ek:'Kinetic E', ep:'Potential E', et:'Total E',
+    cnoteY:'Height <i>y</i>(<i>t</i>). Dashed line: flight in vacuum.', cnoteV:'Speed |<i>v</i>|(<i>t</i>). The minimum falls at the top of the path.',
+    cnoteEon:'Energy of the drag path. The drop in total energy is the work done by drag.', cnoteEoff:'In vacuum total energy is constant: kinetic turns into potential and back.',
+    deg:'°', none:'—'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('rzut-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function autoDec(x) { const a = Math.abs(x); return a >= 1000 ? 0 : a >= 10 ? 1 : 2; }
+const fa = (x) => fmt(x, autoDec(x));
+function fsci(x) {
+  if (!isFinite(x) || x <= 0) return '—';
+  const e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  return `${fmt(m, 1)}·10${String(e).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c] ?? '⁻').join('')}`;
+}
+
+/* ---------- parameters ---------- */
+const PLANETS = { earth:{ g:9.81, rho:1.225 }, moon:{ g:1.62, rho:0 }, mars:{ g:3.71, rho:0.020 }, jupiter:{ g:24.79, rho:0.16 } };
+const BALLS = {
+  soccer:{ m:0.43, d:0.22, cd:0.25 }, baseball:{ m:0.145, d:0.074, cd:0.35 }, golf:{ m:0.0459, d:0.0427, cd:0.25 },
+  pingpong:{ m:0.0027, d:0.04, cd:0.5 }, cannon:{ m:6.0, d:0.115, cd:0.47 }
+};
+const mFromSlider = (s) => Math.pow(10, -3 + 4 * s / 1000);           // 1 g .. 10 kg, log scale
+const sliderFromM = (m) => Math.round((Math.log10(m) + 3) / 4 * 1000);
+
+const P = {};
+function readParams() {
+  P.v0 = +$('#v0').value; P.th = +$('#th').value; P.h0 = +$('#h0').value; P.g = +$('#g').value;
+  P.drag = $('#drag').checked; P.m = mFromSlider(+$('#m').value); P.d = +$('#d').value;
+  P.cd = +$('#cd').value; P.rho = +$('#rho').value; P.wind = +$('#wind').value;
+}
+
+/* ---------- physics ---------- */
+// RK4 integration of m dv/dt = m g - 1/2 rho Cd A |v - w| (v - w); ends at ground impact (y = 0).
+function simulate(p, useDrag, nTarget = 3000) {
+  const th = p.th * D2R, vx0 = p.v0 * Math.cos(th), vy0 = p.v0 * Math.sin(th);
+  const Tv = (vy0 + Math.sqrt(vy0 * vy0 + 2 * p.g * p.h0)) / p.g;
+  const A = Math.PI * p.d * p.d / 4;
+  const k = useDrag ? p.rho * p.cd * A / (2 * p.m) : 0;
+  const E0 = 0.5 * p.m * p.v0 * p.v0 + p.m * p.g * p.h0;
+  const acc = (vx, vy) => {
+    const rx = vx - p.wind, ry = vy, sp = Math.hypot(rx, ry);
+    return [-k * sp * rx, -p.g - k * sp * ry];
+  };
+  const pack = (t, s) => { const a = acc(s[2], s[3]); return { t, x: s[0], y: s[1], vx: s[2], vy: s[3], ax: a[0], ay: a[1] }; };
+  const out = { pts: [], T: 0, R: 0, H: p.h0, xH: 0, tH: 0, vImp: p.v0, angImp: 0, E0, Eloss: 0, k, dt: 0, xmin: 0, xmax: 0, ymax: p.h0, m: p.m, g: p.g };
+  if (!(Tv > 1e-9)) { out.pts.push(pack(0, [0, p.h0, vx0, vy0])); return out; }
+  const dt = Math.max(Tv / nTarget, 2e-4);
+  out.dt = dt;
+  let s = [0, p.h0, vx0, vy0], t = 0;
+  out.pts.push(pack(0, s));
+  const f = (st) => { const a = acc(st[2], st[3]); return [st[2], st[3], a[0], a[1]]; };
+  for (let i = 0; i < 80000; i++) {
+    const k1 = f(s);
+    const s2 = s.map((v, j) => v + 0.5 * dt * k1[j]); const k2 = f(s2);
+    const s3 = s.map((v, j) => v + 0.5 * dt * k2[j]); const k3 = f(s3);
+    const s4 = s.map((v, j) => v + dt * k3[j]); const k4 = f(s4);
+    const n = s.map((v, j) => v + dt / 6 * (k1[j] + 2 * k2[j] + 2 * k3[j] + k4[j]));
+    if (n[1] < 0) {
+      const fr = s[1] / (s[1] - n[1]);
+      const e = s.map((v, j) => v + fr * (n[j] - v)); e[1] = 0;
+      out.pts.push(pack(t + fr * dt, e));
+      break;
+    }
+    s = n; t += dt;
+    out.pts.push(pack(t, s));
+    if (s[1] > out.H) { out.H = s[1]; out.xH = s[0]; out.tH = t; }
+  }
+  const last = out.pts[out.pts.length - 1];
+  out.T = last.t; out.R = last.x;
+  out.vImp = Math.hypot(last.vx, last.vy);
+  out.angImp = Math.atan2(-last.vy, last.vx) / D2R;
+  out.Eloss = Math.max(0, E0 - 0.5 * p.m * out.vImp * out.vImp);
+  for (const q of out.pts) { if (q.x < out.xmin) out.xmin = q.x; if (q.x > out.xmax) out.xmax = q.x; }
+  out.ymax = out.H;
+  return out;
+}
+function sampleAt(path, t) {
+  const pts = path.pts, n = pts.length;
+  if (n === 1 || t <= 0) return pts[0];
+  if (t >= path.T) return pts[n - 1];
+  let i = Math.min(Math.floor(t / path.dt), n - 2);
+  while (i > 0 && pts[i].t > t) i--;
+  while (i < n - 2 && pts[i + 1].t < t) i++;
+  const a = pts[i], b = pts[i + 1], u = (t - a.t) / (b.t - a.t || 1);
+  const L = (k) => a[k] + u * (b[k] - a[k]);
+  return { t, x: L('x'), y: L('y'), vx: L('vx'), vy: L('vy'), ax: L('ax'), ay: L('ay') };
+}
+function bestAngle(p, drag) {
+  if (!drag) return Math.atan(p.v0 / Math.sqrt(p.v0 * p.v0 + 2 * p.g * p.h0)) / D2R;
+  const R = (th) => simulate({ ...p, th }, true, 400).R;
+  let bt = 45, br = -Infinity;
+  for (let th = 0; th <= 90; th += 2) { const r = R(th); if (r > br) { br = r; bt = th; } }
+  let a = Math.max(0, bt - 2), b = Math.min(90, bt + 2);
+  const gr = 0.6180339887;
+  let c = b - gr * (b - a), d = a + gr * (b - a), fc = R(c), fd = R(d);
+  for (let i = 0; i < 22; i++) {
+    if (fc > fd) { b = d; d = c; fd = fc; c = b - gr * (b - a); fc = R(c); }
+    else { a = c; c = d; fc = fd; d = a + gr * (b - a); fd = R(d); }
+  }
+  return (a + b) / 2;
+}
+
+/* ---------- state ---------- */
+const S = {
+  mode: 'idle', t: 0, speed: 1, landed: {}, recoil: 0, paused: false,
+  vectors: true, strobe: true, showIdeal: true, preview: true, trails: false,
+  kept: [], chartTab: 'y', hoverT: null
+};
+let paths = { vac: null, drag: null };
+let opt = { vac: 45, drag: null };
+
+function visiblePaths() {
+  const out = [];
+  if (P.drag && S.showIdeal) out.push({ key: 'vac', path: paths.vac, color: col.vac, ideal: true });
+  out.push(P.drag ? { key: 'drag', path: paths.drag, color: col.drag, ideal: false } : { key: 'vac', path: paths.vac, color: col.vac, ideal: false });
+  return out;
+}
+const activePath = () => (P.drag ? paths.drag : paths.vac);
+
+function archiveShot() {
+  if (!S.trails || S.mode !== 'landed') return;
+  const p = activePath();
+  if (!p || p.T <= 0) return;
+  const stride = Math.max(1, Math.floor(p.pts.length / 300));
+  const pts = p.pts.filter((_, i) => i % stride === 0).map(q => [q.x, q.y]);
+  const L = p.pts[p.pts.length - 1]; pts.push([L.x, L.y]);
+  S.kept.push({ pts, R: p.R, label: `${fmt(P.th, 1)}° · ${fmt(P.v0, 1)} m/s`, xmin: p.xmin, xmax: p.xmax, ymax: p.ymax });
+  if (S.kept.length > 8) S.kept.shift();
+  $('#clear').hidden = false;
+}
+
+function recompute() {
+  readParams();
+  if (S.mode !== 'idle') { archiveShot(); S.mode = 'idle'; S.t = 0; }
+  S.paused = false;
+  paths.vac = simulate(P, false);
+  paths.drag = P.drag ? simulate(P, true) : null;
+  opt.vac = bestAngle(P, false);
+  opt.drag = P.drag ? bestAngle(P, true) : null;
+  updateOutputs(); updateResults(); updateFormulas(); updateLegend(); updateHud(); updateScrub();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- UI: outputs & chips ---------- */
+function setFill(el) {
+  const p = (el.value - el.min) / (el.max - el.min) * 100;
+  el.style.setProperty('--p', p + '%');
+}
+function updateOutputs() {
+  const o = (id, s) => { $('#' + id + '-out').textContent = s; };
+  o('v0', `${fmt(P.v0, 1)} m/s`); o('th', `${fmt(P.th, 1)}°`); o('h0', `${fmt(P.h0, 1)} m`);
+  o('g', `${fmt(P.g, 2)} m/s²`);
+  o('m', P.m < 1 ? `${fmt(P.m * 1000, P.m < 0.01 ? 1 : 0)} g` : `${fmt(P.m, 2)} kg`);
+  o('d', `${fmt(P.d * 100, 1)} cm`); o('cd', fmt(P.cd, 2)); o('rho', `${fmt(P.rho, 3)} kg/m³`);
+  o('wind', `${P.wind > 0 ? '+' : ''}${fmt(P.wind, 1)} m/s`);
+  $$('input[type=range]').forEach(setFill);
+  $$('#planets .chip').forEach(b => {
+    const q = PLANETS[b.dataset.planet];
+    b.setAttribute('aria-pressed', String(Math.abs(q.g - P.g) < 0.006 && Math.abs(q.rho - P.rho) < 0.003));
+  });
+  $$('#balls .chip').forEach(b => {
+    const q = BALLS[b.dataset.ball];
+    b.setAttribute('aria-pressed', String(Math.abs(Math.log(q.m / P.m)) < 0.006 && Math.abs(q.d - P.d) < 0.0006 && Math.abs(q.cd - P.cd) < 0.006));
+  });
+  $('#airset').toggleAttribute('disabled', false);
+  $$('#airset .ctl input, #airset .chip').forEach(el => { el.disabled = !P.drag; });
+  $('#airset').classList.toggle('off', !P.drag);
+  $('#airset').style.opacity = '';
+  $$('#airset .ctl, #airset .chips, #airset .pills').forEach(el => { el.style.opacity = P.drag ? '' : '.38'; });
+  const A = Math.PI * P.d * P.d / 4, k = P.rho * P.cd * A / (2 * P.m);
+  $('#pill-vt').textContent = k > 0 ? `${fa(Math.sqrt(P.g / k))} m/s` : '∞';
+  $('#pill-k').textContent = k > 0 ? `${fsci(k)} m⁻¹` : '0';
+  $('#pill-re').textContent = P.rho > 0 ? fsci(P.rho * P.v0 * P.d / MU_AIR) : '0';
+}
+
+function updateResults() {
+  const v = paths.vac, d = paths.drag;
+  const pct = (a, b) => (b === 0 ? tr('none') : `${a >= b ? '+' : '−'}${fmt(Math.abs(a / b - 1) * 100, 0)} %`);
+  const rows = [
+    ['rR', v.R, d && d.R, 'm', true],
+    ['rH', v.H, d && d.H, 'm', true],
+    ['rT', v.T, d && d.T, 's', true],
+    ['rV', v.vImp, d && d.vImp, 'm/s', true],
+    ['rA', v.angImp, d && d.angImp, '°', false],
+    ['rE', 0, d && d.Eloss, 'J', false]
+  ];
+  $('#res-body').innerHTML = rows.map(([k, a, b, u, rel]) => {
+    const sa = `${fa(a)} ${u}`;
+    let sb = tr('none'), sd = tr('none');
+    if (d) {
+      sb = k === 'rE' ? `${fa(b)} J <span class="muted">(${fmt(d.E0 > 0 ? b / d.E0 * 100 : 0, 0)} %)</span>` : `${fa(b)} ${u}`;
+      if (rel) sd = pct(b, a);
+      else if (k === 'rA') sd = `${b - a >= 0 ? '+' : '−'}${fmt(Math.abs(b - a), 1)}°`;
+    }
+    return `<tr><th>${tr(k)}</th><td>${sa}</td><td class="${d ? '' : 'muted'}">${sb}</td><td class="delta">${sd}</td></tr>`;
+  }).join('');
+  $('#res-sub').textContent = d ? `${tr('resSubOn')} ${fmt(Math.abs(1 - d.R / (v.R || 1)) * 100, 0)} %.` : tr('resSubOff');
+  $('#opt-vac').textContent = `${fmt(opt.vac, 1)}°`;
+  $('#opt-drag').textContent = opt.drag != null ? `${fmt(opt.drag, 1)}°` : tr('none');
+}
+
+function updateLegend() {
+  const strobeDt = niceStep(Math.max(activePath().T, 0.01), 12);
+  S.strobeDt = strobeDt;
+  let h = '';
+  if (P.drag) h += `<span><i class="sw-line"></i>${tr('lgDrag')}</span>`;
+  if (!P.drag || S.showIdeal) h += `<span><i class="sw-line vac" style="${P.drag ? '' : 'border-top-style:solid'}"></i>${tr('lgVac')}</span>`;
+  if (S.strobe) h += `<span><i class="sw-dot"></i>${tr('lgStrobe')} Δt = ${fmt(strobeDt, strobeDt < 0.1 ? 2 : strobeDt < 1 ? 1 : 0)} s</span>`;
+  if (P.drag && P.wind !== 0) h += `<span>${tr('lgWind')} ${P.wind > 0 ? '→' : '←'} ${fmt(Math.abs(P.wind), 1)} m/s</span>`;
+  const sk = stateKey();
+  h += `<span class="state" id="state" data-s="${sk}">${tr(STATE_LABEL[sk])}</span>`;
+  $('#legend').innerHTML = h;
+}
+const STATE_LABEL = { idle: 'sIdle', fly: 'sFly', pause: 'sPause', land: 'sLand' };
+const stateKey = () => (S.mode === 'flying' ? (S.paused ? 'pause' : 'fly') : S.mode === 'landed' ? 'land' : 'idle');
+function setStateChip() {
+  const el = $('#state'); if (!el) return;
+  const s = stateKey();
+  if (el.dataset.s !== s) { el.dataset.s = s; el.textContent = tr(STATE_LABEL[s]); }
+}
+
+let hudLast = '';
+function updateHud() {
+  const p = activePath();
+  const q = S.mode === 'idle' ? p.pts[0] : sampleAt(p, Math.min(S.t, p.T));
+  const tt = S.mode === 'idle' ? 0 : Math.min(S.t, p.T);
+  const key = [tt, q.x, q.y, q.vx, q.vy, lang].map(v => typeof v === 'number' ? v.toFixed(3) : v).join('|');
+  if (key === hudLast) return; hudLast = key;
+  const set = (id, v, u) => { $('#hud-' + id).innerHTML = `${fmt(v, 2)} <span>${u}</span>`; };
+  set('t', tt, 's'); set('x', q.x, 'm'); set('y', q.y, 'm'); set('v', Math.hypot(q.vx, q.vy), 'm/s'); set('vx', q.vx, 'm/s'); set('vy', q.vy, 'm/s');
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' <span class="op">=</span> ';
+function updateFormulas() {
+  const th = P.th * D2R, vx0 = P.v0 * Math.cos(th), vy0 = P.v0 * Math.sin(th), g = P.g, h0 = P.h0;
+  const T = paths.vac.T, H = paths.vac.H, R = paths.vac.R;
+  const n = (x, d = 2) => fmt(x, d);
+  const res = (x, u) => `<span class="r vac">${fa(x)} ${u}</span>`;
+  const cards = [];
+  cards.push(`<div class="fcard"><h4>${tr('fVel')}</h4>
+    <div class="eq">${V('v', '0x')}${EQ}${V('v', '0')} cos ${V('θ')}${EQ}${n(P.v0, 1)} · cos ${n(P.th, 1)}°${EQ}${res(vx0, 'm/s')}</div>
+    <div class="eq">${V('v', '0y')}${EQ}${V('v', '0')} sin ${V('θ')}${EQ}${n(P.v0, 1)} · sin ${n(P.th, 1)}°${EQ}${res(vy0, 'm/s')}</div></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fMotion')}</h4>
+    <div class="eq">${V('x')}(${V('t')})${EQ}${V('v', '0x')} ${V('t')}</div>
+    <div class="eq">${V('y')}(${V('t')})${EQ}${V('h', '0')} + ${V('v', '0y')} ${V('t')} − ${FR('1', '2')}${V('g')}${V('t')}<sup>2</sup></div>
+    <div class="eq num">${V('y')}(${V('t')})${EQ}${n(h0, 1)} + ${n(vy0)} ${V('t')} − ${n(g / 2, 3)} ${V('t')}<sup>2</sup></div></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fT')}</h4>
+    <div class="eq">${V('T')}${EQ}${FR(`${V('v', '0y')} + ${RT(`${V('v', '0y')}<sup>2</sup> + 2${V('g')}${V('h', '0')}`)}`, V('g'))}</div>
+    <div class="eq num">${V('T')}${EQ}${FR(`${n(vy0)} + ${RT(`${n(vy0)}<sup>2</sup> + 2 · ${n(g)} · ${n(h0, 1)}`)}`, n(g))}${EQ}${res(T, 's')}</div></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fH')}</h4>
+    <div class="eq">${V('H')}${EQ}${V('h', '0')} + ${FR(`${V('v', '0y')}<sup>2</sup>`, `2${V('g')}`)}</div>
+    <div class="eq num">${V('H')}${EQ}${n(h0, 1)} + ${FR(`${n(vy0)}<sup>2</sup>`, `2 · ${n(g)}`)}${EQ}${res(H, 'm')}</div></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fR')}</h4>
+    <div class="eq">${V('R')}${EQ}${V('v', '0x')} ${V('T')}${EQ}${n(vx0)} · ${n(T)}${EQ}${res(R, 'm')}</div>
+    <p class="fnote">${tr('noteR0')}</p>
+    <div class="eq">${V('R')}${EQ}${FR(`${V('v', '0')}<sup>2</sup> sin 2${V('θ')}`, V('g'))}</div></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fPath')}</h4>
+    <div class="eq">${V('y')}(${V('x')})${EQ}${V('h', '0')} + ${V('x')} tg ${V('θ')} − ${FR(`${V('g')} ${V('x')}<sup>2</sup>`, `2${V('v', '0')}<sup>2</sup> cos<sup>2</sup>${V('θ')}`)}</div>
+    <p class="fnote">${tr('noteParab')}</p></div>`);
+  if (lang === 'en') cards[cards.length - 1] = cards[cards.length - 1].replace(' tg ', ' tan ');
+  // drag card
+  const A = Math.PI * P.d * P.d / 4, k = P.rho * P.cd * A / (2 * P.m);
+  let dragBody = `<div class="eq">${V('F', 'D')}${EQ}${FR('1', '2')}${V('ρ')}${V('C', 'D')}${V('A')}|${V('v')} − ${V('w')}|<sup>2</sup></div>
+    <div class="eq">${V('m')}${FR(`d${V('<b>v</b>')}`, `d${V('t')}`)}${EQ}${V('m')}${V('<b>g</b>')} − ${FR('1', '2')}${V('ρ')}${V('C', 'D')}${V('A')}|${V('<b>v</b>')} − ${V('<b>w</b>')}|(${V('<b>v</b>')} − ${V('<b>w</b>')})</div>`;
+  if (P.drag) {
+    dragBody += `<div class="eq num">${V('k')}${EQ}${FR(`${V('ρ')}${V('C', 'D')}${V('A')}`, `2${V('m')}`)}${EQ}${FR(`${n(P.rho, 3)} · ${n(P.cd)} · ${fsci(A)}`, `2 · ${fsci(P.m)}`)}${EQ}<span class="r">${fsci(k)} m⁻¹</span></div>`;
+    dragBody += `<div class="eq num">${V('v', 't')}${EQ}${RT(FR(V('g'), V('k')))}${EQ}<span class="r">${k > 0 ? fa(Math.sqrt(g / k)) : '∞'} m/s</span></div>`;
+    dragBody += `<p class="fnote">${tr('noteVt')} ${tr('noteDrag')} Δt = ${fmt(paths.drag.dt * 1000, 2)} ms.</p>`;
+  } else dragBody += `<p class="fnote">${tr('noteDragOff')}</p>`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fDrag')}</h4>${dragBody}</div>`);
+  // optimal angle
+  cards.push(`<div class="fcard wide"><h4>${tr('fOpt')}</h4>
+    <div class="eq">${V('θ', '*')}${EQ}arctg ${FR(V('v', '0'), RT(`${V('v', '0')}<sup>2</sup> + 2${V('g')}${V('h', '0')}`))}${EQ}${FR(n(P.v0, 1), RT(`${n(P.v0, 1)}<sup>2</sup> + 2 · ${n(g)} · ${n(h0, 1)}`))}${EQ}<span class="r vac">${fmt(opt.vac, 1)}°</span></div>
+    ${P.drag ? `<div class="eq num">${V('θ', '*')}<sub>D</sub>${EQ}<span class="r">${fmt(opt.drag, 1)}°</span></div><p class="fnote">${tr('noteOpt')}</p>` : ''}
+    </div>`);
+  if (lang === 'en') cards[cards.length - 1] = cards[cards.length - 1].replace('arctg', 'arctan');
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- canvas: scene ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d');
+const box = $('#canvas-box');
+let cw = 800, ch = 450, dpr = 1, dirty = true;
+let col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'drag', 'vac', 'amber', 'violet'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+
+const PAD = { t: 26, b: 58, r: 22 };
+const view = { s: 10, xL: -2, ready: false };
+function targetView() {
+  let xmin = 0, xmax = 0, ymax = P.h0;
+  for (const v of visiblePaths()) { xmin = Math.min(xmin, v.path.xmin); xmax = Math.max(xmax, v.path.xmax); ymax = Math.max(ymax, v.path.ymax); }
+  for (const k of S.kept) { xmin = Math.min(xmin, k.xmin); xmax = Math.max(xmax, k.xmax); ymax = Math.max(ymax, k.ymax); }
+  const W = Math.max(xmax - xmin, 8), Hh = Math.max(ymax, 3);
+  const plotW = cw - PAD.r, plotH = ch - PAD.t - PAD.b;
+  const lead = 34;                             // px reserved left of the launch point
+  const s = Math.min((plotW - lead - 20) / (W * 1.04), plotH / (Hh * 1.12));
+  return { s, xL: xmin - lead / s };
+}
+const sx = (x) => (x - view.xL) * view.s;
+const gy = () => ch - PAD.b;
+const sy = (y) => gy() - y * view.s;
+
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function subLabel(b, s, x, y, color, align = 'left') {
+  const c = ctx, fb = `italic 17px ${FONT_MATH}`, fs = `italic 12px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fs; const ws = s ? c.measureText(s).width : 0;
+  let x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb, 'left'); if (s) halo(s, x0 + wb + 1, y + 5, color, fs, 'left');
+}
+function arrow(x1, y1, x2, y2, color, w = 2, dash = null, head = 9) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.4) * head, y2 - Math.sin(a - 0.4) * head);
+  c.lineTo(x2 - Math.cos(a + 0.4) * head, y2 - Math.sin(a + 0.4) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function hatch(x0, y0, w, h, color, step = 8) {
+  const c = ctx; c.save(); c.beginPath(); c.rect(x0, y0, w, h); c.clip();
+  c.strokeStyle = color; c.lineWidth = 1; c.beginPath();
+  for (let x = x0 - h; x < x0 + w + h; x += step) { c.moveTo(x, y0 + h); c.lineTo(x + h, y0); }
+  c.stroke(); c.restore();
+}
+function tracePath(path, t0, t1) {
+  const c = ctx, pts = path.pts; let started = false;
+  c.beginPath();
+  for (let i = 0; i < pts.length; i++) {
+    const q = pts[i];
+    if (q.t < t0) continue;
+    if (q.t > t1) { const e = sampleAt(path, t1); c.lineTo(sx(e.x), sy(e.y)); break; }
+    if (!started) {
+      if (t0 > 0) { const s0 = sampleAt(path, t0); c.moveTo(sx(s0.x), sy(s0.y)); c.lineTo(sx(q.x), sy(q.y)); }
+      else c.moveTo(sx(q.x), sy(q.y));
+      started = true;
+    } else c.lineTo(sx(q.x), sy(q.y));
+  }
+}
+function strokeWith(color, w, alpha = 1, dash = null, glow = 0) {
+  const c = ctx; c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineJoin = 'round'; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
+  c.stroke(); c.restore();
+}
+function withAlpha(hex, a) {
+  const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+
+/* particles + wind streaks */
+const parts = [], rings = [];
+function burst(x, y, color, dir = null) {
+  if (reduceMotion) return;
+  const n = dir ? 16 : 26;
+  for (let i = 0; i < n; i++) {
+    let a, sp;
+    if (dir != null) { a = dir + (Math.random() - 0.5) * 0.9; sp = 40 + Math.random() * 120; }
+    else { a = -Math.PI * (0.08 + 0.84 * Math.random()); sp = 50 + Math.random() * 170; }
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 0.9 + Math.random() * 0.9, r: 1.2 + Math.random() * 2.4, color, smoke: dir != null, ground: y });
+  }
+  if (dir == null) rings.push({ x, y, r: 4, life: 1, color });
+}
+const streaks = Array.from({ length: 26 }, () => ({ u: Math.random(), v: Math.random(), len: 0.5 + Math.random() }));
+
+function drawScene(now) {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  const G = gy();
+
+  // grid
+  const major = niceStep(90 / view.s, 1), mant = major / Math.pow(10, Math.floor(Math.log10(major) + 1e-9));
+  const minor = major / (Math.round(mant) === 2 ? 4 : 5);
+  const xW0 = view.xL, xW1 = view.xL + cw / view.s, yW1 = (G - PAD.t * 0.2) / view.s;
+  c.lineWidth = 1;
+  c.strokeStyle = col.grid; c.beginPath();
+  for (let x = Math.ceil(xW0 / minor) * minor; x <= xW1; x += minor) { const X = Math.round(sx(x)) + 0.5; c.moveTo(X, 0); c.lineTo(X, G); }
+  for (let y = minor; y <= yW1; y += minor) { const Y = Math.round(sy(y)) + 0.5; c.moveTo(0, Y); c.lineTo(cw, Y); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let x = Math.ceil(xW0 / major) * major; x <= xW1; x += major) { const X = Math.round(sx(x)) + 0.5; c.moveTo(X, 0); c.lineTo(X, G); }
+  for (let y = major; y <= yW1; y += major) { const Y = Math.round(sy(y)) + 0.5; c.moveTo(0, Y); c.lineTo(cw, Y); }
+  c.stroke();
+
+  // wind streaks (ambient, only when drag and wind are on)
+  if (P.drag && P.wind !== 0 && P.rho > 0) {
+    const sp = P.wind * view.s, tt = now / 1000;
+    c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.2; c.lineCap = 'round';
+    for (const s of streaks) {
+      const L = Math.min(60, 10 + Math.abs(P.wind) * 2.2) * s.len;
+      let x = reduceMotion ? s.u * (cw + 120) : ((s.u * (cw + 120) + sp * tt * (0.7 + 0.5 * s.len)) % (cw + 120) + cw + 120) % (cw + 120);
+      x -= 60;
+      const y = PAD.t + s.v * (G - PAD.t - 10);
+      c.globalAlpha = 0.18 + 0.2 * s.len;
+      c.beginPath(); c.moveTo(x, y); c.lineTo(x - Math.sign(P.wind) * L, y); c.stroke();
+    }
+    c.restore();
+  }
+
+  // ground
+  c.fillStyle = col.sunk; c.fillRect(0, G, cw, ch - G);
+  hatch(0, G, cw, 12, withAlpha(col.ink3, 0.55), 7);
+  c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, G + 0.5); c.lineTo(cw, G + 0.5); c.stroke();
+  // x tick labels
+  for (let x = Math.ceil(xW0 / major) * major; x <= xW1; x += major) {
+    const X = sx(x); if (X < 14 || X > cw - 24) continue;
+    c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(Math.round(X) + 0.5, G); c.lineTo(Math.round(X) + 0.5, G + 5); c.stroke();
+    halo(fmt(x, major < 1 ? (major < 0.1 ? 2 : 1) : 0), X, G + 44, col.ink2, `500 11px ${FONT_MONO}`, 'center');
+  }
+  halo('x [m]', cw - 8, G + 44, col.ink3, `500 11px ${FONT_MONO}`, 'right');
+
+  // launch platform
+  const X0 = sx(0);
+  if (P.h0 > 0) {
+    const Yp = sy(P.h0);
+    c.fillStyle = col.sunk; c.fillRect(0, Yp, X0, G - Yp);
+    hatch(0, Yp, X0, G - Yp, withAlpha(col.ink3, 0.4), 9);
+    c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, Yp + 0.5); c.lineTo(X0, Yp + 0.5); c.lineTo(X0, G); c.stroke();
+  }
+  // y tick labels
+  for (let y = major; y <= yW1; y += major) {
+    const Y = sy(y); if (Y < 12) continue;
+    halo(fmt(y, major < 1 ? (major < 0.1 ? 2 : 1) : 0), 8, Y, col.ink2, `500 11px ${FONT_MONO}`, 'left');
+  }
+  halo('y [m]', 8, 12, col.ink3, `500 11px ${FONT_MONO}`, 'left');
+
+  // kept trails
+  for (const k of S.kept) {
+    c.beginPath(); k.pts.forEach(([x, y], i) => (i ? c.lineTo(sx(x), sy(y)) : c.moveTo(sx(x), sy(y))));
+    strokeWith(col.ink3, 1.4, 0.55);
+    const L = k.pts[k.pts.length - 1];
+    halo(k.label, sx(L[0]), G - 10, col.ink3, `500 10.5px ${FONT_MONO}`, 'center');
+  }
+
+  const vis = visiblePaths();
+  const act = vis[vis.length - 1];
+  const tNow = S.mode === 'idle' ? 0 : S.t;
+
+  // trajectories
+  for (const v of vis) {
+    const p = v.path; if (p.T <= 0) continue;
+    const dash = v.ideal ? [7, 6] : null;
+    if (S.mode === 'idle') {
+      if (!S.preview) continue;
+      tracePath(p, 0, p.T); strokeWith(v.color, v.ideal ? 1.6 : 2, v.ideal ? 0.55 : 0.6, v.ideal ? [7, 6] : [2, 6]);
+    } else {
+      const te = Math.min(tNow, p.T);
+      if (S.preview && te < p.T) { tracePath(p, te, p.T); strokeWith(v.color, 1.4, 0.25, [2, 6]); }
+      tracePath(p, 0, te); strokeWith(v.color, v.ideal ? 1.8 : 2.6, v.ideal ? 0.85 : 1, dash, v.ideal ? 0 : 7);
+    }
+  }
+
+  // strobe snapshots
+  if (S.strobe && S.mode !== 'idle') {
+    const dt = S.strobeDt || 0.5;
+    for (const v of vis) {
+      const p = v.path, lim = Math.min(tNow, p.T);
+      c.save(); c.lineWidth = 1.5;
+      for (let k = 1; k * dt <= lim + 1e-9; k++) {
+        const q = sampleAt(p, k * dt), X = sx(q.x), Y = sy(q.y);
+        c.globalAlpha = v.ideal ? 0.6 : 0.85;
+        c.beginPath(); c.arc(X, Y, v.ideal ? 4.5 : 5.5, 0, Math.PI * 2);
+        c.fillStyle = col.paper; c.fill(); c.strokeStyle = v.color; c.stroke();
+      }
+      c.restore();
+    }
+  }
+
+  // markers H and R of the active path
+  {
+    const p = act.path;
+    const showH = p.T > 0 && p.H > P.h0 + 1e-6 && ((S.mode === 'idle' && S.preview) || (S.mode !== 'idle' && tNow >= p.tH));
+    const showR = p.T > 0 && ((S.mode === 'idle' && S.preview) || S.mode === 'landed' || (S.mode === 'flying' && S.landed[act.key]));
+    const alpha = S.mode === 'idle' ? 0.6 : 1;
+    c.save(); c.globalAlpha = alpha;
+    if (showH) {
+      const X = sx(p.xH), Y = sy(p.H);
+      c.strokeStyle = col.ink2; c.lineWidth = 1; c.setLineDash([2, 4]);
+      c.beginPath(); c.moveTo(X, Y); c.lineTo(X, G); c.stroke(); c.setLineDash([]);
+      c.fillStyle = act.color; c.beginPath(); c.arc(X, Y, 3, 0, Math.PI * 2); c.fill();
+      halo(`H = ${fa(p.H)} m`, X, Y - 16, col.ink, `600 12px ${FONT_MONO}`, 'center');
+    }
+    if (showR) {
+      const Xa = X0, Xb = sx(p.R), Yd = G + 22;
+      c.strokeStyle = col.ink2; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(Xa, G + 14); c.lineTo(Xa, G + 30); c.moveTo(Xb, G + 14); c.lineTo(Xb, G + 30); c.stroke();
+      if (Math.abs(Xb - Xa) > 24) { arrow((Xa + Xb) / 2, Yd, Xa, Yd, col.ink2, 1, null, 6); arrow((Xa + Xb) / 2, Yd, Xb, Yd, col.ink2, 1, null, 6); }
+      const txt = `R = ${fa(p.R)} m`;
+      c.font = `600 12px ${FONT_MONO}`; const tw = c.measureText(txt).width;
+      const Xm = Math.max(tw / 2 + 6, Math.min(cw - tw / 2 - 6, (Xa + Xb) / 2));
+      c.fillStyle = col.sunk; c.fillRect(Xm - tw / 2 - 5, Yd - 9, tw + 10, 18);
+      halo(txt, Xm, Yd, col.ink, `600 12px ${FONT_MONO}`, 'center');
+    }
+    // vacuum range tick when comparing
+    if (P.drag && S.showIdeal && paths.vac.T > 0 && (S.mode === 'idle' ? S.preview : S.landed.vac)) {
+      const X = sx(paths.vac.R);
+      c.strokeStyle = col.vac; c.lineWidth = 2; c.beginPath(); c.moveTo(X, G - 7); c.lineTo(X, G + 7); c.stroke();
+      halo(`R₀ = ${fa(paths.vac.R)} m`, X - 6, G - 14, col.vac, `600 11px ${FONT_MONO}`, 'right');
+    }
+    c.restore();
+  }
+
+  // launcher
+  {
+    const Y0 = sy(P.h0), a = P.th * D2R, rec = S.recoil * 7;
+    c.save(); c.translate(X0, Y0);
+    if (S.mode === 'idle' && S.vectors) {
+      c.strokeStyle = col.ink3; c.lineWidth = 1; c.setLineDash([3, 4]);
+      c.beginPath(); c.moveTo(0, 0); c.lineTo(78, 0); c.stroke(); c.setLineDash([]);
+    }
+    c.rotate(-a);
+    c.fillStyle = col.ink;
+    const L0 = -10 - rec, L1 = 38 - rec;
+    c.beginPath(); c.moveTo(L0, -7.5); c.lineTo(L1, -5.5); c.lineTo(L1, 5.5); c.lineTo(L0, 7.5); c.closePath(); c.fill();
+    c.fillStyle = col.drag; c.fillRect(L1 - 6, -6, 4, 12);
+    c.restore();
+    c.save(); c.translate(X0, Y0);
+    c.fillStyle = col.ink2; c.beginPath(); c.arc(0, 0, 14, Math.PI, 0); c.closePath(); c.fill();
+    c.fillStyle = col.paper; c.beginPath(); c.arc(0, -3, 3, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+
+  // launch vectors (idle)
+  if (S.mode === 'idle' && S.vectors) {
+    const Y0 = sy(P.h0), a = P.th * D2R, L = 92;
+    c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.2;
+    c.beginPath(); c.arc(X0, Y0, 30, -a, 0); c.stroke(); c.restore();
+    const am = -a / 2;
+    halo(`θ = ${fmt(P.th, 1)}°`, X0 + Math.cos(am) * 44 + 4, Y0 + Math.sin(am) * 44 - 2, col.ink, `600 12px ${FONT_MONO}`, 'left');
+    const ex = X0 + Math.cos(a) * L, ey = Y0 - Math.sin(a) * L;
+    arrow(X0, Y0, ex, Y0, col.vac, 1.6, [4, 4], 7);
+    arrow(ex, Y0, ex, ey, col.amber, 1.6, [4, 4], 7);
+    arrow(X0, Y0, ex, ey, col.drag, 2.6, null, 11);
+    subLabel('v', '0', ex + 8, ey - 8, col.drag);
+    if (Math.cos(a) * L > 30) subLabel('v', '0x', X0 + Math.cos(a) * L / 2, Y0 + 16, col.vac, 'center');
+    if (Math.sin(a) * L > 26) subLabel('v', '0y', ex + 8, (Y0 + ey) / 2, col.amber);
+  }
+
+  // balls + vectors
+  if (S.mode !== 'idle') {
+    for (const v of vis) {
+      const p = v.path, q = sampleAt(p, Math.min(tNow, p.T)), X = sx(q.x), Y = sy(q.y);
+      if (tNow * 1 < 0.004 && S.mode === 'flying') continue;
+      c.save();
+      if (v.ideal) {
+        c.globalAlpha = 0.9; c.fillStyle = withAlpha(col.vac, 0.25); c.strokeStyle = col.vac; c.lineWidth = 1.8;
+        c.beginPath(); c.arc(X, Y, 7, 0, Math.PI * 2); c.fill(); c.stroke();
+      } else {
+        c.shadowColor = v.color; c.shadowBlur = 14;
+        c.fillStyle = v.color; c.beginPath(); c.arc(X, Y, 8, 0, Math.PI * 2); c.fill();
+        c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,.75)'; c.beginPath(); c.arc(X - 2.5, Y - 2.5, 2.4, 0, Math.PI * 2); c.fill();
+      }
+      c.restore();
+      if (!v.ideal && S.vectors) {
+        const kv = 92 / Math.max(P.v0, 0.5), ka = 46 / P.g;
+        const ex = X + q.vx * kv, ey = Y - q.vy * kv;
+        arrow(X, Y, ex, Y, col.vac, 1.5, [4, 4], 7);
+        arrow(ex, Y, ex, ey, col.amber, 1.5, [4, 4], 7);
+        arrow(X, Y, ex, ey, col.drag, 2.4, null, 10);
+        subLabel('v', '', ex + (q.vx >= 0 ? 7 : -16), ey - 6, col.drag);
+        const axp = X + q.ax * ka, ayp = Y - q.ay * ka;
+        arrow(X, Y, axp, ayp, col.ink, 2, null, 9);
+        subLabel(P.drag ? 'a' : 'g', '', axp + 7, ayp + 4, col.ink);
+      }
+    }
+  }
+
+  // particles
+  for (const r of rings) {
+    c.save(); c.globalAlpha = r.life * 0.7; c.strokeStyle = r.color; c.lineWidth = 2;
+    c.beginPath(); c.ellipse(r.x, r.y, r.r, r.r * 0.32, 0, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  for (const q of parts) {
+    c.save(); c.globalAlpha = Math.max(0, q.life) * (q.smoke ? 0.45 : 0.9);
+    c.fillStyle = q.smoke ? col.ink3 : q.color;
+    c.beginPath(); c.arc(q.x, q.y, q.smoke ? q.r * (1 + (1 - q.life) * 3) : q.r, 0, Math.PI * 2); c.fill(); c.restore();
+  }
+}
+
+function stepParticles(dt) {
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const q = parts[i];
+    q.life -= dt * q.decay;
+    if (q.smoke) { q.vx *= 1 - 3 * dt; q.vy = q.vy * (1 - 3 * dt) - 20 * dt; }
+    else { q.vy += 520 * dt; }
+    q.x += q.vx * dt; q.y += q.vy * dt;
+    if (!q.smoke && q.y > q.ground) { q.y = q.ground; q.vy *= -0.3; q.vx *= 0.6; }
+    if (q.life <= 0) parts.splice(i, 1);
+  }
+  for (let i = rings.length - 1; i >= 0; i--) {
+    const r = rings[i]; r.r += 90 * dt; r.life -= dt * 1.6; if (r.life <= 0) rings.splice(i, 1);
+  }
+}
+
+/* ---------- actions ---------- */
+function fire() {
+  if (S.mode === 'landed') archiveShot();
+  if (activePath().T <= 0) return;
+  S.mode = 'flying'; S.t = 0; S.landed = {}; S.recoil = 1; S.paused = false;
+  const a = P.th * D2R, X0 = sx(0), Y0 = sy(P.h0);
+  burst(X0 + Math.cos(a) * 40, Y0 - Math.sin(a) * 40, col.ink3, -a);
+  setStateChip(); updateScrub(); dirty = true; chartDirty = true;
+}
+function reset() { S.mode = 'idle'; S.t = 0; S.landed = {}; S.paused = false; parts.length = 0; rings.length = 0; setStateChip(); updateHud(); updateScrub(); dirty = true; chartDirty = true; }
+
+/* timeline: pause, scrub, step */
+const tEnd = () => Math.max(...visiblePaths().map(v => v.path.T));
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIconState = null;
+function updateScrub() {
+  const T = tEnd(), tt = S.mode === 'idle' ? 0 : Math.min(S.t, T);
+  const el = $('#scrub');
+  el.value = T > 0 ? Math.round(tt / T * 1000) : 0; setFill(el);
+  $('#scrub-time').textContent = `${fmt(tt, 2)} / ${fmt(T, 2)} s`;
+  const playing = S.mode === 'flying' && !S.paused;
+  if (pauseIconState !== playing + lang) {
+    pauseIconState = playing + lang;
+    const pb = $('#pause'); pb.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(playing ? 'pause' : 'play'));
+  }
+}
+function seek(t) {
+  const T = tEnd(); if (!(T > 0)) return;
+  S.t = Math.max(0, Math.min(T, t)); S.paused = true;
+  for (const v of visiblePaths()) S.landed[v.key] = S.t >= v.path.T;
+  S.mode = S.t >= T ? 'landed' : 'flying';
+  setStateChip(); updateHud(); updateScrub(); dirty = true; chartDirty = true;
+}
+function togglePause() {
+  if (S.mode === 'flying') { S.paused = !S.paused; setStateChip(); updateScrub(); }
+  else fire();
+}
+const stepSize = () => S.strobeDt || 0.1;
+
+/* ---------- main loop ---------- */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  // smooth camera
+  const tv = targetView();
+  if (!view.ready) { view.s = tv.s; view.xL = tv.xL; view.ready = true; dirty = true; }
+  else {
+    const f = reduceMotion ? 1 : 1 - Math.exp(-dt * 7);
+    const ls = Math.log(view.s), lt = Math.log(tv.s);
+    if (Math.abs(lt - ls) > 1e-4 || Math.abs(tv.xL - view.xL) * view.s > 0.3) {
+      view.s = Math.exp(ls + (lt - ls) * f); view.xL += (tv.xL - view.xL) * f; dirty = true;
+    } else if (view.s !== tv.s || view.xL !== tv.xL) { view.s = tv.s; view.xL = tv.xL; dirty = true; }
+  }
+  if (S.mode === 'flying' && !S.paused) {
+    S.t += dt * S.speed;
+    for (const v of visiblePaths()) {
+      if (!S.landed[v.key] && S.t >= v.path.T) {
+        S.landed[v.key] = true;
+        const L = v.path.pts[v.path.pts.length - 1];
+        burst(sx(L.x), sy(L.y), v.color);
+        if (!reduceMotion && !v.ideal) shake = 1;
+      }
+    }
+    const Tend = Math.max(...visiblePaths().map(v => v.path.T));
+    if (S.t >= Tend) { S.t = Tend; S.mode = 'landed'; setStateChip(); }
+    updateHud(); updateScrub(); dirty = true; chartDirty = true;
+  }
+  if (S.recoil > 0) { S.recoil = Math.max(0, S.recoil - dt * 3.5); dirty = true; }
+  if (parts.length || rings.length) { stepParticles(dt); dirty = true; }
+  if (P.drag && P.wind !== 0 && P.rho > 0 && !reduceMotion) dirty = true;
+  if (shake > 0) { shake = Math.max(0, shake - dt * 5); box.style.transform = shake > 0 ? `translate(${(Math.random() - 0.5) * 3 * shake}px, ${(Math.random() - 0.5) * 3 * shake}px)` : ''; }
+  if (dirty) { drawScene(now); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+let shake = 0;
+
+/* ---------- chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 260, chartDirty = true;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+
+function chartSeries() {
+  const vis = visiblePaths(), act = vis[vis.length - 1];
+  if (S.chartTab === 'y') return { unit: 'm', ylab: 'y [m]', list: vis.map(v => ({ name: v.ideal || !P.drag ? tr('lgVac') : tr('lgDrag'), color: v.color, dash: v.ideal ? [6, 5] : null, path: v.path, get: q => q.y })) };
+  if (S.chartTab === 'v') return { unit: 'm/s', ylab: '|v| [m/s]', list: vis.map(v => ({ name: v.ideal || !P.drag ? tr('lgVac') : tr('lgDrag'), color: v.color, dash: v.ideal ? [6, 5] : null, path: v.path, get: q => Math.hypot(q.vx, q.vy) })) };
+  const p = act.path, m = P.m, g = P.g;
+  return { unit: 'J', ylab: 'E [J]', list: [
+    { name: tr('ek'), color: col.amber, path: p, get: q => 0.5 * m * (q.vx * q.vx + q.vy * q.vy) },
+    { name: tr('ep'), color: col.violet, path: p, get: q => m * g * q.y },
+    { name: tr('et'), color: col.ink, path: p, width: 2.4, get: q => 0.5 * m * (q.vx * q.vx + q.vy * q.vy) + m * g * q.y }
+  ] };
+}
+function updateChartLegend() {
+  const cs = chartSeries();
+  $('#clegend').innerHTML = cs.list.map(s => `<span><i class="sw-line" style="border-top:${s.width ? 3 : 2.5}px ${s.dash ? 'dashed' : 'solid'} ${s.color}"></i>${s.name}</span>`).join('');
+  $('#cnote').innerHTML = S.chartTab === 'y' ? tr('cnoteY') : S.chartTab === 'v' ? tr('cnoteV') : (P.drag ? tr('cnoteEon') : tr('cnoteEoff'));
+}
+let chartGeom = null;
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, W, H);
+  const cs = chartSeries();
+  updateChartLegend();
+  const Tm = Math.max(...cs.list.map(s => s.path.T));
+  if (!(Tm > 0)) { chartGeom = null; return; }
+  let lo = 0, hi = -Infinity;
+  for (const s of cs.list) {
+    const st = Math.max(1, Math.floor(s.path.pts.length / 400));
+    for (let i = 0; i < s.path.pts.length; i += st) { const v = s.get(s.path.pts[i]); if (v > hi) hi = v; if (v < lo) lo = v; }
+    const v = s.get(s.path.pts[s.path.pts.length - 1]); if (v > hi) hi = v; if (v < lo) lo = v;
+  }
+  if (!(hi > lo)) hi = lo + 1;
+  const ystep = niceStep(hi - lo, 4);
+  hi = Math.ceil(hi * 1.04 / ystep) * ystep; lo = Math.floor(lo / ystep) * ystep;
+  c.font = `500 11px ${FONT_MONO}`;
+  const ydec = ystep < 1 ? (ystep < 0.1 ? 2 : 1) : 0;
+  let labW = 0; for (let y = lo; y <= hi + 1e-9; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 12, T = 18, B = 26, pw = W - L - R, ph = H - T - B;
+  const X = t => L + t / Tm * pw, Y = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  chartGeom = { L, R, T, B, pw, ph, Tm, X, Y, cs };
+  // grid + labels
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = lo; y <= hi + 1e-9; y += ystep) {
+    const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke();
+    c.fillText(fmt(y, ydec), L - 8, yy);
+  }
+  const xstep = niceStep(Tm, 5), xdec = xstep < 1 ? (xstep < 0.1 ? 2 : 1) : 0;
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let t = 0; t <= Tm + 1e-9; t += xstep) { const xx = X(t); c.fillText(fmt(t, xdec), xx, H - B + 8); }
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Math.round(Y(Math.max(lo, 0))) + 0.5); c.lineTo(W - R, Math.round(Y(Math.max(lo, 0))) + 0.5); c.stroke();
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(cs.ylab, L - labW - 6, 0);
+  c.textAlign = 'right'; c.textBaseline = 'top'; c.fillText('t [s]', W - R, H - B + 8 + 13 > H ? H - 12 : H - B + 8);
+  // series
+  for (const s of cs.list) {
+    const pts = s.path.pts, st = Math.max(1, Math.floor(pts.length / 500));
+    c.beginPath();
+    for (let i = 0; i < pts.length; i += st) { const q = pts[i]; i ? c.lineTo(X(q.t), Y(s.get(q))) : c.moveTo(X(q.t), Y(s.get(q))); }
+    const e = pts[pts.length - 1]; c.lineTo(X(e.t), Y(s.get(e)));
+    c.save(); c.strokeStyle = s.color; c.lineWidth = s.width || 2; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); c.stroke(); c.restore();
+    c.save(); c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2;
+    c.beginPath(); c.arc(X(e.t), Y(s.get(e)), 3.5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+  }
+  // live cursor
+  const cur = S.hoverT != null ? S.hoverT : (S.mode !== 'idle' ? S.t : null);
+  if (cur != null) {
+    const xx = Math.round(X(Math.min(cur, Tm))) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    for (const s of cs.list) {
+      if (cur > s.path.T + 1e-9) continue;
+      const q = sampleAt(s.path, cur), yy = Y(s.get(q));
+      c.save(); c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, yy, 4.5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+    }
+  }
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom;
+  if (x < g.L || x > g.L + g.pw) { S.hoverT = null; tip.hidden = true; chartDirty = true; return; }
+  const t = (x - g.L) / g.pw * g.Tm; S.hoverT = t;
+  const rows = g.cs.list.filter(s => t <= s.path.T + 1e-9).map(s => {
+    const v = s.get(sampleAt(s.path, t));
+    return `<div class="row"><i class="k" style="background:${s.color}"></i>${s.name}: ${fa(v)} ${g.cs.unit}</div>`;
+  }).join('');
+  tip.innerHTML = `<div>t = ${fmt(t, 2)} s</div>${rows}`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverT = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- wiring ---------- */
+['v0', 'th', 'h0', 'g', 'm', 'd', 'cd', 'rho', 'wind'].forEach(id => $('#' + id).addEventListener('input', recompute));
+$('#drag').addEventListener('change', recompute);
+$$('#planets .chip').forEach(b => b.addEventListener('click', () => {
+  const q = PLANETS[b.dataset.planet]; $('#g').value = q.g; $('#rho').value = q.rho; recompute();
+}));
+$$('#balls .chip').forEach(b => b.addEventListener('click', () => {
+  const q = BALLS[b.dataset.ball]; $('#m').value = sliderFromM(q.m); $('#d').value = q.d; $('#cd').value = q.cd;
+  recompute();
+  // snap m to the exact preset after slider rounding
+  P.m = q.m; paths.drag = P.drag ? simulate(P, true) : null; opt.drag = P.drag ? bestAngle(P, true) : null;
+  updateOutputs(); updateResults(); updateFormulas(); dirty = true; chartDirty = true;
+}));
+$('#fire').addEventListener('click', fire);
+$('#reset').addEventListener('click', reset);
+$('#pause').addEventListener('click', togglePause);
+$('#step-back').addEventListener('click', () => seek((S.mode === 'idle' ? 0 : S.t) - stepSize()));
+$('#step-fwd').addEventListener('click', () => seek((S.mode === 'idle' ? 0 : S.t) + stepSize()));
+$('#scrub').addEventListener('input', (e) => seek(+e.target.value / 1000 * tEnd()));
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+const toggles = { 'tg-vectors': 'vectors', 'tg-strobe': 'strobe', 'tg-ideal': 'showIdeal', 'tg-preview': 'preview', 'tg-trails': 'trails' };
+Object.entries(toggles).forEach(([id, key]) => $('#' + id).addEventListener('click', (e) => {
+  S[key] = !S[key]; e.currentTarget.setAttribute('aria-pressed', String(S[key]));
+  if (key === 'showIdeal' && S.mode === 'flying') { /* keep flying; landing flags handle themselves */ }
+  updateLegend(); dirty = true; chartDirty = true;
+}));
+$('#clear').addEventListener('click', () => { S.kept = []; $('#clear').hidden = true; dirty = true; });
+$('#set-opt').addEventListener('click', () => {
+  const a = P.drag ? opt.drag : opt.vac; $('#th').value = Math.round(a * 2) / 2; recompute();
+});
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  S.chartTab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); chartDirty = true;
+}));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+fsBtn.addEventListener('click', () => {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+});
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); if (S.mode === 'flying') togglePause(); else fire(); return; }
+  if (tag === 'input') return;
+  const nudge = (id, d) => { const el = $('#' + id); el.value = +el.value + d; recompute(); e.preventDefault(); };
+  if (e.key === 'ArrowLeft') nudge('th', -1);
+  else if (e.key === 'ArrowRight') nudge('th', 1);
+  else if (e.key === 'ArrowUp') nudge('v0', 1);
+  else if (e.key === 'ArrowDown') nudge('v0', -1);
+  else if (e.key === 'r' || e.key === 'R') reset();
+  else if (e.key === ',') seek((S.mode === 'idle' ? 0 : S.t) - stepSize());
+  else if (e.key === '.') seek((S.mode === 'idle' ? 0 : S.t) + stepSize());
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#sp-01').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  $$('#planets small').forEach(s => { const q = PLANETS[s.parentElement.dataset.planet]; s.textContent = fmt(q.g, 2); });
+  $$('#balls small').forEach(s => { const q = BALLS[s.parentElement.dataset.ball]; s.textContent = q.m < 1 ? `${fmt(q.m * 1000, q.m < 0.01 ? 1 : 0)} g` : `${fmt(q.m, 0)} kg`; });
+  hudLast = '';
+  recompute();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('rzut-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
