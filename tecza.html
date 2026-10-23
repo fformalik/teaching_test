@@ -1,0 +1,1215 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tęcza</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: a night-sky optical stage (dark in both themes so spectral rays can add up to white),
+   control panel on the right, "try this" prompts under the stage, formulas and plots underneath. */
+:root{
+  --bg:#E5ECEE; --surface:#F6F9FA; --paper:#FBFDFD; --sunk:#EBF1F2;
+  --ink:#10232A; --ink-2:#455A62; --ink-3:#7B8E95; --line:#CBD7DA;
+  --grid:#E0E8EA; --grid-major:#C2D1D5;
+  --acc:#0B8F86; --red:#D9302A; --violet:#7438D8; --blue:#2F7FE0; --amber:#C77A2A;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(16,35,42,.04), 0 8px 24px -12px rgba(16,35,42,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#071014; --surface:#0E1A1F; --paper:#0B161A; --sunk:#12232A;
+    --ink:#E2EDEF; --ink-2:#A0B3B8; --ink-3:#6A8087; --line:#1F333A;
+    --grid:#13242A; --grid-major:#1E353D;
+    --acc:#2EC4B6; --red:#FF5A4E; --violet:#A47BFF; --blue:#3F8EF0; --amber:#D9913A;
+    --on-accent:#04201D;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#071014; --surface:#0E1A1F; --paper:#0B161A; --sunk:#12232A;
+  --ink:#E2EDEF; --ink-2:#A0B3B8; --ink-3:#6A8087; --line:#1F333A;
+  --grid:#13242A; --grid-major:#1E353D;
+  --acc:#2EC4B6; --red:#FF5A4E; --violet:#A47BFF; --blue:#3F8EF0; --amber:#D9913A;
+  --on-accent:#04201D;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1.1em; height:.62em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; color:var(--ink); white-space:nowrap}
+.hud dd .cr{color:var(--red)} .hud dd .cv{color:var(--violet)}
+.hud dd .sep{color:var(--ink-3); margin:0 3px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.spec{width:64px; height:8px; border-radius:4px; background:linear-gradient(90deg,#7a00b8,#3b00ff,#0080ff,#00e0d0,#40ff00,#e8ff00,#ff9a00,#ff2000,#c00000)}
+.legend small{font-family:var(--f-mono); font-size:11px; color:var(--ink-3)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.canvas-box{position:relative; height:clamp(360px, 62vh, 640px); background:#060A12}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.canvas-box canvas.grab{cursor:ns-resize}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn.sm{padding:4px 11px; font-size:12.5px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start; flex-wrap:wrap}
+.seg button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .hint{font-size:12.5px; color:var(--ink-3)}
+
+/* Try this */
+.tries{padding:16px 18px; display:flex; flex-direction:column; gap:12px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tlist{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.titem{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.titem b{font-family:var(--f-display); font-weight:700; font-size:15.5px; display:flex; gap:8px; align-items:baseline}
+.titem b span{font-family:var(--f-mono); font-size:11px; color:var(--acc); font-weight:500}
+.titem b em{font-style:normal}
+.titem p{margin:0; font-size:13.5px; color:var(--ink-2)}
+.titem .btn{align-self:flex-start; margin-top:2px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px; transition:opacity .15s}
+.ctl.off{opacity:.38}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pill i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.ctl .hint, .grp .hint{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]:disabled{cursor:default}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--acc)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--acc)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--acc))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--acc))}
+#lam::-webkit-slider-runnable-track{height:6px; border-radius:3px; background:linear-gradient(90deg,#7a00b8,#3b00ff,#0080ff,#00e0d0,#40ff00,#e8ff00,#ff9a00,#ff2000,#c00000)}
+#lam::-webkit-slider-thumb{margin-top:-6px; border-color:var(--ink)}
+#lam::-moz-range-track{height:6px; border-radius:3px; background:linear-gradient(90deg,#7a00b8,#3b00ff,#0080ff,#00e0d0,#40ff00,#e8ff00,#ff9a00,#ff2000,#c00000)}
+#lam::-moz-range-progress{background:transparent}
+#lam::-moz-range-thumb{border-color:var(--ink)}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2; text-align:left}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.pills{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill .cr{color:var(--red)} .pill .cv{color:var(--violet)}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:360px}
+.res th, .res td{padding:6px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2); font-size:13.5px}
+.res td{font-family:var(--f-mono); font-size:13.5px}
+.res td.cr{color:var(--red)} .res td.cv{color:var(--violet)} .res td.mut{color:var(--ink-3); font-family:var(--f-body)}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{width:20px; height:0; border-top:2.5px solid var(--ink)}
+.sw-box{width:14px; height:10px; border-radius:2px; background:var(--sunk); border:1px solid var(--ink-3)}
+.chart-box{position:relative; height:280px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.9; max-width:100%}
+  .fgrid, .tlist{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{font-size:12.5px}
+  .chart-box{height:250px}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .ctl{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Optyka · kropla wody</span>
+      <h1>
+        <svg viewBox="0 0 66 38" aria-hidden="true"><path d="M5 36a28 28 0 0 1 56 0" fill="none" stroke="#D9302A" stroke-width="4"/><path d="M10 36a23 23 0 0 1 46 0" fill="none" stroke="#E8B21C" stroke-width="4"/><path d="M15 36a18 18 0 0 1 36 0" fill="none" stroke="#1FAF6A" stroke-width="4"/><path d="M20 36a13 13 0 0 1 26 0" fill="none" stroke="#7438D8" stroke-width="4"/></svg>
+        <span data-i18n="title">Tęcza</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Równoległe światło słoneczne wpada do kropli, załamuje się, odbija w środku i wychodzi rozszczepione na barwy. Przesuń promień i znajdź kąt, pod którym promienie wyjściowe się zagęszczają.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud" id="hud"></dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" data-i18n-aria="sceneAria" aria-label="Kropla wody i promienie światła"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="play">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="play-ic"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="play-lbl">Skanuj b</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="tg" id="tg-angles" aria-pressed="false" data-i18n="angles">Kąty</button>
+          <span class="hint" id="bar-hint"></span>
+        </div>
+      </section>
+
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2><p data-i18n="triesSub">Cztery krótkie eksperymenty. Każdy przycisk ustawia scenę za Ciebie.</p></div>
+        <div class="tlist">
+          <div class="titem"><b><span>01</span><em data-i18n="t1h">Postój kąta</em></b><p data-i18n="t1">Skanuj b i patrz na φ w pasku u góry: rośnie, zatrzymuje się przy około 42° i maleje. To zatrzymanie jest całą tęczą.</p><button type="button" class="btn sm" data-try="1" data-i18n="show">Pokaż</button></div>
+          <div class="titem"><b><span>02</span><em data-i18n="t2h">Kaustyka</em></b><p data-i18n="t2">Włącz wachlarz: promienie wychodzą pod różnymi kątami, ale zbijają się w jasny pęk przy kącie tęczy.</p><button type="button" class="btn sm" data-try="2" data-i18n="show">Pokaż</button></div>
+          <div class="titem"><b><span>03</span><em data-i18n="t3h">Ciemny pas Aleksandra</em></b><p data-i18n="t3">Wybierz obie tęcze: między około 42° a 50° nie trafia żaden promień, więc niebo między łukami jest ciemniejsze.</p><button type="button" class="btn sm" data-try="3" data-i18n="show">Pokaż</button></div>
+          <div class="titem"><b><span>04</span><em data-i18n="t4h">Szkło zamiast wody</em></b><p data-i18n="t4">Podnieś n do 1,5: kąt tęczy spada do około 23°. Szklane kulki w farbie drogowej dają właśnie taki mały łuk.</p><button type="button" class="btn sm" data-try="4" data-i18n="show">Pokaż</button></div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="panelAria" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gPresets">Presety</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-preset="red" aria-pressed="false"><span data-i18n="pRed">Czerwony promień tęczy</span><small>700 nm</small></button>
+          <button type="button" class="chip" data-preset="fan" aria-pressed="false"><span data-i18n="pFan">Wachlarz promieni</span><small data-i18n="pFanS">światło białe</small></button>
+          <button type="button" class="chip" data-preset="sec" aria-pressed="false"><span data-i18n="pSec">Tęcza wtórna</span><small data-i18n="pSecS">dwa odbicia</small></button>
+          <button type="button" class="chip" data-preset="glass" aria-pressed="false"><span data-i18n="pGlass">Kula szklana</span><small id="glass-s">n = 1,50</small></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gRays">Promienie</h3>
+        <div class="seg" role="group" id="seg-mode">
+          <button type="button" data-v="one" aria-pressed="true" data-i18n="modeOne">Jeden promień</button>
+          <button type="button" data-v="fan" aria-pressed="false" data-i18n="modeFan">Wachlarz</button>
+        </div>
+        <div class="ctl" id="ctl-b">
+          <div class="ctl-head"><label for="b" data-i18n-html="lb">Parametr zderzenia <i>b</i>/<i>R</i></label><output id="b-out" for="b"></output></div>
+          <input type="range" id="b" min="0" max="0.999" step="0.001" value="0.86">
+          <span class="hint" data-i18n="hintB">Odległość promienia od osi kropli. Możesz też przeciągać na scenie.</span>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gBow">Tęcza</h3>
+        <div class="seg" role="group" id="seg-bow">
+          <button type="button" data-v="p" aria-pressed="true" data-i18n="bowP">Główna</button>
+          <button type="button" data-v="s" aria-pressed="false" data-i18n="bowS">Wtórna</button>
+          <button type="button" data-v="b" aria-pressed="false" data-i18n="bowB">Obie</button>
+        </div>
+        <span class="hint" data-i18n-html="hintBow">Główna: <i>k</i> = 1 odbicie wewnątrz kropli. Wtórna: <i>k</i> = 2.</span>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gLight">Światło</h3>
+        <div class="seg" role="group" id="seg-light">
+          <button type="button" data-v="white" aria-pressed="true" data-i18n="lightW">Białe</button>
+          <button type="button" data-v="mono" aria-pressed="false" data-i18n="lightM">Jedna barwa</button>
+        </div>
+        <div class="ctl off" id="ctl-lam">
+          <div class="ctl-head"><label for="lam" data-i18n-html="llam">Długość fali <i>λ</i></label><output id="lam-out" for="lam"></output></div>
+          <input type="range" id="lam" min="400" max="700" step="1" value="600" disabled>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gMed">Materiał kropli</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="n" data-i18n-html="ln">Współczynnik załamania <i>n</i><sub>D</sub></label><output id="n-out" for="n"></output></div>
+          <input type="range" id="n" min="1.2" max="1.8" step="0.001" value="1.333">
+          <span class="hint" data-i18n="hintN">Przy 589 nm. Woda 1,333, szkło około 1,5.</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n-html="pl1">tęcza główna <i>φ</i><sub>1</sub></small><span id="pill-1"></span></div>
+          <div class="pill"><small data-i18n-html="pl2">tęcza wtórna <i>φ</i><sub>2</sub></small><span id="pill-2"></span></div>
+          <div class="pill"><small data-i18n="pl3">pas Aleksandra</small><span id="pill-3"></span></div>
+          <div class="pill"><small data-i18n-html="pl4">promień tęczowy <i>b</i>*/<i>R</i></small><span id="pill-4"></span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p id="f-sub"></p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykres</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" data-tab="phi" aria-selected="true" data-i18n="tabPhi">Kąt φ(b)</button>
+        <button type="button" role="tab" data-tab="sky" aria-selected="false" data-i18n="tabSky">Niebo</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const D2R = Math.PI / 180, R2D = 180 / Math.PI;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Optyka · kropla wody', title:'Tęcza',
+    lede:'Równoległe światło słoneczne wpada do kropli, załamuje się, odbija w środku i wychodzi rozszczepione na barwy. Przesuń promień i znajdź kąt, pod którym promienie wyjściowe się zagęszczają.',
+    sceneAria:'Kropla wody i promienie światła', panelAria:'Ustawienia',
+    kbd:'spacja', angles:'Kąty', playOne:'Skanuj b', playFan:'Wypuść światło', pause:'Pauza',
+    hintOne:'Przeciągnij w górę lub w dół na scenie, aby zmienić b.', hintFan:'Górna połowa kropli; dolna daje lustrzane odbicie.',
+    tries:'Spróbuj', triesSub:'Cztery krótkie eksperymenty. Każdy przycisk ustawia scenę za Ciebie.', show:'Pokaż',
+    t1h:'Postój kąta', t1:'Skanuj b i patrz na φ w pasku u góry: rośnie, zatrzymuje się przy około 42° i maleje. To zatrzymanie jest całą tęczą.',
+    t2h:'Kaustyka', t2:'Włącz wachlarz: promienie wychodzą pod różnymi kątami, ale zbijają się w jasny pęk przy kącie tęczy.',
+    t3h:'Ciemny pas Aleksandra', t3:'Wybierz obie tęcze: między około 42° a 50° nie trafia żaden promień, więc niebo między łukami jest ciemniejsze.',
+    t4h:'Szkło zamiast wody', t4:'Podnieś n do 1,5: kąt tęczy spada do około 23°. Szklane kulki w farbie drogowej dają właśnie taki mały łuk.',
+    gPresets:'Presety', pRed:'Czerwony promień tęczy', pFan:'Wachlarz promieni', pFanS:'światło białe', pSec:'Tęcza wtórna', pSecS:'dwa odbicia', pGlass:'Kula szklana',
+    gRays:'Promienie', modeOne:'Jeden promień', modeFan:'Wachlarz', lb:'Parametr zderzenia <i>b</i>/<i>R</i>',
+    hintB:'Odległość promienia od osi kropli. Możesz też przeciągać na scenie.',
+    gBow:'Tęcza', bowP:'Główna', bowS:'Wtórna', bowB:'Obie', hintBow:'Główna: <i>k</i> = 1 odbicie wewnątrz kropli. Wtórna: <i>k</i> = 2.',
+    gLight:'Światło', lightW:'Białe', lightM:'Jedna barwa', llam:'Długość fali <i>λ</i>',
+    gMed:'Materiał kropli', ln:'Współczynnik załamania <i>n</i><sub>D</sub>', hintN:'Przy 589 nm. Woda 1,333, szkło około 1,5.',
+    pl1:'tęcza główna <i>φ</i><sub>1</sub>', pl2:'tęcza wtórna <i>φ</i><sub>2</sub>', pl3:'pas Aleksandra', pl4:'promień tęczowy <i>b</i>*/<i>R</i>',
+    noBow:'brak', bandNone:'brak pasa',
+    lgRed:'czerwień', lgViolet:'fiolet', sIdle:'statycznie', sRun:'animacja',
+    cSun:'Słońce', cDrop:'kropla wody', cSphere:'kula, n = ', cAxis:'kierunek do Słońca', cRainbow:'promień tęczowy', cScreen:'kąt φ od kierunku do Słońca',
+    cPrim:'tęcza główna', cSec:'tęcza wtórna', cNormal:'normalna',
+    formulas:'Wzory', fSubW:'Liczby na żywo dla czerwieni, λ = 700 nm.', fSubM:'Liczby na żywo dla λ = ',
+    fSnell:'Prawo Snelliusa', fDisp:'Dyspersja wody', fB:'Parametr zderzenia', fD:'Kąt odchylenia', fStat:'Warunek tęczy: minimum D',
+    nSnell:'Na wyjściu z kropli kąty są te same, tylko w odwrotnej kolejności.',
+    nDispW:'Dopasowanie Cauchy’ego do danych dla wody w 20 °C, λ w nm.', nDispS:'Dla innego materiału skalujemy (n − 1) tak, by n(589 nm) = n<sub>D</sub>; liczba Abbego zostaje jak dla wody.',
+    nB:'Promień środkowy (b = 0) wraca prosto do Słońca, promień styczny (b → R) wchodzi pod kątem 90°.',
+    nD:'Każde załamanie skręca promień o θ<sub>i</sub> − θ<sub>r</sub>, każde odbicie wewnętrzne o 180° − 2θ<sub>r</sub>. Kąt tęczy liczymy od kierunku do Słońca.',
+    nStat:'Gdzie D(b) ma ekstremum, wiele sąsiednich promieni wychodzi pod tym samym kątem. Ta kaustyka to tęcza.',
+    thBow:'Łuk', th700:'700 nm', th400:'400 nm', thOrder:'Czerwień', outside:'na zewnątrz', inside:'wewnątrz', rowP:'Główna, k = 1', rowS:'Wtórna, k = 2',
+    nBand:'Szerokość ciemnego pasa Aleksandra między łukami:',
+    charts:'Wykres', tabPhi:'Kąt φ(b)', tabSky:'Niebo',
+    clRed:'czerwień 700 nm', clViolet:'fiolet 400 nm', clLam:'λ = ', clPrim:'główna', clSec:'wtórna (przerywana)', clBand:'pas Aleksandra',
+    cnotePhi:'Kąt <i>φ</i> = |180° − <i>D</i>| w funkcji <i>b</i>/<i>R</i>. Kropki: stacjonarne punkty, czyli minimum <i>D</i>. Dla głównej to maksimum <i>φ</i>, dla wtórnej minimum.',
+    cnotePhiB:' Wybierz obie tęcze, by zobaczyć pas Aleksandra.',
+    cnoteSky:'Widok obserwatora: Słońce za plecami, 15° nad horyzontem. Łuki są okręgami wokół punktu antysłonecznego. Czerwień jest na zewnątrz łuku głównego i wewnątrz wtórnego.',
+    skyAnti:'punkt antysłoneczny', skyHor:'horyzont', axB:'b/R', axPhi:'φ [°]', band:'pas Aleksandra', statP:'min D',
+    deg:'°'
+  },
+  en: {
+    eyebrow:'Optics · water droplet', title:'Rainbow',
+    lede:'Parallel sunlight enters a water droplet, refracts, reflects inside and leaves split into colors. Move the ray and find the angle where the outgoing rays pile up.',
+    sceneAria:'Water droplet and light rays', panelAria:'Settings',
+    kbd:'space', angles:'Angles', playOne:'Sweep b', playFan:'Release light', pause:'Pause',
+    hintOne:'Drag up or down on the stage to change b.', hintFan:'Upper half of the drop; the lower half is a mirror image.',
+    tries:'Try this', triesSub:'Four quick experiments. Each button sets up the stage for you.', show:'Show',
+    t1h:'The angle stalls', t1:'Sweep b and watch φ in the top strip: it grows, stalls near 42° and shrinks again. That stall is the whole rainbow.',
+    t2h:'Caustic', t2:'Switch to the fan: rays leave at many angles, yet they bunch into a bright sheaf at the rainbow angle.',
+    t3h:'Alexander’s dark band', t3:'Choose both bows: no ray lands between about 42° and 50°, so the sky between the arcs is darker.',
+    t4h:'Glass instead of water', t4:'Raise n to 1.5: the rainbow angle drops to about 23°. Glass beads in road paint make exactly such a small bow.',
+    gPresets:'Presets', pRed:'Red ray at rainbow angle', pFan:'Fan of rays', pFanS:'white light', pSec:'Secondary bow', pSecS:'two reflections', pGlass:'Glass sphere',
+    gRays:'Rays', modeOne:'One ray', modeFan:'Fan', lb:'Impact parameter <i>b</i>/<i>R</i>',
+    hintB:'Distance of the ray from the drop axis. You can also drag on the stage.',
+    gBow:'Bow', bowP:'Primary', bowS:'Secondary', bowB:'Both', hintBow:'Primary: <i>k</i> = 1 reflection inside the drop. Secondary: <i>k</i> = 2.',
+    gLight:'Light', lightW:'White', lightM:'Single color', llam:'Wavelength <i>λ</i>',
+    gMed:'Drop material', ln:'Refractive index <i>n</i><sub>D</sub>', hintN:'At 589 nm. Water 1.333, glass about 1.5.',
+    pl1:'primary bow <i>φ</i><sub>1</sub>', pl2:'secondary bow <i>φ</i><sub>2</sub>', pl3:'Alexander’s band', pl4:'rainbow ray <i>b</i>*/<i>R</i>',
+    noBow:'none', bandNone:'no band',
+    lgRed:'red', lgViolet:'violet', sIdle:'static', sRun:'animating',
+    cSun:'Sun', cDrop:'water droplet', cSphere:'sphere, n = ', cAxis:'toward the Sun', cRainbow:'rainbow ray', cScreen:'angle φ from the sunward direction',
+    cPrim:'primary bow', cSec:'secondary bow', cNormal:'normal',
+    formulas:'Formulas', fSubW:'Live numbers for red light, λ = 700 nm.', fSubM:'Live numbers for λ = ',
+    fSnell:'Snell’s law', fDisp:'Dispersion of water', fB:'Impact parameter', fD:'Deflection angle', fStat:'Rainbow condition: minimum D',
+    nSnell:'On the way out of the drop the same angles appear in reverse order.',
+    nDispW:'Cauchy fit to data for water at 20 °C, λ in nm.', nDispS:'For another material we scale (n − 1) so that n(589 nm) = n<sub>D</sub>; the Abbe number stays that of water.',
+    nB:'The central ray (b = 0) goes straight back to the Sun; the grazing ray (b → R) enters at 90°.',
+    nD:'Each refraction turns the ray by θ<sub>i</sub> − θ<sub>r</sub>, each internal reflection by 180° − 2θ<sub>r</sub>. The rainbow angle is measured from the sunward direction.',
+    nStat:'Where D(b) has an extremum, many neighboring rays leave at the same angle. This caustic is the rainbow.',
+    thBow:'Bow', th700:'700 nm', th400:'400 nm', thOrder:'Red is', outside:'outside', inside:'inside', rowP:'Primary, k = 1', rowS:'Secondary, k = 2',
+    nBand:'Width of Alexander’s dark band between the bows:',
+    charts:'Plot', tabPhi:'Angle φ(b)', tabSky:'Sky',
+    clRed:'red 700 nm', clViolet:'violet 400 nm', clLam:'λ = ', clPrim:'primary', clSec:'secondary (dashed)', clBand:'Alexander’s band',
+    cnotePhi:'Angle <i>φ</i> = |180° − <i>D</i>| versus <i>b</i>/<i>R</i>. Dots: stationary points, i.e. minimum <i>D</i>. For the primary this is a maximum of <i>φ</i>, for the secondary a minimum.',
+    cnotePhiB:' Choose both bows to see Alexander’s band.',
+    cnoteSky:'Observer’s view: Sun behind you, 15° above the horizon. The bows are circles around the antisolar point. Red is outside the primary bow and inside the secondary.',
+    skyAnti:'antisolar point', skyHor:'horizon', axB:'b/R', axPhi:'φ [°]', band:'Alexander’s band', statP:'min D',
+    deg:'°'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('tecza-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const fd = (x, d = 1) => fmt(x, d) + '°';
+
+/* ---------- physics ---------- */
+// Water at 20 °C: 3-term Cauchy fit to tabulated data 404.7–706.5 nm (residual < 2·10⁻⁴).
+const CA = 1.32309, CB = 3585.3, CC = -5.8405e7;
+const nWater = (l) => CA + CB / (l * l) + CC / (l * l * l * l);
+const NW_D = nWater(589.3);
+const LAM_R = 700, LAM_V = 400;
+const S = {
+  mode: 'one', bow: 'p', light: 'white', lam: 600, b: 0.86, nD: 1.333,
+  angles: false, playing: false, tab: 'phi', rev: 1, sweepT: 0
+};
+// medium dispersion: scale (n − 1) of water so that n(589.3 nm) = nD
+const nAt = (l) => 1 + (S.nD - 1) * (nWater(l) - 1) / (NW_D - 1);
+const ks = () => (S.bow === 'p' ? [1] : S.bow === 's' ? [2] : [1, 2]);
+const refK = () => (S.bow === 's' ? 2 : 1);
+const lamRef = () => (S.light === 'white' ? LAM_R : S.lam);
+
+function wrapPi(a) { a = (a + Math.PI) % (2 * Math.PI); if (a < 0) a += 2 * Math.PI; return a - Math.PI; }
+// angles for impact parameter b (in units of R), index n, k internal reflections
+function rayAngles(b, n, k) {
+  const ti = Math.asin(Math.min(b, 1)), trr = Math.asin(Math.min(b, 1) / n);
+  const D = 2 * (ti - trr) + k * (Math.PI - 2 * trr);
+  const out = wrapPi(-D);                  // direction of the outgoing ray (y up, sunlight along +x)
+  const phi = Math.PI - Math.abs(out);     // angle from the sunward direction = |180° − D| (mod 360°)
+  return { ti, tr: trr, D, out, phi };
+}
+// stationary (rainbow) ray: cos²θi = (n² − 1) / (k(k+2))
+function stationary(n, k) {
+  const c2 = (n * n - 1) / (k * (k + 2));
+  if (!(c2 > 0 && c2 < 1)) return null;
+  const ti = Math.acos(Math.sqrt(c2));
+  const r = rayAngles(Math.sin(ti), n, k);
+  return { c2, b: Math.sin(ti), ...r };
+}
+// Fresnel, unpolarized: T² R^k averaged over s and p
+function fresnelW(ti, trr, n, k) {
+  const ci = Math.cos(ti), ct = Math.cos(trr);
+  const rs = ((ci - n * ct) / (ci + n * ct)) ** 2, rp = ((ct - n * ci) / (ct + n * ci)) ** 2;
+  return 0.5 * ((1 - rs) ** 2 * rs ** k + (1 - rp) ** 2 * rp ** k);
+}
+
+// vector ray tracing through a unit circle centred at the origin
+function refract(d, N, eta) {
+  let nx = N[0], ny = N[1];
+  if (d[0] * nx + d[1] * ny > 0) { nx = -nx; ny = -ny; }
+  const ci = -(d[0] * nx + d[1] * ny), kk = 1 - eta * eta * (1 - ci * ci);
+  if (kk < 0) return null;
+  const f = eta * ci - Math.sqrt(kk);
+  return [eta * d[0] + f * nx, eta * d[1] + f * ny];
+}
+function trace(b, n, k) {
+  b = Math.min(b, 0.9995);
+  let p = [-Math.sqrt(1 - b * b), b], d = [1, 0];
+  const pts = [p.slice()];
+  d = refract(d, p, 1 / n);
+  for (let j = 0; j <= k; j++) {
+    const s = -2 * (p[0] * d[0] + p[1] * d[1]);
+    p = [p[0] + s * d[0], p[1] + s * d[1]];
+    pts.push(p.slice());
+    if (j < k) { const dn = d[0] * p[0] + d[1] * p[1]; d = [d[0] - 2 * dn * p[0], d[1] - 2 * dn * p[1]]; }
+  }
+  d = refract(d, p, n) || d;
+  return { pts, dir: d };
+}
+
+/* ---------- colours ---------- */
+function specRGB(l) {
+  let r = 0, g = 0, b = 0;
+  if (l < 440) { r = -(l - 440) / 60; b = 1; }
+  else if (l < 490) { g = (l - 440) / 50; b = 1; }
+  else if (l < 510) { g = 1; b = -(l - 510) / 20; }
+  else if (l < 580) { r = (l - 510) / 70; g = 1; }
+  else if (l < 645) { r = 1; g = -(l - 645) / 65; }
+  else { r = 1; }
+  let f = 1;
+  if (l < 420) f = 0.45 + 0.55 * (l - 380) / 40;
+  else if (l > 680) f = 0.55 + 0.45 * (780 - l) / 100;
+  const c = (v) => Math.round(255 * Math.pow(Math.max(0, v * f), 0.8));
+  return [c(r), c(g), c(b)];
+}
+const specCSS = (l, a = 1) => { const [r, g, b] = specRGB(l); return `rgba(${r},${g},${b},${a})`; };
+const WHITE_SET = [400, 425, 450, 475, 500, 525, 550, 575, 600, 625, 650, 675, 700];
+const FAN_SET = [405, 445, 485, 520, 560, 600, 640, 690];
+const HIST_SET = Array.from({ length: 61 }, (_, i) => 400 + i * 5);
+const lamsDraw = () => (S.light === 'white' ? WHITE_SET : [S.lam]);
+
+/* ---------- tokens ---------- */
+let col = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'red', 'violet'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+const STG = { bg: '#060A12', grid: 'rgba(150,180,220,0.05)', ink: '#DCE6F2', ink2: '#9AAEC6', ink3: '#5F7390', drop: 'rgba(140,195,255,0.65)' };
+
+/* ---------- stage canvas ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 500, dpr = 1, dirty = true;
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+
+let G = { cx: 0, cy: 0, R: 100, RA: 2.1 };
+function geom() {
+  const R = Math.max(40, Math.min(ch * 0.27, cw * 0.25));
+  const RA = Math.min(2.35, (cw * 0.66 - 16) / R, (ch * 0.5 - 14) / (R * 0.82));
+  G = { R, RA: Math.max(1.6, RA), cx: Math.min(cw * 0.66, cw - R - 30), cy: ch * 0.5 };
+}
+const X = (x) => G.cx + x * G.R, Y = (y) => G.cy - y * G.R;
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = STG.bg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrowHead(x, y, ang, color, size = 8) {
+  const c = ctx; c.save(); c.fillStyle = color; c.beginPath(); c.moveTo(x, y);
+  c.lineTo(x - Math.cos(ang - 0.4) * size, y - Math.sin(ang - 0.4) * size);
+  c.lineTo(x - Math.cos(ang + 0.4) * size, y - Math.sin(ang + 0.4) * size);
+  c.closePath(); c.fill(); c.restore();
+}
+// distance to the screen arc (radius RA) from point p along dir d, in R units
+function toArc(p, d) {
+  const pd = p[0] * d[0] + p[1] * d[1], pp = p[0] * p[0] + p[1] * p[1];
+  return -pd + Math.sqrt(Math.max(0, pd * pd - pp + G.RA * G.RA));
+}
+// build a polyline (canvas px) for a ray: from the left edge to the arc
+function rayPoly(tr_) {
+  const p0 = tr_.pts[0], xl = (0 - G.cx) / G.R - 0.05;
+  const poly = [[X(xl), Y(p0[1])]];
+  for (const p of tr_.pts) poly.push([X(p[0]), Y(p[1])]);
+  const pe = tr_.pts[tr_.pts.length - 1], s = toArc(pe, tr_.dir);
+  poly.push([X(pe[0] + s * tr_.dir[0]), Y(pe[1] + s * tr_.dir[1])]);
+  return poly;
+}
+// stroke a polyline from segment index i0, truncated at a cumulative length cap
+function strokePoly(poly, i0, i1, cap) {
+  const c = ctx; let L = 0; c.beginPath();
+  for (let i = 0; i < poly.length - 1; i++) {
+    const a = poly[i], b = poly[i + 1], seg = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    if (L >= cap) break;
+    const u = Math.min(1, (cap - L) / (seg || 1));
+    if (i >= i0 && i < i1) { c.moveTo(a[0], a[1]); c.lineTo(a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])); }
+    L += seg;
+  }
+  c.stroke();
+}
+function polyLen(poly) { let L = 0; for (let i = 0; i < poly.length - 1; i++) L += Math.hypot(poly[i + 1][0] - poly[i][0], poly[i + 1][1] - poly[i][1]); return L; }
+
+// angular histogram on the screen arc: Fresnel-weighted, area weight b db (3D sphere)
+let hist = null, histKey = '';
+const HB = 0.5, HN = 720;
+function buildHist() {
+  const key = [S.nD, S.bow, S.light, S.lam].join('|');
+  if (key === histKey) return; histKey = key;
+  const lams = S.light === 'white' ? HIST_SET : [S.lam];
+  const M = 2400, rows = [];
+  let vmax = 0;
+  for (const l of lams) {
+    const n = nAt(l), h = new Float32Array(HN);
+    for (const k of ks()) {
+      for (let i = 0; i < M; i++) {
+        const b = (i + 0.5) / M, r = rayAngles(b, n, k);
+        const w = b * fresnelW(r.ti, r.tr, n, k);
+        let idx = Math.floor((r.out * R2D + 180) / HB); if (idx >= HN) idx = HN - 1;
+        h[idx] += w;
+      }
+    }
+    for (let i = 0; i < HN; i++) if (h[i] > vmax) vmax = h[i];
+    rows.push({ l, h });
+  }
+  hist = { rows, vmax };
+}
+function drawHist() {
+  if (!hist) return;
+  const c = ctx, Rp = G.RA * G.R;
+  c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'butt';
+  const white = S.light === 'white', ref = hist.vmax * 0.5;
+  for (const row of hist.rows) {
+    const [r, g, b] = specRGB(row.l);
+    for (let i = 0; i < HN; i++) {
+      const v = row.h[i]; if (v <= 0) continue;
+      let I = Math.min(1, Math.pow(v / ref, 0.8));
+      if (I < 0.02) continue;
+      const a0 = -((i * HB - 180) * D2R), a1 = -(((i + 1) * HB - 180) * D2R);
+      c.strokeStyle = `rgba(${r},${g},${b},${(white ? 0.055 : 0.85) * I})`;
+      c.lineWidth = 16;
+      c.beginPath(); c.arc(G.cx, G.cy, Rp + 4, Math.min(a0, a1), Math.max(a0, a1) + 0.002); c.stroke();
+    }
+  }
+  c.restore();
+}
+
+function drawStage(now) {
+  const c = ctx; geom();
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const grd = c.createLinearGradient(0, 0, 0, ch);
+  grd.addColorStop(0, '#070C17'); grd.addColorStop(1, '#04070D');
+  c.fillStyle = grd; c.fillRect(0, 0, cw, ch);
+  // faint graph paper
+  const step = Math.max(18, G.R / 5);
+  c.strokeStyle = STG.grid; c.lineWidth = 1; c.beginPath();
+  for (let x = (G.cx % step); x < cw; x += step) { c.moveTo(Math.round(x) + 0.5, 0); c.lineTo(Math.round(x) + 0.5, ch); }
+  for (let y = (G.cy % step); y < ch; y += step) { c.moveTo(0, Math.round(y) + 0.5); c.lineTo(cw, Math.round(y) + 0.5); }
+  c.stroke();
+
+  // axis toward the Sun + screen arc with ticks
+  const Rp = G.RA * G.R;
+  c.save(); c.strokeStyle = 'rgba(160,185,215,0.22)'; c.setLineDash([4, 6]); c.lineWidth = 1;
+  c.beginPath(); c.moveTo(G.cx + G.R * 1.15, G.cy); c.lineTo(G.cx - Rp - 10, G.cy); c.stroke();
+  c.beginPath(); c.arc(G.cx, G.cy, Rp, Math.PI * 0.5, Math.PI * 1.5); c.stroke();
+  c.restore();
+  buildHist();
+  if (S.mode === 'fan') drawHist();
+  // ticks every 10°, labels every 20°
+  c.save(); c.strokeStyle = 'rgba(160,185,215,0.45)'; c.lineWidth = 1;
+  for (let ph = 0; ph <= 90; ph += 10) {
+    for (const sgn of ph === 0 ? [1] : [1, -1]) {
+      const a = Math.PI + sgn * ph * D2R; // canvas angle: π is the −x direction; +sgn is downward on canvas
+      const ca = Math.cos(a), sa = Math.sin(a), L = ph % 20 === 0 ? 7 : 4;
+      const x0 = G.cx + ca * (Rp - L), y0 = G.cy + sa * (Rp - L), x1 = G.cx + ca * (Rp + L), y1 = G.cy + sa * (Rp + L);
+      if (y1 < 4 || y1 > ch - 4 || x1 < 2) continue;
+      c.beginPath(); c.moveTo(x0, y0); c.lineTo(x1, y1); c.stroke();
+      if (ph % 20 === 0) {
+        const lx = G.cx + ca * (Rp - 20), ly = G.cy + sa * (Rp - 20);
+        if (lx > 14 && ly > 10 && ly < ch - 10) halo(fd(ph, 0), lx, ly, STG.ink3, `500 10.5px ${FONT_MONO}`, 'center');
+      }
+    }
+  }
+  c.restore();
+
+  // sun glyph on the left
+  {
+    const sx = 22, sy = 24;
+    c.save(); c.fillStyle = '#FFD25A'; c.shadowColor = '#FFB020'; c.shadowBlur = 14;
+    c.beginPath(); c.arc(sx, sy, 7, 0, Math.PI * 2); c.fill(); c.restore();
+    c.save(); c.strokeStyle = '#FFD25A'; c.lineWidth = 1.5;
+    for (let i = 0; i < 8; i++) { const a = i * Math.PI / 4; c.beginPath(); c.moveTo(sx + Math.cos(a) * 10, sy + Math.sin(a) * 10); c.lineTo(sx + Math.cos(a) * 14, sy + Math.sin(a) * 14); c.stroke(); }
+    c.restore();
+    halo(tr('cSun') + ' →', sx + 22, sy, STG.ink2, `500 12px ${FONT_BODY}`, 'left');
+  }
+
+  // droplet
+  {
+    const rg = c.createRadialGradient(G.cx - G.R * 0.35, G.cy - G.R * 0.4, G.R * 0.1, G.cx, G.cy, G.R);
+    rg.addColorStop(0, 'rgba(150,200,255,0.16)'); rg.addColorStop(1, 'rgba(70,120,200,0.07)');
+    c.fillStyle = rg; c.beginPath(); c.arc(G.cx, G.cy, G.R, 0, Math.PI * 2); c.fill();
+    c.strokeStyle = STG.drop; c.lineWidth = 1.6; c.stroke();
+    c.save(); c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2.5; c.lineCap = 'round';
+    c.beginPath(); c.arc(G.cx, G.cy, G.R * 0.86, -Math.PI * 0.82, -Math.PI * 0.62); c.stroke(); c.restore();
+    const water = Math.abs(S.nD - 1.333) < 0.0015;
+    const dl = water ? tr('cDrop') : tr('cSphere') + fmt(S.nD, 3);
+    c.font = `500 12px ${FONT_BODY}`;
+    const dw = c.measureText(dl).width;
+    halo(dl, Math.min(cw - 8 - dw, G.cx + G.R * 0.72), Math.min(ch - 10, G.cy + G.R * 0.98 + (G.cx + G.R * 0.72 + dw > cw - 8 ? 14 : 0)), STG.ink2, `500 12px ${FONT_BODY}`, 'left');
+  }
+
+  if (S.mode === 'one') drawOne(); else drawFan();
+}
+
+function drawOne() {
+  const c = ctx, lams = lamsDraw(), white = S.light === 'white';
+  const kk = ks();
+  // incoming ray
+  const y0 = Y(S.b), xE = X(-Math.sqrt(1 - Math.min(S.b, 0.9995) ** 2));
+  c.save(); c.strokeStyle = white ? 'rgba(255,255,255,0.95)' : specCSS(S.lam, 1); c.lineWidth = 2.2; c.shadowColor = c.strokeStyle; c.shadowBlur = 8;
+  c.beginPath(); c.moveTo(0, y0); c.lineTo(xE, y0); c.stroke(); c.restore();
+  arrowHead(xE * 0.55, y0, 0, white ? '#fff' : specCSS(S.lam), 9);
+  // b marker on the right of the drop
+  c.save(); c.strokeStyle = 'rgba(160,185,215,0.5)'; c.lineWidth = 1;
+  const bx = G.cx + G.R + 14;
+  c.beginPath(); c.moveTo(bx - 4, G.cy); c.lineTo(bx + 4, G.cy); c.moveTo(bx - 4, y0); c.lineTo(bx + 4, y0); c.moveTo(bx, G.cy); c.lineTo(bx, y0); c.stroke();
+  c.setLineDash([2, 4]); c.beginPath(); c.moveTo(xE, y0); c.lineTo(bx, y0); c.stroke(); c.restore();
+  if (Math.abs(y0 - G.cy) > 16) { ctx.font = `italic 16px ${FONT_MATH}`; halo('b', bx + 7, (G.cy + y0) / 2, STG.ink2, `italic 16px ${FONT_MATH}`, 'left'); }
+
+  c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round'; c.lineJoin = 'round';
+  for (const k of kk) {
+    for (const l of lams) {
+      const t = trace(S.b, nAt(l), k), poly = rayPoly(t);
+      const a = white ? 0.75 : 1;
+      c.strokeStyle = specCSS(l, a); c.lineWidth = white ? 1.6 : 2.2;
+      strokePoly(poly, 1, poly.length - 1, Infinity);
+      // end dot + arrow on the arc
+      const e = poly[poly.length - 1], q = poly[poly.length - 2];
+      arrowHead(e[0], e[1], Math.atan2(e[1] - q[1], e[0] - q[0]), specCSS(l, 1), white ? 7 : 10);
+    }
+  }
+  c.restore();
+  // phi label at the arc for the reference wavelength of each bow
+  for (const k of kk) {
+    const l = lamRef(), r = rayAngles(S.b, nAt(l), k);
+    const Rp = G.RA * G.R + 22, ang = -r.out; // canvas angle
+    const lx = G.cx + Math.cos(ang) * Rp, ly = G.cy + Math.sin(ang) * Rp;
+    const txt = `φ${kk.length > 1 ? (k === 1 ? '₁' : '₂') : ''} = ${fd(r.phi * R2D)}`;
+    halo(txt, Math.max(40, Math.min(cw - 40, lx)), Math.max(48, Math.min(ch - 12, ly)), STG.ink, `600 12px ${FONT_MONO}`, 'center');
+  }
+  if (S.angles) drawAngles();
+}
+
+function angArc(x, y, r, a0, a1, color) {
+  let d = a1 - a0; while (d > Math.PI) d -= 2 * Math.PI; while (d < -Math.PI) d += 2 * Math.PI;
+  const c = ctx; c.save(); c.strokeStyle = color; c.lineWidth = 1.4; c.beginPath(); c.arc(x, y, r, a0, a0 + d, d < 0); c.stroke(); c.restore();
+  return a0 + d / 2;
+}
+function drawAngles() {
+  const c = ctx, l = lamRef(), n = nAt(l), k = refK();
+  const t = trace(S.b, n, k), r = rayAngles(S.b, n, k);
+  const P = t.pts.map(p => [X(p[0]), Y(p[1])]);
+  const ink = STG.ink, dim = 'rgba(200,215,235,0.55)';
+  c.save(); c.setLineDash([3, 4]); c.strokeStyle = dim; c.lineWidth = 1;
+  // normals at entry and each internal hit (through the centre)
+  for (let i = 0; i < P.length; i++) {
+    const p = t.pts[i];
+    c.beginPath(); c.moveTo(X(p[0] * 1.45), Y(p[1] * 1.45)); c.lineTo(G.cx, G.cy); c.stroke();
+  }
+  // continuation of incoming ray
+  c.beginPath(); c.moveTo(P[0][0], P[0][1]); c.lineTo(P[0][0] + 50, P[0][1]); c.stroke();
+  c.restore();
+  const cang = (dx, dy) => Math.atan2(-dy, dx); // physics dir -> canvas angle
+  const p0 = t.pts[0], inw = cang(-p0[0], -p0[1]);
+  // θi: between incoming direction (+x) and inward normal
+  const outw = cang(p0[0], p0[1]);
+  c.save(); c.setLineDash([3, 4]); c.strokeStyle = dim; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(P[0][0], P[0][1]); c.lineTo(P[0][0] + Math.cos(outw) * 60, P[0][1] + Math.sin(outw) * 60); c.stroke(); c.restore();
+  let m = angArc(P[0][0], P[0][1], 34, outw, Math.PI, ink);
+  halo('θᵢ', P[0][0] + Math.cos(m) * 50, P[0][1] + Math.sin(m) * 50, ink, `italic 15px ${FONT_MATH}`, 'center');
+  // θr: between inward normal and refracted ray
+  const p1 = t.pts[1], rd = cang(p1[0] - p0[0], p1[1] - p0[1]);
+  m = angArc(P[0][0], P[0][1], 30, inw, rd, '#FFD25A');
+  halo('θᵣ', P[0][0] + Math.cos(m) * 46, P[0][1] + Math.sin(m) * 46, '#FFD25A', `italic 15px ${FONT_MATH}`, 'center');
+  // at the first internal reflection: equal angles θr
+  {
+    const q = t.pts[1], nIn = cang(-q[0], -q[1]);
+    const a0 = cang(p0[0] - q[0], p0[1] - q[1]), a1 = cang(t.pts[2][0] - q[0], t.pts[2][1] - q[1]);
+    angArc(P[1][0], P[1][1], 20, nIn, a0, '#FFD25A'); angArc(P[1][0], P[1][1], 26, nIn, a1, '#FFD25A');
+  }
+  // φ at exit: between the outgoing ray and the sunward direction (−x)
+  {
+    const e = t.pts[t.pts.length - 1], E = P[P.length - 1];
+    c.save(); c.setLineDash([3, 4]); c.strokeStyle = dim; c.beginPath(); c.moveTo(E[0], E[1]); c.lineTo(E[0] - 70, E[1]); c.stroke(); c.restore();
+    const od = cang(t.dir[0], t.dir[1]);
+    m = angArc(E[0], E[1], 46, Math.PI, od, '#7FE3D8');
+    halo('φ', E[0] + Math.cos(m) * 60, E[1] + Math.sin(m) * 60, '#7FE3D8', `italic 16px ${FONT_MATH}`, 'center');
+    halo(tr('cNormal'), P[0][0] + Math.cos(outw) * 64 - 4, P[0][1] + Math.sin(outw) * 64 - 8, STG.ink3, `500 11px ${FONT_BODY}`, 'right');
+    void e;
+  }
+  void r;
+}
+
+function drawFan() {
+  const c = ctx, white = S.light === 'white', kk = ks();
+  const lams = white ? FAN_SET : [S.lam];
+  const N = white ? 34 : 64;
+  // incoming parallel beam
+  const polys = [];
+  for (const k of kk) for (const l of lams) {
+    const n = nAt(l);
+    for (let i = 0; i < N; i++) { const b = (i + 0.5) / N; polys.push({ l, k, poly: rayPoly(trace(b, n, k)), b }); }
+  }
+  const maxLen = Math.max(...polys.map(p => polyLen(p.poly)));
+  const cap = S.rev >= 1 ? Infinity : S.rev * maxLen;
+  c.save(); c.lineCap = 'round';
+  c.strokeStyle = 'rgba(255,255,255,0.22)'; c.lineWidth = 1;
+  for (let i = 0; i < N; i += (white ? 1 : 2)) {
+    const b = (i + 0.5) / N, y = Y(b), xe = X(-Math.sqrt(1 - b * b));
+    c.beginPath(); c.moveTo(0, y); c.lineTo(Math.min(xe, cap), y); c.stroke();
+  }
+  c.restore();
+  c.save(); c.globalCompositeOperation = 'lighter'; c.lineCap = 'round';
+  for (const p of polys) {
+    const kf = p.k === 2 ? 0.75 : 1;
+    c.lineWidth = 1;
+    c.strokeStyle = specCSS(p.l, (white ? 0.16 : 0.32) * kf); strokePoly(p.poly, 1, p.poly.length - 2, cap);
+    c.strokeStyle = specCSS(p.l, (white ? 0.30 : 0.5) * kf); strokePoly(p.poly, p.poly.length - 2, p.poly.length - 1, cap);
+  }
+  // highlight the rainbow rays (stationary) for red and violet, or the single λ
+  const hl = white ? [LAM_R, LAM_V] : [S.lam];
+  c.lineWidth = 2.2;
+  for (const k of kk) for (const l of hl) {
+    const st = stationary(nAt(l), k); if (!st) continue;
+    const poly = rayPoly(trace(st.b, nAt(l), k));
+    c.strokeStyle = specCSS(l, 0.95); c.shadowColor = specCSS(l, 1); c.shadowBlur = 8;
+    strokePoly(poly, 1, poly.length - 1, cap);
+  }
+  c.restore();
+  if (S.rev >= 1) {
+    for (const k of kk) {
+      const st = stationary(nAt(lamRef()), k); if (!st) continue;
+      const Rp = G.RA * G.R + 24, ang = -st.out;
+      const lx = G.cx + Math.cos(ang) * Rp, ly = G.cy + Math.sin(ang) * Rp;
+      const name = k === 1 ? tr('cPrim') : tr('cSec');
+      halo(`${name} ${fd(st.phi * R2D)}`, Math.max(70, Math.min(cw - 70, lx)), Math.max(48, Math.min(ch - 12, ly)), STG.ink, `600 12px ${FONT_MONO}`, 'center');
+    }
+  }
+}
+
+/* ---------- chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box');
+let ccw = 400, cch = 280, chartDirty = true;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+
+function chartLams() {
+  const out = [{ l: LAM_R, c: col.red, name: tr('clRed') }, { l: LAM_V, c: col.violet, name: tr('clViolet') }];
+  if (S.light === 'mono') out.push({ l: S.lam, c: specCSS(S.lam), name: tr('clLam') + S.lam + ' nm', w: 2.6 });
+  return out;
+}
+function drawPhiChart() {
+  const c = cctx, W = ccw, H = cch;
+  const kk = ks();
+  const s1R = stationary(nAt(LAM_R), 1), s2R = stationary(nAt(LAM_R), 2), s2V = stationary(nAt(LAM_V), 2), s1V = stationary(nAt(LAM_V), 1);
+  let top = 0;
+  if (kk.includes(1)) top = Math.max(top, ((s1R && s1R.phi) || (s1V && s1V.phi) || 0) * R2D + 12);
+  if (kk.includes(2)) top = Math.max(top, ((s2V && s2V.phi) || (s2R && s2R.phi) || 1.5) * R2D + 16);
+  const ystep = top > 90 ? 20 : 10;
+  const hi = Math.min(180, Math.ceil(top / ystep) * ystep), lo = 0;
+  c.font = `500 11px ${FONT_MONO}`;
+  const L = 40, Rr = 12, T = 16, B = 30, pw = W - L - Rr, ph = H - T - B;
+  const Xc = (b) => L + b * pw, Yc = (v) => T + (1 - (v - lo) / (hi - lo)) * ph;
+  // band
+  if (S.bow === 'b' && s1R && s2R && s2R.phi > s1R.phi) {
+    const y1 = Yc(Math.min(hi, s2R.phi * R2D)), y0 = Yc(s1R.phi * R2D);
+    c.fillStyle = col.sunk; c.fillRect(L, y1, pw, y0 - y1);
+    c.save(); c.strokeStyle = col.ink3; c.globalAlpha = 0.35; c.beginPath(); c.rect(L, y1, pw, y0 - y1); c.clip();
+    for (let x = L - 200; x < L + pw; x += 8) { c.moveTo(x, y0); c.lineTo(x + (y0 - y1), y1); } c.stroke(); c.restore();
+    c.fillStyle = col.ink2; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = `500 11px ${FONT_BODY}`;
+    if (y0 - y1 > 12) c.fillText(tr('band'), L + 8, (y0 + y1) / 2);
+  }
+  // grid
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let v = lo; v <= hi + 1e-9; v += ystep) { const yy = Math.round(Yc(v)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - Rr, yy); c.stroke(); c.fillText(fmt(v, 0), L - 6, yy); }
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let b = 0; b <= 1.0001; b += 0.2) { const xx = Math.round(Xc(b)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.fillText(fmt(b, 1), xx, T + ph + 6); }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.fillText(tr('axPhi'), 2, 0);
+  c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText(tr('axB'), W - Rr, H - 1);
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, T + ph + 0.5); c.lineTo(W - Rr, T + ph + 0.5); c.moveTo(L + 0.5, T); c.lineTo(L + 0.5, T + ph); c.stroke();
+  // curves
+  c.save(); c.beginPath(); c.rect(L, T - 2, pw, ph + 4); c.clip();
+  for (const k of kk) for (const s of chartLams()) {
+    const n = nAt(s.l);
+    c.beginPath();
+    for (let i = 0; i <= 240; i++) { const b = Math.min(i / 240, 0.9999), v = rayAngles(b, n, k).phi * R2D; i ? c.lineTo(Xc(b), Yc(v)) : c.moveTo(Xc(b), Yc(v)); }
+    c.strokeStyle = s.c; c.lineWidth = s.w || 2; c.setLineDash(k === 2 ? [6, 4] : []); c.stroke(); c.setLineDash([]);
+  }
+  c.restore();
+  // stationary points
+  for (const k of kk) for (const s of chartLams()) {
+    const st = stationary(nAt(s.l), k); if (!st) continue;
+    const xx = Xc(st.b), yy = Yc(st.phi * R2D); if (yy < T) continue;
+    c.save(); c.strokeStyle = s.c; c.globalAlpha = 0.5; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(L, yy); c.lineTo(xx, yy); c.stroke(); c.restore();
+    c.fillStyle = s.c; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, yy, 4.5, 0, Math.PI * 2); c.fill(); c.stroke();
+    if (s.l === LAM_R || s.l === LAM_V) {
+      const above = (k === 1) === (s.l === LAM_R);
+      c.fillStyle = s.c; c.font = `600 11px ${FONT_MONO}`; c.textAlign = 'right'; c.textBaseline = above ? 'bottom' : 'top';
+      c.fillText(fd(st.phi * R2D), xx - 8, yy + (above ? -3 : 3));
+    }
+  }
+  // current b cursor
+  if (S.mode === 'one') {
+    const xx = Math.round(Xc(S.b)) + 0.5;
+    c.save(); c.strokeStyle = col.acc; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    for (const k of kk) {
+      const l = lamRef(), v = rayAngles(S.b, nAt(l), k).phi * R2D; if (v > hi) continue;
+      c.fillStyle = col.acc; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, Yc(v), 5, 0, Math.PI * 2); c.fill(); c.stroke();
+    }
+  }
+}
+
+function drawSky() {
+  const c = cctx, W = ccw, H = cch, e = 15;
+  const kk = ks();
+  const radii = [];
+  for (const k of kk) for (const l of [LAM_R, LAM_V]) { const st = stationary(nAt(l), k); if (st) radii.push(st.phi * R2D); }
+  const Rv = Math.max(30, ...radii) + 6;
+  const above = Rv - e + 3, below = e + 9;
+  const s = Math.min((W - 16) / (2 * Rv), (H - 8) / (above + below));
+  const ax = W / 2, horY = 4 + above * s + (H - 8 - (above + below) * s) / 2, ay = horY + e * s;
+  // sky
+  const g = c.createLinearGradient(0, 0, 0, horY);
+  g.addColorStop(0, '#2A3F66'); g.addColorStop(1, '#6C88AE');
+  c.fillStyle = g; c.fillRect(0, 0, W, horY);
+  c.save(); c.beginPath(); c.rect(0, 0, W, horY); c.clip();
+  const s1 = stationary(nAt(LAM_R), 1), s2 = stationary(nAt(LAM_R), 2);
+  // brighter inside the primary bow, darker band up to the secondary
+  if (kk.includes(1) && s1) {
+    const rg = c.createRadialGradient(ax, ay, 0, ax, ay, s1.phi * R2D * s);
+    rg.addColorStop(0, 'rgba(255,255,255,0.10)'); rg.addColorStop(1, 'rgba(255,255,255,0.26)');
+    c.fillStyle = rg; c.beginPath(); c.arc(ax, ay, s1.phi * R2D * s, 0, Math.PI * 2); c.fill();
+  }
+  if (kk.includes(2) && s2) {
+    c.fillStyle = 'rgba(255,255,255,0.08)'; c.beginPath(); c.rect(0, 0, W, H); c.arc(ax, ay, s2.phi * R2D * s, 0, Math.PI * 2, true); c.fill('evenodd');
+  }
+  c.globalCompositeOperation = 'lighter';
+  for (const k of kk) {
+    for (const l of HIST_SET) {
+      const st = stationary(nAt(l), k); if (!st) continue;
+      c.strokeStyle = specCSS(l, k === 1 ? 0.55 : 0.3); c.lineWidth = Math.max(1.5, s * 0.55);
+      c.beginPath(); c.arc(ax, ay, st.phi * R2D * s, Math.PI, 2 * Math.PI); c.stroke();
+    }
+  }
+  c.restore();
+  // ground
+  c.fillStyle = '#1D2A22'; c.fillRect(0, horY, W, H - horY);
+  c.strokeStyle = 'rgba(255,255,255,0.5)'; c.lineWidth = 1; c.beginPath(); c.moveTo(0, horY + 0.5); c.lineTo(W, horY + 0.5); c.stroke();
+  c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = 'rgba(255,255,255,0.6)'; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(tr('skyHor'), 6, horY + 3);
+  // antisolar point = shadow of the observer's head
+  c.fillStyle = 'rgba(0,0,0,0.55)'; c.beginPath(); c.ellipse(ax, ay + 1, 7, 9, 0, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = '#FFE08A'; c.lineWidth = 1.5; c.beginPath(); c.moveTo(ax - 5, ay); c.lineTo(ax + 5, ay); c.moveTo(ax, ay - 5); c.lineTo(ax, ay + 5); c.stroke();
+  c.fillStyle = '#FFE08A'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = `500 10.5px ${FONT_MONO}`;
+  c.fillText(tr('skyAnti'), ax + 12, Math.min(H - 8, ay + 2));
+  // radius indicators
+  const dirs = { 1: -Math.PI * 0.62, 2: -Math.PI * 0.30 };
+  for (const k of kk) {
+    const st = stationary(nAt(LAM_R), k); if (!st) continue;
+    const r = st.phi * R2D * s, a = dirs[k];
+    c.save(); c.strokeStyle = 'rgba(255,255,255,0.75)'; c.setLineDash([3, 3]); c.lineWidth = 1;
+    c.beginPath(); c.moveTo(ax, ay); c.lineTo(ax + Math.cos(a) * r, ay + Math.sin(a) * r); c.stroke(); c.restore();
+    const lx = ax + Math.cos(a) * r * 0.62, ly = ay + Math.sin(a) * r * 0.62;
+    const txt = fd(st.phi * R2D, 0);
+    c.font = `600 11.5px ${FONT_MONO}`; const tw = c.measureText(txt).width;
+    c.fillStyle = 'rgba(10,18,30,0.7)'; c.fillRect(lx - tw / 2 - 4, ly - 9, tw + 8, 18);
+    c.fillStyle = '#fff'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(txt, lx, ly);
+  }
+}
+
+function drawChart() {
+  const c = cctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, ccw, cch);
+  let lg = '';
+  if (S.tab === 'phi') {
+    drawPhiChart();
+    lg = chartLams().map(s => `<span><i class="sw-line" style="border-top-color:${s.c}"></i>${s.name}</span>`).join('');
+    if (ks().includes(2)) lg += `<span><i class="sw-line" style="border-top-style:dashed;border-top-color:var(--ink-2)"></i>${tr('clSec')}</span>`;
+    if (S.bow === 'b') lg += `<span><i class="sw-box"></i>${tr('clBand')}</span>`;
+    $('#cnote').innerHTML = tr('cnotePhi') + (S.bow === 'b' ? '' : tr('cnotePhiB'));
+  } else {
+    drawSky();
+    $('#cnote').innerHTML = tr('cnoteSky');
+  }
+  $('#clegend').innerHTML = lg;
+}
+
+/* ---------- readouts ---------- */
+function pair(fn, dec = 1, unit = '°') {
+  if (S.light === 'white') return `<span class="cr">${fmt(fn(LAM_R), dec)}${unit}</span><span class="sep">/</span><span class="cv">${fmt(fn(LAM_V), dec)}${unit}</span>`;
+  return `${fmt(fn(S.lam), dec)}${unit}`;
+}
+function updateHud() {
+  const kk = ks(), fan = S.mode === 'fan';
+  const k0 = refK();
+  const bOf = (l, k = k0) => (fan ? (stationary(nAt(l), k) || { b: NaN }).b : S.b);
+  const A = (l, k) => rayAngles(bOf(l, k), nAt(l), k);
+  const star = fan ? '*' : '';
+  let h = `<div><dt>n</dt><dd>${pair(l => nAt(l), 4, '')}</dd></div>`;
+  h += `<div><dt>b${star}/R</dt><dd>${fan ? pair(l => bOf(l), 3, '') : fmt(S.b, 3)}</dd></div>`;
+  h += `<div><dt>θ<sub>i</sub>${star}</dt><dd>${fan ? pair(l => A(l, k0).ti * R2D) : fd(Math.asin(S.b) * R2D)}</dd></div>`;
+  h += `<div><dt>θ<sub>r</sub>${star}</dt><dd>${pair(l => A(l, k0).tr * R2D)}</dd></div>`;
+  for (const k of kk) {
+    const sub = kk.length > 1 ? `<sub>${k}</sub>` : '';
+    h += `<div><dt>D${sub}</dt><dd>${pair(l => A(l, k).D * R2D)}</dd></div>`;
+    h += `<div><dt>φ${sub}</dt><dd>${pair(l => A(l, k).phi * R2D)}</dd></div>`;
+  }
+  $('#hud').innerHTML = h;
+  const sk = S.playing ? 'run' : 'idle';
+  $('#legend').innerHTML = `<span><i class="spec"></i><small>400–700 nm</small></span><span class="state" data-s="${sk}">${tr(S.playing ? 'sRun' : 'sIdle')}</span>`;
+}
+function updatePanel() {
+  const set = (id, v) => { $('#' + id).textContent = v; };
+  set('b-out', fmt(S.b, 3)); set('lam-out', `${S.lam} nm`); set('n-out', fmt(S.nD, 3));
+  $$('input[type=range]').forEach(el => el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'));
+  const pv = (k) => { const a = stationary(nAt(LAM_R), k), b = stationary(nAt(LAM_V), k); return a && b ? `<span class="cr">${fd(a.phi * R2D)}</span> / <span class="cv">${fd(b.phi * R2D)}</span>` : tr('noBow'); };
+  $('#pill-1').innerHTML = pv(1); $('#pill-2').innerHTML = pv(2);
+  const a = stationary(nAt(LAM_R), 1), b = stationary(nAt(LAM_R), 2);
+  $('#pill-3').textContent = a && b && b.phi > a.phi ? fd((b.phi - a.phi) * R2D) : tr('bandNone');
+  const st = stationary(nAt(lamRef()), refK());
+  $('#pill-4').textContent = st ? fmt(st.b, 3) : tr('noBow');
+  $('#ctl-b').classList.toggle('off', S.mode !== 'one'); $('#b').disabled = S.mode !== 'one';
+  $('#ctl-lam').classList.toggle('off', S.light !== 'mono'); $('#lam').disabled = S.light !== 'mono';
+  const segSync = (id, v) => $$('#' + id + ' button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.v === v)));
+  segSync('seg-mode', S.mode); segSync('seg-bow', S.bow); segSync('seg-light', S.light);
+  $('#tg-angles').setAttribute('aria-pressed', String(S.angles));
+  $('#tg-angles').hidden = S.mode !== 'one';
+  $('#bar-hint').textContent = tr(S.mode === 'one' ? 'hintOne' : 'hintFan');
+  cv.classList.toggle('grab', S.mode === 'one');
+  // presets: highlight when state matches
+  const W = Math.abs(S.nD - 1.333) < 0.0015;
+  const match = {
+    red: S.mode === 'one' && S.light === 'mono' && S.lam === 700 && S.bow === 'p' && W && Math.abs(S.b - stationary(nAt(700), 1).b) < 0.0015,
+    fan: S.mode === 'fan' && S.light === 'white' && S.bow === 'p' && W,
+    sec: S.mode === 'fan' && S.light === 'white' && S.bow === 's' && W,
+    glass: S.mode === 'fan' && S.light === 'white' && S.bow === 'p' && Math.abs(S.nD - 1.5) < 0.0015
+  };
+  $$('#presets .chip').forEach(ch_ => ch_.setAttribute('aria-pressed', String(!!match[ch_.dataset.preset])));
+  $('#glass-s').textContent = `n = ${fmt(1.5, 2)}`;
+  updatePlayBtn();
+}
+function updatePlayBtn() {
+  $('#play-lbl').textContent = S.playing ? tr('pause') : tr(S.mode === 'one' ? 'playOne' : 'playFan');
+  $('#play-ic').innerHTML = S.playing ? '<path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' : '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+function updateFormulas() {
+  const l = lamRef(), n = nAt(l), k = refK();
+  const fan = S.mode === 'fan';
+  const st = stationary(n, k);
+  const b = fan ? (st ? st.b : 0.5) : S.b;
+  const r = rayAngles(b, n, k);
+  const ti = r.ti * R2D, tR = r.tr * R2D, D = r.D * R2D;
+  const res = (s) => `<span class="r">${s}</span>`;
+  $('#f-sub').textContent = S.light === 'white' ? tr('fSubW') : `${tr('fSubM')}${S.lam} nm.`;
+  const cards = [];
+  cards.push(`<div class="fcard"><h4>${tr('fSnell')}</h4>
+    <div class="eq">${V('n', '1')} sin ${V('θ', 'i')}${EQ}${V('n', '2')} sin ${V('θ', 'r')}</div>
+    <div class="eq num">1 · sin ${fd(ti)}${EQ}${fmt(n, 4)} · sin ${V('θ', 'r')}</div>
+    <div class="eq num">${V('θ', 'r')}${EQ}${res(fd(tR, 2))}</div>
+    <p class="fnote">${tr('nSnell')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fB')}</h4>
+    <div class="eq">${V('b')}${EQ}${V('R')} sin ${V('θ', 'i')}</div>
+    <div class="eq num">sin ${V('θ', 'i')}${EQ}${fmt(b, 3)} ⇒ ${V('θ', 'i')}${EQ}${res(fd(ti, 2))}</div>
+    <p class="fnote">${tr('nB')}</p></div>`);
+  const W = Math.abs(S.nD - 1.333) < 0.0015;
+  cards.push(`<div class="fcard wide"><h4>${tr('fDisp')}</h4>
+    <div class="eq">${V('n')}(${V('λ')})${EQ}${V('A')} + ${FR(V('B'), `${V('λ')}<sup>2</sup>`)} + ${FR(V('C'), `${V('λ')}<sup>4</sup>`)}</div>
+    <div class="eq num">${V('A')}${EQ}${fmt(CA, 5)},  ${V('B')}${EQ}${fmt(CB, 1)} nm<sup>2</sup>,  ${V('C')}${EQ}−${fmt(-CC / 1e7, 3)} · 10<sup>7</sup> nm<sup>4</sup></div>
+    <div class="eq num">${V('n', 'w')}(700 nm)${EQ}${fmt(nWater(700), 4)},  ${V('n', 'w')}(400 nm)${EQ}${fmt(nWater(400), 4)}${S.light === 'mono' ? `,  ${V('n', 'w')}(${S.lam} nm)${EQ}${fmt(nWater(S.lam), 4)}` : ''}</div>
+    ${W ? `<p class="fnote">${tr('nDispW')}</p>` : `<div class="eq num">${V('n')}(${l} nm)${EQ}1 + (${fmt(S.nD, 3)} − 1) · ${FR(`${fmt(nWater(l), 4)} − 1`, `${fmt(NW_D, 4)} − 1`)}${EQ}${res(fmt(n, 4))}</div><p class="fnote">${tr('nDispS')}</p>`}
+    </div>`);
+  const Dnum = `2(${fd(ti, 2)} − ${fd(tR, 2)}) + ${k} · (180° − 2 · ${fd(tR, 2)})`;
+  const phiEq = k === 1 ? `180° − ${fd(D, 2)}` : `${fd(D, 2)} − 180°`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fD')}</h4>
+    <div class="eq">${V('D')}${EQ}2(${V('θ', 'i')} − ${V('θ', 'r')}) + ${V('k')}(180° − 2${V('θ', 'r')}),   ${V('φ')}${EQ}|180° − ${V('D')}|</div>
+    <div class="eq num">${V('D')}${EQ}${Dnum}${EQ}${res(fd(D, 2))}</div>
+    <div class="eq num">${V('φ')}${EQ}${phiEq}${EQ}${res(fd(r.phi * R2D, 2))}</div>
+    <p class="fnote">${tr('nD')}</p></div>`);
+  // stationary condition + table
+  let statBody = `<div class="eq">${FR(`d${V('D')}`, `d${V('θ', 'i')}`)}${EQ}0  ⇒  cos<sup>2</sup>${V('θ', 'i')}${EQ}${FR(`${V('n')}<sup>2</sup> − 1`, `${V('k')}(${V('k')} + 2)`)}</div>`;
+  if (st) {
+    statBody += `<div class="eq num">cos<sup>2</sup>${V('θ', 'i')}${EQ}${FR(`${fmt(n, 4)}<sup>2</sup> − 1`, `${k}·${k + 2}`)}${EQ}${fmt(st.c2, 4)} ⇒ ${V('θ', 'i')}${EQ}${fd(st.ti * R2D, 2)},  ${V('b')}*/${V('R')}${EQ}${fmt(st.b, 3)},  ${V('φ')}*${EQ}${res(fd(st.phi * R2D, 2))}</div>`;
+  } else statBody += `<div class="eq num">${FR(`${fmt(n, 4)}<sup>2</sup> − 1`, `${k}·${k + 2}`)} > 1 ⇒ ${tr('noBow')}</div>`;
+  const row = (kk_) => {
+    const a = stationary(nAt(LAM_R), kk_), b2 = stationary(nAt(LAM_V), kk_);
+    return `<tr><th>${tr(kk_ === 1 ? 'rowP' : 'rowS')}</th><td class="cr">${a ? fd(a.phi * R2D, 2) : '·'}</td><td class="cv">${b2 ? fd(b2.phi * R2D, 2) : '·'}</td><td class="mut">${a && b2 ? tr((a.phi > b2.phi) ? 'outside' : 'inside') : ''}</td></tr>`;
+  };
+  statBody += `<div class="tbl-wrap"><table class="res"><thead><tr><th>${tr('thBow')}</th><th>φ, ${tr('th700')}</th><th>φ, ${tr('th400')}</th><th>${tr('thOrder')}</th></tr></thead><tbody>${row(1)}${row(2)}</tbody></table></div>`;
+  const a1 = stationary(nAt(LAM_R), 1), a2 = stationary(nAt(LAM_R), 2);
+  statBody += `<p class="fnote">${tr('nStat')} ${a1 && a2 && a2.phi > a1.phi ? `${tr('nBand')} ${fd(a2.phi * R2D, 1)} − ${fd(a1.phi * R2D, 1)} = ${fd((a2.phi - a1.phi) * R2D, 1)}.` : ''}</p>`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fStat')}</h4>${statBody}</div>`);
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+function refresh() { updatePanel(); updateHud(); updateFormulas(); dirty = true; chartDirty = true; }
+// cheaper refresh during sweeps
+function refreshLive() { $('#b').value = S.b; updatePanel(); updateHud(); updateFormulas(); dirty = true; chartDirty = true; }
+
+/* ---------- play / animation ---------- */
+function setPlaying(on) {
+  S.playing = on;
+  if (on && S.mode === 'fan') S.rev = 0;
+  if (on && S.mode === 'one') S.sweepT = Math.acos(Math.max(-1, Math.min(1, 1 - 2 * (S.b - 0.02) / 0.975)));
+  if (!on && S.mode === 'fan') S.rev = 1;
+  updateHud(); updatePlayBtn(); dirty = true;
+}
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.playing) {
+    if (S.mode === 'one') {
+      S.sweepT += dt * (2 * Math.PI / 9) * (reduceMotion ? 0.5 : 1);
+      S.b = 0.02 + 0.975 * (1 - Math.cos(S.sweepT)) / 2;
+      refreshLive();
+    } else {
+      S.rev += dt / 2.6;
+      if (S.rev >= 1) { S.rev = 1; S.playing = false; updateHud(); updatePlayBtn(); }
+      dirty = true;
+    }
+  }
+  if (dirty) { drawStage(now); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  if (!document.hidden) requestAnimationFrame(frame); else rafOn = false;
+}
+let rafOn = true;
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !rafOn) { rafOn = true; lastT = performance.now(); requestAnimationFrame(frame); }
+});
+
+/* ---------- wiring ---------- */
+function stopPlay() { if (S.playing) setPlaying(false); }
+$('#b').addEventListener('input', (e) => { stopPlay(); S.b = +e.target.value; refresh(); });
+$('#lam').addEventListener('input', (e) => { S.lam = +e.target.value; refresh(); });
+$('#n').addEventListener('input', (e) => { S.nD = +e.target.value; refresh(); });
+const segWire = (id, key) => $$('#' + id + ' button').forEach(bt => bt.addEventListener('click', () => {
+  if (S[key] === bt.dataset.v) return;
+  stopPlay(); S[key] = bt.dataset.v; S.rev = 1; refresh();
+}));
+segWire('seg-mode', 'mode'); segWire('seg-bow', 'bow'); segWire('seg-light', 'light');
+$('#tg-angles').addEventListener('click', () => { S.angles = !S.angles; refresh(); });
+$('#play').addEventListener('click', () => setPlaying(!S.playing));
+$$('#tabs button').forEach(bt => bt.addEventListener('click', () => {
+  S.tab = bt.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === bt))); chartDirty = true;
+}));
+function setState(o) {
+  stopPlay(); Object.assign(S, o); S.rev = 1;
+  $('#b').value = S.b; $('#lam').value = S.lam; $('#n').value = S.nD; refresh();
+}
+const PRESETS = {
+  red: () => setState({ mode: 'one', light: 'mono', lam: 700, bow: 'p', nD: 1.333, b: Math.round(stationary(1 + 0.333 * (nWater(700) - 1) / (NW_D - 1), 1).b * 1000) / 1000 }),
+  fan: () => setState({ mode: 'fan', light: 'white', bow: 'p', nD: 1.333 }),
+  sec: () => setState({ mode: 'fan', light: 'white', bow: 's', nD: 1.333 }),
+  glass: () => setState({ mode: 'fan', light: 'white', bow: 'p', nD: 1.5 })
+};
+$$('#presets .chip').forEach(chp => chp.addEventListener('click', () => { PRESETS[chp.dataset.preset](); if (S.mode === 'fan' && !reduceMotion) setPlaying(true); }));
+$$('[data-try]').forEach(bt => bt.addEventListener('click', () => {
+  const t = bt.dataset.try;
+  if (t === '1') { setState({ mode: 'one', light: 'white', bow: 'p', nD: 1.333, b: 0.3 }); setPlaying(true); }
+  if (t === '2') { PRESETS.fan(); setPlaying(true); }
+  if (t === '3') { setState({ mode: 'fan', light: 'white', bow: 'b', nD: 1.333 }); setPlaying(true); }
+  if (t === '4') { PRESETS.glass(); setPlaying(true); }
+  $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}));
+// drag on stage to set b
+let dragging = false;
+function bFromEvent(e) { const r = cv.getBoundingClientRect(); return Math.max(0, Math.min(0.999, (G.cy - (e.clientY - r.top)) / G.R)); }
+cv.addEventListener('pointerdown', (e) => {
+  if (S.mode !== 'one') return;
+  dragging = true; cv.setPointerCapture(e.pointerId); stopPlay();
+  S.b = Math.round(bFromEvent(e) * 1000) / 1000; $('#b').value = S.b; refresh();
+});
+cv.addEventListener('pointermove', (e) => { if (!dragging) return; S.b = Math.round(bFromEvent(e) * 1000) / 1000; $('#b').value = S.b; refresh(); });
+const endDrag = () => { dragging = false; };
+cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); setPlaying(!S.playing); return; }
+  if (tag === 'input') return;
+  if (S.mode === 'one' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    e.preventDefault(); stopPlay();
+    S.b = Math.max(0, Math.min(0.999, Math.round((S.b + (e.key === 'ArrowUp' ? 0.005 : -0.005)) * 1000) / 1000)); $('#b').value = S.b; refresh();
+  }
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  refresh();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('tecza-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
