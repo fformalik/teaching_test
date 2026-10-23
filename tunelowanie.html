@@ -1,0 +1,1158 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Tunelowanie kwantowe</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: quantum bench. Wave packet stage with HUD strip and transport bar, control panel on the right,
+   probabilities, transmission plot, formulas and experiments underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --psi:#0B8F7E; --refl:#C77A2A; --en:#E41C55; --re:#2F7FE0; --im:#6A5CFF; --pot:#5A6B7D;
+  --on-accent:#FFFFFF; --on-psi:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --psi:#2FD0B8; --refl:#D08A3A; --en:#EE3A68; --re:#4E9DFF; --im:#8A7FFF; --pot:#8C9BAB; --on-psi:#04201C;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --psi:#2FD0B8; --refl:#D08A3A; --en:#EE3A68; --re:#4E9DFF; --im:#8A7FFF; --pot:#8C9BAB; --on-psi:#04201C;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--re); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1.1em; height:.66em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.6ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.hud dd.refl{color:var(--refl)} .hud dd.tran{color:var(--psi)}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-fill{width:16px; height:10px; border-radius:2px; background:var(--psi); opacity:.75}
+.sw-pot{width:16px; height:10px; border-radius:2px; background:var(--pot); opacity:.35; border-top:2px solid var(--pot)}
+.sw-line{width:20px; height:0; border-top:2px solid var(--re)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--psi); color:var(--psi)}
+.state[data-s="pause"]{border-color:var(--refl); color:var(--refl)}
+.state[data-s="done"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(340px, 54vh, 600px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--psi); color:var(--on-psi); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--psi); transition:transform .12s ease; min-width:9.5em; justify-content:center}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg i{font-family:var(--f-math); font-size:15px}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c, var(--psi)); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+
+/* Probabilities */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:6px 12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.split{display:flex; height:30px; border-radius:8px; overflow:hidden; background:var(--sunk); border:1px solid var(--line)}
+.split div{height:100%; transition:width .12s linear; min-width:0}
+.split .r{background:var(--refl)} .split .m{background:repeating-linear-gradient(135deg, var(--ink-3) 0 3px, transparent 3px 7px); opacity:.6} .split .t{background:var(--psi); margin-left:auto}
+.probs{display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:10px}
+.prob{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:10px 12px; display:flex; flex-direction:column; gap:2px; min-width:0}
+.prob small{font-size:11.5px; color:var(--ink-3); line-height:1.3}
+.prob b{font-family:var(--f-mono); font-weight:500; font-size:22px; font-variant-numeric:tabular-nums; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.prob.refl b{color:var(--refl)} .prob.tran b{color:var(--psi)}
+.prob .k{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:6px; vertical-align:baseline}
+.cmp{display:grid; grid-template-columns:minmax(0,1fr) auto; gap:6px 16px; padding:10px 12px; border-radius:10px; background:var(--sunk); font-size:13.5px; align-items:baseline}
+.cmp span{color:var(--ink-2)}
+.cmp output{font-family:var(--f-mono); font-variant-numeric:tabular-nums; text-align:right}
+.cmp .hl{color:var(--psi); font-weight:500}
+.cmp i{font-family:var(--f-math); font-size:15px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl.off{opacity:.38}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]:disabled{cursor:not-allowed}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:flex; align-items:center; gap:9px; line-height:1.2; text-align:left; min-width:0}
+.chip svg{width:30px; height:18px; flex:none}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.rcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:minmax(0,1fr); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--psi); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2); align-items:center}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.chart-box{position:relative; height:250px; cursor:crosshair}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4)}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.try{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); text-align:left; cursor:pointer; color:var(--ink); transition:border-color .12s}
+.try:hover{border-color:var(--psi)}
+.try .n{grid-row:span 2; width:26px; height:26px; border-radius:50%; background:var(--sunk); display:inline-flex; align-items:center; justify-content:center; font-family:var(--f-mono); font-size:12.5px; color:var(--psi); font-weight:500}
+.try b{font-family:var(--f-display); font-weight:700; font-size:15.5px}
+.try span{font-size:13px; color:var(--ink-2); line-height:1.45}
+.try span i{font-family:var(--f-math); font-size:14.5px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.6}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .probs{grid-template-columns:repeat(2, minmax(0,1fr))}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.6ch; font-size:12.5px}
+  .fire{min-width:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .split div, .try{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka kwantowa · paczka falowa</span>
+      <h1>
+        <svg viewBox="0 0 66 40" aria-hidden="true"><rect x="30" y="4" width="7" height="34" rx="1.5" fill="var(--pot)" opacity=".35"/><path d="M2 36 C10 36 12 8 20 8 S 28 30 31 33 L36 35 C40 36 44 26 48 26 S 56 36 64 36" fill="none" stroke="var(--psi)" stroke-width="3.2" stroke-linecap="round"/></svg>
+        <span data-i18n="title">Tunelowanie kwantowe</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Wyślij elektron w stronę bariery, której klasycznie nie da się przeskoczyć. Równanie Schrödingera rozwiązywane na żywo pokazuje, ile fali się odbija, a ile przenika na drugą stronę.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t">0,0 <span>fs</span></dd></div>
+            <div><dt>⟨x⟩</dt><dd id="hud-x">0,00 <span>nm</span></dd></div>
+            <div><dt>R</dt><dd id="hud-r" class="refl">0,0 <span>%</span></dd></div>
+            <div><dt>T</dt><dd id="hud-tt" class="tran">0,0 <span>%</span></dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="play">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="play-ico"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="play-lbl">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-energy" aria-pressed="false" style="--c:var(--en)" data-i18n-html="tgEnergy">Energia <i>E</i></button>
+            <button type="button" class="tg" id="tg-reim" aria-pressed="false" style="--c:var(--re)" data-i18n-html="tgReIm">Re <i>ψ</i>, Im <i>ψ</i></button>
+            <button type="button" class="tg" id="tg-zoom" aria-pressed="false" style="--c:var(--psi)" data-i18n="tgZoom">Lupa ×50</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="probs">Prawdopodobieństwa</h2><p id="res-sub"></p></div>
+        <div class="split" aria-hidden="true"><div class="r" id="bar-r"></div><div class="m" id="bar-m"></div><div class="t" id="bar-t"></div></div>
+        <div class="probs">
+          <div class="prob refl"><small><i class="k" style="background:var(--refl)"></i><span data-i18n="pR">odbite R</span></small><b id="p-r">0</b></div>
+          <div class="prob"><small data-i18n="pM">w obszarze bariery</small><b id="p-m">0</b></div>
+          <div class="prob tran"><small><i class="k" style="background:var(--psi)"></i><span data-i18n="pT">przepuszczone T</span></small><b id="p-t">0</b></div>
+          <div class="prob"><small data-i18n="pN">suma R + T</small><b id="p-n">0</b></div>
+        </div>
+        <div class="cmp">
+          <span data-i18n-html="cPlane">Fala płaska o energii <i>E</i>: <i>T</i>(<i>E</i>)</span><output id="c-plane"></output>
+          <span data-i18n-html="cAvg">Średnia po rozkładzie energii paczki ⟨<i>T</i>⟩</span><output id="c-avg"></output>
+          <span data-i18n-html="cSim">Symulacja, paczka falowa <i>T</i></span><output id="c-sim" class="hl"></output>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" id="panel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gPot">Potencjał</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-preset="rect" aria-pressed="true"><svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 16H12V3H18V16H29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span data-i18n="prRect">Bariera</span></button>
+          <button type="button" class="chip" data-preset="double" aria-pressed="false"><svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 16H7V3H11V16H19V3H23V16H29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span data-i18n="prDouble">Podwójna bariera</span></button>
+          <button type="button" class="chip" data-preset="step" aria-pressed="false"><svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 16H14V7H29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span data-i18n="prStep">Schodek</span></button>
+          <button type="button" class="chip" data-preset="well" aria-pressed="false"><svg viewBox="0 0 30 18" aria-hidden="true"><path d="M1 4H11V15H19V4H29" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg><span data-i18n="prWell">Studnia</span></button>
+        </div>
+        <div class="ctl" style="--c:var(--pot)">
+          <div class="ctl-head"><label for="V0" id="lab-V0" data-i18n-html="lV0">Wysokość bariery <i>V</i><sub>0</sub></label><output id="V0-out" for="V0"></output></div>
+          <input type="range" id="V0" min="0.5" max="10" step="0.1" value="5">
+        </div>
+        <div class="ctl" id="ctl-a" style="--c:var(--pot)">
+          <div class="ctl-head"><label for="a" data-i18n-html="la">Szerokość <i>a</i></label><output id="a-out" for="a"></output></div>
+          <input type="range" id="a" min="0.1" max="2" step="0.01" value="0.3">
+        </div>
+        <div class="ctl" id="ctl-d" style="--c:var(--pot)">
+          <div class="ctl-head"><label for="d" data-i18n-html="ld">Odstęp barier <i>d</i></label><output id="d-out" for="d"></output></div>
+          <input type="range" id="d" min="0.2" max="2" step="0.05" value="0.4">
+        </div>
+      </fieldset>
+      <fieldset class="grp">
+        <h3 data-i18n="gPacket">Paczka falowa (elektron)</h3>
+        <div class="ctl" style="--c:var(--psi)">
+          <div class="ctl-head"><label for="E" data-i18n-html="lE">Energia <i>E</i></label><output id="E-out" for="E"></output></div>
+          <input type="range" id="E" min="0.5" max="10" step="0.01" value="3">
+        </div>
+        <div class="ctl" style="--c:var(--psi)">
+          <div class="ctl-head"><label for="sigma" data-i18n-html="lsig">Szerokość paczki <i>σ</i></label><output id="sigma-out" for="sigma"></output></div>
+          <input type="range" id="sigma" min="0.5" max="3.5" step="0.1" value="2">
+          <span class="hint" data-i18n="sigHint">Węższa paczka ma szerszy rozkład energii.</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pillLam">długość fali λ</small><span id="pill-lam">—</span></div>
+          <div class="pill"><small data-i18n="pillV">prędkość grupowa</small><span id="pill-v">—</span></div>
+          <div class="pill"><small data-i18n="pillDE">rozrzut energii ΔE</small><span id="pill-de">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżących ustawień. Masa elektronu mₑ, ħ = 0,658 eV·fs.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <div class="rcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n-html="chartT">Transmisja <i>T</i>(<i>E</i>)</h2>
+          <div class="seg" role="group" id="scale"><button type="button" data-sc="lin" aria-pressed="true" data-i18n="scLin">liniowa</button><button type="button" data-sc="log" aria-pressed="false" data-i18n="scLog">log</button></div>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+        <p class="cnote" data-i18n-html="cnote">Krzywa to wynik dla fali płaskiej. Paczka falowa zawiera cały zakres energii (zacieniony rozkład), więc jej <i>T</i> jest średnią z <i>T</i>(<i>E</i>) ważoną tym rozkładem. Wąskie piki rezonansowe paczka częściowo rozmywa.</p>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <div id="trylist"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ---------- physics core (units: nm, fs, eV) ---------- */
+const HBAR = 0.6582119569;          // eV·fs
+const C2M = 0.0380998212;           // ħ²/2mₑ in eV·nm²
+const N = 4096, DX = 0.025, L = N * DX, X0 = -L / 2;
+const XABS = 43, WABS = -X0 - XABS; // complex absorbing potential beyond |x| > XABS
+const W0 = 7.2;                     // CAP strength scale, eV
+const LOGN = Math.log2(N);
+const xs = new Float64Array(N), ks = new Float64Array(N);
+for (let i = 0; i < N; i++) { xs[i] = X0 + i * DX; ks[i] = 2 * Math.PI / L * (i < N / 2 ? i : i - N); }
+// FFT tables
+const rev = new Uint32Array(N);
+for (let i = 0; i < N; i++) { let r = 0, v = i; for (let b = 0; b < LOGN; b++) { r = (r << 1) | (v & 1); v >>= 1; } rev[i] = r; }
+const twr = new Float64Array(N / 2), twi = new Float64Array(N / 2);
+for (let i = 0; i < N / 2; i++) { twr[i] = Math.cos(-2 * Math.PI * i / N); twi[i] = Math.sin(-2 * Math.PI * i / N); }
+function fft(re, im, inv) {
+  for (let i = 0; i < N; i++) { const j = rev[i]; if (j > i) { let t = re[i]; re[i] = re[j]; re[j] = t; t = im[i]; im[i] = im[j]; im[j] = t; } }
+  const sg = inv ? -1 : 1;
+  for (let size = 2; size <= N; size <<= 1) {
+    const half = size >> 1, step = N / size;
+    for (let s = 0; s < N; s += size) {
+      for (let j = 0, t = 0; j < half; j++, t += step) {
+        const wr = twr[t], wi = sg * twi[t], a = s + j, b = a + half;
+        const xr = re[b] * wr - im[b] * wi, xi = re[b] * wi + im[b] * wr;
+        re[b] = re[a] - xr; im[b] = im[a] - xi; re[a] += xr; im[a] += xi;
+      }
+    }
+  }
+  if (inv) { const f = 1 / N; for (let i = 0; i < N; i++) { re[i] *= f; im[i] *= f; } }
+}
+// piecewise-constant potentials: list of [xStart, xEnd, V] segments (V outside = 0 unless step)
+function segments(p) {
+  const a = p.a, V0 = p.V0;
+  switch (p.preset) {
+    case 'double': { const g = p.d; return [[-g / 2 - a, -g / 2, V0], [g / 2, g / 2 + a, V0]]; }
+    case 'step': return [[0, Infinity, V0]];
+    case 'well': return [[-a / 2, a / 2, -V0]];
+    default: return [[-a / 2, a / 2, V0]];
+  }
+}
+function structEdges(p) {
+  const s = segments(p); let l = Infinity, r = -Infinity;
+  for (const q of s) { l = Math.min(l, q[0]); r = Math.max(r, isFinite(q[1]) ? q[1] : q[0]); }
+  return [l, r];
+}
+// area-weighted cell average, so widths are not quantised to the grid
+function potentialGrid(p, out) {
+  const s = segments(p);
+  for (let i = 0; i < N; i++) {
+    const c0 = xs[i] - DX / 2, c1 = xs[i] + DX / 2; let v = 0;
+    for (const [a, b, V] of s) { const ov = Math.min(c1, b) - Math.max(c0, a); if (ov > 0) v += V * ov / DX; }
+    out[i] = v;
+  }
+  return out;
+}
+// complex helpers for transfer matrix
+const cx = (re, im = 0) => ({ re, im });
+const cadd = (a, b) => cx(a.re + b.re, a.im + b.im);
+const csub = (a, b) => cx(a.re - b.re, a.im - b.im);
+const cmul = (a, b) => cx(a.re * b.re - a.im * b.im, a.re * b.im + a.im * b.re);
+const cdiv = (a, b) => { const d = b.re * b.re + b.im * b.im; return cx((a.re * b.re + a.im * b.im) / d, (a.im * b.re - a.re * b.im) / d); };
+const cexp = (a) => { const m = Math.exp(a.re); return cx(m * Math.cos(a.im), m * Math.sin(a.im)); };
+const cabs2 = (a) => a.re * a.re + a.im * a.im;
+const ksq = (E) => { const q = (E) / C2M; return q >= 0 ? cx(Math.sqrt(q), 0) : cx(0, Math.sqrt(-q)); };
+// plane-wave transmission through piecewise-constant V (transfer matrix, amplitudes A e^{ikx} + B e^{-ikx})
+function transmission(p, E) {
+  const segs = segments(p);
+  const bounds = [], vals = [0];
+  for (const [a, b, V] of segs) { bounds.push(a); vals.push(V); if (isFinite(b)) { bounds.push(b); vals.push(0); } }
+  if (E <= vals[vals.length - 1] || E <= 0) return 0;
+  // propagate from right: in last region A=1,B=0
+  let n = vals.length - 1;
+  let A = cx(1), B = cx(0);
+  for (let j = n; j >= 1; j--) {
+    const x = bounds[j - 1];
+    const k2 = ksq(E - vals[j]), k1 = ksq(E - vals[j - 1]);
+    if (Math.abs(k1.re) + Math.abs(k1.im) < 1e-12) return transmission(p, E + 1e-9);
+    // psi and psi' at x from region j
+    const ep = cexp(cmul(cx(0, 1), cmul(k2, cx(x)))), em = cexp(cmul(cx(0, -1), cmul(k2, cx(x))));
+    const psi = cadd(cmul(A, ep), cmul(B, em));
+    const dpsi = cmul(cmul(cx(0, 1), k2), csub(cmul(A, ep), cmul(B, em)));
+    // region j-1: A1 e^{ik1x} + B1 e^{-ik1x}
+    const e1p = cexp(cmul(cx(0, 1), cmul(k1, cx(x)))), e1m = cexp(cmul(cx(0, -1), cmul(k1, cx(x))));
+    const t = cdiv(dpsi, cmul(cx(0, 1), k1));
+    A = cdiv(cmul(cadd(psi, t), cx(0.5)), e1p);
+    B = cdiv(cmul(csub(psi, t), cx(0.5)), e1m);
+  }
+  const kL = Math.sqrt(E / C2M), kR = Math.sqrt((E - vals[n]) / C2M);
+  return Math.min(1, (kR / kL) / cabs2(A));
+}
+// energy-weighted average over the packet's momentum distribution
+function packetT(p, k0, sk, ns = 300) {
+  let s = 0, w = 0;
+  for (let i = -ns; i <= ns; i++) {
+    const k = k0 + i / ns * 5 * sk, g = Math.exp(-0.5 * (i / ns * 5) ** 2);
+    w += g; if (k > 0) s += g * transmission(p, C2M * k * k);
+  }
+  return s / w;
+}
+
+class Sim {
+  constructor() {
+    this.re = new Float64Array(N); this.im = new Float64Array(N);
+    this.V = new Float64Array(N); this.W = new Float64Array(N);
+    this.vr = new Float64Array(N); this.vi = new Float64Array(N); this.vm = new Float64Array(N);
+    this.kr = new Float64Array(N); this.ki = new Float64Array(N);
+    this.rho = new Float64Array(N);
+    for (let i = 0; i < N; i++) { const d = Math.abs(xs[i]) - XABS; this.W[i] = d > 0 ? W0 * (d / WABS) ** 2 : 0; }
+  }
+  setup(p) {
+    this.p = { ...p };
+    const sk = 1 / (2 * p.sigma);
+    this.sk = sk;
+    this.k0 = Math.sqrt(p.E / C2M);             // E is the central energy ħ²k₀²/2m
+    this.x0 = structEdges(p)[0] - (3.8 * p.sigma + 1.5);
+    potentialGrid(p, this.V);
+    const ekmax = C2M * (this.k0 + 5 * sk) ** 2 + (p.preset === 'well' ? p.V0 : 0);
+    this.dt = Math.min(0.005, 0.1 * HBAR / Math.max(ekmax, p.V0, 1));
+    const dt = this.dt;
+    for (let i = 0; i < N; i++) {
+      const ph = -this.V[i] * dt / (2 * HBAR), m = Math.exp(-this.W[i] * dt / (2 * HBAR));
+      this.vr[i] = Math.cos(ph); this.vi[i] = Math.sin(ph); this.vm[i] = m;
+      const pk = -C2M * ks[i] * ks[i] * dt / HBAR;
+      this.kr[i] = Math.cos(pk); this.ki[i] = Math.sin(pk);
+    }
+    const nrm = Math.pow(2 * Math.PI * p.sigma * p.sigma, -0.25);
+    for (let i = 0; i < N; i++) {
+      const x = xs[i], g = nrm * Math.exp(-((x - this.x0) ** 2) / (4 * p.sigma * p.sigma));
+      this.re[i] = g * Math.cos(this.k0 * x); this.im[i] = g * Math.sin(this.k0 * x);
+    }
+    this.t = 0; this.lossL = 0; this.lossR = 0;
+    [this.eL, this.eR] = structEdges(p);
+    this.measure();
+    this.peak0 = 0; for (let i = 0; i < N; i++) this.peak0 = Math.max(this.peak0, this.rho[i]);
+  }
+  halfV() {
+    const re = this.re, im = this.im, vr = this.vr, vi = this.vi, vm = this.vm;
+    for (let i = 0; i < N; i++) {
+      const a = re[i], b = im[i];
+      let r = a * vr[i] - b * vi[i], q = a * vi[i] + b * vr[i];
+      const m = vm[i];
+      if (m < 1) {
+        const lost = (r * r + q * q) * (1 - m * m) * DX;
+        if (xs[i] < 0) this.lossL += lost; else this.lossR += lost;
+        r *= m; q *= m;
+      }
+      re[i] = r; im[i] = q;
+    }
+  }
+  step(n) {
+    const re = this.re, im = this.im, kr = this.kr, ki = this.ki;
+    for (let s = 0; s < n; s++) {
+      this.halfV();
+      fft(re, im, false);
+      for (let i = 0; i < N; i++) { const a = re[i], b = im[i]; re[i] = a * kr[i] - b * ki[i]; im[i] = a * ki[i] + b * kr[i]; }
+      fft(re, im, true);
+      this.halfV();
+      this.t += this.dt;
+    }
+    this.measure();
+  }
+  measure() {
+    let pl = 0, pr = 0, pm = 0, mx = 0, tot = 0;
+    for (let i = 0; i < N; i++) {
+      const r = (this.re[i] ** 2 + this.im[i] ** 2); this.rho[i] = r;
+      const w = r * DX, x = xs[i]; tot += w; mx += w * x;
+      if (x < this.eL) pl += w; else if (x > this.eR) pr += w; else pm += w;
+    }
+    this.R = pl + this.lossL; this.T = pr + this.lossR; this.M = pm;
+    this.norm = tot + this.lossL + this.lossR;
+    this.xm = tot > 1e-9 ? mx / tot : 0;
+  }
+}
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka kwantowa · paczka falowa', title:'Tunelowanie kwantowe',
+    lede:'Wyślij elektron w stronę bariery, której klasycznie nie da się przeskoczyć. Równanie Schrödingera rozwiązywane na żywo pokazuje, ile fali się odbija, a ile przenika na drugą stronę.',
+    kbd:'spacja', reset:'Od nowa', speed:'Tempo', start:'Start', pause:'Pauza', resume:'Wznów', again:'Jeszcze raz',
+    tgEnergy:'Energia <i>E</i>', tgReIm:'Re <i>ψ</i>, Im <i>ψ</i>', tgZoom:'Lupa ×50',
+    sReady:'gotowe', sRun:'symulacja', sPause:'pauza', sDone:'koniec',
+    lgPsi:'|ψ|² (jedn. wzgl.)', lgV:'potencjał V(x)', lgE:'energia E', lgRe:'Re ψ', lgIm:'Im ψ', lgZoom:'|ψ|² × 50',
+    probs:'Prawdopodobieństwa', pR:'odbite R', pM:'w obszarze bariery', pT:'przepuszczone T', pN:'suma R + T',
+    subReady:'Kliknij Start. Prawdopodobieństwa ustalą się po zderzeniu paczki z potencjałem.', subRun:'Paczka w ruchu. Liczby zmieniają się, dopóki fala nie opuści bariery.', subDone:'Wynik ustalony. Część pochłonięta przez brzegi siatki jest wliczona do R i T.',
+    cPlane:'Fala płaska o energii <i>E</i>: <i>T</i>(<i>E</i>)', cAvg:'Średnia po rozkładzie energii paczki ⟨<i>T</i>⟩', cSim:'Symulacja, paczka falowa <i>T</i>',
+    gPot:'Potencjał', prRect:'Bariera', prDouble:'Podwójna bariera', prStep:'Schodek', prWell:'Studnia',
+    lV0:'Wysokość bariery <i>V</i><sub>0</sub>', lV0step:'Wysokość schodka <i>V</i><sub>0</sub>', lV0well:'Głębokość studni <i>V</i><sub>0</sub>',
+    la:'Szerokość <i>a</i>', laDouble:'Szerokość każdej bariery <i>a</i>', laWell:'Szerokość studni <i>a</i>', ld:'Odstęp barier <i>d</i>',
+    gPacket:'Paczka falowa (elektron)', lE:'Energia <i>E</i>', lsig:'Szerokość paczki <i>σ</i>', sigHint:'Węższa paczka ma szerszy rozkład energii.',
+    pillLam:'długość fali λ', pillV:'prędkość grupowa', pillDE:'rozrzut energii ΔE',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżących ustawień. Masa elektronu mₑ, ħ = 0,658 eV·fs, 2mₑ/ħ² = 26,25 eV⁻¹·nm⁻².',
+    fSch:'Równanie Schrödingera', fK:'Liczba falowa', fKappa:'Zanik pod barierą', fKover:'Fala nad barierą', fKwell:'Fala w studni', fApprox:'Przybliżenie grubej bariery', fExact:'Dokładny wynik dla fali płaskiej',
+    nSch:'Metoda split-operator: krok w potencjale, transformata Fouriera (własne FFT), krok kinetyczny, transformata odwrotna. Siatka', nSch2:'Na brzegach urojony potencjał pochłania falę, więc nic nie wraca z drugiej strony.',
+    nK:'Długość fali de Broglie’a', nKappa:'Głębokość wnikania 1/κ: na tej odległości amplituda maleje e razy.', nKover:'Nad barierą fala nie zanika, ale zmienia liczbę falową. Skok k na krawędziach daje częściowe odbicie.', nKwell:'W studni elektron przyspiesza. Skok k na krawędziach odbija część fali, choć klasycznie nic jej nie zatrzymuje.',
+    nApprox:'Działa dla κa ≫ 1. Tu κa =', nApproxNo:'Przybliżenie stosuje się tylko dla E < V₀ i grubej bariery (κa ≫ 1).', nApproxD:'Dla pojedynczej bariery. Dwie bariery poza rezonansem dają mniej więcej iloczyn, w rezonansie aż T ≈ 1.',
+    nExactStepBelow:'Dla E < V₀ fala całkowicie się odbija (R = 1), choć wnika pod schodek na głębokość 1/κ.', nExactDouble:'Dwie bariery liczone metodą macierzy przejścia. Fala odbijana między barierami interferuje: przy energiach rezonansowych T = 1.', nRes:'Najbliższy rezonans:',
+    chartT:'Transmisja <i>T</i>(<i>E</i>)', scLin:'liniowa', scLog:'log',
+    clPlane:'fala płaska T(E)', clDist:'rozkład energii paczki', clSim:'symulacja', clV0:'V₀',
+    cnote:'Krzywa to wynik dla fali płaskiej. Paczka falowa zawiera cały zakres energii (zacieniony rozkład), więc jej <i>T</i> jest średnią z <i>T</i>(<i>E</i>) ważoną tym rozkładem. Wąskie piki rezonansowe paczka częściowo rozmywa.',
+    tries:'Spróbuj',
+    t1h:'E < V₀, a jednak przechodzi', t1:'Elektron o energii 3 eV na barierze 5 eV i grubości 0,3 nm. Klasycznie odbiłby się w całości, kwantowo około 5% przenika na drugą stronę.',
+    t2h:'Dwa razy grubsza bariera', t2:'Przy <i>a</i> = 0,25 nm przechodzi około 10%. Tu <i>a</i> = 0,5 nm i zostaje około 0,3%, ponad 30 razy mniej, bo <i>T</i> ∝ e<sup>−2κa</sup>. Lupa ×50 pokazuje to, co przeszło.',
+    t3h:'E > V₀, a jednak odbicie', t3:'Energia 6 eV nad barierą 5 eV. Klasycznie wszystko przelatuje, a tu około 26% wraca. Preset Studnia pokazuje to samo nad dołem potencjału.',
+    t4h:'Rezonans: dwie bariery przepuszczają więcej', t4:'Jedna cienka bariera przepuszcza przy 1,03 eV około 31%. Dwie takie same, ustawione w rezonansie, przepuszczają prawie 90%. Zobacz ostry pik na wykresie <i>T</i>(<i>E</i>).',
+    ariaCanvas:'Animacja paczki falowej na potencjale', ariaPanel:'Ustawienia', ariaChart:'Wykres transmisji T(E)',
+    eAxis:'E [eV]', xAxis:'x [nm]', absorbed:'pochłonięte', none:'—'
+  },
+  en: {
+    eyebrow:'Quantum physics · wave packet', title:'Quantum tunnelling',
+    lede:'Send an electron at a barrier it could never climb classically. The Schrödinger equation, solved live, shows how much of the wave reflects and how much leaks through to the other side.',
+    kbd:'space', reset:'Reset', speed:'Speed', start:'Start', pause:'Pause', resume:'Resume', again:'Run again',
+    tgEnergy:'Energy <i>E</i>', tgReIm:'Re <i>ψ</i>, Im <i>ψ</i>', tgZoom:'Magnify ×50',
+    sReady:'ready', sRun:'running', sPause:'paused', sDone:'done',
+    lgPsi:'|ψ|² (arb. units)', lgV:'potential V(x)', lgE:'energy E', lgRe:'Re ψ', lgIm:'Im ψ', lgZoom:'|ψ|² × 50',
+    probs:'Probabilities', pR:'reflected R', pM:'inside the barrier region', pT:'transmitted T', pN:'sum R + T',
+    subReady:'Press Start. The probabilities settle once the packet has hit the potential.', subRun:'Packet moving. The numbers change until the wave leaves the barrier.', subDone:'Result settled. The part absorbed at the grid edges is counted in R and T.',
+    cPlane:'Plane wave at energy <i>E</i>: <i>T</i>(<i>E</i>)', cAvg:'Average over the packet’s energy spread ⟨<i>T</i>⟩', cSim:'Simulation, wave packet <i>T</i>',
+    gPot:'Potential', prRect:'Barrier', prDouble:'Double barrier', prStep:'Step', prWell:'Well',
+    lV0:'Barrier height <i>V</i><sub>0</sub>', lV0step:'Step height <i>V</i><sub>0</sub>', lV0well:'Well depth <i>V</i><sub>0</sub>',
+    la:'Width <i>a</i>', laDouble:'Width of each barrier <i>a</i>', laWell:'Well width <i>a</i>', ld:'Barrier separation <i>d</i>',
+    gPacket:'Wave packet (electron)', lE:'Energy <i>E</i>', lsig:'Packet width <i>σ</i>', sigHint:'A narrower packet has a wider energy spread.',
+    pillLam:'wavelength λ', pillV:'group velocity', pillDE:'energy spread ΔE',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current settings. Electron mass mₑ, ħ = 0.658 eV·fs, 2mₑ/ħ² = 26.25 eV⁻¹·nm⁻².',
+    fSch:'Schrödinger equation', fK:'Wave number', fKappa:'Decay inside the barrier', fKover:'Wave above the barrier', fKwell:'Wave inside the well', fApprox:'Thick barrier approximation', fExact:'Exact plane-wave result',
+    nSch:'Split-operator method: potential half step, Fourier transform (hand-written FFT), kinetic step, inverse transform. Grid', nSch2:'An imaginary potential at the edges absorbs the wave, so nothing wraps around.',
+    nK:'de Broglie wavelength', nKappa:'Penetration depth 1/κ: over this distance the amplitude drops by a factor of e.', nKover:'Above the barrier the wave does not decay, but its wave number changes. The jump in k at the edges causes partial reflection.', nKwell:'Inside the well the electron speeds up. The jump in k at the edges reflects part of the wave, even though nothing stops it classically.',
+    nApprox:'Valid for κa ≫ 1. Here κa =', nApproxNo:'The approximation applies only for E < V₀ and a thick barrier (κa ≫ 1).', nApproxD:'For a single barrier. Off resonance two barriers give roughly the product, on resonance T ≈ 1.',
+    nExactStepBelow:'For E < V₀ the wave is totally reflected (R = 1), although it penetrates the step to a depth 1/κ.', nExactDouble:'Two barriers, computed with the transfer matrix method. The wave bouncing between them interferes: at resonance energies T = 1.', nRes:'Nearest resonance:',
+    chartT:'Transmission <i>T</i>(<i>E</i>)', scLin:'linear', scLog:'log',
+    clPlane:'plane wave T(E)', clDist:'packet energy spread', clSim:'simulation', clV0:'V₀',
+    cnote:'The curve is the plane-wave result. A wave packet contains a range of energies (shaded distribution), so its <i>T</i> is the average of <i>T</i>(<i>E</i>) weighted by that distribution. The packet partly smears out narrow resonance peaks.',
+    tries:'Try this',
+    t1h:'E < V₀, yet it gets through', t1:'A 3 eV electron hits a 5 eV barrier 0.3 nm thick. Classically it would bounce back entirely; quantum mechanically about 5% leaks through.',
+    t2h:'Twice as thick a barrier', t2:'At <i>a</i> = 0.25 nm about 10% gets through. Here <i>a</i> = 0.5 nm and only about 0.3% is left, over 30 times less, because <i>T</i> ∝ e<sup>−2κa</sup>. Magnify ×50 reveals what got through.',
+    t3h:'E > V₀, yet it reflects', t3:'A 6 eV electron over a 5 eV barrier. Classically everything passes; here about 26% comes back. The Well preset shows the same above a dip in the potential.',
+    t4h:'Resonance: two barriers let more through', t4:'One thin barrier transmits about 31% at 1.03 eV. Two identical ones, tuned to resonance, transmit almost 90%. Look at the sharp peak in the <i>T</i>(<i>E</i>) plot.',
+    ariaCanvas:'Animation of a wave packet hitting a potential', ariaPanel:'Settings', ariaChart:'Transmission plot T(E)',
+    eAxis:'E [eV]', xAxis:'x [nm]', absorbed:'absorbed', none:'—'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('tunel-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUP = (n) => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c] ?? '⁻').join('');
+function fsci(x, d = 2) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return fmt(0, 0);
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  if (e >= -2 && e < 4) return fmt(x, Math.max(0, d + 1 - e - 1 + (e < 0 ? 0 : 0)) );
+  return `${fmt(x / Math.pow(10, e), d - 1)}·10${SUP(e)}`;
+}
+function sig(x, n = 3) {           // n significant digits, sci for very small
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return fmt(0, 0);
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  if (e < -3) return `${fmt(x / Math.pow(10, e), n - 1)}·10${SUP(e)}`;
+  return fmt(x, Math.max(0, n - 1 - e));
+}
+function pct(v) {
+  const p = v * 100;
+  return p >= 10 ? fmt(p, 1) : p >= 0.1 ? fmt(p, 2) : p >= 0.001 ? fmt(p, 3) : p >= 1e-6 ? sig(p, 2) : fmt(0, 1);
+}
+
+/* ---------- parameters & state ---------- */
+const P = { preset: 'rect', V0: 5, a: 0.3, d: 0.4, E: 3, sigma: 2 };
+const S = { mode: 'ready', speed: 1, energy: false, reim: false, zoom: false, scale: 'lin', hoverE: null };
+const sim = new Sim();
+let curve = null, avgT = 0, planeT = 0, resE = null, view = null;
+
+function readParams() {
+  P.V0 = +$('#V0').value; P.a = +$('#a').value; P.d = +$('#d').value; P.E = +$('#E').value; P.sigma = +$('#sigma').value;
+}
+function setupSim() {
+  sim.setup(P);
+  // frame: initial packet (±2σ) on the left, the same distance past the structure on the right
+  const right = isFinite(sim.eR) ? sim.eR : sim.eL;
+  const xl = sim.x0 - 2 * P.sigma, c = 0.5 * (sim.eL + right);
+  view = { xl, xr: right + (sim.eL - xl) };
+  if (c - xl < 8) view = { xl: c - 8, xr: c + 8 };
+}
+function computeCurve() {
+  const n = 700, Emax = 10.5, pts = new Float64Array(n + 1);
+  for (let i = 0; i <= n; i++) pts[i] = transmission(P, Math.max(1e-4, i / n * Emax));
+  curve = { n, Emax, pts };
+  planeT = transmission(P, P.E);
+  avgT = packetT(P, sim.k0, sim.sk, 400);
+  // nearest resonance below V0 for double barrier
+  resE = null;
+  if (P.preset === 'double') {
+    let best = null;
+    for (let i = 1; i < n; i++) {
+      const E = i / n * Emax; if (E >= P.V0) break;
+      if (pts[i] > pts[i - 1] && pts[i] >= pts[i + 1] && pts[i] > 0.5) {
+        let lo = (i - 1) / n * Emax, hi = (i + 1) / n * Emax;
+        for (let k = 0; k < 40; k++) { const m1 = lo + (hi - lo) / 3, m2 = hi - (hi - lo) / 3; if (transmission(P, m1) < transmission(P, m2)) lo = m1; else hi = m2; }
+        const Er = (lo + hi) / 2;
+        if (best == null || Math.abs(Er - P.E) < Math.abs(best - P.E)) best = Er;
+      }
+    }
+    resE = best;
+  }
+}
+function recompute() {
+  readParams();
+  setupSim();
+  computeCurve();
+  S.mode = 'ready';
+  updateOutputs(); updateProbs(); updateFormulas(); updateLegend(); updateChartLegend(); updatePlay();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- UI ---------- */
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function updateOutputs() {
+  const o = (id, s) => { $('#' + id + '-out').textContent = s; };
+  o('V0', `${fmt(P.V0, 1)} eV`); o('a', `${fmt(P.a, 2)} nm`); o('d', `${fmt(P.d, 2)} nm`);
+  o('E', `${fmt(P.E, 2)} eV`); o('sigma', `${fmt(P.sigma, 1)} nm`);
+  $$('input[type=range]').forEach(setFill);
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === P.preset)));
+  $('#ctl-d').hidden = P.preset !== 'double';
+  $('#ctl-a').classList.toggle('off', P.preset === 'step');
+  $('#a').disabled = P.preset === 'step';
+  $('#lab-V0').innerHTML = tr(P.preset === 'step' ? 'lV0step' : P.preset === 'well' ? 'lV0well' : 'lV0');
+  $('#ctl-a label').innerHTML = tr(P.preset === 'double' ? 'laDouble' : P.preset === 'well' ? 'laWell' : 'la');
+  const k = sim.k0, v = 2 * C2M * k / HBAR;           // nm/fs
+  $('#pill-lam').textContent = `${fmt(2 * Math.PI / k, 3)} nm`;
+  $('#pill-v').textContent = `${fmt(v * 1000, 0)} km/s`;
+  $('#pill-de').textContent = `${fmt(2 * C2M * k * sim.sk, 2)} eV`;
+}
+function stateKey() { return S.mode; }
+const STATE_LABEL = { ready: 'sReady', run: 'sRun', pause: 'sPause', done: 'sDone' };
+function updateLegend() {
+  let h = `<span><i class="sw-fill"></i>${tr('lgPsi')}</span><span><i class="sw-pot"></i>${tr('lgV')}</span>`;
+  if (S.energy) h += `<span><i class="sw-line" style="border-top:2px dashed var(--en)"></i>${tr('lgE')}</span>`;
+  if (S.reim) h += `<span><i class="sw-line"></i>${tr('lgRe')}</span><span><i class="sw-line" style="border-top-color:var(--im)"></i>${tr('lgIm')}</span>`;
+  if (S.zoom) h += `<span><i class="sw-line" style="border-top:2px dotted var(--psi)"></i>${tr('lgZoom')}</span>`;
+  h += `<span class="state" id="state" data-s="${S.mode}">${tr(STATE_LABEL[S.mode])}</span>`;
+  $('#legend').innerHTML = h;
+}
+function setStateChip() {
+  const el = $('#state'); if (!el) return;
+  if (el.dataset.s !== S.mode) { el.dataset.s = S.mode; el.textContent = tr(STATE_LABEL[S.mode]); }
+}
+const ICO_PLAY = '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+const ICO_PAUSE = '<path d="M5 3.5h3.5v13H5zM11.5 3.5H15v13h-3.5z" fill="currentColor"/>';
+const ICO_AGAIN = '<path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>';
+function updatePlay() {
+  const m = S.mode;
+  $('#play-lbl').textContent = tr(m === 'run' ? 'pause' : m === 'pause' ? 'resume' : m === 'done' ? 'again' : 'start');
+  $('#play-ico').innerHTML = m === 'run' ? ICO_PAUSE : m === 'done' ? ICO_AGAIN : ICO_PLAY;
+  setStateChip();
+}
+let lastProbKey = '';
+function updateProbs() {
+  const R = sim.R, T = sim.T, M = sim.M;
+  const key = [R, T, M, lang, S.mode].map(v => typeof v === 'number' ? v.toFixed(6) : v).join('|');
+  if (key === lastProbKey) return; lastProbKey = key;
+  const started = sim.t > 0;
+  const r = started ? R : 0, t = started ? T : 0;
+  $('#p-r').textContent = `${pct(r)} %`;
+  $('#p-t').textContent = `${pct(t)} %`;
+  $('#p-m').textContent = `${pct(started ? M : 0)} %`;
+  $('#p-n').textContent = `${pct(started ? R + T : 0)} %`;
+  $('#bar-r').style.width = (r * 100) + '%';
+  $('#bar-t').style.width = (t * 100) + '%';
+  $('#bar-m').style.width = (started ? M * 100 : 0) + '%';
+  $('#hud-r').innerHTML = `${pct(r)} <span>%</span>`;
+  $('#hud-tt').innerHTML = `${pct(t)} <span>%</span>`;
+  $('#hud-t').innerHTML = `${fmt(sim.t, 1)} <span>fs</span>`;
+  $('#hud-x').innerHTML = `${fmt(sim.xm, 2)} <span>nm</span>`;
+  $('#c-plane').textContent = `${pct(planeT)} %`;
+  $('#c-avg').textContent = `${pct(avgT)} %`;
+  $('#c-sim').textContent = S.mode === 'done' || (started && M < 0.01 && sim.t > 0) ? `${pct(T)} %` : started ? `${pct(T)} % …` : tr('none');
+  $('#res-sub').textContent = tr(S.mode === 'done' ? 'subDone' : S.mode === 'ready' ? 'subReady' : 'subRun');
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+const res = (s) => `<span class="r">${s}</span>`;
+function updateFormulas() {
+  const E = P.E, V0 = P.V0, a = P.a, c = 1 / C2M, n = (x, d = 2) => fmt(x, d);
+  const hb = 'ħ', me = `${V('m', 'e')}`;
+  const cards = [];
+  cards.push(`<div class="fcard wide"><h4>${tr('fSch')}</h4>
+    <div class="eq"><i>i</i>${hb}${FR('∂' + V('ψ'), '∂' + V('t'))}${EQ}−${FR(`${hb}<sup>2</sup>`, `2${me}`)}${FR(`∂<sup>2</sup>${V('ψ')}`, `∂${V('x')}<sup>2</sup>`)} + ${V('V')}(${V('x')})${V('ψ')}</div>
+    <p class="fnote">${tr('nSch')} <i>N</i> = ${N}, Δ<i>x</i> = ${n(DX, 3)} nm, Δ<i>t</i> = ${n(sim.dt, 4)} fs. ${tr('nSch2')}</p></div>`);
+  const k = sim.k0;
+  cards.push(`<div class="fcard wide"><h4>${tr('fK')}</h4>
+    <div class="eq">${V('k')}${EQ}${FR(RT(`2${me}${V('E')}`), hb)}${EQ}${RT(`${n(c, 2)} · ${n(E, 2)}`)} nm⁻¹${EQ}${res(`${n(k, 2)} nm⁻¹`)}</div>
+    <div class="eq num">${V('λ')}${EQ}${FR('2π', V('k'))}${EQ}${res(`${n(2 * Math.PI / k, 3)} nm`)}</div>
+    <p class="fnote">${tr('nK')}.</p></div>`);
+  const below = P.preset !== 'well' && E < V0;
+  let kap = 0;
+  if (P.preset === 'well') {
+    const kw = Math.sqrt((E + V0) * c);
+    cards.push(`<div class="fcard wide"><h4>${tr('fKwell')}</h4>
+      <div class="eq">${V('k', '′')}${EQ}${FR(RT(`2${me}(${V('E')} + ${V('V', '0')})`), hb)}${EQ}${RT(`${n(c, 2)} · ${n(E + V0, 2)}`)}${EQ}${res(`${n(kw, 2)} nm⁻¹`)}</div>
+      <p class="fnote">${tr('nKwell')}</p></div>`);
+  } else if (below) {
+    kap = Math.sqrt((V0 - E) * c);
+    cards.push(`<div class="fcard wide"><h4>${tr('fKappa')}</h4>
+      <div class="eq">${V('κ')}${EQ}${FR(RT(`2${me}(${V('V', '0')} − ${V('E')})`), hb)}${EQ}${RT(`${n(c, 2)} · ${n(V0 - E, 2)}`)}${EQ}${res(`${n(kap, 2)} nm⁻¹`)}</div>
+      <div class="eq num">1/${V('κ')}${EQ}${res(`${n(1 / kap, 3)} nm`)}</div>
+      <p class="fnote">${tr('nKappa')}</p></div>`);
+  } else {
+    const kp = Math.sqrt(Math.max(E - V0, 0) * c);
+    cards.push(`<div class="fcard wide"><h4>${tr('fKover')}</h4>
+      <div class="eq">${V('k', '′')}${EQ}${FR(RT(`2${me}(${V('E')} − ${V('V', '0')})`), hb)}${EQ}${RT(`${n(c, 2)} · ${n(E - V0, 2)}`)}${EQ}${res(`${n(kp, 2)} nm⁻¹`)}</div>
+      <p class="fnote">${tr('nKover')}</p></div>`);
+  }
+  // thick-barrier approximation
+  let ap = `<div class="eq">${V('T')} ≈ 16${FR(V('E'), V('V', '0'))}(1 − ${FR(V('E'), V('V', '0'))}) e<sup>−2κ<i>a</i></sup></div>`;
+  if (below && (P.preset === 'rect' || P.preset === 'double')) {
+    const x = E / V0, Ta = 16 * x * (1 - x) * Math.exp(-2 * kap * a);
+    ap += `<div class="eq num">${V('T')} ≈ 16 · ${n(x, 3)} · ${n(1 - x, 3)} · e<sup>−2 · ${n(kap, 2)} · ${n(a, 2)}</sup>${EQ}${res(`${sig(Ta, 3)}`)}</div>
+      <p class="fnote">${tr('nApprox')} ${n(kap * a, 2)}.${P.preset === 'double' ? ' ' + tr('nApproxD') : ''}</p>`;
+  } else ap += `<p class="fnote">${tr('nApproxNo')}</p>`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fApprox')}</h4>${ap}</div>`);
+  // exact
+  let ex = '';
+  const Tex = transmission(P, E);
+  if (P.preset === 'rect') {
+    ex += `<div class="eq">${V('T')}${EQ}<span style="font-size:1.6em;vertical-align:middle">[</span>1 + ${FR(`${V('V', '0')}<sup>2</sup> sinh<sup>2</sup>(${V('κ')}${V('a')})`, `4${V('E')}(${V('V', '0')} − ${V('E')})`)}<span style="font-size:1.6em;vertical-align:middle">]</span><sup>−1</sup> &nbsp;<span class="fnote">(E &lt; V₀)</span></div>
+      <div class="eq">${V('T')}${EQ}<span style="font-size:1.6em;vertical-align:middle">[</span>1 + ${FR(`${V('V', '0')}<sup>2</sup> sin<sup>2</sup>(${V('k', '′')}${V('a')})`, `4${V('E')}(${V('E')} − ${V('V', '0')})`)}<span style="font-size:1.6em;vertical-align:middle">]</span><sup>−1</sup> &nbsp;<span class="fnote">(E &gt; V₀)</span></div>`;
+    if (Math.abs(E - V0) > 1e-9) {
+      const q = Math.sqrt(Math.abs(V0 - E) * c), f = below ? Math.sinh(q * a) ** 2 : Math.sin(q * a) ** 2;
+      ex += `<div class="eq num">${V('T')}${EQ}[1 + ${FR(`${n(V0 * V0, 2)} · ${below ? 'sinh' : 'sin'}<sup>2</sup>(${n(q * a, 3)})`, `4 · ${n(E, 2)} · ${n(Math.abs(V0 - E), 2)}`)}]<sup>−1</sup>${EQ}${res(sig(Tex, 4))}</div>`;
+    }
+  } else if (P.preset === 'step') {
+    ex += `<div class="eq">${V('T')}${EQ}${FR(`4${V('k')}${V('k', '′')}`, `(${V('k')} + ${V('k', '′')})<sup>2</sup>`)} &nbsp;<span class="fnote">(E &gt; V₀)</span></div>`;
+    if (below) ex += `<p class="fnote">${tr('nExactStepBelow')}</p><div class="eq num">${V('T')}${EQ}${res(fmt(0, 0))}</div>`;
+    else { const kp = Math.sqrt((E - V0) * c); ex += `<div class="eq num">${V('T')}${EQ}${FR(`4 · ${n(k, 2)} · ${n(kp, 2)}`, `(${n(k, 2)} + ${n(kp, 2)})<sup>2</sup>`)}${EQ}${res(sig(Tex, 4))}</div>`; }
+  } else if (P.preset === 'well') {
+    const kw = Math.sqrt((E + V0) * c);
+    ex += `<div class="eq">${V('T')}${EQ}<span style="font-size:1.6em;vertical-align:middle">[</span>1 + ${FR(`${V('V', '0')}<sup>2</sup> sin<sup>2</sup>(${V('k', '′')}${V('a')})`, `4${V('E')}(${V('E')} + ${V('V', '0')})`)}<span style="font-size:1.6em;vertical-align:middle">]</span><sup>−1</sup></div>
+      <div class="eq num">${V('T')}${EQ}[1 + ${FR(`${n(V0 * V0, 2)} · sin<sup>2</sup>(${n(kw * a, 3)})`, `4 · ${n(E, 2)} · ${n(E + V0, 2)}`)}]<sup>−1</sup>${EQ}${res(sig(Tex, 4))}</div>`;
+  } else {
+    ex += `<p class="fnote">${tr('nExactDouble')}</p><div class="eq num">${V('T')}(${n(E, 2)} eV)${EQ}${res(sig(Tex, 4))}</div>`;
+    if (resE != null) ex += `<p class="fnote">${tr('nRes')} <i>E</i> ≈ ${n(resE, 3)} eV.</p>`;
+  }
+  cards.push(`<div class="fcard wide"><h4>${tr('fExact')}</h4>${ex}</div>`);
+  let html = cards.join('');
+  if (lang === 'pl') html = html.replace(/sinh/g, 'sh');
+  $('#fgrid').innerHTML = html;
+}
+
+/* ---------- canvas: scene ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 450, dpr = 1, dirty = true, chartDirty = true;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'psi', 'refl', 'en', 're', 'im', 'pot'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+function withAlpha(hex, a) {
+  const h = hex.replace('#', ''); const v = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(v >> 16) & 255},${(v >> 8) & 255},${v & 255},${a})`;
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle', c = ctx, bg = col.paper) {
+  c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = bg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function subText(b, s, x, y, color, size = 16, align = 'left') {
+  const c = ctx, fb = `italic ${size}px ${FONT_MATH}`, fs = `italic ${Math.round(size * 0.7)}px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fs; const ws = s ? c.measureText(s).width + 1 : 0;
+  const x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb); if (s) halo(s, x0 + wb + 1, y + size * 0.3, color, fs);
+  return x0 + wb + ws;
+}
+
+function energyRange() {
+  const lo = P.preset === 'well' ? -P.V0 : 0;
+  const hi = Math.max(P.preset === 'well' ? 0.9 * P.V0 : P.V0, P.E + 1.5 * 2 * C2M * sim.k0 * sim.sk, 1) * 1.28;
+  return [lo - (hi - lo) * 0.04, hi];
+}
+function drawScene() {
+  const c = ctx; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  const L = 46, R = 12, T = 16, B = 30, pw = cw - L - R, ph = ch - T - B;
+  const [e0, e1] = energyRange();
+  const X = (x) => L + (x - view.xl) / (view.xr - view.xl) * pw;
+  const Y = (e) => T + (1 - (e - e0) / (e1 - e0)) * ph;
+  const y0 = Y(0);
+  // grid
+  const xs1 = niceStep(view.xr - view.xl, Math.max(4, pw / 70)), es = niceStep(e1 - e0, Math.max(3, ph / 55));
+  c.lineWidth = 1;
+  c.strokeStyle = col.grid; c.beginPath();
+  for (let x = Math.ceil(view.xl / (xs1 / 5)) * xs1 / 5; x <= view.xr; x += xs1 / 5) { const px = Math.round(X(x)) + 0.5; c.moveTo(px, T); c.lineTo(px, T + ph); }
+  for (let e = Math.ceil(e0 / (es / 5)) * es / 5; e <= e1; e += es / 5) { const py = Math.round(Y(e)) + 0.5; c.moveTo(L, py); c.lineTo(L + pw, py); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let x = Math.ceil(view.xl / xs1) * xs1; x <= view.xr; x += xs1) { const px = Math.round(X(x)) + 0.5; c.moveTo(px, T); c.lineTo(px, T + ph); }
+  for (let e = Math.ceil(e0 / es) * es; e <= e1; e += es) { const py = Math.round(Y(e)) + 0.5; c.moveTo(L, py); c.lineTo(L + pw, py); }
+  c.stroke();
+  // axis labels
+  for (let x = Math.ceil(view.xl / xs1) * xs1; x <= view.xr + 1e-9; x += xs1) {
+    const px = X(x); if (px < L + 10 || px > L + pw - 62) continue;
+    halo(fmt(x, xs1 < 1 ? 1 : 0), px, T + ph + 15, col.ink2, `500 11px ${FONT_MONO}`, 'center');
+  }
+  halo(tr('xAxis'), L + pw - 2, T + ph + 15, col.ink3, `500 11px ${FONT_MONO}`, 'right');
+  for (let e = Math.ceil(e0 / es) * es; e <= e1 + 1e-9; e += es) {
+    const py = Y(e); if (py < T + 16) continue;
+    halo(fmt(e, es < 1 ? 1 : 0), L - 6, py, col.ink2, `500 11px ${FONT_MONO}`, 'right');
+  }
+  halo(tr('eAxis'), 6, T + 4, col.ink3, `500 11px ${FONT_MONO}`, 'left');
+  c.save(); c.beginPath(); c.rect(L, T, pw, ph); c.clip();
+  // potential
+  const segs = segments(P);
+  c.beginPath(); c.moveTo(L, y0);
+  const xR = (b) => Math.min(isFinite(b) ? b : view.xr + 1, view.xr + 1);
+  // thin layers get a minimum drawn width of 3 px so they stay visible (physics uses the true width)
+  const SX = (a, b) => { let xa = X(a), xb = X(xR(b)); if (xb - xa < 3) { const m = (xa + xb) / 2; xa = m - 1.5; xb = m + 1.5; } return [xa, xb]; };
+  for (const [a, b, Vv] of segs) { const [xa, xb] = SX(a, b); c.lineTo(xa, y0); c.lineTo(xa, Y(Vv)); c.lineTo(xb, Y(Vv)); c.lineTo(xb, y0); }
+  c.lineTo(L + pw, y0);
+  c.fillStyle = withAlpha(col.pot, 0.16); c.fill();
+  c.strokeStyle = col.pot; c.lineWidth = 2; c.lineJoin = 'miter'; c.stroke();
+  // hatch inside the potential
+  c.save(); c.beginPath();
+  for (const [a, b, Vv] of segs) { const [xa, xb] = SX(a, b); c.rect(xa, Math.min(Y(Vv), y0), xb - xa, Math.abs(Y(Vv) - y0)); }
+  c.clip(); c.strokeStyle = withAlpha(col.pot, 0.22); c.lineWidth = 1; c.beginPath();
+  for (let x = L - ph; x < L + pw + ph; x += 8) { c.moveTo(x, T + ph); c.lineTo(x + ph, T); }
+  c.stroke(); c.restore();
+
+  // wavefunction
+  const amp = 0.52 * (y0 - T) / sim.peak0;           // |ψ|² scale (px per nm⁻¹)
+  let i0 = 0, i1 = N - 1;
+  while (i0 < N - 1 && xs[i0] < view.xl - DX) i0++;
+  while (i1 > 0 && xs[i1] > view.xr + DX) i1--;
+  if (S.reim) {
+    const yc = y0 - (y0 - T) * 0.62, ap = 0.3 * (y0 - T) / Math.sqrt(sim.peak0);
+    for (const [arr, color] of [[sim.re, col.re], [sim.im, col.im]]) {
+      c.beginPath();
+      for (let i = i0; i <= i1; i++) { const px = X(xs[i]), py = yc - arr[i] * ap; i === i0 ? c.moveTo(px, py) : c.lineTo(px, py); }
+      c.strokeStyle = withAlpha(color, 0.85); c.lineWidth = 1.3; c.stroke();
+    }
+    c.strokeStyle = withAlpha(col.ink3, 0.5); c.setLineDash([2, 4]); c.beginPath(); c.moveTo(L, yc); c.lineTo(L + pw, yc); c.stroke(); c.setLineDash([]);
+  }
+  const g = c.createLinearGradient(0, y0 - (y0 - T) * 0.6, 0, y0);
+  g.addColorStop(0, withAlpha(col.psi, 0.55)); g.addColorStop(1, withAlpha(col.psi, 0.08));
+  c.beginPath(); c.moveTo(X(xs[i0]), y0);
+  for (let i = i0; i <= i1; i++) c.lineTo(X(xs[i]), y0 - Math.min(sim.rho[i] * amp, ph * 2));
+  c.lineTo(X(xs[i1]), y0); c.closePath();
+  c.fillStyle = g; c.fill();
+  c.beginPath();
+  for (let i = i0; i <= i1; i++) { const py = y0 - Math.min(sim.rho[i] * amp, ph * 2); i === i0 ? c.moveTo(X(xs[i]), py) : c.lineTo(X(xs[i]), py); }
+  c.save(); c.strokeStyle = col.psi; c.lineWidth = 2.2; c.lineJoin = 'round';
+  if (!reduceMotion) { c.shadowColor = col.psi; c.shadowBlur = 12; }
+  c.stroke(); c.restore();
+  if (S.zoom) {
+    const xr0 = isFinite(sim.eR) ? sim.eR : 0;
+    c.beginPath(); let st = false;
+    for (let i = i0; i <= i1; i++) {
+      if (xs[i] < xr0) continue;
+      const py = y0 - Math.min(sim.rho[i] * amp * 50, ph * 2);
+      st ? c.lineTo(X(xs[i]), py) : (c.moveTo(X(xs[i]), py), st = true);
+    }
+    c.strokeStyle = col.psi; c.lineWidth = 1.6; c.setLineDash([2, 3]); c.stroke(); c.setLineDash([]);
+    halo('×50', X(xr0) + 8, T + 14, col.psi, `500 11px ${FONT_MONO}`, 'left');
+  }
+  // energy line
+  if (S.energy) {
+    const ye = Y(P.E);
+    c.save(); c.strokeStyle = col.en; c.lineWidth = 1.6; c.setLineDash([7, 5]);
+    c.beginPath(); c.moveTo(L, ye); c.lineTo(L + pw, ye); c.stroke(); c.restore();
+    subText('E', null, L + 8, ye - 11, col.en, 16);
+    halo(`= ${fmt(P.E, 2)} eV`, L + 22, ye - 10, col.en, `500 11.5px ${FONT_MONO}`, 'left');
+  }
+  c.restore();
+  // potential label
+  {
+    const sg = segs[0], xa = X(sg[0]), xb = X(xR(sg[1]));
+    const lx = P.preset === 'step' ? Math.min(xa + 14, L + pw - 90) : (P.preset === 'double' ? X(segs[1][1]) + 8 : xb + 8);
+    const ly = P.preset === 'well' ? Y(-P.V0) + 14 : Y(P.V0) - 4;
+    const end = subText('V', '0', lx, ly - 8, col.ink2, 15);
+    halo(`= ${fmt(P.V0, 1)} eV`, end + 4, ly - 8, col.ink2, `500 11.5px ${FONT_MONO}`, 'left');
+  }
+  // big R / T readouts
+  if (sim.t > 0) {
+    halo(`R ${pct(sim.R)} %`, L + 10, T + 30, col.refl, `500 15px ${FONT_MONO}`, 'left');
+    halo(`T ${pct(sim.T)} %`, L + pw - 10, T + 30, col.psi, `500 15px ${FONT_MONO}`, 'right');
+  }
+  // frame
+  c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(L + 0.5, T); c.lineTo(L + 0.5, T + ph + 0.5); c.lineTo(L + pw, T + ph + 0.5); c.stroke();
+}
+
+/* ---------- chart T(E) ---------- */
+const chv = $('#chart'), cctx = chv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 250, cgeom = null;
+function resizeChart() { ccw = cbox.clientWidth; cch = cbox.clientHeight; chv.width = Math.round(ccw * dpr); chv.height = Math.round(cch * dpr); chartDirty = true; }
+new ResizeObserver(resizeChart).observe(cbox);
+function updateChartLegend() {
+  $('#clegend').innerHTML = `<span><i class="sw-line" style="border-top-color:var(--ink)"></i>${tr('clPlane')}</span>
+    <span><i class="sw-fill" style="opacity:.35"></i>${tr('clDist')}</span>
+    <span><i class="sw-dot" style="width:10px;height:10px;border-radius:50%;border:2px solid var(--psi);display:inline-block"></i>${tr('clSim')}</span>`;
+}
+function drawChart() {
+  const c = cctx; c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, ccw, cch);
+  const L = 44, R = 10, T = 10, B = 28, pw = ccw - L - R, ph = cch - T - B;
+  const log = S.scale === 'log', lmin = -6;
+  const X = (E) => L + E / curve.Emax * pw;
+  const Yv = (t) => log ? T + (1 - (Math.log10(Math.max(t, 1e-12)) - lmin) / -lmin) * ph : T + (1 - t) * ph;
+  const Y = (t) => Math.min(T + ph, Math.max(T, Yv(t)));
+  cgeom = { L, pw, X };
+  // grid
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.beginPath();
+  for (let E = 0; E <= curve.Emax + 1e-9; E += 1) { const px = Math.round(X(E)) + 0.5; c.moveTo(px, T); c.lineTo(px, T + ph); }
+  const yt = log ? [-6, -5, -4, -3, -2, -1, 0].map(v => Math.pow(10, v)) : [0, 0.25, 0.5, 0.75, 1];
+  for (const t of yt) { const py = Math.round(Y(t)) + 0.5; c.moveTo(L, py); c.lineTo(L + pw, py); }
+  c.stroke();
+  c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (const t of yt) c.fillText(log ? `10${SUP(Math.round(Math.log10(t)))}` : fmt(t, 2), L - 6, Y(t));
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let E = 0; E <= curve.Emax - 2 + 1e-9; E += 2) c.fillText(fmt(E, 0), X(E), T + ph + 6);
+  c.textAlign = 'right'; c.fillStyle = col.ink3; c.fillText('E [eV]', L + pw, T + ph + 6 + 0);
+  // packet energy distribution
+  const sk = sim.sk, k0 = sim.k0;
+  c.beginPath(); c.moveTo(X(0), T + ph);
+  let pmax = 0; const dist = [];
+  for (let i = 0; i <= 400; i++) {
+    const E = i / 400 * curve.Emax, k = Math.sqrt(E / C2M);
+    const pE = Math.exp(-0.5 * ((k - k0) / sk) ** 2) / Math.max(k, 1e-3);   // ∝ dk/dE
+    dist.push([E, pE]); if (pE > pmax) pmax = pE;
+  }
+  for (const [E, pE] of dist) c.lineTo(X(E), T + ph - pE / pmax * ph * 0.55);
+  c.lineTo(X(curve.Emax), T + ph); c.closePath(); c.fillStyle = withAlpha(col.psi, 0.16); c.fill();
+  // V0 line
+  if (P.preset !== 'well') {
+    const xv = X(P.V0);
+    c.save(); c.strokeStyle = col.pot; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(xv, T); c.lineTo(xv, T + ph); c.stroke(); c.restore();
+    halo('V₀', xv + 4, T + 8, col.ink2, `italic 14px ${FONT_MATH}`, 'left', 'middle', c, col.surface);
+  }
+  // T(E) curve
+  c.beginPath();
+  for (let i = 0; i <= curve.n; i++) { const E = i / curve.n * curve.Emax, py = Y(curve.pts[i]); i ? c.lineTo(X(E), py) : c.moveTo(X(E), py); }
+  c.strokeStyle = col.ink; c.lineWidth = 1.8; c.lineJoin = 'round'; c.stroke();
+  // markers
+  const xe = X(P.E);
+  c.save(); c.strokeStyle = col.en; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(xe, T); c.lineTo(xe, T + ph); c.stroke(); c.restore();
+  c.fillStyle = col.ink; c.strokeStyle = col.surface; c.lineWidth = 2;
+  c.beginPath(); c.arc(xe, Y(planeT), 4.5, 0, Math.PI * 2); c.fill(); c.stroke();
+  // ⟨T⟩ tick
+  c.strokeStyle = col.psi; c.lineWidth = 2; c.beginPath(); c.moveTo(xe - 9, Y(avgT)); c.lineTo(xe + 9, Y(avgT)); c.stroke();
+  if (sim.t > 0) { c.beginPath(); c.arc(xe, Y(sim.T), 6.5, 0, Math.PI * 2); c.strokeStyle = col.psi; c.lineWidth = 2; c.stroke(); }
+  // hover
+  if (S.hoverE != null) {
+    const px = X(S.hoverE);
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(px, T); c.lineTo(px, T + ph); c.stroke(); c.restore();
+    c.fillStyle = col.ink; c.beginPath(); c.arc(px, Y(transmission(P, S.hoverE)), 3.5, 0, Math.PI * 2); c.fill();
+  }
+  c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(L + 0.5, T); c.lineTo(L + 0.5, T + ph + 0.5); c.lineTo(L + pw, T + ph + 0.5); c.stroke();
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!cgeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left;
+  if (x < cgeom.L || x > cgeom.L + cgeom.pw) { S.hoverE = null; tip.hidden = true; chartDirty = true; return; }
+  const E = Math.max(0.01, (x - cgeom.L) / cgeom.pw * curve.Emax); S.hoverE = E;
+  tip.innerHTML = `E = ${fmt(E, 2)} eV<br>T = ${pct(transmission(P, E))} %`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverE = null; tip.hidden = true; chartDirty = true; });
+cbox.addEventListener('click', () => {
+  if (S.hoverE == null) return;
+  $('#E').value = Math.min(10, Math.max(0.5, S.hoverE)).toFixed(2); recompute();
+});
+
+/* ---------- animation ---------- */
+function inViewProb() {
+  let s = 0; for (let i = 0; i < N; i++) if (xs[i] > view.xl && xs[i] < view.xr) s += sim.rho[i];
+  return s * DX;
+}
+let lastT = 0;
+function frame(now) {
+  const dtR = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.mode === 'run' && !document.hidden) {
+    const vg = 2 * C2M * sim.k0 / HBAR;                  // nm/fs
+    const fsPerSec = 6 / vg * S.speed;                    // packet travels ≈ 6 nm per real second at 1×
+    let steps = Math.max(1, Math.round(fsPerSec * dtR / sim.dt));
+    const t0 = performance.now(); let done = 0;
+    while (done < steps) { const k = Math.min(8, steps - done); sim.step(k); done += k; if (performance.now() - t0 > 14) break; }
+    if (sim.t > 2 && sim.M < 2e-4 && inViewProb() < 2e-3) { S.mode = 'done'; updatePlay(); updateLegend(); }
+    dirty = true; chartDirty = true;
+    updateProbs();
+  }
+  if (dirty) { drawScene(); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+
+function play() {
+  if (S.mode === 'run') S.mode = 'pause';
+  else if (S.mode === 'done') { setupSim(); S.mode = 'run'; }
+  else S.mode = 'run';
+  updatePlay(); updateProbs(); dirty = true; chartDirty = true;
+}
+function reset() { setupSim(); S.mode = 'ready'; lastProbKey = ''; updatePlay(); updateProbs(); dirty = true; chartDirty = true; }
+
+/* ---------- try this ---------- */
+const TRIES = [
+  { h: 't1h', b: 't1', set: { preset: 'rect', V0: 5, a: 0.3, E: 3, sigma: 2 }, energy: true, zoom: false, scale: 'lin' },
+  { h: 't2h', b: 't2', set: { preset: 'rect', V0: 5, a: 0.5, E: 3, sigma: 2 }, energy: true, zoom: true, scale: 'log' },
+  { h: 't3h', b: 't3', set: { preset: 'rect', V0: 5, a: 0.5, E: 6, sigma: 2 }, energy: true, zoom: false, scale: 'lin' },
+  { h: 't4h', b: 't4', set: { preset: 'double', V0: 5, a: 0.1, d: 0.4, E: 1.03, sigma: 3.5 }, energy: true, zoom: false, scale: 'lin' }
+];
+function renderTries() {
+  $('#trylist').innerHTML = TRIES.map((t, i) => `<button type="button" class="try" data-try="${i}" style="width:100%;margin-top:${i ? 8 : 0}px"><span class="n">${i + 1}</span><b>${tr(t.h)}</b><span>${tr(t.b)}</span></button>`).join('');
+  $$('#trylist .try').forEach(b => b.addEventListener('click', () => {
+    const t = TRIES[+b.dataset.try];
+    P.preset = t.set.preset;
+    for (const k of ['V0', 'a', 'd', 'E', 'sigma']) if (t.set[k] != null) $('#' + k).value = t.set[k];
+    setToggle('energy', t.energy); setToggle('zoom', t.zoom); setScale(t.scale);
+    recompute(); S.mode = 'run'; updatePlay(); updateProbs();
+    $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+  }));
+}
+function setToggle(key, on) { S[key] = on; $('#tg-' + key).setAttribute('aria-pressed', String(on)); updateLegend(); dirty = true; }
+function setScale(sc) { S.scale = sc; $$('#scale button').forEach(x => x.setAttribute('aria-pressed', String(x.dataset.sc === sc))); chartDirty = true; }
+
+/* ---------- wiring ---------- */
+['V0', 'a', 'd', 'E', 'sigma'].forEach(id => $('#' + id).addEventListener('input', recompute));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => {
+  P.preset = b.dataset.preset;
+  const D = { rect: { V0: 5, a: 0.3, E: 3 }, double: { V0: 5, a: 0.1, d: 0.4, E: 1.03, sigma: 3.5 }, step: { V0: 3, E: 4 }, well: { V0: 8, a: 0.6, E: 0.5 } }[P.preset];
+  for (const k in D) $('#' + k).value = D[k];
+  recompute();
+}));
+$('#play').addEventListener('click', play);
+$('#reset').addEventListener('click', reset);
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+['energy', 'reim', 'zoom'].forEach(k => $('#tg-' + k).addEventListener('click', () => setToggle(k, !S[k])));
+$$('#scale button').forEach(b => b.addEventListener('click', () => setScale(b.dataset.sc)));
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); play(); }
+  else if ((e.key === 'r' || e.key === 'R') && tag !== 'input') reset();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  cv.setAttribute('aria-label', tr('ariaCanvas')); chv.setAttribute('aria-label', tr('ariaChart'));
+  $('#panel').setAttribute('aria-label', tr('ariaPanel'));
+  $('#reset').setAttribute('aria-label', tr('reset'));
+  renderTries();
+  lastProbKey = '';
+  updateOutputs(); updateProbs(); updateFormulas(); updateLegend(); updateChartLegend(); updatePlay();
+  dirty = true; chartDirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('tunel-lang', lang); } catch (e) {}
+  applyLang();
+}));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize(); resizeChart();
+readParams(); setupSim(); computeCurve();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
