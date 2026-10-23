@@ -1,0 +1,2397 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Bryła sztywna</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: mechanics bench. A drafting-board stage with mode tabs (draw / pendulum / throw / torque),
+   an instrument strip on top and a transport bar below; control panel on the right;
+   live derivations and plots underneath. Bodies are drawn with technical-drawing section hatching. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --crimson:#E41C55; --blue:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:.9em; height:.9em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.modebar{display:flex; gap:4px; padding:8px 10px 0; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none}
+.modebar::-webkit-scrollbar{display:none}
+.mtab{flex:1 0 auto; display:inline-flex; align-items:center; justify-content:center; gap:9px; border:1px solid transparent; border-bottom:0; background:none; padding:9px 14px 10px; border-radius:10px 10px 0 0; cursor:pointer; color:var(--ink-2); font-family:var(--f-display); font-weight:600; font-size:15.5px; letter-spacing:-.005em; position:relative; margin-bottom:-1px; white-space:nowrap}
+.mtab svg{width:21px; height:21px; flex:none; color:var(--accent-mode)}
+.mtab kbd{font-family:var(--f-mono); font-size:10px; font-weight:400; color:var(--ink-3); border:1px solid var(--line); border-radius:4px; padding:0 4px}
+.mtab:hover{color:var(--ink)}
+.mtab[aria-selected="true"]{background:var(--paper); color:var(--ink); border-color:var(--line)}
+.mtab[aria-selected="true"]::after{content:""; position:absolute; left:12px; right:12px; top:-1px; height:3px; border-radius:0 0 3px 3px; background:var(--accent-mode)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:7.6ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-line{display:inline-block; width:22px; height:0; border-top:2.5px solid var(--crimson)}
+.sw-dot{display:inline-block; width:10px; height:10px; border-radius:50%; border:2px solid var(--violet); background:var(--paper)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--crimson); color:var(--crimson)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="done"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(380px, 62vh, 680px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+.toast{position:absolute; left:12px; bottom:12px; max-width:min(460px, calc(100% - 24px)); display:flex; gap:9px; align-items:baseline; background:var(--ink); color:var(--paper); padding:8px 12px; border-radius:10px; font-size:13px; line-height:1.4; box-shadow:0 8px 22px -10px rgba(0,0,0,.5); opacity:0; transform:translateY(6px); transition:opacity .2s, transform .2s; pointer-events:none}
+.toast.on{opacity:1; transform:none}
+.toast .dot{flex:none; width:8px; height:8px; border-radius:50%; background:var(--blue); transform:translateY(-1px)}
+.toast .dot[data-tone="warn"]{background:var(--amber)}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--crimson); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--crimson); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px; flex:none}
+.btn:disabled{opacity:.45; cursor:default}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg.wide button{font-family:var(--f-body); font-size:13px; padding:5px 12px}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--crimson); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--crimson)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:13ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:72ch}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:560px}
+.res th, .res td{padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res thead th:first-child{text-align:left}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res tbody th i, .res td i{font-family:var(--f-math); font-size:16px}
+.res td{font-family:var(--f-mono); font-size:13.5px}
+.res td.ref{color:var(--ink-2); font-size:13px}
+.res td.delta{color:var(--ink-3)}
+.res td.good{color:var(--blue)}
+.res tr.sep th, .res tr.sep td{border-top:1.5px solid var(--ink-3)}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pills i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.hint{font-size:12.5px; color:var(--ink-3); margin:0; line-height:1.45}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.chips.row{display:flex; flex-wrap:wrap}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 9px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2; min-width:0; text-align:left}
+.chip small{font-family:var(--f-math); font-style:italic; font-size:12.5px; color:var(--ink-3); white-space:nowrap}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.chip.own{border-style:dashed; color:var(--crimson); border-color:var(--crimson)}
+.chip.own small{color:var(--crimson); opacity:.8}
+.pills{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 9px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:11px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.btnrow{display:flex; flex-wrap:wrap; gap:6px}
+.steps{margin:0; padding-left:1.2em; display:flex; flex-direction:column; gap:6px; font-size:13px; color:var(--ink-2)}
+.steps li::marker{font-family:var(--f-mono); color:var(--ink-3); font-size:11.5px}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .big{font-size:1.3em; line-height:1; vertical-align:-.08em; margin:0 .08em}
+.eq .r{color:var(--crimson); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.b{color:var(--blue)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; flex-wrap:wrap; gap:2px; border:1px solid var(--line); border-radius:18px; padding:2px; background:var(--paper); align-self:flex-start; max-width:100%}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.chart-box{position:relative; height:270px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:1 / 1.08; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .mtab{padding:8px 10px 9px; font-size:14px; gap:6px}
+  .mtab kbd{display:none}
+  .chips{grid-template-columns:repeat(2, minmax(0,1fr))}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .toast{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Dynamika · bryła sztywna</span>
+      <h1>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 6 C29 5 35 12 33 21 C31 31 22 36 14 32 C6 28 5 18 10 11 C13 7 16 6 20 6Z" fill="none" stroke="var(--crimson)" stroke-width="3" stroke-linejoin="round"/><path d="M20 9 V38" stroke="var(--amber)" stroke-width="2" stroke-dasharray="2 3"/><circle cx="20" cy="9" r="2.6" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/><circle cx="20" cy="21" r="3.2" fill="var(--ink)"/></svg>
+        <span data-i18n="title">Bryła sztywna</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Narysuj dowolny kształt, wbij gwóźdź i puść.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="modebar" role="tablist" id="modebar">
+          <button type="button" role="tab" class="mtab" id="mode-draw" data-mode="draw" style="--accent-mode:var(--crimson)" aria-selected="false">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3.5 16.5l1-4.2 8.6-8.6 3.2 3.2-8.6 8.6zM11.6 5.2l3.2 3.2" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+            <span data-i18n="mDraw">Rysuj</span><kbd>1</kbd></button>
+          <button type="button" role="tab" class="mtab" id="mode-pend" data-mode="pend" style="--accent-mode:var(--amber)" aria-selected="true">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 3.2 V18" stroke="currentColor" stroke-width="1.3" stroke-dasharray="1.6 2"/><path d="M10 3.2c4.5 0 6.8 3.6 5.6 7.6-1.1 3.7-5.4 5.6-8.6 3.6C4.4 12.8 4 8.6 6 5.6 7 4 8.4 3.2 10 3.2z" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="3.2" r="1.6" fill="currentColor"/></svg>
+            <span data-i18n="mPend">Wahadło</span><kbd>2</kbd></button>
+          <button type="button" role="tab" class="mtab" id="mode-throw" data-mode="throw" style="--accent-mode:var(--blue)" aria-selected="false">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2 17C5 5 13 3 18 12" fill="none" stroke="currentColor" stroke-width="1.4" stroke-dasharray="1.6 2.2"/><rect x="7.5" y="3.5" width="5" height="5" rx="1" transform="rotate(30 10 6)" fill="none" stroke="currentColor" stroke-width="1.7"/></svg>
+            <span data-i18n="mThrow">Rzut z obrotem</span><kbd>3</kbd></button>
+          <button type="button" role="tab" class="mtab" id="mode-torque" data-mode="torque" style="--accent-mode:var(--violet)" aria-selected="false">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="7" r="5.2" fill="none" stroke="currentColor" stroke-width="1.7"/><circle cx="10" cy="7" r="1.6" fill="currentColor"/><path d="M4.8 7v6.5" stroke="currentColor" stroke-width="1.3"/><rect x="2.6" y="13.5" width="4.4" height="4" fill="currentColor"/></svg>
+            <span data-i18n="mTorque">Moment siły</span><kbd>4</kbd></button>
+        </div>
+        <div class="strip">
+          <dl class="hud" id="hud"></dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" aria-label="Bryła sztywna"></canvas><div class="toast" id="toast" role="status" aria-live="polite"></div></div>
+        <div class="scrub" id="scrubrow">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0,00 / 0,00 s</span>
+        </div>
+        <div class="bar" id="bar-run">
+          <button type="button" class="fire" id="fire">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="fire-label">Puść</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-01" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+          </div>
+          <div class="toggles" id="toggles">
+            <button type="button" class="tg" id="tg-com" data-key="com" data-modes="pend throw torque" aria-pressed="true" data-i18n="tgCom">Środek masy</button>
+            <button type="button" class="tg" id="tg-plumb" data-key="plumb" data-modes="pend" aria-pressed="true" data-i18n="tgPlumb">Piony</button>
+            <button type="button" class="tg" id="tg-O" data-key="O" data-modes="pend" aria-pressed="true" data-i18n="tgO">Środek wahań</button>
+            <button type="button" class="tg" id="tg-k" data-key="k" data-modes="pend" aria-pressed="false" data-i18n="tgK">Okrąg k</button>
+            <button type="button" class="tg" id="tg-axes" data-key="axes" data-modes="pend throw torque" aria-pressed="false" data-i18n="tgAxes">Osie główne</button>
+            <button type="button" class="tg" id="tg-strobe" data-key="strobe" data-modes="throw" aria-pressed="true" data-i18n="tgStrobe">Stroboskop</button>
+            <button type="button" class="tg" id="tg-trace" data-key="trace" data-modes="throw" aria-pressed="true" data-i18n="tgTrace">Ślad punktu</button>
+            <button type="button" class="tg" id="tg-vec" data-key="vec" data-modes="pend throw torque" aria-pressed="true" data-i18n="tgVec">Wektory</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn fsbtn" id="fs" aria-label="Pełny ekran">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+        <div class="bar" id="bar-draw" hidden>
+          <button type="button" class="fire" id="done">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="done">Gotowe</span><kbd data-i18n="kbdEnter">Enter</kbd>
+          </button>
+          <div class="seg wide" role="group" id="tools">
+            <button type="button" id="tool-free" data-tool="free" aria-pressed="true" data-i18n="toolFree">Odręcznie</button>
+            <button type="button" id="tool-poly" data-tool="poly" aria-pressed="false" data-i18n="toolPoly">Wielokąt</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-hole" aria-pressed="false" data-i18n="tgHole">Wycinaj otwór</button>
+            <button type="button" class="tg" id="tg-snap" aria-pressed="true" data-i18n="tgSnap">Siatka 1 cm</button>
+          </div>
+          <button type="button" class="btn" id="undo">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M7.5 5 3.5 9l4 4M4 9h8a4.5 4.5 0 0 1 0 9H9" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="undo">Cofnij</span>
+          </button>
+          <button type="button" class="btn" id="rm-holes"><span data-i18n="rmHoles">Usuń otwory</span></button>
+          <span class="spacer"></span>
+          <button type="button" class="btn fsbtn" id="fs2" aria-label="Pełny ekran">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="tbl-wrap">
+          <table class="res">
+            <thead><tr><th data-i18n="cQty">Wielkość</th><th data-i18n="cVal">Wartość</th><th data-i18n="cRef">Odniesienie</th><th data-i18n="cDelta">Różnica</th></tr></thead>
+            <tbody id="res-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia">
+      <fieldset class="grp" id="g-body">
+        <h3 data-i18n="gBody">Bryła</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" id="pr-blob" data-preset="blob" aria-pressed="true"><span data-i18n="pBlob">Plama</span><small>∫ r² dm</small></button>
+          <button type="button" class="chip" id="pr-crescent" data-preset="crescent" aria-pressed="false"><span data-i18n="pCrescent">Sierp</span><small>∫ r² dm</small></button>
+          <button type="button" class="chip" id="pr-L" data-preset="L" aria-pressed="false"><span data-i18n="pL">Kształt L</span><small>Steiner</small></button>
+          <button type="button" class="chip" id="pr-rod" data-preset="rod" aria-pressed="false"><span data-i18n="pRod">Pręt</span><small>mL²/12</small></button>
+          <button type="button" class="chip" id="pr-disc" data-preset="disc" aria-pressed="false"><span data-i18n="pDisc">Krążek</span><small>½ mR²</small></button>
+          <button type="button" class="chip" id="pr-ring" data-preset="ring" aria-pressed="false"><span data-i18n="pRing">Pierścień</span><small>½ m(R²+r²)</small></button>
+          <button type="button" class="chip" id="pr-square" data-preset="square" aria-pressed="false"><span data-i18n="pSquare">Kwadrat</span><small>ma²/6</small></button>
+          <button type="button" class="chip" id="pr-tri" data-preset="tri" aria-pressed="false"><span data-i18n="pTri">Trójkąt</span><small>ma²/12</small></button>
+          <button type="button" class="chip own" id="pr-own" aria-pressed="false"><span data-i18n="pOwn">Narysuj…</span><small data-i18n="pOwnSub">własna</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="m" data-i18n-html="lm">Masa <i>m</i></label><output id="m-out" for="m"></output></div>
+          <input type="range" id="m" min="0.05" max="5" step="0.05" value="1" style="--c:var(--crimson)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="size" data-i18n-html="lsize">Rozmiar <i>L</i></label><output id="size-out" for="size"></output></div>
+          <input type="range" id="size" min="5" max="150" step="0.5" value="36" style="--c:var(--crimson)">
+          <span class="hint" data-i18n="sizeHint">Największy wymiar bryły. Skaluje kształt bez zmiany proporcji.</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pA">pole A</small><span id="pill-A">—</span></div>
+          <div class="pill"><small data-i18n-html="pSig">gęstość σ</small><span id="pill-sig">—</span></div>
+          <div class="pill"><small data-i18n-html="pIc">moment I_c</small><span id="pill-Ic">—</span></div>
+          <div class="pill"><small data-i18n="pK">promień bezwładności k</small><span id="pill-k">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="g-draw" data-for="draw" hidden>
+        <h3 data-i18n="gDraw">Rysowanie</h3>
+        <ol class="steps">
+          <li data-i18n="dh1">Narysuj zamknięty kontur.</li>
+          <li data-i18n="dh2">Kontur jest wygładzany i upraszczany.</li>
+          <li data-i18n="dh3">Wycinaj otwór.</li>
+          <li data-i18n="dh4">Wielokąt.</li>
+        </ol>
+        <div class="pills">
+          <div class="pill"><small data-i18n="vertices">wierzchołki</small><span id="pill-nv">—</span></div>
+          <div class="pill"><small data-i18n="holes">otwory</small><span id="pill-nh">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="g-pend" data-for="pend">
+        <h3 data-i18n="gPend">Wahadło fizyczne</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="th0" data-i18n-html="lth0">Amplituda <i>θ</i><sub>0</sub></label><output id="th0-out" for="th0"></output></div>
+          <input type="range" id="th0" min="1" max="170" step="1" value="30" style="--c:var(--amber)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="gam" data-i18n-html="lgam">Tłumienie <i>γ</i></label><output id="gam-out" for="gam"></output></div>
+          <input type="range" id="gam" min="0" max="1" step="0.01" value="0.04" style="--c:var(--amber)">
+        </div>
+        <div class="btnrow">
+          <button type="button" class="btn" id="btn-huy"><span data-i18n="btnHuy">Zawieś w O</span></button>
+          <button type="button" class="btn" id="btn-k"><span data-i18n="btnK">Oś w odległości k</span></button>
+          <button type="button" class="btn" id="btn-clr"><span data-i18n="btnClr">Wyczyść piony</span></button>
+        </div>
+        <p class="hint" data-i18n="pendHint">Kliknij bryłę, żeby wbić gwóźdź.</p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-throw" data-for="throw" hidden>
+        <h3 data-i18n="gThrow">Rzut z obrotem</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v0" data-i18n-html="lv0">Prędkość <i>v</i><sub>0</sub></label><output id="v0-out" for="v0"></output></div>
+          <input type="range" id="v0" min="0.5" max="12" step="0.1" value="4.6" style="--c:var(--blue)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="beta" data-i18n-html="lbeta">Kąt rzutu <i>β</i></label><output id="beta-out" for="beta"></output></div>
+          <input type="range" id="beta" min="0" max="90" step="0.5" value="62" style="--c:var(--blue)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="w0" data-i18n-html="lw0">Prędkość kątowa <i>ω</i><sub>0</sub></label><output id="w0-out" for="w0"></output></div>
+          <input type="range" id="w0" min="-30" max="30" step="0.5" value="9" style="--c:var(--blue)">
+        </div>
+        <p class="hint" data-i18n="throwHint">Bez oporu powietrza.</p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-torque" data-for="torque" hidden>
+        <h3 data-i18n="gTorque">Ciężarek na nici</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="mw" data-i18n-html="lmw">Masa ciężarka <i>m</i><sub>c</sub></label><output id="mw-out" for="mw"></output></div>
+          <input type="range" id="mw" min="0.01" max="2" step="0.01" value="0.2" style="--c:var(--violet)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="rd" data-i18n-html="lrd">Promień bębna <i>r</i></label><output id="rd-out" for="rd"></output></div>
+          <input type="range" id="rd" min="0.5" max="15" step="0.5" value="4" style="--c:var(--violet)">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="H" data-i18n-html="lH">Wysokość spadku <i>h</i></label><output id="H-out" for="H"></output></div>
+          <input type="range" id="H" min="0.2" max="2" step="0.05" value="0.8" style="--c:var(--violet)">
+        </div>
+        <p class="hint" data-i18n="torqueHint">Oś przez środek masy.</p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-grav" data-for="pend throw torque">
+        <h3 data-i18n="gGrav">Grawitacja</h3>
+        <div class="chips row" id="planets">
+          <button type="button" class="chip" id="pl-earth" data-g="9.81" aria-pressed="true"><span data-i18n="earth">Ziemia</span><small class="gv">9,81</small></button>
+          <button type="button" class="chip" id="pl-mars" data-g="3.71" aria-pressed="false"><span data-i18n="mars">Mars</span><small class="gv">3,71</small></button>
+          <button type="button" class="chip" id="pl-moon" data-g="1.62" aria-pressed="false"><span data-i18n="moon">Księżyc</span><small class="gv">1,62</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="g" data-i18n-html="lg">Przyspieszenie <i>g</i></label><output id="g-out" for="g"></output></div>
+          <input type="range" id="g" min="0.5" max="25" step="0.01" value="9.81">
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const D2R = Math.PI / 180, TAU = Math.PI * 2;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+const wrapPi = (x) => x - TAU * Math.round(x / TAU);
+
+/* GEOM-BEGIN: pure geometry engine (unit-tested in node) */
+// Exact integrals over one polygon ring (any orientation; sign follows orientation).
+function ringRaw(p) {
+  let A = 0, Sx = 0, Sy = 0, Qxx = 0, Qyy = 0, Qxy = 0;
+  const n = p.length;
+  for (let i = 0; i < n; i++) {
+    const x0 = p[i][0], y0 = p[i][1], x1 = p[(i + 1) % n][0], y1 = p[(i + 1) % n][1];
+    const c = x0 * y1 - x1 * y0;
+    A += c; Sx += (x0 + x1) * c; Sy += (y0 + y1) * c;
+    Qxx += (x0 * x0 + x0 * x1 + x1 * x1) * c;
+    Qyy += (y0 * y0 + y0 * y1 + y1 * y1) * c;
+    Qxy += (x0 * y1 + 2 * x0 * y0 + 2 * x1 * y1 + x1 * y0) * c;
+  }
+  return { A: A / 2, Sx: Sx / 6, Sy: Sy / 6, Qxx: Qxx / 12, Qyy: Qyy / 12, Qxy: Qxy / 24 };
+}
+// rings[0] = outer outline, rings[1..] = holes. Returns area moments about the centroid.
+// Mxx = ∫x'² dA, Myy = ∫y'² dA, Mxy = ∫x'y' dA (primes: relative to the centroid).
+function shapeMoments(rings) {
+  const t = { A: 0, Sx: 0, Sy: 0, Qxx: 0, Qyy: 0, Qxy: 0 };
+  rings.forEach((r, i) => {
+    const q = ringRaw(r), sg = (i === 0 ? 1 : -1) * (q.A < 0 ? -1 : 1);
+    for (const k in t) t[k] += sg * q[k];
+  });
+  const A = t.A, xc = t.Sx / A, yc = t.Sy / A;
+  const Mxx = t.Qxx - A * xc * xc, Myy = t.Qyy - A * yc * yc, Mxy = t.Qxy - A * xc * yc;
+  const h = (Mxx + Myy) / 2, rad = Math.hypot((Mxx - Myy) / 2, Mxy);
+  return { A, xc, yc, Mxx, Myy, Mxy, J: Mxx + Myy, lmax: h + rad, lmin: h - rad, phi: 0.5 * Math.atan2(2 * Mxy, Mxx - Myy) };
+}
+// Uniform areal density: mass moments. Ix = ∫y² dm (about the x axis), Iy = ∫x² dm, Dxy = ∫xy dm.
+// I1 (about the long principal axis, angle phi) <= I2; I1 + I2 = Ic (perpendicular-axis theorem).
+function massMoments(g, m) {
+  const s = m / g.A;
+  return { sigma: s, Ic: s * g.J, Ix: s * g.Myy, Iy: s * g.Mxx, Dxy: s * g.Mxy, I1: s * g.lmin, I2: s * g.lmax, k: Math.sqrt(g.J / g.A) };
+}
+function bboxOf(pts) {
+  let x0 = Infinity, y0 = Infinity, x1 = -Infinity, y1 = -Infinity;
+  for (const p of pts) { if (p[0] < x0) x0 = p[0]; if (p[0] > x1) x1 = p[0]; if (p[1] < y0) y0 = p[1]; if (p[1] > y1) y1 = p[1]; }
+  return { x0, y0, x1, y1, w: x1 - x0, h: y1 - y0 };
+}
+function perimeterClosed(p) { let L = 0; for (let i = 0; i < p.length; i++) { const a = p[i], b = p[(i + 1) % p.length]; L += Math.hypot(b[0] - a[0], b[1] - a[1]); } return L; }
+function resampleClosed(p, step) {
+  const n = p.length, out = [[p[0][0], p[0][1]]];
+  let carry = 0;
+  for (let i = 0; i < n; i++) {
+    const a = p[i], b = p[(i + 1) % n], L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+    let s = step - carry;
+    while (s <= L) { const u = s / L; out.push([a[0] + u * (b[0] - a[0]), a[1] + u * (b[1] - a[1])]); s += step; }
+    carry = L - (s - step);
+  }
+  if (out.length > 3) { const l = out[out.length - 1]; if (Math.hypot(l[0] - out[0][0], l[1] - out[0][1]) < step * 0.5) out.pop(); }
+  return out;
+}
+function smoothClosed(p, passes) {
+  for (let k = 0; k < passes; k++) {
+    const n = p.length;
+    p = p.map((q, i) => { const a = p[(i - 1 + n) % n], b = p[(i + 1) % n]; return [0.25 * a[0] + 0.5 * q[0] + 0.25 * b[0], 0.25 * a[1] + 0.5 * q[1] + 0.25 * b[1]]; });
+  }
+  return p;
+}
+function rdpOpen(p, eps) {
+  if (p.length < 3) return p.slice();
+  const keep = new Uint8Array(p.length); keep[0] = 1; keep[p.length - 1] = 1;
+  const stack = [[0, p.length - 1]];
+  while (stack.length) {
+    const [a, b] = stack.pop();
+    const ax = p[a][0], ay = p[a][1], dx = p[b][0] - ax, dy = p[b][1] - ay, L2 = dx * dx + dy * dy;
+    let dmax = 0, idx = -1;
+    for (let i = a + 1; i < b; i++) {
+      const px = p[i][0] - ax, py = p[i][1] - ay;
+      const u = L2 > 0 ? Math.max(0, Math.min(1, (px * dx + py * dy) / L2)) : 0;
+      const d = Math.hypot(px - u * dx, py - u * dy);
+      if (d > dmax) { dmax = d; idx = i; }
+    }
+    if (dmax > eps && idx > 0) { keep[idx] = 1; stack.push([a, idx], [idx, b]); }
+  }
+  return p.filter((_, i) => keep[i]);
+}
+function rdpClosed(p, eps) {
+  let far = 1, dm = -1;
+  for (let i = 1; i < p.length; i++) { const d = Math.hypot(p[i][0] - p[0][0], p[i][1] - p[0][1]); if (d > dm) { dm = d; far = i; } }
+  const a = rdpOpen(p.slice(0, far + 1), eps);
+  const b = rdpOpen(p.slice(far).concat([p[0]]), eps);
+  return a.slice(0, -1).concat(b.slice(0, -1));
+}
+function orient(p, q, r) { return (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]); }
+function segCross(a, b, c, d) {
+  const d1 = orient(c, d, a), d2 = orient(c, d, b), d3 = orient(a, b, c), d4 = orient(a, b, d);
+  return d1 * d2 < 0 && d3 * d4 < 0;
+}
+function findSelfCross(p) {
+  const n = p.length;
+  for (let i = 0; i < n; i++) {
+    const a = p[i], b = p[(i + 1) % n];
+    for (let j = i + 2; j < n; j++) {
+      if (i === 0 && j === n - 1) continue;
+      if (segCross(a, b, p[j], p[(j + 1) % n])) return [i, j];
+    }
+  }
+  return null;
+}
+function crossPoint(a, b, c, d) {
+  const rx = b[0] - a[0], ry = b[1] - a[1], sx = d[0] - c[0], sy = d[1] - c[1];
+  const den = rx * sy - ry * sx, t = ((c[0] - a[0]) * sy - (c[1] - a[1]) * sx) / den;
+  return [a[0] + t * rx, a[1] + t * ry];
+}
+// Split at self-intersections and keep the loop with the largest area.
+function untangle(p) {
+  let fixed = false;
+  for (let it = 0; it < 80; it++) {
+    const x = findSelfCross(p); if (!x) break;
+    fixed = true;
+    const [i, j] = x, n = p.length, X = crossPoint(p[i], p[(i + 1) % n], p[j], p[(j + 1) % n]);
+    const loopA = [X].concat(p.slice(i + 1, j + 1));
+    const loopB = [X].concat(p.slice(j + 1), p.slice(0, i + 1));
+    p = Math.abs(ringRaw(loopA).A) >= Math.abs(ringRaw(loopB).A) ? loopA : loopB;
+    if (p.length < 3) break;
+  }
+  return { poly: p, fixed };
+}
+function pointInRing(pt, r) {
+  let inside = false;
+  for (let i = 0, j = r.length - 1; i < r.length; j = i++) {
+    const xi = r[i][0], yi = r[i][1], xj = r[j][0], yj = r[j][1];
+    if ((yi > pt[1]) !== (yj > pt[1]) && pt[0] < (xj - xi) * (pt[1] - yi) / (yj - yi) + xi) inside = !inside;
+  }
+  return inside;
+}
+function pointInShape(pt, rings) {
+  if (!pointInRing(pt, rings[0])) return false;
+  for (let k = 1; k < rings.length; k++) if (pointInRing(pt, rings[k])) return false;
+  return true;
+}
+function nearestOnRings(pt, rings) {
+  let best = null, bd = Infinity;
+  for (const r of rings) for (let i = 0; i < r.length; i++) {
+    const a = r[i], b = r[(i + 1) % r.length], dx = b[0] - a[0], dy = b[1] - a[1], L2 = dx * dx + dy * dy;
+    const u = L2 > 0 ? Math.max(0, Math.min(1, ((pt[0] - a[0]) * dx + (pt[1] - a[1]) * dy) / L2)) : 0;
+    const q = [a[0] + u * dx, a[1] + u * dy], d = Math.hypot(pt[0] - q[0], pt[1] - q[1]);
+    if (d < bd) { bd = d; best = q; }
+  }
+  return best;
+}
+function ringsCross(r1, r2) {
+  for (let i = 0; i < r1.length; i++) for (let j = 0; j < r2.length; j++)
+    if (segCross(r1[i], r1[(i + 1) % r1.length], r2[j], r2[(j + 1) % r2.length])) return true;
+  return false;
+}
+function arcPts(cx, cy, R, a0, a1, n, incl0, incl1) {
+  const out = [];
+  for (let j = incl0 ? 0 : 1; j <= (incl1 ? n : n - 1); j++) { const a = a0 + (a1 - a0) * j / n; out.push([cx + R * Math.cos(a), cy + R * Math.sin(a)]); }
+  return out;
+}
+function circlePts(cx, cy, R, n) { return arcPts(cx, cy, R, 0, 2 * Math.PI, n, true, false); }
+// Presets in cm. ref: parameters for the textbook formula (null = no closed form).
+const PRESET_DEFS = {
+  blob: () => {
+    const pts = [];
+    for (let i = 0; i < 120; i++) {
+      const a = 2 * Math.PI * i / 120;
+      const r = 16 * (1 + 0.21 * Math.cos(2 * a - 0.5) + 0.13 * Math.sin(3 * a + 0.7) + 0.06 * Math.cos(5 * a + 1.1));
+      pts.push([r * Math.cos(a), r * Math.sin(a)]);
+    }
+    return { rings: [pts], ref: null };
+  },
+  crescent: () => {
+    const R = 18, c2 = 7, r = 14;
+    const xI = (R * R - r * r + c2 * c2) / (2 * c2), yI = Math.sqrt(R * R - xI * xI), ta = Math.atan2(yI, xI);
+    const outer = arcPts(0, 0, R, ta, 2 * Math.PI - ta, 110, true, true);
+    const inner = arcPts(c2, 0, r, Math.atan2(-yI, xI - c2) + 2 * Math.PI, Math.atan2(yI, xI - c2), 80, false, false);
+    return { rings: [outer.concat(inner)], ref: null };
+  },
+  L: () => ({ rings: [[[0, 0], [36, 0], [36, 12], [12, 12], [12, 36], [0, 36]]], ref: { kind: 'L', a: 36, t: 12 } }),
+  rod: () => ({ rings: [[[-2, -30], [2, -30], [2, 30], [-2, 30]]], ref: { kind: 'rect', a: 4, b: 60 } }),
+  disc: () => ({ rings: [circlePts(0, 0, 15, 144)], ref: { kind: 'disc', R: 15, N: 144 } }),
+  ring: () => ({ rings: [circlePts(0, 0, 16, 144), circlePts(0, 0, 10, 144)], ref: { kind: 'ring', R: 16, r: 10, N: 144 } }),
+  square: () => ({ rings: [[[-15, -15], [15, -15], [15, 15], [-15, 15]]], ref: { kind: 'square', a: 30 } }),
+  tri: () => { const a = 36, h = a * Math.sqrt(3) / 2; return { rings: [[[-a / 2, -h / 3], [a / 2, -h / 3], [0, 2 * h / 3]]], ref: { kind: 'tri', a } }; }
+};
+// Textbook values for a preset scaled by sc (lengths in cm, I in kg m^2, COM from the bbox corner in cm).
+function tbValues(ref, sc, m) {
+  if (!ref) return null;
+  const L = (x) => x * sc, c = 0.01;
+  let A, I, com;
+  switch (ref.kind) {
+    case 'rect': { const a = L(ref.a), b = L(ref.b); A = a * b; I = m * ((a * c) ** 2 + (b * c) ** 2) / 12; com = [a / 2, b / 2]; break; }
+    case 'disc': { const R = L(ref.R); A = Math.PI * R * R; I = 0.5 * m * (R * c) ** 2; com = [R, R]; break; }
+    case 'ring': { const R = L(ref.R), r = L(ref.r); A = Math.PI * (R * R - r * r); I = 0.5 * m * ((R * c) ** 2 + (r * c) ** 2); com = [R, R]; break; }
+    case 'square': { const a = L(ref.a); A = a * a; I = m * (a * c) ** 2 / 6; com = [a / 2, a / 2]; break; }
+    case 'tri': { const a = L(ref.a); A = Math.sqrt(3) / 4 * a * a; I = m * (a * c) ** 2 / 12; com = [a / 2, a * Math.sqrt(3) / 6]; break; }
+    case 'L': {
+      const a = L(ref.a), t = L(ref.t);
+      const parts = [{ w: a, h: t, x: a / 2, y: t / 2 }, { w: t, h: a - t, x: t / 2, y: t + (a - t) / 2 }];
+      A = parts.reduce((s, q) => s + q.w * q.h, 0);
+      const xc = parts.reduce((s, q) => s + q.w * q.h * q.x, 0) / A, yc = parts.reduce((s, q) => s + q.w * q.h * q.y, 0) / A;
+      I = 0;
+      for (const q of parts) { const mi = m * q.w * q.h / A; I += mi * (((q.w * c) ** 2 + (q.h * c) ** 2) / 12 + ((q.x - xc) * c) ** 2 + ((q.y - yc) * c) ** 2); }
+      com = [xc, yc]; break;
+    }
+    default: return null;
+  }
+  return { A, I, com, k: Math.sqrt(I / m) / c };
+}
+/* GEOM-END */
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Dynamika · bryła sztywna', title:'Bryła sztywna',
+    lede:'Narysuj dowolny kształt, wbij gwóźdź i puść. Środek masy, moment bezwładności i okres wahań liczymy dokładnie z konturu bryły.',
+    mDraw:'Rysuj', mPend:'Wahadło', mThrow:'Rzut z obrotem', mTorque:'Moment siły',
+    firePend:'Puść', fireThrow:'Rzuć', fireTorque:'Start', kbd:'spacja', kbdEnter:'Enter', done:'Gotowe',
+    reset:'Od nowa', speed:'Tempo', fullscreen:'Pełny ekran', pause:'Pauza', play:'Odtwórz',
+    tgCom:'Środek masy', tgAxes:'Osie główne', tgPlumb:'Piony', tgO:'Środek wahań', tgK:'Okrąg k', tgStrobe:'Stroboskop', tgTrace:'Ślad punktu', tgVec:'Wektory',
+    toolFree:'Odręcznie', toolPoly:'Wielokąt', tgHole:'Wycinaj otwór', tgSnap:'Siatka 1 cm', undo:'Cofnij', rmHoles:'Usuń otwory',
+    sRest:'spoczynek', sSettle:'ustala się', sSwing:'waha się', sPause:'pauza', sDone:'koniec', sIdle:'gotowy', sFly:'w locie', sSpin:'obraca się', sDraw:'rysowanie', sDrag:'odchylanie', sHole:'otwór',
+    gBody:'Bryła', pRod:'Pręt', pDisc:'Krążek', pRing:'Pierścień', pSquare:'Kwadrat', pTri:'Trójkąt', pL:'Kształt L', pCrescent:'Sierp', pBlob:'Plama', pOwn:'Narysuj…', pOwnSub:'własna bryła',
+    lm:'Masa <i>m</i>', lsize:'Rozmiar <i>L</i>', sizeHint:'Największy wymiar bryły. Skaluje kształt bez zmiany proporcji.',
+    pA:'pole A', pSig:'gęstość powierzchniowa σ', pIc:'moment I<sub>c</sub>', pK:'promień bezwładności k',
+    gDraw:'Rysowanie', dh1:'Narysuj zamknięty kontur palcem lub myszą. Koniec połączy się z początkiem.', dh2:'Kontur jest wygładzany i upraszczany (Ramer–Douglas–Peucker). Pętle z samoprzecięć są usuwane.', dh3:'Włącz „Wycinaj otwór” i narysuj drugi kontur wewnątrz bryły, żeby go odjąć.', dh4:'„Wielokąt”: klikaj wierzchołki, zamknij klikając pierwszy albo klawiszem Enter.',
+    vertices:'wierzchołki', holes:'otwory',
+    gPend:'Wahadło fizyczne', lth0:'Amplituda <i>θ</i><sub>0</sub>', lgam:'Tłumienie <i>γ</i>', btnHuy:'Zawieś w środku wahań O', btnK:'Oś w odległości k', btnClr:'Wyczyść piony',
+    pendHint:'Kliknij bryłę albo miejsce obok niej, żeby wbić gwóźdź. Przeciągnij bryłę, żeby ją odchylić i puścić. Dwa zawieszenia: piony przecinają się w środku masy.',
+    gThrow:'Rzut z obrotem', lv0:'Prędkość środka masy <i>v</i><sub>0</sub>', lbeta:'Kąt rzutu <i>β</i>', lw0:'Prędkość kątowa <i>ω</i><sub>0</sub>',
+    throwHint:'Bez oporu powietrza. Środek masy leci po paraboli, a bryła obraca się wokół niego jednostajnie.',
+    gTorque:'Ciężarek na nici', lmw:'Masa ciężarka <i>m</i><sub>c</sub>', lrd:'Promień bębna <i>r</i>', lH:'Wysokość spadku <i>h</i>',
+    torqueHint:'Oś obrotu przechodzi przez środek masy, więc ciężar bryły nie daje momentu. Nić nawinięta na lekki bęben; po uderzeniu ciężarka w podłogę nić się odczepia.',
+    gGrav:'Grawitacja', earth:'Ziemia', moon:'Księżyc', mars:'Mars', lg:'Przyspieszenie <i>g</i>',
+    results:'Wyniki', cQty:'Wielkość', cVal:'Wartość', cRef:'Odniesienie', cDelta:'Różnica',
+    resSub:'Całki liczone dokładnie z {n} wierzchołków wielokąta. Środek masy mierzony od lewego dolnego rogu prostokąta opisanego.',
+    rA:'Pole <i>A</i>', rM:'Masa <i>m</i>', rCom:'Środek masy (<i>x</i><sub>c</sub>; <i>y</i><sub>c</sub>)', rIc:'Moment bezwładności <i>I</i><sub>c</sub>', rI12:'Osie główne <i>I</i><sub>1</sub> / <i>I</i><sub>2</sub>', rK:'Promień bezwładności <i>k</i>',
+    rD:'Odległość osi od środka masy <i>d</i>', rIp:'Moment względem osi <i>I</i><sub>p</sub>', rT:'Okres <i>T</i> (symulacja)', rLred:'Długość zredukowana <i>l</i><sub>red</sub>', rTmin:'Najkrótszy okres',
+    rEtr:'Energia ruchu postępowego', rErot:'Energia ruchu obrotowego', rRange:'Zasięg środka masy', rEps:'Przyspieszenie kątowe', rAcc:'Przyspieszenie ciężarka <i>a</i>', rOmF:'Prędkość kątowa po spadku', rIexp:'<i>I</i> z pomiaru <i>a</i>',
+    refNone:'brak prostego wzoru', refSmall:'małe kąty', refMath:'wahadło matematyczne', refShare:'udział obrotu', refLand:'czas spadku',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącej bryły i ustawień. Długości w obliczeniach w metrach.',
+    fArea:'Pole i środek masy', fInertia:'Moment bezwładności', fAxes:'Osie główne bezwładności', fK:'Promień bezwładności', fSteiner:'Twierdzenie Steinera', fPeriod:'Okres wahadła fizycznego', fLred:'Długość zredukowana i środek wahań', fEom:'Równanie ruchu obrotowego', fEnergy:'Energia i moment pędu', fThrow:'Rzut: ruch środka masy i obrót', fTorque:'Moment siły i przyspieszenie kątowe', fCheck:'Sprawdzenie: całka a wzór z podręcznika',
+    nArea:'Suma po krawędziach wielokąta (wzór Gaussa). Współrzędne od lewego dolnego rogu prostokąta opisanego.',
+    nInertia:'Dla wielokąta całki są dokładne, np. ∫<i>x</i>² d<i>A</i> = (1/12) Σ (<i>x</i><sub>i</sub>² + <i>x</i><sub>i</sub><i>x</i><sub>i+1</sub> + <i>x</i><sub>i+1</sub>²)(<i>x</i><sub>i</sub><i>y</i><sub>i+1</sub> − <i>x</i><sub>i+1</sub><i>y</i><sub>i</sub>).',
+    perp:'twierdzenie o osiach prostopadłych',
+    nAxesSym:'Kształt symetryczny: każda oś w płaszczyźnie przez środek masy jest osią główną.', nAxes:'Oś 1 ma najmniejszy moment, oś 2 największy. Na bryle: krzyż i elipsa bezwładności.',
+    nK:'Bryła obraca się wokół środka masy tak, jakby cała masa była skupiona w odległości k od osi.',
+    nSteiner:'Przesunięcie osi o d od środka masy zwiększa moment bezwładności o md².',
+    nPeriodMass:'Masa się skraca: okres zależy tylko od kształtu i położenia osi.', nLarge:'Duże wychylenia:', nMeas:'symulacja RK4:',
+    nLred:'Gwóźdź przeniesiony do środka wahań O (na prostej przez środek masy, w odległości l<sub>red</sub> od osi) daje ten sam okres. Na tym opiera się wahadło rewersyjne Katera.',
+    nEom:'Całkowane numerycznie metodą RK4, krok Δt = {dt} ms. Tłumienie dodaje człon −γω.',
+    nEnergyPend:'Względem osi zawieszenia, bieżąca chwila.', nEnergyThrow:'Względem środka masy. W locie ω się nie zmienia.', nEnergyTorque:'Względem osi przez środek masy, bieżąca chwila.',
+    nThrow:'Ciężar działa w środku masy, więc nie daje względem niego momentu i ω jest stałe. Punkt na brzegu ma prędkość v<sub>c</sub> + ω × r, stąd pętle na jego torze.',
+    nTorque:'Odwrotnie, z pomiaru przyspieszenia ciężarka da się wyznaczyć moment bezwładności:',
+    nCheckCustom:'Ten kształt nie ma prostego wzoru z podręcznika. Wybierz krążek, pręt, pierścień albo kwadrat, żeby porównać całkę ze wzorem.',
+    nCheckPoly:'Okrąg przybliżony wielokątem o {n} bokach. Różnica pochodzi z przybliżenia brzegu, nie z całkowania.',
+    nCheckRod:'Dla cienkiego pręta (b ≪ L) wzór upraszcza się do mL²/12:', nCheckL:'Złożenie dwóch prostokątów i twierdzenie Steinera.', nCheckExact:'Wielokąt jest tu dokładny, więc zgodność jest pełna.',
+    charts:'Wykresy', tabTh:'Kąt θ(t)', tabOm:'Prędkość kątowa ω(t)', tabEn:'Energia', tabTd:'Okres T(d)', tabY:'Wysokość', tabPhi:'Kąt obrotu φ(t)', tabH:'Spadek ciężarka',
+    lgSim:'symulacja', lgLin:'przybliżenie małych kątów', ep:'E potencjalna', ek:'E kinetyczna (obrót)', et:'E całkowita', etr:'E ruchu postępowego', erot:'E obrotu', epw:'E potencjalna ciężarka', ekw:'E kinetyczna ciężarka',
+    lgCom:'środek masy', lgRim:'punkt na brzegu', lgCur:'bieżąca oś', lgConj:'środek wahań', lgMin:'minimum, d = k', lgPlumb:'pion', lgO:'środek wahań O', lgGhost:'zdjęcie co',
+    cnTh:'Kąt wychylenia θ(t). Linia przerywana: rozwiązanie liniowe θ₀ cos ωt. Przy dużej amplitudzie ruch zostaje za nim w tyle.', cnOm:'Prędkość kątowa ω(t). Największa przy przejściu przez położenie równowagi.',
+    cnEnP:'Energia względem najniższego położenia środka masy. Spadek energii całkowitej to praca tłumienia.',
+    cnTd:'<i>T</i>(<i>d</i>) = 2π√((<i>k</i>² + <i>d</i>²)/(<i>g d</i>)). Minimum przy <i>d</i> = <i>k</i>. Osie w odległości <i>d</i> i <i>k</i>²/<i>d</i> dają ten sam okres. Kliknij wykres, żeby przenieść oś.',
+    cnY:'Wysokość środka masy (parabola) i punktu na brzegu bryły.', cnPhi:'Kąt obrotu rośnie liniowo: w locie ω = const.', cnEnT:'Energia obrotu jest stała. Energia ruchu postępowego wymienia się z potencjalną.',
+    cnOmQ:'ω rośnie liniowo, dopóki ciężarek spada. Potem bryła obraca się ze stałą prędkością (bez tarcia).', cnH:'Droga ciężarka h(t) = ½ a t².', cnEnQ:'Energia potencjalna ciężarka zamienia się w energię obrotu bryły i ruchu ciężarka. Przy uderzeniu w podłogę energia kinetyczna ciężarka jest tracona.',
+    cnNone:'Puść bryłę, żeby zobaczyć wykres.',
+    msgSmall:'Za mały albo zbyt cienki kontur. Narysuj większy kształt.', msgFixed:'Kontur przecinał sam siebie, więc zostawiono największą pętlę.', msgOk:'Nowa bryła: {n} wierzchołków (z {raw} punktów).',
+    msgHoleOut:'Otwór musi leżeć w całości wewnątrz bryły i nie może przecinać innych otworów.', msgHoleOk:'Wycięto otwór. Środek masy przesunął się.', msgCom:'Oś w środku masy: równowaga obojętna, okres nieskończony.',
+    msgPivot:'Gwóźdź wbity. Bryła obraca się, aż środek masy znajdzie się pod osią.', msgPlumb:'Piony z kolejnych zawieszeń przecinają się w środku masy.', msgHuy:'Zawieszono w środku wahań O. Okres {a} s, poprzednio {b} s.',
+    msgK:'Oś w odległości k od środka masy: najkrótszy możliwy okres {a} s.', msgPolyMin:'Potrzeba co najmniej 3 wierzchołków.', msgUndo:'Cofnięto ostatnią zmianę.', msgNoUndo:'Nie ma czego cofnąć.', msgNoHoles:'Bryła nie ma otworów.', msgHolesGone:'Usunięto otwory.',
+    msgOutside:'Gwóźdź poza materiałem: bryła wisi na lekkim ramieniu.',
+    hintFree:'Rysuj kontur palcem lub myszą', hintPoly:'Klikaj wierzchołki · zamknij na pierwszym albo Enter', hintHole:'Tryb otworu: narysuj kontur wewnątrz bryły',
+    none:'—', armLbl:'ramię', vertAbbr:'wierzch.'
+  },
+  en: {
+    eyebrow:'Dynamics · rigid body', title:'Rigid body',
+    lede:'Draw any shape, drive in a nail and let go. Centre of mass, moment of inertia and the period are computed exactly from the outline.',
+    mDraw:'Draw', mPend:'Pendulum', mThrow:'Spinning throw', mTorque:'Torque',
+    firePend:'Release', fireThrow:'Throw', fireTorque:'Start', kbd:'space', kbdEnter:'Enter', done:'Done',
+    reset:'Reset', speed:'Speed', fullscreen:'Full screen', pause:'Pause', play:'Play',
+    tgCom:'Centre of mass', tgAxes:'Principal axes', tgPlumb:'Plumb lines', tgO:'Centre of oscillation', tgK:'k circle', tgStrobe:'Strobe', tgTrace:'Point trace', tgVec:'Vectors',
+    toolFree:'Freehand', toolPoly:'Polygon', tgHole:'Cut a hole', tgSnap:'1 cm grid', undo:'Undo', rmHoles:'Remove holes',
+    sRest:'at rest', sSettle:'settling', sSwing:'swinging', sPause:'paused', sDone:'finished', sIdle:'ready', sFly:'in flight', sSpin:'spinning', sDraw:'drawing', sDrag:'pulling', sHole:'hole',
+    gBody:'Body', pRod:'Rod', pDisc:'Disc', pRing:'Ring', pSquare:'Square', pTri:'Triangle', pL:'L-shape', pCrescent:'Crescent', pBlob:'Blob', pOwn:'Draw…', pOwnSub:'your own body',
+    lm:'Mass <i>m</i>', lsize:'Size <i>L</i>', sizeHint:'Largest dimension of the body. Scales the shape, keeping its proportions.',
+    pA:'area A', pSig:'areal density σ', pIc:'moment I<sub>c</sub>', pK:'radius of gyration k',
+    gDraw:'Drawing', dh1:'Draw a closed outline with a finger or the mouse. The end joins the start.', dh2:'The outline is smoothed and simplified (Ramer–Douglas–Peucker). Self-intersection loops are removed.', dh3:'Turn on “Cut a hole” and draw a second outline inside the body to subtract it.', dh4:'“Polygon”: click vertices, close by clicking the first one or pressing Enter.',
+    vertices:'vertices', holes:'holes',
+    gPend:'Physical pendulum', lth0:'Amplitude <i>θ</i><sub>0</sub>', lgam:'Damping <i>γ</i>', btnHuy:'Hang at centre of oscillation O', btnK:'Axis at distance k', btnClr:'Clear plumb lines',
+    pendHint:'Click the body, or a spot next to it, to drive in a nail. Drag the body to pull it aside and let go. Hang it twice: the plumb lines cross at the centre of mass.',
+    gThrow:'Spinning throw', lv0:'Centre-of-mass speed <i>v</i><sub>0</sub>', lbeta:'Launch angle <i>β</i>', lw0:'Angular velocity <i>ω</i><sub>0</sub>',
+    throwHint:'No air drag. The centre of mass follows a parabola while the body spins uniformly about it.',
+    gTorque:'Hanging mass', lmw:'Hanging mass <i>m</i><sub>c</sub>', lrd:'Drum radius <i>r</i>', lH:'Drop height <i>h</i>',
+    torqueHint:'The axle passes through the centre of mass, so the body’s weight gives no torque. The string is wound on a light drum and comes off when the mass hits the floor.',
+    gGrav:'Gravity', earth:'Earth', moon:'Moon', mars:'Mars', lg:'Acceleration <i>g</i>',
+    results:'Results', cQty:'Quantity', cVal:'Value', cRef:'Reference', cDelta:'Difference',
+    resSub:'Integrals computed exactly from the {n} polygon vertices. Centre of mass measured from the lower-left corner of the bounding box.',
+    rA:'Area <i>A</i>', rM:'Mass <i>m</i>', rCom:'Centre of mass (<i>x</i><sub>c</sub>; <i>y</i><sub>c</sub>)', rIc:'Moment of inertia <i>I</i><sub>c</sub>', rI12:'Principal axes <i>I</i><sub>1</sub> / <i>I</i><sub>2</sub>', rK:'Radius of gyration <i>k</i>',
+    rD:'Axis to centre of mass <i>d</i>', rIp:'Moment about the axis <i>I</i><sub>p</sub>', rT:'Period <i>T</i> (simulation)', rLred:'Equivalent length <i>l</i><sub>red</sub>', rTmin:'Shortest period',
+    rEtr:'Translational energy', rErot:'Rotational energy', rRange:'Centre-of-mass range', rEps:'Angular acceleration', rAcc:'Mass acceleration <i>a</i>', rOmF:'Angular velocity after the drop', rIexp:'<i>I</i> from measured <i>a</i>',
+    refNone:'no simple formula', refSmall:'small angles', refMath:'simple pendulum', refShare:'rotation share', refLand:'drop time',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current body and settings. Lengths in metres in the calculations.',
+    fArea:'Area and centre of mass', fInertia:'Moment of inertia', fAxes:'Principal axes of inertia', fK:'Radius of gyration', fSteiner:'Parallel-axis theorem', fPeriod:'Period of a physical pendulum', fLred:'Equivalent length and centre of oscillation', fEom:'Rotational equation of motion', fEnergy:'Energy and angular momentum', fThrow:'Throw: centre of mass and rotation', fTorque:'Torque and angular acceleration', fCheck:'Check: integral vs textbook formula',
+    nArea:'A sum over the polygon edges (shoelace formula). Coordinates from the lower-left corner of the bounding box.',
+    nInertia:'For a polygon the integrals are exact, e.g. ∫<i>x</i>² d<i>A</i> = (1/12) Σ (<i>x</i><sub>i</sub>² + <i>x</i><sub>i</sub><i>x</i><sub>i+1</sub> + <i>x</i><sub>i+1</sub>²)(<i>x</i><sub>i</sub><i>y</i><sub>i+1</sub> − <i>x</i><sub>i+1</sub><i>y</i><sub>i</sub>).',
+    perp:'perpendicular-axis theorem',
+    nAxesSym:'Symmetric shape: every in-plane axis through the centre of mass is a principal axis.', nAxes:'Axis 1 has the smallest moment, axis 2 the largest. On the body: the cross and the inertia ellipse.',
+    nK:'About its centre of mass the body turns as if all its mass sat at distance k from the axis.',
+    nSteiner:'Moving the axis a distance d from the centre of mass adds md² to the moment of inertia.',
+    nPeriodMass:'The mass cancels: the period depends only on the shape and the axis position.', nLarge:'Large amplitude:', nMeas:'RK4 simulation:',
+    nLred:'Moving the nail to the centre of oscillation O (on the line through the centre of mass, l<sub>red</sub> from the axis) gives the same period. Kater’s reversible pendulum is built on this.',
+    nEom:'Integrated numerically with RK4, step Δt = {dt} ms. Damping adds a −γω term.',
+    nEnergyPend:'About the pivot, at the current instant.', nEnergyThrow:'About the centre of mass. ω stays constant in flight.', nEnergyTorque:'About the axle through the centre of mass, current instant.',
+    nThrow:'Weight acts at the centre of mass, so it has no torque about it and ω is constant. A rim point moves with v<sub>c</sub> + ω × r, hence the loops in its path.',
+    nTorque:'Conversely, the measured acceleration of the mass gives the moment of inertia:',
+    nCheckCustom:'This shape has no simple textbook formula. Pick the disc, rod, ring or square to compare the integral with the formula.',
+    nCheckPoly:'The circle is approximated by a polygon with {n} sides. The difference comes from the outline, not from the integration.',
+    nCheckRod:'For a thin rod (b ≪ L) the formula reduces to mL²/12:', nCheckL:'Two rectangles combined with the parallel-axis theorem.', nCheckExact:'Here the polygon is exact, so the match is exact.',
+    charts:'Charts', tabTh:'Angle θ(t)', tabOm:'Angular velocity ω(t)', tabEn:'Energy', tabTd:'Period T(d)', tabY:'Height', tabPhi:'Rotation φ(t)', tabH:'Mass drop',
+    lgSim:'simulation', lgLin:'small-angle approximation', ep:'Potential E', ek:'Kinetic E (rotation)', et:'Total E', etr:'Translational E', erot:'Rotational E', epw:'Potential E of the mass', ekw:'Kinetic E of the mass',
+    lgCom:'centre of mass', lgRim:'rim point', lgCur:'current axis', lgConj:'centre of oscillation', lgMin:'minimum, d = k', lgPlumb:'plumb line', lgO:'centre of oscillation O', lgGhost:'snapshot every',
+    cnTh:'Angle θ(t). Dashed: the linear solution θ₀ cos ωt. At large amplitude the motion falls behind it.', cnOm:'Angular velocity ω(t). Largest when passing the equilibrium position.',
+    cnEnP:'Energy relative to the lowest position of the centre of mass. The drop in total energy is the work of damping.',
+    cnTd:'<i>T</i>(<i>d</i>) = 2π√((<i>k</i>² + <i>d</i>²)/(<i>g d</i>)). Minimum at <i>d</i> = <i>k</i>. Axes at <i>d</i> and <i>k</i>²/<i>d</i> give the same period. Click the chart to move the axis.',
+    cnY:'Height of the centre of mass (parabola) and of a point on the rim.', cnPhi:'The rotation angle grows linearly: ω is constant in flight.', cnEnT:'Rotational energy is constant. Translational energy trades with potential energy.',
+    cnOmQ:'ω grows linearly while the mass falls. After that the body spins at constant speed (no friction).', cnH:'Distance fallen h(t) = ½ a t².', cnEnQ:'The potential energy of the mass turns into rotational energy of the body and kinetic energy of the mass. When the mass hits the floor its kinetic energy is lost.',
+    cnNone:'Release the body to see the chart.',
+    msgSmall:'Outline too small or too thin. Draw a bigger shape.', msgFixed:'The outline crossed itself, so the largest loop was kept.', msgOk:'New body: {n} vertices (from {raw} points).',
+    msgHoleOut:'A hole must lie entirely inside the body and must not cross other holes.', msgHoleOk:'Hole cut. The centre of mass has moved.', msgCom:'Axis at the centre of mass: neutral equilibrium, infinite period.',
+    msgPivot:'Nail in. The body turns until its centre of mass is below the axis.', msgPlumb:'Plumb lines from successive hangings cross at the centre of mass.', msgHuy:'Hung at the centre of oscillation O. Period {a} s, before {b} s.',
+    msgK:'Axis at distance k from the centre of mass: the shortest possible period, {a} s.', msgPolyMin:'At least 3 vertices are needed.', msgUndo:'Last change undone.', msgNoUndo:'Nothing to undo.', msgNoHoles:'The body has no holes.', msgHolesGone:'Holes removed.',
+    msgOutside:'Nail outside the material: the body hangs on a light arm.',
+    hintFree:'Draw an outline with a finger or the mouse', hintPoly:'Click vertices · close on the first one or press Enter', hintHole:'Hole mode: draw an outline inside the body',
+    none:'—', armLbl:'arm', vertAbbr:'vert.'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('bryla-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const trf = (k, o) => tr(k).replace(/\{(\w+)\}/g, (_, a) => o[a]);
+const SYM = () => (lang === 'pl' ? { M: 'M', e: 'ε', tg: 'tg' } : { M: 'τ', e: 'α', tg: 'tan' });
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function autoDec(x) { const a = Math.abs(x); return a >= 1000 ? 0 : a >= 10 ? 1 : 2; }
+const fa = (x) => fmt(x, autoDec(x));
+const SUPD = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+function fsci(x, sig = 3) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const e = Math.floor(Math.log10(Math.abs(x))), m = x / Math.pow(10, e);
+  return `${fmt(m, sig - 1)}·10${String(e).split('').map(c => (c === '-' ? '⁻' : SUPD[+c])).join('')}`;
+}
+function fs(x, sig = 3) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const e = Math.floor(Math.log10(Math.abs(x)));
+  if (e < -3 || e >= 5) return fsci(x, sig);
+  return fmt(x, Math.max(0, sig - 1 - e));
+}
+function pct(a, b) {
+  if (!isFinite(a) || !isFinite(b) || b === 0) return tr('none');
+  const d = (a / b - 1) * 100, ad = Math.abs(d);
+  return `${d >= 0 ? '+' : '−'}${fmt(ad, ad < 0.01 ? 4 : ad < 1 ? 3 : 1)} %`;
+}
+
+/* ---------- state ---------- */
+const P = {};
+function readParams() {
+  P.m = +$('#m').value; P.L = +$('#size').value; P.g = +$('#g').value;
+  P.th0 = +$('#th0').value; P.gam = +$('#gam').value;
+  P.v0 = +$('#v0').value; P.beta = +$('#beta').value; P.w0 = +$('#w0').value;
+  P.mw = +$('#mw').value; P.rd = +$('#rd').value; P.H = +$('#H').value;
+}
+const S = {
+  mode: 'pend', phase: 'rest', run: null, t: 0, paused: false, speed: 1,
+  piv: [0, 0], hist: [], restTh: 0, swingSign: 1, autoSwing: false, drag: null, ptr: null, cam: [0, 0],
+  measRun: null, throwRun: null, torqueRun: null,
+  tool: 'free', holeMode: false, snap: true, stroke: [], drawing: false, poly: [], hover: null,
+  show: { com: true, axes: false, plumb: true, O: true, k: false, strobe: true, trace: true, vec: true },
+  chartTab: 'th', hoverX: null, undo: []
+};
+let SH = null;   // shape: { key, base (cm rings at sc=1), ref, sc, ext0 }
+let G = null;    // geometry derived from SH
+let MM = null;   // mass moments
+let PD = null;   // pendulum derived quantities
+
+function extentOf(r) { const b = bboxOf(r); return Math.max(b.w, b.h); }
+function computeGeometry() {
+  const sc = SH.sc;
+  const ringsCm = SH.base.map(r => r.map(([x, y]) => [x * sc, y * sc]));
+  const gm = shapeMoments(ringsCm);
+  const bbox = bboxOf(ringsCm[0]);
+  const ringsM = ringsCm.map(r => r.map(([x, y]) => [(x - gm.xc) / 100, (y - gm.yc) / 100]));
+  let Rb = 0, far = 0;
+  ringsM[0].forEach((q, i) => { const r = Math.hypot(q[0], q[1]); if (r > Rb) { Rb = r; far = i; } });
+  const si = { A: gm.A * 1e-4, J: gm.J * 1e-8, Mxx: gm.Mxx * 1e-8, Myy: gm.Myy * 1e-8, Mxy: gm.Mxy * 1e-8, lmin: gm.lmin * 1e-8, lmax: gm.lmax * 1e-8, phi: gm.phi };
+  G = { ringsCm, gm, bbox, ringsM, Rb, far, si, nVert: ringsCm.reduce((s, r) => s + r.length, 0), nHoles: ringsCm.length - 1, ext: Math.max(bbox.w, bbox.h) };
+}
+function computeMass() { MM = massMoments(G.si, P.m); }
+// A nail near the top of the body, inside the material and clear of the edge (body frame, m).
+function defaultPivot() {
+  const R = G.ringsM[0], bb = bboxOf(R), ext = Math.max(bb.w, bb.h);
+  const margin = Math.min(0.015, 0.07 * ext), n = 48;
+  let best = null, bs = -Infinity;
+  for (let i = 0; i <= n; i++) for (let j = 0; j <= n; j++) {
+    const p = [bb.x0 + bb.w * i / n, bb.y0 + bb.h * j / n];
+    if (p[1] < 0.3 * bb.y1) continue;
+    const sc = p[1] - 0.35 * Math.abs(p[0]);
+    if (sc <= bs || !pointInShape(p, G.ringsM)) continue;
+    const q = nearestOnRings(p, G.ringsM);
+    if (Math.hypot(p[0] - q[0], p[1] - q[1]) < margin) continue;
+    best = p; bs = sc;
+  }
+  if (best) return best;
+  let top = R[0];
+  for (const q of R) if (q[1] > top[1]) top = q;
+  return [0.85 * top[0], 0.85 * top[1]];
+}
+function derivePend() {
+  const p = S.piv, d = Math.hypot(p[0], p[1]);
+  const Ip = MM.Ic + P.m * d * d;
+  const ok = d > 1e-3;
+  const w2 = ok ? P.m * P.g * d / Ip : 0;
+  const ab = Math.atan2(-p[1], -p[0]);
+  const lred = ok ? Ip / (P.m * d) : Infinity;
+  const phi0 = -Math.PI / 2 - ab, c0 = Math.cos(phi0), s0 = Math.sin(phi0);
+  let reach = 0, up = 0;
+  for (const [x, y] of G.ringsM[0]) {
+    const dx = x - p[0], dy = y - p[1];
+    reach = Math.max(reach, Math.hypot(dx, dy));
+    up = Math.max(up, s0 * dx + c0 * dy);
+  }
+  PD = {
+    d, Ip, w2, ab, lred, T0: ok ? TAU / Math.sqrt(w2) : Infinity, reach, upRest: up,
+    O: ok ? [p[0] * (1 - lred / d), p[1] * (1 - lred / d)] : null,
+    inside: pointInShape(p, G.ringsM), Tmin: TAU * Math.sqrt(2 * MM.k / P.g)
+  };
+}
+
+/* ---------- physics: runs ---------- */
+// Pendulum: theta'' = -(m g d / I_p) sin(theta) - gamma * theta'  (RK4)
+function makePendRun(th0, om0, gam, dur, kind) {
+  const w2 = PD.w2;
+  let dt = Math.min(0.004, isFinite(PD.T0) ? PD.T0 / 500 : 0.004);
+  let n = Math.ceil(dur / dt) + 1;
+  if (n > 40000) { n = 40000; dt = dur / (n - 1); }
+  const th = new Float64Array(n), om = new Float64Array(n);
+  let a = th0, b = om0, last = n;
+  th[0] = a; om[0] = b;
+  const f = (x, v) => -w2 * Math.sin(x) - gam * v;
+  for (let i = 1; i < n; i++) {
+    const k1x = b, k1v = f(a, b);
+    const k2x = b + 0.5 * dt * k1v, k2v = f(a + 0.5 * dt * k1x, b + 0.5 * dt * k1v);
+    const k3x = b + 0.5 * dt * k2v, k3v = f(a + 0.5 * dt * k2x, b + 0.5 * dt * k2v);
+    const k4x = b + dt * k3v, k4v = f(a + dt * k3x, b + dt * k3v);
+    a += dt / 6 * (k1x + 2 * k2x + 2 * k3x + k4x);
+    b += dt / 6 * (k1v + 2 * k2v + 2 * k3v + k4v);
+    th[i] = a; om[i] = b;
+    if (kind === 'settle' && i * dt > 0.3 && Math.abs(a) < 6e-4 && Math.abs(b) < 4e-3) { last = i + 1; break; }
+  }
+  const TH = th.subarray(0, last), OM = om.subarray(0, last), len = last;
+  const run = {
+    kind, dt, T: (len - 1) * dt, th0, gam, w2,
+    at(t) {
+      if (len < 2) return { t: 0, th: TH[0], om: OM[0], al: -w2 * Math.sin(TH[0]) - gam * OM[0] };
+      t = clamp(t, 0, this.T);
+      let i = Math.floor(t / dt); if (i > len - 2) i = len - 2;
+      const u = t / dt - i, x = TH[i] + u * (TH[i + 1] - TH[i]), v = OM[i] + u * (OM[i + 1] - OM[i]);
+      return { t, th: x, om: v, al: -w2 * Math.sin(x) - gam * v };
+    }
+  };
+  // measured period from zero crossings (two crossings per period)
+  const cr = [];
+  for (let i = 1; i < len; i++) if ((TH[i - 1] < 0) !== (TH[i] < 0)) cr.push((i - 1 + TH[i - 1] / (TH[i - 1] - TH[i])) * dt);
+  run.Tmeas = cr.length >= 3 ? 2 * (cr[cr.length - 1] - cr[0]) / (cr.length - 1) : null;
+  let omMax = 0; for (let i = 0; i < len; i++) omMax = Math.max(omMax, Math.abs(OM[i]));
+  run.omMax = omMax;
+  const N = 1400; run.pts = Array.from({ length: N }, (_, j) => run.at(j * run.T / (N - 1)));
+  return run;
+}
+const swingDur = () => clamp(12 * PD.T0, 8, 60);
+// Throw: centre of mass on a parabola, uniform rotation about it.
+function makeThrowRun() {
+  const b = P.beta * D2R, vx = P.v0 * Math.cos(b), vy = P.v0 * Math.sin(b), g = P.g, w = P.w0;
+  const T = vy > 1e-6 ? 2 * vy / g : 0;
+  const run = {
+    kind: 'throw', T, vx, vy, R: vx * T, H: vy * vy / (2 * g),
+    at(t) { t = clamp(t, 0, T); return { t, x: vx * t, y: vy * t - 0.5 * g * t * t, vx, vy: vy - g * t, phi: w * t, om: w }; }
+  };
+  run.strobe = T > 0 ? niceStep(T, 9) : 0.1;
+  const N = 500; run.pts = Array.from({ length: N }, (_, j) => run.at(j * T / (N - 1)));
+  return run;
+}
+// Torque: axle through the COM, string on a light drum (left side), mass m_c falls a height h.
+const boxSize = () => 0.04 + 0.05 * Math.cbrt(P.mw / 0.5);
+function makeTorqueRun() {
+  const r = P.rd / 100, mw = P.mw, I = MM.Ic, g = P.g;
+  const al = mw * g * r / (I + mw * r * r), a = al * r, N = mw * (g - a);
+  const tl = Math.sqrt(2 * P.H / a), wl = al * tl;
+  const T = tl + Math.max(1.5, 0.6 * tl);
+  const run = {
+    kind: 'torque', T, al, a, N, tl, wl, r,
+    at(t) {
+      t = clamp(t, 0, T);
+      if (t <= tl) return { t, phi: 0.5 * al * t * t, om: al * t, al, h: 0.5 * a * t * t, v: a * t, landed: false };
+      const u = t - tl;
+      return { t, phi: 0.5 * al * tl * tl + wl * u, om: wl, al: 0, h: P.H, v: 0, landed: true };
+    }
+  };
+  const Np = 500; run.pts = Array.from({ length: Np }, (_, j) => run.at(j * T / (Np - 1)));
+  return run;
+}
+function buildRuns() {
+  S.measRun = PD.w2 > 0 ? makePendRun(S.swingSign * P.th0 * D2R, 0, P.gam, swingDur(), 'swing') : null;
+  S.throwRun = makeThrowRun();
+  S.torqueRun = makeTorqueRun();
+}
+
+/* ---------- pendulum control ---------- */
+function pendState() {
+  if (S.drag) return { t: 0, th: S.drag.th, om: 0, al: 0 };
+  if (S.run && (S.run.kind === 'settle' || S.run.kind === 'swing')) return S.run.at(S.t);
+  return { t: 0, th: S.restTh, om: 0, al: 0 };
+}
+const curT = () => (S.measRun && S.measRun.Tmeas ? S.measRun.Tmeas : PD.T0);
+function startSwing() {
+  S.drag = null;
+  if (!S.measRun) { S.run = null; S.phase = 'rest'; toast(tr('msgCom'), 'warn'); return; }
+  S.run = S.measRun; S.phase = 'run'; S.t = 0; S.paused = false;
+}
+function settleFrom(th) {
+  S.run = makePendRun(th, 0, 1.4 * Math.sqrt(PD.w2), 25, 'settle');
+  S.phase = 'run'; S.t = 0; S.paused = false;
+}
+function setPivot(b, opts = {}) {
+  const st = pendState(), phiNow = st.th - Math.PI / 2 - PD.ab;
+  const c = Math.cos(phiNow), s = Math.sin(phiNow), dx = b[0] - S.piv[0], dy = b[1] - S.piv[1];
+  const w = [c * dx - s * dy, s * dx + c * dy];
+  if (Math.hypot(S.piv[0], S.piv[1]) > 1e-3) { S.hist.push(S.piv.slice()); if (S.hist.length > 3) S.hist.shift(); }
+  S.piv = [b[0], b[1]];
+  S.cam = [S.cam[0] + w[0], S.cam[1] + w[1]];
+  S.drag = null;
+  derivePend(); buildRuns();
+  const thNew = wrapPi(phiNow + Math.PI / 2 + PD.ab);
+  if (!(PD.w2 > 0)) { S.run = null; S.phase = 'rest'; S.restTh = thNew; toast(tr('msgCom'), 'warn'); }
+  else {
+    S.autoSwing = !!opts.autoSwing;
+    settleFrom(thNew);
+    if (!opts.quiet) toast(tr(PD.inside ? 'msgPivot' : 'msgOutside'));
+  }
+  updateAll();
+}
+function worldToBody(w) {
+  const st = pendState(), phi = st.th - Math.PI / 2 - PD.ab, c = Math.cos(phi), s = Math.sin(phi);
+  return [c * w[0] + s * w[1] + S.piv[0], -s * w[0] + c * w[1] + S.piv[1]];
+}
+function pivotAtDistance(d) {
+  const L = PD.d > 1e-3 ? PD.d : 1, u = PD.d > 1e-3 ? [S.piv[0] / L, S.piv[1] / L] : [0, 1];
+  return [u[0] * d, u[1] * d];
+}
+
+/* ---------- shape management ---------- */
+function snapshotShape() { return { key: SH.key, base: SH.base.map(r => r.map(p => p.slice())), ref: SH.ref, sc: SH.sc, ext0: SH.ext0, L: P.L }; }
+function pushUndo() { if (SH) { S.undo.push(snapshotShape()); if (S.undo.length > 25) S.undo.shift(); } }
+function setSizeSlider(L) { const el = $('#size'); el.value = clamp(Math.round(L * 2) / 2, +el.min, +el.max); }
+function loadPreset(key, withUndo = true) {
+  if (withUndo) pushUndo();
+  const d = PRESET_DEFS[key]();
+  SH = { key, base: d.rings, ref: d.ref, sc: 1, ext0: extentOf(d.rings[0]) };
+  setSizeSlider(SH.ext0);
+  shapeChanged(true);
+}
+function shapeChanged(refit) {
+  readParams();
+  SH.sc = P.L / SH.ext0;
+  computeGeometry(); computeMass();
+  S.piv = defaultPivot(); S.hist = []; S.restTh = 0; S.swingSign = 1; S.cam = [0, 0]; S.drag = null; S.autoSwing = false;
+  derivePend(); buildRuns();
+  modeRefresh();
+  if (S.mode === 'draw' && refit) fitBoard();
+  updateAll();
+}
+function modeRefresh() {
+  if (S.mode === 'pend') startSwing();
+  else if (S.mode === 'throw') { S.run = S.throwRun; S.phase = 'idle'; S.t = 0; }
+  else if (S.mode === 'torque') { S.run = S.torqueRun; S.phase = 'idle'; S.t = 0; }
+  else { S.run = null; S.phase = 'idle'; S.t = 0; }
+}
+function onParam() { readParams(); computeMass(); derivePend(); buildRuns(); modeRefresh(); updateAll(); }
+function onSize() {
+  readParams();
+  const old = SH.sc; SH.sc = P.L / SH.ext0;
+  const f = SH.sc / old;
+  S.piv = S.piv.map(v => v * f); S.hist = S.hist.map(p => p.map(v => v * f));
+  computeGeometry(); computeMass(); derivePend(); buildRuns(); modeRefresh();
+  if (S.mode === 'draw') fitBoard();
+  updateAll();
+}
+
+/* ---------- drawing tool ---------- */
+function processOutline(raw, freehand) {
+  let pts = [];
+  for (const p of raw) { const l = pts[pts.length - 1]; if (!l || Math.hypot(p[0] - l[0], p[1] - l[1]) > 1e-6) pts.push([p[0], p[1]]); }
+  if (pts.length > 2) { const l = pts[pts.length - 1]; if (Math.hypot(l[0] - pts[0][0], l[1] - pts[0][1]) < 1e-6) pts.pop(); }
+  if (pts.length < 3) return { err: freehand ? 'msgSmall' : 'msgPolyMin' };
+  const ext = extentOf(pts);
+  if (ext < 2) return { err: 'msgSmall' };
+  if (freehand) {
+    pts = resampleClosed(pts, Math.max(perimeterClosed(pts) / 420, 0.12));
+    pts = smoothClosed(pts, 2);
+  }
+  let u = untangle(pts); pts = u.poly; let fixed = u.fixed;
+  if (freehand) pts = rdpClosed(pts, Math.max(0.0035 * ext, 0.05));
+  u = untangle(pts); pts = u.poly; fixed = fixed || u.fixed;
+  if (pts.length < 3) return { err: 'msgSmall' };
+  const A = ringRaw(pts).A, e2 = extentOf(pts);
+  if (Math.abs(A) < 1 || Math.abs(A) < 0.01 * e2 * e2) return { err: 'msgSmall' };
+  if (A < 0) pts.reverse();
+  return { poly: pts, fixed, raw: raw.length };
+}
+function holeValid(h) {
+  const R = G.ringsCm;
+  for (const p of h) { if (!pointInRing(p, R[0])) return false; for (let k = 1; k < R.length; k++) if (pointInRing(p, R[k])) return false; }
+  for (const r of R) if (ringsCross(h, r)) return false;
+  for (let k = 1; k < R.length; k++) if (pointInRing(R[k][0], h)) return false;
+  return true;
+}
+function commitOutline(raw, freehand) {
+  const r = processOutline(raw, freehand);
+  if (r.err) { toast(tr(r.err), 'warn'); dirty = true; return; }
+  if (S.holeMode) {
+    if (!holeValid(r.poly)) { toast(tr('msgHoleOut'), 'warn'); dirty = true; return; }
+    pushUndo();
+    SH.base.push(r.poly.map(([x, y]) => [x / SH.sc, y / SH.sc]));
+    SH.key = 'custom'; SH.ref = null;
+    shapeChanged(false);
+    toast(tr('msgHoleOk') + (r.fixed ? ' ' + tr('msgFixed') : ''), r.fixed ? 'warn' : 'ok');
+  } else {
+    pushUndo();
+    SH = { key: 'custom', base: [r.poly], ref: null, sc: 1, ext0: extentOf(r.poly) };
+    setSizeSlider(SH.ext0);
+    shapeChanged(false);
+    toast(trf('msgOk', { n: r.poly.length, raw: r.raw }) + (r.fixed ? ' ' + tr('msgFixed') : ''), r.fixed ? 'warn' : 'ok');
+  }
+}
+function finishPoly() {
+  if (S.poly.length < 3) { toast(tr('msgPolyMin'), 'warn'); return; }
+  const p = S.poly; S.poly = []; S.hover = null;
+  commitOutline(p, false);
+}
+function undo() {
+  const s = S.undo.pop();
+  if (!s) { toast(tr('msgNoUndo'), 'warn'); return; }
+  SH = { key: s.key, base: s.base, ref: s.ref, sc: s.sc, ext0: s.ext0 };
+  setSizeSlider(s.L);
+  shapeChanged(S.mode === 'draw');
+  toast(tr('msgUndo'));
+}
+function removeHoles() {
+  if (SH.base.length < 2) { toast(tr('msgNoHoles'), 'warn'); return; }
+  pushUndo(); SH.base = [SH.base[0]]; SH.key = 'custom'; SH.ref = null;
+  shapeChanged(false); toast(tr('msgHolesGone'));
+}
+
+/* ---------- canvas setup ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 480, dpr = 1, dirty = true, chartDirty = true;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'crimson', 'blue', 'amber', 'violet'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim() || '#888888';
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = Math.max(1, box.clientWidth); ch = Math.max(1, box.clientHeight);
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  if (S.mode === 'draw' && G) fitBoard();
+  dirty = true;
+}
+
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function withAlpha(hex, a) {
+  const h = String(hex).replace('#', '').trim();
+  if (!/^[0-9a-fA-F]{3}([0-9a-fA-F]{3})?$/.test(h)) return hex;
+  const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function subLabel(b, s, x, y, color, align = 'left') {
+  const c = ctx, fb = `italic 17px ${FONT_MATH}`, fsub = `italic 12px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fsub; const ws = s ? c.measureText(s).width : 0;
+  const x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb, 'left'); if (s) halo(s, x0 + wb + 1, y + 5, color, fsub, 'left');
+}
+function arrow(x1, y1, x2, y2, color, w = 2, dash = null, head = 9) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.4) * head, y2 - Math.sin(a - 0.4) * head);
+  c.lineTo(x2 - Math.cos(a + 0.4) * head, y2 - Math.sin(a + 0.4) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+// Curved arrow around (X, Y): starts at world angle a0, sweeps by `sweep` (positive = counter-clockwise).
+function arcArrow(X, Y, R, a0, sweep, color, w = 2) {
+  if (Math.abs(sweep) < 0.08 || R < 4) return;
+  const c = ctx, s0 = -a0, s1 = -(a0 + sweep);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  c.beginPath(); c.arc(X, Y, R, s0, s1, sweep > 0); c.stroke();
+  const hx = X + R * Math.cos(s1), hy = Y + R * Math.sin(s1), dir = sweep > 0 ? -1 : 1;
+  const tx = -Math.sin(s1) * dir, ty = Math.cos(s1) * dir, nx = -ty, ny = tx, hl = 8;
+  c.beginPath(); c.moveTo(hx + tx * 4, hy + ty * 4); c.lineTo(hx - tx * hl + nx * 4.5, hy - ty * hl + ny * 4.5); c.lineTo(hx - tx * hl - nx * 4.5, hy - ty * hl - ny * 4.5); c.closePath(); c.fill();
+  c.restore();
+}
+function hatch(x0, y0, w, h, color, step = 8) {
+  const c = ctx; c.save(); c.beginPath(); c.rect(x0, y0, w, h); c.clip();
+  c.strokeStyle = color; c.lineWidth = 1; c.beginPath();
+  for (let x = x0 - h; x < x0 + w + h; x += step) { c.moveTo(x, y0 + h); c.lineTo(x + h, y0); }
+  c.stroke(); c.restore();
+}
+function comMarker(X, Y, rot = 0, r = 7) {
+  const c = ctx; c.save(); c.translate(X, Y); c.rotate(-rot);
+  c.beginPath(); c.arc(0, 0, r + 2, 0, TAU); c.fillStyle = col.paper; c.fill();
+  for (let q = 0; q < 4; q++) { c.beginPath(); c.moveTo(0, 0); c.arc(0, 0, r, q * Math.PI / 2, (q + 1) * Math.PI / 2); c.closePath(); c.fillStyle = q % 2 ? col.paper : col.ink; c.fill(); }
+  c.beginPath(); c.arc(0, 0, r, 0, TAU); c.strokeStyle = col.ink; c.lineWidth = 1.5; c.stroke();
+  c.restore();
+}
+function ring(X, Y, r, color, w = 2, fill = null) {
+  const c = ctx; c.beginPath(); c.arc(X, Y, r, 0, TAU);
+  if (fill) { c.fillStyle = fill; c.fill(); }
+  c.strokeStyle = color; c.lineWidth = w; c.stroke();
+}
+
+/* ---------- world view (pend / throw / torque) ---------- */
+const V = { s: 300, ox: 400, oy: 60, ready: false };
+let VW = { s: 300, ox: 400, oy: 60 };
+const W2S = (x, y) => [VW.ox + VW.s * x, VW.oy - VW.s * y];
+const S2W = (X, Y) => [(X - VW.ox) / VW.s, (VW.oy - Y) / VW.s];
+function targetView() {
+  if (S.mode === 'pend') {
+    const extra = S.show.O && isFinite(PD.lred) ? PD.lred + 0.012 : 0;
+    const Rr = Math.max(PD.reach, 0.02);
+    const down = Math.max(Rr, extra) + 0.012;
+    const up = Math.max(PD.upRest, Rr * Math.max(0, -Math.cos(P.th0 * D2R)));
+    const topPad = 62, botPad = 22;
+    const s = Math.min((ch - topPad - botPad) / (up + down), (cw / 2 - 22) / Rr);
+    return { s, ox: cw / 2, oy: topPad + up * s };
+  }
+  if (S.mode === 'throw') {
+    const r = S.throwRun, Rb = G.Rb, yg = -(Rb + 0.02);
+    const xmin = -Rb - 0.06, xmax = Math.max(r.R, 0) + Rb + 0.06, ymax = r.H + Rb + 0.08;
+    const padT = 22, padB = 40;
+    const s = Math.min((cw - 40) / (xmax - xmin), (ch - padT - padB) / (ymax - yg));
+    return { s, ox: (cw - (xmax - xmin) * s) / 2 - xmin * s, oy: ch - padB + yg * s };
+  }
+  const Rb = G.Rb, r = P.rd / 100, L0 = Rb + 0.1, bx = boxSize(), yf = -(L0 + P.H + bx);
+  const top = Rb + 0.05, bot = yf - 0.035, half = Math.max(Rb, r + bx) + 0.1;
+  const s = Math.min((ch - 24) / (top - bot), (cw - 30) / (2 * half));
+  return { s, ox: cw / 2, oy: 12 + top * s + ((ch - 24) - (top - bot) * s) / 2 };
+}
+function gridWorld() {
+  const c = ctx, s = VW.s;
+  const major = niceStep(110 / s, 1), mant = major / Math.pow(10, Math.floor(Math.log10(major) + 1e-9));
+  const minor = major / (Math.round(mant) === 2 ? 4 : 5);
+  const x0 = -VW.ox / s, x1 = (cw - VW.ox) / s, y0 = (VW.oy - ch) / s, y1 = VW.oy / s;
+  c.lineWidth = 1;
+  for (const [st, color] of [[minor, col.grid], [major, col.gridmajor]]) {
+    if (st * s < 5) continue;
+    c.strokeStyle = color; c.beginPath();
+    for (let x = Math.ceil(x0 / st) * st; x <= x1; x += st) { const X = Math.round(VW.ox + x * s) + 0.5; c.moveTo(X, 0); c.lineTo(X, ch); }
+    for (let y = Math.ceil(y0 / st) * st; y <= y1; y += st) { const Y = Math.round(VW.oy - y * s) + 0.5; c.moveTo(0, Y); c.lineTo(cw, Y); }
+    c.stroke();
+  }
+  return major;
+}
+function scaleBar(major, x = 14, y = null) {
+  const c = ctx, L = major * VW.s; y = y ?? ch - 16;
+  c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.6;
+  c.beginPath(); c.moveTo(x, y - 5); c.lineTo(x, y + 3); c.moveTo(x, y); c.lineTo(x + L, y); c.moveTo(x + L, y - 5); c.lineTo(x + L, y + 3); c.stroke();
+  c.restore();
+  const cm = major * 100;
+  halo(cm >= 100 ? `${fmt(major, major < 1 ? 1 : 0)} m` : `${fmt(cm, cm < 1 ? 1 : 0)} cm`, x + L + 8, y - 1, col.ink2, `500 11px ${FONT_MONO}`, 'left');
+}
+function bodyPathLocal(c) {
+  c.beginPath();
+  for (const r of G.ringsM) { for (let i = 0; i < r.length; i++) { const q = r[i]; i ? c.lineTo(q[0], q[1]) : c.moveTo(q[0], q[1]); } c.closePath(); }
+}
+// Draw the body with its COM at world `pos`, rotated by `phi` (body frame -> world).
+function drawBody(pos, phi, o = {}) {
+  const c = ctx, [X, Y] = W2S(pos[0], pos[1]), px = 1 / VW.s;
+  c.save(); c.translate(X, Y); c.scale(VW.s, -VW.s); c.rotate(phi);
+  bodyPathLocal(c);
+  if (o.ghost) {
+    c.fillStyle = withAlpha(col.crimson, 0.045); c.fill('evenodd');
+    c.setLineDash([4 * px, 3 * px]); c.lineWidth = 1.2 * px; c.strokeStyle = withAlpha(col.crimson, o.alpha ?? 0.55); c.stroke();
+    c.restore(); return;
+  }
+  c.fillStyle = withAlpha(col.crimson, 0.12); c.fill('evenodd');
+  c.save(); c.clip('evenodd');
+  const R = G.Rb * 1.05 + 0.005, h = 7 * px;
+  c.beginPath(); for (let u = -2 * R; u <= 2 * R; u += h) { c.moveTo(u - R, -R); c.lineTo(u + R, R); }
+  c.strokeStyle = withAlpha(col.crimson, 0.32); c.lineWidth = px; c.stroke();
+  if (o.marks) o.marks(c, px);
+  c.restore();
+  bodyPathLocal(c); c.lineJoin = 'round'; c.lineWidth = 1.9 * px; c.strokeStyle = col.ink; c.stroke();
+  c.restore();
+}
+// Inertia ellipse (uniform ellipse with the same second moments) and principal axes.
+function drawAxes(X, Y, phiWorld, s, gmLike, A) {
+  const c = ctx;
+  const a = 2 * Math.sqrt(Math.max(gmLike.lmax, 0) / A) * s, b = 2 * Math.sqrt(Math.max(gmLike.lmin, 0) / A) * s;
+  const ang = -(gmLike.phi + phiWorld);
+  c.save(); c.translate(X, Y); c.rotate(ang);
+  c.strokeStyle = withAlpha(col.blue, 0.85); c.lineWidth = 1.4; c.setLineDash([5, 4]);
+  c.beginPath(); c.ellipse(0, 0, Math.max(a, 1), Math.max(b, 1), 0, 0, TAU); c.stroke();
+  c.setLineDash([]); c.lineWidth = 1.6; c.strokeStyle = col.blue;
+  const ea = Math.max(a * 1.25, 18), eb = Math.max(b * 1.25, 18);
+  c.beginPath(); c.moveTo(-ea, 0); c.lineTo(ea, 0); c.moveTo(0, -eb); c.lineTo(0, eb); c.stroke();
+  c.restore();
+  const ca = Math.cos(ang), sa = Math.sin(ang);
+  halo('1', X + ca * (ea + 9), Y + sa * (ea + 9), col.blue, `600 12px ${FONT_MONO}`, 'center');
+  halo('2', X - sa * (eb + 9), Y + ca * (eb + 9), col.blue, `600 12px ${FONT_MONO}`, 'center');
+}
+
+/* ---------- scene: pendulum ---------- */
+function pendPose(th) {
+  const phi = th - Math.PI / 2 - PD.ab, c = Math.cos(phi), s = Math.sin(phi), p0 = S.piv;
+  const toW = (b) => [c * (b[0] - p0[0]) - s * (b[1] - p0[1]), s * (b[0] - p0[0]) + c * (b[1] - p0[1])];
+  return { phi, toW, com: toW([0, 0]) };
+}
+function drawPend() {
+  const c = ctx, st = pendState(), pose = pendPose(st.th), [NX, NY] = W2S(0, 0);
+  const major = gridWorld();
+  // support beam (behind the body)
+  {
+    const w = 84, top = NY - 44;
+    c.save();
+    c.fillStyle = col.sunk; c.fillRect(NX - w / 2, top - 12, w, 12);
+    hatch(NX - w / 2, top - 12, w, 12, withAlpha(col.ink3, 0.7), 6);
+    c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath(); c.moveTo(NX - w / 2, top + 0.5); c.lineTo(NX + w / 2, top + 0.5); c.stroke();
+    c.strokeStyle = col.ink2; c.lineWidth = 3; c.lineCap = 'round'; c.beginPath(); c.moveTo(NX, top); c.lineTo(NX, NY); c.stroke();
+    c.restore();
+  }
+  // arm when the nail is outside the material
+  const armEnd = !PD.inside ? pose.toW(nearestOnRings(S.piv, G.ringsM)) : null;
+  // body with pencil marks (plumb lines drawn on the body)
+  drawBody(pose.com, pose.phi, {
+    marks: S.show.plumb ? (cx, px) => {
+      const all = S.hist.map(p => ({ p, cur: false })).concat([{ p: S.piv, cur: true }]);
+      for (const { p, cur } of all) {
+        const d = Math.hypot(p[0], p[1]); if (d < 1e-4) continue;
+        const ux = -p[0] / d, uy = -p[1] / d, L = 2.2 * G.Rb + d;
+        cx.beginPath(); cx.moveTo(p[0] - ux * L, p[1] - uy * L); cx.lineTo(p[0] + ux * L, p[1] + uy * L);
+        cx.setLineDash(cur ? [] : [6 * px, 4 * px]); cx.lineWidth = 1.4 * px; cx.strokeStyle = cur ? withAlpha(col.ink, 0.7) : col.ink2; cx.stroke();
+      }
+      cx.setLineDash([]);
+    } : null
+  });
+  // nail holes from previous hangings
+  if (S.show.plumb) S.hist.forEach((p, i) => {
+    const [X, Y] = W2S(...pose.toW(p));
+    ring(X, Y, 4, col.ink2, 1.5, col.paper);
+    halo(String(i + 1), X + 8, Y - 8, col.ink2, `600 11px ${FONT_MONO}`, 'left');
+  });
+  const [CX, CY] = W2S(pose.com[0], pose.com[1]);
+  if (S.show.k) { c.save(); c.setLineDash([2, 4]); ring(CX, CY, MM.k * VW.s, col.violet, 1.4); c.restore(); halo('k', CX + MM.k * VW.s * 0.71 + 4, CY - MM.k * VW.s * 0.71 - 4, col.violet, `italic 15px ${FONT_MATH}`, 'left'); }
+  if (S.show.axes) drawAxes(CX, CY, pose.phi, VW.s, G.si, G.si.A);
+  // plumb line (world vertical through the nail)
+  {
+    const len = Math.max(PD.reach, isFinite(PD.lred) && S.show.O ? PD.lred : 0) * VW.s + 8;
+    const Yb = Math.min(NY + len, ch - 26);
+    c.save(); c.strokeStyle = col.amber; c.lineWidth = 1.5; c.beginPath(); c.moveTo(NX, NY); c.lineTo(NX, Yb); c.stroke();
+    c.fillStyle = col.amber; c.beginPath(); c.moveTo(NX, Yb); c.bezierCurveTo(NX + 9, Yb + 7, NX + 6.5, Yb + 17, NX, Yb + 17); c.bezierCurveTo(NX - 6.5, Yb + 17, NX - 9, Yb + 7, NX, Yb); c.fill();
+    c.restore();
+  }
+  // centre of oscillation O and l_red
+  if (S.show.O && PD.O) {
+    const [OX, OY] = W2S(...pose.toW(PD.O));
+    const ux = (OX - NX) / (Math.hypot(OX - NX, OY - NY) || 1), uy = (OY - NY) / (Math.hypot(OX - NX, OY - NY) || 1);
+    const nx = -uy, ny = ux, off = 18;
+    c.save(); c.strokeStyle = withAlpha(col.violet, 0.9); c.lineWidth = 1.2;
+    c.setLineDash([3, 3]); c.beginPath(); c.moveTo(CX, CY); c.lineTo(OX, OY); c.stroke(); c.setLineDash([]);
+    c.beginPath(); c.moveTo(NX + nx * off, NY + ny * off); c.lineTo(OX + nx * off, OY + ny * off);
+    c.moveTo(NX + nx * (off - 5), NY + ny * (off - 5)); c.lineTo(NX + nx * (off + 5), NY + ny * (off + 5));
+    c.moveTo(OX + nx * (off - 5), OY + ny * (off - 5)); c.lineTo(OX + nx * (off + 5), OY + ny * (off + 5)); c.stroke();
+    c.restore();
+    ring(OX, OY, 6, col.violet, 2.2, col.paper);
+    halo('O', OX + 10, OY + 2, col.violet, `italic 600 16px ${FONT_MATH}`, 'left');
+    const mx = (NX + OX) / 2 + nx * (off + 14), my = (NY + OY) / 2 + ny * (off + 14);
+    halo(`l = ${fmt(PD.lred * 100, 1)} cm`, mx, my, col.violet, `600 11.5px ${FONT_MONO}`, nx >= 0 ? 'left' : 'right');
+  }
+  if (armEnd) {
+    const [AX, AY] = W2S(armEnd[0], armEnd[1]);
+    c.save(); c.strokeStyle = col.ink2; c.lineWidth = 5; c.lineCap = 'round'; c.beginPath(); c.moveTo(NX, NY); c.lineTo(AX, AY); c.stroke(); c.restore();
+    ring(AX, AY, 3.5, col.ink, 1.5, col.paper);
+  }
+  if (S.show.com) comMarker(CX, CY, pose.phi);
+  // vectors: weight at the COM and COM velocity
+  if (S.show.vec && PD.d > 1e-3) {
+    arrow(CX, CY, CX, CY + 48, col.amber, 2.2, null, 9);
+    subLabel('mg', '', CX + 7, CY + 42, col.amber);
+    const run = S.run && S.run.kind === 'swing' ? S.run : S.measRun;
+    const vref = run ? run.omMax * PD.d : 0;
+    if (vref > 1e-6 && Math.abs(st.om) > 1e-4) {
+      const k = 62 / vref, rx = pose.com[0], ry = pose.com[1];
+      const vx = -st.om * ry, vy = st.om * rx;
+      arrow(CX, CY, CX + vx * k, CY - vy * k, col.crimson, 2.4, null, 10);
+      subLabel('v', 'c', CX + vx * k + (vx >= 0 ? 6 : -18), CY - vy * k - 8, col.crimson);
+    }
+  }
+  // nail
+  ring(NX, NY, 5.5, col.ink, 2, col.paper);
+  c.fillStyle = col.ink; c.beginPath(); c.arc(NX, NY, 1.8, 0, TAU); c.fill();
+  // angle arc
+  if (Math.abs(st.th) > 0.6 * D2R && PD.d > 1e-3) {
+    const R = 40;
+    c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.3;
+    c.beginPath(); c.arc(NX, NY, R, Math.PI / 2, Math.PI / 2 - st.th, st.th > 0); c.stroke(); c.restore();
+    const am = Math.PI / 2 - st.th / 2;
+    halo(`θ = ${fmt(st.th / D2R, 1)}°`, NX + Math.cos(am) * (R + 14), NY + Math.sin(am) * (R + 14), col.ink, `600 12px ${FONT_MONO}`, st.th > 0 ? 'left' : 'right');
+  }
+  scaleBar(major);
+}
+
+/* ---------- scene: throw ---------- */
+function drawThrow() {
+  const c = ctx, r = S.throwRun, yg = -(G.Rb + 0.02), tNow = S.phase === 'idle' ? 0 : S.t;
+  const major = gridWorld();
+  const [, GY] = W2S(0, yg);
+  c.fillStyle = col.sunk; c.fillRect(0, GY, cw, ch - GY);
+  hatch(0, GY, cw, 12, withAlpha(col.ink3, 0.55), 7);
+  c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, GY + 0.5); c.lineTo(cw, GY + 0.5); c.stroke();
+  const para = (t0, t1) => { c.beginPath(); for (let i = 0; i <= 120; i++) { const q = r.at(t0 + (t1 - t0) * i / 120), [X, Y] = W2S(q.x, q.y); i ? c.lineTo(X, Y) : c.moveTo(X, Y); } };
+  if (r.T > 0) {
+    para(0, r.T); c.save(); c.strokeStyle = col.crimson; c.globalAlpha = 0.45; c.setLineDash([2, 6]); c.lineWidth = 2; c.lineCap = 'round'; c.stroke(); c.restore();
+    if (tNow > 0) { para(0, tNow); c.save(); c.strokeStyle = col.crimson; c.lineWidth = 2.4; c.stroke(); c.restore(); }
+  }
+  // launch mark
+  { const [X0, Y0] = W2S(0, 0); c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1; c.setLineDash([3, 4]); c.beginPath(); c.moveTo(X0, Y0); c.lineTo(X0, GY); c.stroke(); c.restore(); }
+  if (S.show.strobe && tNow > 0 && r.strobe > 0) {
+    for (let k = 1; k * r.strobe <= tNow + 1e-9; k++) { const q = r.at(k * r.strobe); drawBody([q.x, q.y], q.phi, { ghost: true, alpha: 0.5 }); }
+  }
+  const rim = G.ringsM[0][G.far];
+  const rimW = (q) => { const cs = Math.cos(q.phi), sn = Math.sin(q.phi); return [q.x + cs * rim[0] - sn * rim[1], q.y + sn * rim[0] + cs * rim[1]]; };
+  if (S.show.trace && tNow > 0) {
+    c.beginPath();
+    const n = Math.max(2, Math.ceil(400 * tNow / Math.max(r.T, 1e-6)));
+    for (let i = 0; i <= n; i++) { const [X, Y] = W2S(...rimW(r.at(tNow * i / n))); i ? c.lineTo(X, Y) : c.moveTo(X, Y); }
+    c.save(); c.strokeStyle = col.amber; c.lineWidth = 1.8; c.lineJoin = 'round'; c.stroke(); c.restore();
+  }
+  const q = r.at(tNow);
+  drawBody([q.x, q.y], q.phi);
+  const [CX, CY] = W2S(q.x, q.y);
+  if (S.show.axes) drawAxes(CX, CY, q.phi, VW.s, G.si, G.si.A);
+  const [PX, PY] = W2S(...rimW(q));
+  if (S.show.trace) ring(PX, PY, 4, col.amber, 2, col.paper);
+  if (S.show.com) comMarker(CX, CY, q.phi);
+  if (S.show.vec) {
+    const kv = 70 / Math.max(P.v0, 0.5);
+    arrow(CX, CY, CX + q.vx * kv, CY - q.vy * kv, col.crimson, 2.4, null, 10);
+    subLabel('v', 'c', CX + q.vx * kv + 7, CY - q.vy * kv - 6, col.crimson);
+    if (Math.abs(P.w0) > 0.05) {
+      arcArrow(CX, CY, 24, Math.PI * 0.15 + q.phi, Math.sign(P.w0) * 1.9, col.violet, 2);
+      subLabel('ω', '', CX - 34, CY - 22, col.violet, 'right');
+      if (S.show.trace) {
+        const rx = PX - CX, ry = -(PY - CY);
+        const vpx = q.vx - P.w0 * ry / VW.s, vpy = q.vy + P.w0 * rx / VW.s;
+        arrow(PX, PY, PX + vpx * kv, PY - vpy * kv, col.amber, 1.8, [4, 3], 8);
+      }
+    }
+  }
+  if (S.phase === 'done' || (S.phase === 'idle' && r.T > 0)) {
+    const [XR] = W2S(r.R, 0);
+    c.save(); c.globalAlpha = S.phase === 'idle' ? 0.6 : 1; c.strokeStyle = col.crimson; c.lineWidth = 2; c.beginPath(); c.moveTo(XR, GY - 7); c.lineTo(XR, GY + 7); c.stroke(); c.restore();
+    halo(`R = ${fa(r.R)} m`, XR, GY + 24, col.ink, `600 12px ${FONT_MONO}`, 'center');
+  }
+  scaleBar(major, 14, 18);
+}
+
+/* ---------- scene: torque ---------- */
+function drawTorque() {
+  const c = ctx, r = S.torqueRun, q = r.at(S.phase === 'idle' ? 0 : S.t);
+  const Rb = G.Rb, rd = P.rd / 100, bx = boxSize(), L0 = Rb + 0.1, yf = -(L0 + P.H + bx);
+  const major = gridWorld();
+  const [, FY] = W2S(0, yf);
+  const [AX, AY] = W2S(0, 0);
+  // floor
+  c.fillStyle = col.sunk; c.fillRect(0, FY, cw, ch - FY);
+  hatch(0, FY, cw, 12, withAlpha(col.ink3, 0.55), 7);
+  c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath(); c.moveTo(0, FY + 0.5); c.lineTo(cw, FY + 0.5); c.stroke();
+  // stand (behind the body)
+  {
+    const pw = Math.max(6, 0.022 * VW.s);
+    c.save(); c.fillStyle = col.sunk; c.strokeStyle = col.ink2; c.lineWidth = 1.2;
+    c.fillRect(AX + 0.0 - pw / 2 + Math.max(Rb * VW.s * 0.0, 0), AY, pw, FY - AY); c.strokeRect(AX - pw / 2, AY, pw, FY - AY);
+    c.fillRect(AX - 46, FY - 8, 92, 8); c.strokeRect(AX - 46, FY - 8, 92, 8);
+    c.restore();
+  }
+  drawBody([0, 0], q.phi);
+  if (S.show.axes) drawAxes(AX, AY, q.phi, VW.s, G.si, G.si.A);
+  // drum
+  const DR = Math.max(rd * VW.s, 4);
+  c.save(); c.translate(AX, AY); c.rotate(-q.phi);
+  c.fillStyle = col.ink2; c.beginPath(); c.arc(0, 0, DR, 0, TAU); c.fill();
+  c.strokeStyle = col.paper; c.lineWidth = 1.5; c.beginPath();
+  for (let k = 0; k < 3; k++) { const a = k * TAU / 3; c.moveTo(0, 0); c.lineTo(Math.cos(a) * DR * 0.85, Math.sin(a) * DR * 0.85); }
+  c.stroke(); c.restore();
+  ring(AX, AY, 2.8, col.ink, 1.4, col.paper);
+  // string and mass
+  const boxTop = -(L0 + q.h), [SX, SY] = W2S(-rd, 0), [, BT] = W2S(0, boxTop), BW = bx * VW.s;
+  c.save(); c.strokeStyle = col.ink; c.lineWidth = 1.6; c.beginPath();
+  if (!q.landed) { c.moveTo(SX, SY); c.lineTo(SX, BT); }
+  else { const mid = (SY + BT) / 2; c.moveTo(SX, BT); c.bezierCurveTo(SX + 26, mid + 30, SX - 22, mid + 10, SX + 8, BT - 10); }
+  c.stroke(); c.restore();
+  c.save(); c.fillStyle = col.violet; c.globalAlpha = 0.9; c.fillRect(SX - BW / 2, BT, BW, BW); c.globalAlpha = 1;
+  c.strokeStyle = col.ink; c.lineWidth = 1.4; c.strokeRect(SX - BW / 2, BT, BW, BW); c.restore();
+  halo('m', SX - BW / 2 - 18, BT + BW / 2, col.violet, `italic 16px ${FONT_MATH}`, 'right');
+  halo('c', SX - BW / 2 - 12, BT + BW / 2 + 5, col.violet, `italic 11px ${FONT_MATH}`, 'right');
+  // drop height dimension (initial position to floor)
+  {
+    const [, Y0] = W2S(0, -(L0 + bx)), X = SX + BW / 2 + 22;
+    c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath();
+    c.moveTo(X - 5, Y0); c.lineTo(X + 5, Y0); c.moveTo(X - 5, FY); c.lineTo(X + 5, FY); c.moveTo(X, Y0); c.lineTo(X, FY); c.stroke(); c.restore();
+    halo(`h = ${fmt(P.H, 2)} m`, X + 8, (Y0 + FY) / 2, col.ink2, `500 11.5px ${FONT_MONO}`, 'left');
+  }
+  if (S.show.com) comMarker(AX, AY, q.phi, 6);
+  if (S.show.vec) {
+    const cx = SX, wy = BT + BW / 2;
+    arrow(cx, wy, cx, wy + 44, col.amber, 2.2, null, 9);
+    subLabel('m', 'c', cx + 8, wy + 36, col.amber);
+    halo('g', cx + 30, wy + 36, col.amber, `italic 17px ${FONT_MATH}`, 'left');
+    if (!q.landed) {
+      const Lt = 44 * r.N / (P.mw * P.g);
+      arrow(cx, BT, cx, BT - Lt, col.crimson, 2.2, null, 9);
+      subLabel('N', '', cx + 8, BT - Lt + 6, col.crimson);
+      arrow(SX, SY, SX, SY + Lt, col.crimson, 2.2, null, 9);
+      arcArrow(AX, AY, Math.max(DR + 16, 26), Math.PI * 0.6, 1.6, col.violet, 2.2);
+      subLabel(SYM().e, '', AX + Math.cos(Math.PI * 0.6 + 1.7) * (Math.max(DR + 16, 26) + 14), AY - Math.sin(Math.PI * 0.6 + 1.7) * (Math.max(DR + 16, 26) + 14), col.violet, 'center');
+    } else if (q.om > 0) {
+      arcArrow(AX, AY, Math.max(DR + 16, 26), Math.PI * 0.6, 1.6, col.violet, 2.2);
+      subLabel('ω', '', AX + Math.cos(Math.PI * 0.6 + 1.7) * (Math.max(DR + 16, 26) + 14), AY - Math.sin(Math.PI * 0.6 + 1.7) * (Math.max(DR + 16, 26) + 14), col.violet, 'center');
+    }
+  }
+  scaleBar(major, 14, 18);
+}
+
+/* ---------- scene: drawing board (cm) ---------- */
+const B = { s: 6, ox: 400, oy: 240 };
+const B2S = (x, y) => [B.ox + B.s * x, B.oy - B.s * y];
+const S2B = (X, Y) => [(X - B.ox) / B.s, (B.oy - Y) / B.s];
+function fitBoard() {
+  const bb = G.bbox, E = Math.max(60, 1.7 * G.ext);
+  B.s = Math.min(cw / E, ch / (E * 0.8));
+  B.ox = cw / 2 - B.s * (bb.x0 + bb.x1) / 2; B.oy = ch / 2 + B.s * (bb.y0 + bb.y1) / 2;
+  dirty = true;
+}
+function snapPt(p) { return S.snap ? [Math.round(p[0]), Math.round(p[1])] : p; }
+function drawBoard() {
+  const c = ctx, s = B.s;
+  const [x0, y1] = S2B(0, 0), [x1, y0] = S2B(cw, ch);
+  const minor = s >= 5 ? 1 : s >= 2 ? 2 : 5, major = s >= 2.5 ? 10 : 20;
+  c.lineWidth = 1;
+  for (const [st, color] of [[minor, col.grid], [major, col.gridmajor]]) {
+    c.strokeStyle = color; c.beginPath();
+    for (let x = Math.ceil(x0 / st) * st; x <= x1; x += st) { const X = Math.round(B.ox + x * s) + 0.5; c.moveTo(X, 0); c.lineTo(X, ch); }
+    for (let y = Math.ceil(y0 / st) * st; y <= y1; y += st) { const Y = Math.round(B.oy - y * s) + 0.5; c.moveTo(0, Y); c.lineTo(cw, Y); }
+    c.stroke();
+  }
+  for (let x = Math.ceil(x0 / major) * major; x <= x1; x += major) { const X = B.ox + x * s; if (X > 40 && X < cw - 30) halo(fmt(x, 0), X, ch - 10, col.ink3, `500 10.5px ${FONT_MONO}`, 'center'); }
+  for (let y = Math.ceil(y0 / major) * major; y <= y1; y += major) { const Y = B.oy - y * s; if (Y > 40 && Y < ch - 26) halo(fmt(y, 0), 8, Y, col.ink3, `500 10.5px ${FONT_MONO}`, 'left'); }
+  halo('cm', cw - 10, ch - 10, col.ink3, `500 10.5px ${FONT_MONO}`, 'right');
+  // body
+  const path = () => { c.beginPath(); for (const r of G.ringsCm) { r.forEach((q, i) => { const [X, Y] = B2S(q[0], q[1]); i ? c.lineTo(X, Y) : c.moveTo(X, Y); }); c.closePath(); } };
+  const fade = S.drawing && !S.holeMode ? 0.35 : 1;
+  c.save(); c.globalAlpha = fade;
+  path(); c.fillStyle = withAlpha(col.crimson, 0.12); c.fill('evenodd');
+  c.save(); c.clip('evenodd');
+  const bb = G.bbox, [bx0, by0] = B2S(bb.x0, bb.y1), [bx1, by1] = B2S(bb.x1, bb.y0);
+  c.beginPath(); for (let u = bx0 - (by1 - by0); u < bx1 + (by1 - by0); u += 7) { c.moveTo(u, by1); c.lineTo(u + (by1 - by0), by0); }
+  c.strokeStyle = withAlpha(col.crimson, 0.32); c.lineWidth = 1; c.stroke(); c.restore();
+  path(); c.strokeStyle = col.ink; c.lineWidth = 1.9; c.lineJoin = 'round'; c.stroke();
+  // vertices
+  c.fillStyle = col.ink; for (const r of G.ringsCm) for (const q of r) { const [X, Y] = B2S(q[0], q[1]); c.fillRect(X - 1.5, Y - 1.5, 3, 3); }
+  // dimension lines
+  {
+    c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath();
+    const yD = by1 + 16, xD = bx1 + 16;
+    c.moveTo(bx0, by1 + 4); c.lineTo(bx0, yD + 5); c.moveTo(bx1, by1 + 4); c.lineTo(bx1, yD + 5);
+    c.moveTo(bx1 + 4, by0); c.lineTo(xD + 5, by0); c.moveTo(bx1 + 4, by1); c.lineTo(xD + 5, by1);
+    c.stroke();
+    arrow((bx0 + bx1) / 2, yD, bx0, yD, col.ink3, 1, null, 6); arrow((bx0 + bx1) / 2, yD, bx1, yD, col.ink3, 1, null, 6);
+    arrow(xD, (by0 + by1) / 2, xD, by0, col.ink3, 1, null, 6); arrow(xD, (by0 + by1) / 2, xD, by1, col.ink3, 1, null, 6);
+    halo(`${fmt(bb.w, 1)} cm`, (bx0 + bx1) / 2, yD + 13, col.ink2, `500 11px ${FONT_MONO}`, 'center');
+    c.save(); c.translate(xD + 13, (by0 + by1) / 2); c.rotate(-Math.PI / 2); halo(`${fmt(bb.h, 1)} cm`, 0, 0, col.ink2, `500 11px ${FONT_MONO}`, 'center'); c.restore();
+  }
+  const [CX, CY] = B2S(G.gm.xc, G.gm.yc);
+  drawAxes(CX, CY, 0, s, G.gm, G.gm.A);
+  comMarker(CX, CY, 0, 8);
+  halo(`(${fmt(G.gm.xc - bb.x0, 1)}; ${fmt(G.gm.yc - bb.y0, 1)})`, CX + 13, CY + 15, col.ink, `600 11.5px ${FONT_MONO}`, 'left');
+  c.restore();
+  // stroke in progress + live centre of mass of the auto-closed stroke
+  const live = S.tool === 'free' ? S.stroke : S.poly.concat(S.hover ? [S.hover] : []);
+  if (S.tool === 'free' && S.stroke.length > 1) {
+    c.save(); c.beginPath(); S.stroke.forEach((q, i) => { const [X, Y] = B2S(q[0], q[1]); i ? c.lineTo(X, Y) : c.moveTo(X, Y); });
+    c.strokeStyle = S.holeMode ? col.blue : col.crimson; c.lineWidth = 2.6; c.lineCap = 'round'; c.lineJoin = 'round'; c.stroke();
+    const [ax, ay] = B2S(...S.stroke[S.stroke.length - 1]), [bx, by] = B2S(...S.stroke[0]);
+    c.setLineDash([4, 5]); c.lineWidth = 1.4; c.beginPath(); c.moveTo(ax, ay); c.lineTo(bx, by); c.stroke(); c.restore();
+  }
+  if (S.tool === 'poly' && S.poly.length) {
+    c.save(); c.beginPath(); S.poly.forEach((q, i) => { const [X, Y] = B2S(q[0], q[1]); i ? c.lineTo(X, Y) : c.moveTo(X, Y); });
+    c.strokeStyle = S.holeMode ? col.blue : col.crimson; c.lineWidth = 2.4; c.lineJoin = 'round'; c.stroke();
+    if (S.hover) { const [ax, ay] = B2S(...S.poly[S.poly.length - 1]), [hx, hy] = B2S(...S.hover); c.setLineDash([4, 4]); c.lineWidth = 1.4; c.beginPath(); c.moveTo(ax, ay); c.lineTo(hx, hy); c.stroke(); }
+    c.restore();
+    S.poly.forEach((q, i) => { const [X, Y] = B2S(q[0], q[1]); ring(X, Y, i === 0 ? 6 : 3.5, S.holeMode ? col.blue : col.crimson, 2, col.paper); });
+  }
+  if (live.length >= 3) {
+    const g = ringRaw(live);
+    if (Math.abs(g.A) > 0.5) {
+      const [X, Y] = B2S(g.Sx / g.A, g.Sy / g.A);
+      c.save(); c.globalAlpha = 0.85; comMarker(X, Y, 0, 6); c.restore();
+    }
+  }
+  if (S.tool === 'poly' && S.hover) { const [X, Y] = B2S(...S.hover); c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.moveTo(X - 6, Y); c.lineTo(X + 6, Y); c.moveTo(X, Y - 6); c.lineTo(X, Y + 6); c.stroke(); c.restore(); }
+  const hint = S.holeMode ? tr('hintHole') : S.tool === 'poly' ? tr('hintPoly') : tr('hintFree');
+  halo(hint, 14, 18, S.holeMode ? col.blue : col.ink2, `500 13px ${FONT_BODY}`, 'left');
+}
+
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  if (S.mode === 'draw') { drawBoard(); return; }
+  VW = { s: V.s, ox: V.ox + V.s * S.cam[0], oy: V.oy - V.s * S.cam[1] };
+  if (S.mode === 'pend') drawPend();
+  else if (S.mode === 'throw') drawThrow();
+  else drawTorque();
+}
+
+/* ---------- toast ---------- */
+let toastTimer = 0;
+function toast(msg, tone = 'ok') {
+  const el = $('#toast');
+  el.innerHTML = `<i class="dot" data-tone="${tone}"></i><span>${msg}</span>`;
+  el.classList.add('on');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => el.classList.remove('on'), 4600);
+}
+
+/* ---------- HUD, legend, outputs ---------- */
+const HUD_DEF = {
+  draw: [['A'], ['x', 'c'], ['y', 'c'], ['I', 'c'], ['k'], ['N']],
+  pend: [['t'], ['θ'], ['ω'], ['EPS'], ['d'], ['T']],
+  throw: [['t'], ['x', 'c'], ['y', 'c'], ['v', 'c'], ['φ'], ['ω']],
+  torque: [['t'], ['ω'], ['EPS'], ['h'], ['v'], ['E', 'rot']]
+};
+function buildHud() {
+  $('#hud').innerHTML = HUD_DEF[S.mode].map(([b, s], i) => `<div><dt>${b === 'EPS' ? SYM().e : b}${s ? `<sub>${s}</sub>` : ''}</dt><dd id="hud-${i}"></dd></div>`).join('');
+  hudLast = '';
+}
+let hudLast = '';
+function hudValues() {
+  if (S.mode === 'draw') {
+    const bb = G.bbox;
+    return [[fa(G.gm.A), 'cm²'], [fmt(G.gm.xc - bb.x0, 2), 'cm'], [fmt(G.gm.yc - bb.y0, 2), 'cm'], [fs(MM.Ic, 3), 'kg·m²'], [fmt(MM.k * 100, 2), 'cm'], [String(G.nVert), tr('vertAbbr')]];
+  }
+  if (S.mode === 'pend') {
+    const st = pendState(), t = S.run ? S.t : 0;
+    return [[fmt(t, 2), 's'], [fmt(st.th / D2R, 1), '°'], [fmt(st.om, 2), 'rad/s'], [fmt(st.al, 1), 'rad/s²'], [fmt(PD.d * 100, 1), 'cm'], [isFinite(PD.T0) ? fmt(curT(), 3) : '∞', 's']];
+  }
+  if (S.mode === 'throw') {
+    const t = S.phase === 'idle' ? 0 : S.t, q = S.throwRun.at(t);
+    return [[fmt(t, 2), 's'], [fmt(q.x, 2), 'm'], [fmt(q.y, 2), 'm'], [fmt(Math.hypot(q.vx, q.vy), 2), 'm/s'], [fmt(q.phi, 2), 'rad'], [fmt(q.om, 1), 'rad/s']];
+  }
+  const t = S.phase === 'idle' ? 0 : S.t, q = S.torqueRun.at(t);
+  return [[fmt(t, 2), 's'], [fmt(q.om, 2), 'rad/s'], [fmt(q.al, 2), 'rad/s²'], [fmt(q.h * 100, 1), 'cm'], [fmt(q.v, 2), 'm/s'], [fs(0.5 * MM.Ic * q.om * q.om, 3), 'J']];
+}
+function updateHud() {
+  const vals = hudValues(), key = vals.map(v => v[0]).join('|') + lang;
+  if (key === hudLast) return; hudLast = key;
+  vals.forEach(([v, u], i) => { const el = $('#hud-' + i); if (el) el.innerHTML = `${v} <span>${u}</span>`; });
+}
+function stateKey() {
+  if (S.mode === 'draw') return S.drawing || S.poly.length ? ['sDraw', 'run'] : S.holeMode ? ['sHole', 'pause'] : ['sIdle', 'idle'];
+  if (S.mode === 'pend') {
+    if (S.drag) return ['sDrag', 'pause'];
+    if (S.phase === 'run') return S.paused ? ['sPause', 'pause'] : S.run.kind === 'settle' ? ['sSettle', 'run'] : ['sSwing', 'run'];
+    if (S.phase === 'done') return ['sDone', 'done'];
+    return ['sRest', 'idle'];
+  }
+  if (S.phase === 'run') return S.paused ? ['sPause', 'pause'] : [S.mode === 'throw' ? 'sFly' : 'sSpin', 'run'];
+  if (S.phase === 'done') return ['sDone', 'done'];
+  return ['sIdle', 'idle'];
+}
+function updateLegend() {
+  let h = '';
+  if (S.mode === 'pend') {
+    h += `<span><i class="sw-line" style="border-top:2px solid var(--amber)"></i>${tr('lgPlumb')}</span>`;
+    if (S.show.O) h += `<span><i class="sw-dot"></i>${tr('lgO')}</span>`;
+  } else if (S.mode === 'throw') {
+    h += `<span><i class="sw-line"></i>${tr('lgCom')}</span>`;
+    if (S.show.trace) h += `<span><i class="sw-line" style="border-top-color:var(--amber)"></i>${tr('lgRim')}</span>`;
+    if (S.show.strobe) h += `<span>${tr('lgGhost')} ${fmt(S.throwRun.strobe, S.throwRun.strobe < 0.1 ? 2 : 1)} s</span>`;
+  }
+  const [k, s] = stateKey();
+  h += `<span class="state" id="state" data-s="${s}">${tr(k)}</span>`;
+  $('#legend').innerHTML = h;
+}
+function setStateChip() {
+  const el = $('#state'); if (!el) return;
+  const [k, s] = stateKey();
+  if (el.dataset.k !== k) { el.dataset.k = k; el.dataset.s = s; el.textContent = tr(k); }
+}
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function updateOutputs() {
+  const o = (id, s) => { $('#' + id + '-out').textContent = s; };
+  o('m', `${fmt(P.m, 2)} kg`); o('size', `${fmt(P.L, 1)} cm`); o('g', `${fmt(P.g, 2)} m/s²`);
+  o('th0', `${fmt(P.th0, 0)}°`); o('gam', `${fmt(P.gam, 2)} s⁻¹`);
+  o('v0', `${fmt(P.v0, 1)} m/s`); o('beta', `${fmt(P.beta, 1)}°`); o('w0', `${fmt(P.w0, 1)} rad/s`);
+  o('mw', `${fmt(P.mw, 2)} kg`); o('rd', `${fmt(P.rd, 1)} cm`); o('H', `${fmt(P.H, 2)} m`);
+  $$('input[type=range]').forEach(setFill);
+  $$('#presets .chip[data-preset]').forEach(b => b.setAttribute('aria-pressed', String(SH.key === b.dataset.preset)));
+  $('#pr-own').setAttribute('aria-pressed', String(SH.key === 'custom'));
+  $$('#planets .chip').forEach(b => b.setAttribute('aria-pressed', String(Math.abs(+b.dataset.g - P.g) < 0.006)));
+  $('#pill-A').textContent = `${fa(G.gm.A)} cm²`;
+  $('#pill-sig').textContent = `${fa(MM.sigma)} kg/m²`;
+  $('#pill-Ic').textContent = `${fs(MM.Ic, 3)} kg·m²`;
+  $('#pill-k').textContent = `${fmt(MM.k * 100, 2)} cm`;
+  $('#pill-nv').textContent = String(G.nVert);
+  $('#pill-nh').textContent = String(G.nHoles);
+  $('#btn-huy').disabled = !PD.O; $('#btn-k').disabled = !(MM.k > 0);
+}
+
+/* ---------- results table ---------- */
+function updateResults() {
+  const tb = tbValues(SH.ref, SH.sc, P.m), gm = G.gm, bb = G.bbox, sy = SYM();
+  const com = [gm.xc - bb.x0, gm.yc - bb.y0];
+  const rows = [];
+  const row = (k, v, ref = '', d = '', cls = '') => rows.push(`<tr class="${cls}"><th>${tr(k)}</th><td>${v}</td><td class="ref">${ref}</td><td class="delta">${d}</td></tr>`);
+  row('rA', `${fa(gm.A)} cm²`, tb ? `${fa(tb.A)} cm²` : tr('refNone'), tb ? pct(gm.A, tb.A) : '');
+  row('rM', `${fmt(P.m, 2)} kg`, `σ = ${fa(MM.sigma)} kg/m²`);
+  row('rCom', `(${fmt(com[0], 2)}; ${fmt(com[1], 2)}) cm`, tb ? `(${fmt(tb.com[0], 2)}; ${fmt(tb.com[1], 2)}) cm` : tr('refNone'), tb ? `${fmt(Math.hypot(com[0] - tb.com[0], com[1] - tb.com[1]), 3)} cm` : '');
+  row('rIc', `${fs(MM.Ic, 4)} kg·m²`, tb ? `${fs(tb.I, 4)} kg·m²` : tr('refNone'), tb ? pct(MM.Ic, tb.I) : '');
+  row('rI12', `${fs(MM.I1, 3)} / ${fs(MM.I2, 3)}`, `<i>I</i><sub>1</sub> + <i>I</i><sub>2</sub> = ${fs(MM.I1 + MM.I2, 4)}`, pct(MM.I1 + MM.I2, MM.Ic));
+  row('rK', `${fmt(MM.k * 100, 2)} cm`, tb ? `${fmt(tb.k, 2)} cm` : tr('refNone'), tb ? pct(MM.k * 100, tb.k) : '');
+  row('rD', `${fmt(PD.d * 100, 2)} cm`, '', '', 'sep');
+  row('rIp', `${fs(PD.Ip, 4)} kg·m²`, `<i>I</i><sub>c</sub> + <i>md</i>² = ${fs(MM.Ic, 3)} + ${fs(P.m * PD.d * PD.d, 3)}`);
+  const Tm = S.measRun && S.measRun.Tmeas;
+  row('rT', Tm ? `${fmt(Tm, 3)} s` : tr('none'), `${tr('refSmall')}: <i>T</i><sub>0</sub> = ${isFinite(PD.T0) ? fmt(PD.T0, 3) : '∞'} s`, Tm ? pct(Tm, PD.T0) : '');
+  row('rLred', isFinite(PD.lred) ? `${fmt(PD.lred * 100, 2)} cm` : '∞', isFinite(PD.lred) ? `${tr('refMath')}: 2π√(<i>l</i>/<i>g</i>) = ${fmt(TAU * Math.sqrt(PD.lred / P.g), 3)} s` : '', isFinite(PD.lred) ? pct(TAU * Math.sqrt(PD.lred / P.g), PD.T0) : '');
+  row('rTmin', `${fmt(PD.Tmin, 3)} s`, `<i>d</i> = <i>k</i> = ${fmt(MM.k * 100, 2)} cm`);
+  if (S.mode === 'throw') {
+    const r = S.throwRun, Etr = 0.5 * P.m * P.v0 * P.v0, Er = 0.5 * MM.Ic * P.w0 * P.w0;
+    row('rEtr', `${fs(Etr, 3)} J`, '', '', 'sep');
+    row('rErot', `${fs(Er, 3)} J`, `${tr('refShare')}: ${fmt(Er / (Etr + Er || 1) * 100, 1)} %`);
+    row('rRange', `${fa(r.R)} m`, `<i>v</i><sub>0</sub>² sin 2<i>β</i> / <i>g</i>`);
+  }
+  if (S.mode === 'torque') {
+    const r = S.torqueRun, Iexp = P.mw * (r.r ** 2) * (P.g / r.a - 1);
+    row('rEps', `${fmt(r.al, 3)} rad/s²`, `${sy.e} = ${sy.M}/<i>I</i><sub>c</sub>`, '', 'sep');
+    row('rAcc', `${fmt(r.a, 3)} m/s²`, `${tr('refLand')}: ${fmt(r.tl, 2)} s`);
+    row('rOmF', `${fmt(r.wl, 2)} rad/s`, `${fmt(r.wl / TAU, 2)} obr/s`.replace('obr/s', lang === 'pl' ? 'obr/s' : 'rev/s'));
+    row('rIexp', `${fs(Iexp, 4)} kg·m²`, `<i>I</i><sub>c</sub> = ${fs(MM.Ic, 4)}`, pct(Iexp, MM.Ic));
+  }
+  $('#res-body').innerHTML = rows.join('');
+  $('#res-sub').textContent = trf('resSub', { n: G.nVert });
+}
+
+/* ---------- formulas ---------- */
+const VV = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const RR = (s, b = false) => `<span class="r${b ? ' b' : ''}">${s}</span>`;
+const SUM = '<span class="big">Σ</span>', INT = '<span class="big">∫</span>';
+const CROSS = `(${VV('x', 'i')}${VV('y', 'i+1')} − ${VV('x', 'i+1')}${VV('y', 'i')})`;
+const card = (key, body, wide = false) => `<div class="fcard${wide ? ' wide' : ''}" id="fc-${key}"><h4>${tr(key)}</h4>${body}</div>`;
+const sq = (x) => `${x}<sup>2</sup>`;
+const CARDS = {
+  fArea() {
+    const bb = G.bbox;
+    return card('fArea', `
+      <div class="eq">${VV('A')} = ${FR('1', '2')}${SUM}${CROSS} = ${RR(fa(G.gm.A) + ' cm²')}</div>
+      <div class="eq">${VV('x', 'c')} = ${FR('1', VV('A'))}${INT}${VV('x')} d${VV('A')} = ${FR('1', '6' + VV('A'))}${SUM}(${VV('x', 'i')} + ${VV('x', 'i+1')})${CROSS}</div>
+      <div class="eq num">${VV('x', 'c')} = ${RR(fmt(G.gm.xc - bb.x0, 2) + ' cm')}, &nbsp; ${VV('y', 'c')} = ${RR(fmt(G.gm.yc - bb.y0, 2) + ' cm')}</div>
+      <p class="fnote">${tr('nArea')}</p>`);
+  },
+  fInertia() {
+    return card('fInertia', `
+      <div class="eq">${VV('I', 'c')} = ${INT}${sq(VV('r'))} d${VV('m')} = ${VV('σ')}${INT}(${sq(VV('x'))} + ${sq(VV('y'))}) d${VV('A')}</div>
+      <div class="eq num">${VV('σ')} = ${FR(VV('m'), VV('A'))} = ${FR(fmt(P.m, 2) + ' kg', fs(G.si.A, 4) + ' m²')} = ${fa(MM.sigma)} kg/m²</div>
+      <div class="eq num">${VV('I', 'c')} = ${VV('I', 'x')} + ${VV('I', 'y')} = ${fs(MM.Ix, 4)} + ${fs(MM.Iy, 4)} = ${RR(fs(MM.Ic, 4) + ' kg·m²')}</div>
+      <p class="fnote">${VV('I', 'x')} = ∫<i>y</i>² d<i>m</i>, ${VV('I', 'y')} = ∫<i>x</i>² d<i>m</i> (${tr('perp')}). ${tr('nInertia')}</p>`);
+  },
+  fAxes() {
+    const sym = (MM.I2 - MM.I1) / MM.Ic < 2e-3, t = SYM().tg;
+    return card('fAxes', `
+      <div class="eq">${t} 2${VV('φ')} = ${FR('2' + VV('D', 'xy'), VV('I', 'y') + ' − ' + VV('I', 'x'))}${sym ? '' : ` = ${FR('2 · ' + fs(MM.Dxy, 3), fs(MM.Iy, 4) + ' − ' + fs(MM.Ix, 4))} &nbsp;⇒&nbsp; ${VV('φ')} = ${RR(fmt(G.gm.phi / D2R, 1) + '°', true)}`}</div>
+      <div class="eq num">${VV('I', '1')} = ${RR(fs(MM.I1, 4), true)}, &nbsp; ${VV('I', '2')} = ${RR(fs(MM.I2, 4), true)} kg·m²</div>
+      <p class="fnote">${VV('D', 'xy')} = ∫<i>xy</i> d<i>m</i>. ${sym ? tr('nAxesSym') : tr('nAxes')}</p>`);
+  },
+  fK() {
+    return card('fK', `
+      <div class="eq">${VV('k')} = ${RT(FR(VV('I', 'c'), VV('m')))} = ${RT(FR(fs(MM.Ic, 4), fmt(P.m, 2)))} = ${RR(fmt(MM.k * 100, 2) + ' cm')}</div>
+      <p class="fnote">${tr('nK')}</p>`);
+  },
+  fSteiner() {
+    return card('fSteiner', `
+      <div class="eq">${VV('I', 'p')} = ${VV('I', 'c')} + ${VV('m')}${sq(VV('d'))}</div>
+      <div class="eq num">${VV('I', 'p')} = ${fs(MM.Ic, 4)} + ${fmt(P.m, 2)} · ${sq(fmt(PD.d, 4))} = ${RR(fs(PD.Ip, 4) + ' kg·m²')}</div>
+      <p class="fnote">${tr('nSteiner')}</p>`);
+  },
+  fPeriod() {
+    const th0 = P.th0 * D2R, Tl = PD.T0 * (1 + th0 * th0 / 16 + 11 * th0 ** 4 / 3072), Tm = S.measRun && S.measRun.Tmeas;
+    return card('fPeriod', `
+      <div class="eq">${VV('T', '0')} = 2π${RT(FR(VV('I', 'p'), VV('m') + VV('g') + VV('d')))} = 2π${RT(FR(VV('k') + '<sup>2</sup> + ' + sq(VV('d')), VV('g') + VV('d')))}</div>
+      <div class="eq num">${VV('T', '0')} = 2π${RT(FR(fs(PD.Ip, 4), `${fmt(P.m, 2)} · ${fmt(P.g, 2)} · ${fmt(PD.d, 4)}`))} = ${RR((isFinite(PD.T0) ? fmt(PD.T0, 3) : '∞') + ' s')}</div>
+      <p class="fnote">${tr('nPeriodMass')}</p>
+      <div class="eq num">${tr('nLarge')} ${VV('T')} ≈ ${VV('T', '0')}(1 + ${FR(sq(VV('θ', '0')), '16')} + ${FR('11' + VV('θ', '0') + '<sup>4</sup>', '3072')}) = ${isFinite(Tl) ? fmt(Tl, 3) : '∞'} s; &nbsp;${tr('nMeas')} ${RR(Tm ? fmt(Tm, 3) + ' s' : tr('none'), true)}</div>`);
+  },
+  fLred() {
+    const ok = isFinite(PD.lred);
+    return card('fLred', `
+      <div class="eq">${VV('l', 'red')} = ${FR(VV('I', 'p'), VV('m') + VV('d'))} = ${VV('d')} + ${FR(sq(VV('k')), VV('d'))}${ok ? ` = ${fmt(PD.d * 100, 2)} + ${FR(sq(fmt(MM.k * 100, 2)), fmt(PD.d * 100, 2))} = ${RR(fmt(PD.lred * 100, 2) + ' cm')}` : ''}</div>
+      <div class="eq num">${VV('T')} = 2π${RT(FR(VV('l', 'red'), VV('g')))}${ok ? ` = 2π${RT(FR(fmt(PD.lred, 4), fmt(P.g, 2)))} = ${fmt(TAU * Math.sqrt(PD.lred / P.g), 3)} s` : ''}</div>
+      <p class="fnote">${tr('nLred')}</p>`);
+  },
+  fEom() {
+    const sy = SYM(), st = pendState(), tq = -P.m * P.g * PD.d * Math.sin(st.th), eps = PD.Ip > 0 ? tq / PD.Ip : 0;
+    const dt = (S.run && S.run.dt) || (S.measRun && S.measRun.dt) || 0.004;
+    return card('fEom', `
+      <div class="eq">${VV(sy.M)} = ${VV('I', 'p')}${VV(sy.e)}, &nbsp; ${VV(sy.M)} = −${VV('m')}${VV('g')}${VV('d')} sin ${VV('θ')}</div>
+      <div class="eq num">${VV(sy.M)} = −${fmt(P.m, 2)} · ${fmt(P.g, 2)} · ${fmt(PD.d, 4)} · sin(${fmt(st.th / D2R, 1)}°) = ${RR(fs(tq, 3) + ' N·m')}</div>
+      <div class="eq num">${VV(sy.e)} = ${FR(VV(sy.M), VV('I', 'p'))} = ${FR(fs(tq, 3), fs(PD.Ip, 4))} = ${RR(fmt(eps, 2) + ' rad/s²')}</div>
+      <p class="fnote">${trf('nEom', { dt: fmt(dt * 1000, 2) })}</p>`);
+  },
+  fEnergy() {
+    let I, w, note, Ilab;
+    if (S.mode === 'pend') { I = PD.Ip; w = pendState().om; note = 'nEnergyPend'; Ilab = VV('I', 'p'); }
+    else if (S.mode === 'throw') { I = MM.Ic; w = P.w0; note = 'nEnergyThrow'; Ilab = VV('I', 'c'); }
+    else { I = MM.Ic; w = S.torqueRun.at(S.phase === 'idle' ? 0 : S.t).om; note = 'nEnergyTorque'; Ilab = VV('I', 'c'); }
+    return card('fEnergy', `
+      <div class="eq">${VV('E', 'rot')} = ${FR('1', '2')}${Ilab}${sq(VV('ω'))} = ${FR('1', '2')} · ${fs(I, 4)} · ${sq('(' + fmt(w, 2) + ')')} = ${RR(fs(0.5 * I * w * w, 3) + ' J')}</div>
+      <div class="eq">${VV('L')} = ${Ilab}${VV('ω')} = ${fs(I, 4)} · ${fmt(w, 2)} = ${RR(fs(I * w, 3) + ' kg·m²/s')}</div>
+      <p class="fnote">${tr(note)}</p>`);
+  },
+  fThrow() {
+    const Etr = 0.5 * P.m * P.v0 * P.v0, Er = 0.5 * MM.Ic * P.w0 * P.w0;
+    return card('fThrow', `
+      <div class="eq">${VV('x', 'c')} = ${VV('v', '0')} cos ${VV('β')} · ${VV('t')}, &nbsp; ${VV('y', 'c')} = ${VV('v', '0')} sin ${VV('β')} · ${VV('t')} − ${FR('1', '2')}${VV('g')}${sq(VV('t'))}, &nbsp; ${VV('φ')} = ${VV('ω', '0')}${VV('t')}</div>
+      <div class="eq num">${VV('E')} = ${FR('1', '2')}${VV('m')}${sq(VV('v', 'c'))} + ${FR('1', '2')}${VV('I', 'c')}${sq(VV('ω'))} = ${fs(Etr, 3)} + ${fs(Er, 3)} = ${RR(fs(Etr + Er, 3) + ' J')}</div>
+      <div class="eq">${VV('<b>v</b>', 'P')} = ${VV('<b>v</b>', 'c')} + ${VV('<b>ω</b>')} × ${VV('<b>r</b>')}</div>
+      <p class="fnote">${tr('nThrow')}</p>`, true);
+  },
+  fTorque() {
+    const sy = SYM(), r = S.torqueRun, rd = P.rd / 100, Iexp = P.mw * rd * rd * (P.g / r.a - 1);
+    return card('fTorque', `
+      <div class="eq">${VV(sy.M)} = ${VV('N')}${VV('r')} = ${VV('I', 'c')}${VV(sy.e)}, &nbsp; ${VV('m', 'c')}${VV('a')} = ${VV('m', 'c')}${VV('g')} − ${VV('N')}, &nbsp; ${VV('a')} = ${VV(sy.e)}${VV('r')}</div>
+      <div class="eq num">${VV(sy.e)} = ${FR(VV('m', 'c') + VV('g') + VV('r'), VV('I', 'c') + ' + ' + VV('m', 'c') + sq(VV('r')))} = ${FR(`${fmt(P.mw, 2)} · ${fmt(P.g, 2)} · ${fmt(rd, 3)}`, `${fs(MM.Ic, 4)} + ${fmt(P.mw, 2)} · ${sq(fmt(rd, 3))}`)} = ${RR(fmt(r.al, 3) + ' rad/s²')}</div>
+      <div class="eq num">${VV('a')} = ${RR(fmt(r.a, 3) + ' m/s²')}, &nbsp; ${VV('N')} = ${VV('m', 'c')}(${VV('g')} − ${VV('a')}) = ${RR(fmt(r.N, 3) + ' N')}, &nbsp; ${VV(sy.M)} = ${RR(fs(r.N * rd, 3) + ' N·m')}</div>
+      <p class="fnote">${tr('nTorque')}</p>
+      <div class="eq num">${VV('I')} = ${VV('m', 'c')}${sq(VV('r'))}(${FR(VV('g'), VV('a'))} − 1) = ${RR(fs(Iexp, 4) + ' kg·m²', true)}</div>`, true);
+  },
+  fCheck() {
+    const tb = tbValues(SH.ref, SH.sc, P.m);
+    if (!tb) return card('fCheck', `<div class="eq num">${VV('I', 'c')} = ${RR(fs(MM.Ic, 4) + ' kg·m²')}</div><p class="fnote">${tr('nCheckCustom')}</p>`, true);
+    const ref = SH.ref, s = SH.sc, m = fmt(P.m, 2), L = (x) => fmt(x * s / 100, 3);
+    let sym = '', num = '', note = '', extra = '';
+    switch (ref.kind) {
+      case 'disc': sym = `${FR('1', '2')}${VV('m')}${sq(VV('R'))}`; num = `${FR('1', '2')} · ${m} · ${sq(L(ref.R))}`; note = trf('nCheckPoly', { n: ref.N }); break;
+      case 'ring': sym = `${FR('1', '2')}${VV('m')}(${sq(VV('R'))} + ${sq(VV('r'))})`; num = `${FR('1', '2')} · ${m} · (${sq(L(ref.R))} + ${sq(L(ref.r))})`; note = trf('nCheckPoly', { n: ref.N }); break;
+      case 'square': sym = `${FR('1', '6')}${VV('m')}${sq(VV('a'))}`; num = `${FR('1', '6')} · ${m} · ${sq(L(ref.a))}`; note = tr('nCheckExact'); break;
+      case 'tri': sym = `${FR('1', '12')}${VV('m')}${sq(VV('a'))}`; num = `${FR('1', '12')} · ${m} · ${sq(L(ref.a))}`; note = tr('nCheckExact'); break;
+      case 'rect': {
+        sym = `${FR('1', '12')}${VV('m')}(${sq(VV('L'))} + ${sq(VV('b'))})`; num = `${FR('1', '12')} · ${m} · (${sq(L(ref.b))} + ${sq(L(ref.a))})`;
+        const Lr = ref.b * s / 100, thin = P.m * Lr * Lr / 12;
+        extra = `<p class="fnote">${tr('nCheckRod')}</p><div class="eq num">${FR('1', '12')}${VV('m')}${sq(VV('L'))} = ${fs(thin, 4)} kg·m² (${pct(thin, MM.Ic)})</div>`;
+        note = tr('nCheckExact'); break;
+      }
+      case 'L': {
+        sym = `${SUM}[${FR('1', '12')}${VV('m', 'i')}(${sq(VV('a', 'i'))} + ${sq(VV('b', 'i'))}) + ${VV('m', 'i')}${sq(VV('d', 'i'))}]`;
+        num = '';
+        extra = `<div class="eq num">${VV('x', 'c')} = ${VV('y', 'c')} = ${FR(VV('A', '1') + VV('x', '1') + ' + ' + VV('A', '2') + VV('x', '2'), VV('A', '1') + ' + ' + VV('A', '2'))} = ${RR(fmt(tb.com[0], 2) + ' cm', true)} &nbsp;vs&nbsp; ${RR(fmt(G.gm.xc - G.bbox.x0, 2) + ' cm')}</div>`;
+        note = tr('nCheckL'); break;
+      }
+    }
+    return card('fCheck', `
+      <div class="eq">${VV('I', 'c')} = ${sym}${num ? ` = ${num}` : ''} = ${RR(fs(tb.I, 4) + ' kg·m²', true)}</div>
+      <div class="eq num">${tr('cVal')}: ${INT}${sq(VV('r'))} d${VV('m')} = ${RR(fs(MM.Ic, 4) + ' kg·m²')} &nbsp; (${pct(MM.Ic, tb.I)})</div>
+      ${extra}<p class="fnote">${note}</p>`, true);
+  }
+};
+const CARD_ORDER = {
+  draw: ['fArea', 'fInertia', 'fAxes', 'fK', 'fCheck', 'fSteiner', 'fPeriod', 'fLred'],
+  pend: ['fPeriod', 'fSteiner', 'fLred', 'fEom', 'fK', 'fInertia', 'fEnergy', 'fAxes', 'fArea', 'fCheck'],
+  throw: ['fThrow', 'fEnergy', 'fInertia', 'fK', 'fArea', 'fAxes', 'fCheck'],
+  torque: ['fTorque', 'fEnergy', 'fInertia', 'fK', 'fArea', 'fAxes', 'fCheck']
+};
+const DYN_CARDS = ['fEom', 'fEnergy'];
+function updateFormulas() { $('#fgrid').innerHTML = CARD_ORDER[S.mode].map(k => CARDS[k]()).join(''); }
+let dynLast = 0;
+function updateDynamicCards(now) {
+  if (now - dynLast < 250) return; dynLast = now;
+  for (const k of DYN_CARDS) { const el = $('#fc-' + k); if (el) el.outerHTML = CARDS[k](); }
+}
+
+/* ---------- timeline ---------- */
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIconState = null;
+function timelineRun() { return S.mode === 'pend' ? S.run : S.mode === 'throw' ? S.throwRun : S.mode === 'torque' ? S.torqueRun : null; }
+function updateScrub() {
+  const r = timelineRun(), T = r ? r.T : 0, tt = r && S.phase !== 'idle' ? Math.min(S.t, T) : 0;
+  const el = $('#scrub');
+  el.value = T > 0 ? Math.round(tt / T * 1000) : 0; setFill(el);
+  $('#scrub-time').textContent = `${fmt(tt, 2)} / ${fmt(T, 2)} s`;
+  const playing = S.phase === 'run' && !S.paused;
+  if (pauseIconState !== playing + lang) {
+    pauseIconState = playing + lang;
+    const pb = $('#pause'); pb.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(playing ? 'pause' : 'play'));
+  }
+}
+function seek(t) {
+  if (S.mode === 'pend' && !S.run && S.measRun) { S.run = S.measRun; }
+  const r = timelineRun(); if (!r || !(r.T > 0)) return;
+  if (S.mode !== 'pend') S.run = r;
+  S.t = clamp(t, 0, r.T); S.paused = true; S.phase = 'run'; S.drag = null;
+  setStateChip(); updateHud(); updateScrub(); dirty = true; chartDirty = true;
+}
+const stepSize = () => S.mode === 'pend' ? (isFinite(PD.T0) ? PD.T0 / 24 : 0.05) : S.mode === 'throw' ? S.throwRun.strobe / 2 : S.torqueRun.T / 40;
+function fire() {
+  if (S.mode === 'draw') { if (S.poly.length >= 3) finishPoly(); setMode('pend'); return; }
+  if (S.mode === 'pend') startSwing();
+  else { S.run = S.mode === 'throw' ? S.throwRun : S.torqueRun; if (!(S.run.T > 0)) return; S.phase = 'run'; S.t = 0; S.paused = false; }
+  updateLegend(); updateScrub(); updateHud(); dirty = true; chartDirty = true;
+}
+function togglePause() {
+  const r = timelineRun();
+  if (S.phase === 'run' && r) {
+    if (S.paused && S.t >= r.T - 1e-9) { fire(); return; }
+    S.paused = !S.paused; setStateChip(); updateScrub();
+  } else fire();
+}
+function reset() {
+  if (S.mode === 'pend') {
+    const st = pendState(); S.drag = null;
+    if (PD.w2 > 0 && Math.abs(st.th) > 1e-3) { S.autoSwing = false; settleFrom(st.th); } else { S.run = null; S.phase = 'rest'; S.restTh = 0; }
+  } else if (S.mode === 'draw') { S.stroke = []; S.poly = []; S.drawing = false; S.hover = null; }
+  else { S.phase = 'idle'; S.t = 0; S.paused = false; }
+  updateLegend(); updateHud(); updateScrub(); dirty = true; chartDirty = true;
+}
+function onRunEnd() {
+  const r = S.run;
+  if (r && r.kind === 'settle') {
+    S.restTh = r.at(r.T).th; S.run = null; S.phase = 'rest'; S.t = 0;
+    if (S.autoSwing) { S.autoSwing = false; startSwing(); }
+    else if (S.hist.length && S.show.plumb) toast(tr('msgPlumb'));
+  } else S.phase = 'done';
+  updateLegend(); updateScrub(); chartDirty = true;
+}
+
+/* ---------- mode switching ---------- */
+const TABS = { draw: ['td'], pend: ['th', 'om', 'en', 'td'], throw: ['y', 'phi', 'en'], torque: ['om', 'h', 'en'] };
+const TAB_LABEL = { th: 'tabTh', om: 'tabOm', en: 'tabEn', td: 'tabTd', y: 'tabY', phi: 'tabPhi', h: 'tabH' };
+function buildTabs() {
+  const tabs = TABS[S.mode];
+  if (!tabs.includes(S.chartTab)) S.chartTab = tabs[0];
+  $('#tabs').innerHTML = tabs.map(k => `<button type="button" role="tab" id="tab-${k}" data-tab="${k}" aria-selected="${k === S.chartTab}">${tr(TAB_LABEL[k])}</button>`).join('');
+  $$('#tabs button').forEach(b => b.addEventListener('click', () => {
+    S.chartTab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); S.hoverX = null; tip.hidden = true; chartDirty = true;
+  }));
+}
+function updateModeUI() {
+  $$('#modebar .mtab').forEach(b => b.setAttribute('aria-selected', String(b.dataset.mode === S.mode)));
+  $$('.panel .grp[data-for]').forEach(g => { g.hidden = !g.dataset.for.split(' ').includes(S.mode); });
+  const draw = S.mode === 'draw';
+  $('#bar-run').hidden = draw; $('#bar-draw').hidden = !draw; $('#scrubrow').hidden = draw;
+  $$('#toggles .tg').forEach(b => { b.hidden = !b.dataset.modes.split(' ').includes(S.mode); });
+  $('#fire-label').textContent = tr(S.mode === 'pend' ? 'firePend' : S.mode === 'throw' ? 'fireThrow' : 'fireTorque');
+  cv.style.cursor = draw ? 'crosshair' : S.mode === 'pend' ? 'crosshair' : 'pointer';
+  buildHud(); buildTabs();
+}
+function setMode(m) {
+  if (S.mode === 'draw' && m !== 'draw') { S.stroke = []; S.poly = []; S.drawing = false; S.hover = null; }
+  S.mode = m; S.drag = null; S.ptr = null; S.cam = [0, 0]; V.ready = false; S.hoverX = null; tip.hidden = true;
+  if (m === 'pend') { derivePend(); startSwing(); }
+  else if (m === 'draw') { S.run = null; S.phase = 'idle'; S.t = 0; fitBoard(); }
+  else modeRefresh();
+  updateModeUI(); updateAll();
+}
+function updateAll() {
+  updateOutputs(); updateHud(); updateLegend(); updateResults(); updateFormulas(); updateScrub();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- pointer input on the stage ---------- */
+function localXY(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+cv.addEventListener('pointerdown', (e) => {
+  if (e.button !== undefined && e.button > 0) return;
+  const [X, Y] = localXY(e);
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  e.preventDefault();
+  if (S.mode === 'draw') {
+    const p = S2B(X, Y);
+    if (S.tool === 'free') { S.stroke = [p]; S.drawing = true; setStateChip(); }
+    else {
+      const q = snapPt(p);
+      if (S.poly.length >= 3) { const [fx, fy] = B2S(...S.poly[0]); if (Math.hypot(fx - X, fy - Y) < 13) { finishPoly(); return; } }
+      const l = S.poly[S.poly.length - 1];
+      if (!l || Math.hypot(l[0] - q[0], l[1] - q[1]) * B.s > 3) S.poly.push(q);
+      setStateChip();
+    }
+    dirty = true; return;
+  }
+  if (S.mode === 'pend') { S.ptr = { X, Y, moved: false }; return; }
+  S.ptr = { X, Y, moved: false };
+});
+cv.addEventListener('pointermove', (e) => {
+  const [X, Y] = localXY(e);
+  if (S.mode === 'draw') {
+    const p = S2B(X, Y);
+    if (S.tool === 'free' && S.drawing) {
+      const l = S.stroke[S.stroke.length - 1];
+      if (Math.hypot(p[0] - l[0], p[1] - l[1]) * B.s >= 1.5) { S.stroke.push(p); dirty = true; }
+    } else if (S.tool === 'poly') { S.hover = snapPt(p); dirty = true; }
+    return;
+  }
+  if (S.mode !== 'pend' || !S.ptr) return;
+  const p = S.ptr;
+  if (!p.moved && Math.hypot(X - p.X, Y - p.Y) > 6) {
+    if (!(PD.w2 > 0)) return;
+    p.moved = true;
+    const st = pendState(), w = S2W(p.X, p.Y);
+    S.drag = { a0: Math.atan2(w[1], w[0]), th0: st.th, th: st.th };
+    S.run = null; S.phase = 'rest'; S.autoSwing = false;
+    cv.style.cursor = 'grabbing'; setStateChip();
+  }
+  if (p.moved && S.drag) {
+    const w = S2W(X, Y);
+    S.drag.th = clamp(wrapPi(S.drag.th0 + wrapPi(Math.atan2(w[1], w[0]) - S.drag.a0)), -175 * D2R, 175 * D2R);
+    updateHud(); dirty = true;
+  }
+});
+function endPointer(e, cancel) {
+  const [X, Y] = localXY(e);
+  if (S.mode === 'draw') {
+    if (S.tool === 'free' && S.drawing) { S.drawing = false; const st = S.stroke; S.stroke = []; if (!cancel) commitOutline(st, true); setStateChip(); dirty = true; }
+    return;
+  }
+  const p = S.ptr; S.ptr = null;
+  if (!p || cancel) { if (S.drag) { S.restTh = S.drag.th; S.drag = null; } return; }
+  if (S.mode !== 'pend') { if (!p.moved) togglePause(); return; }
+  cv.style.cursor = 'crosshair';
+  if (p.moved && S.drag) {
+    const th = S.drag.th; S.drag = null; S.restTh = th;
+    if (Math.abs(th) < 0.5 * D2R) { S.phase = 'rest'; updateAll(); return; }
+    S.swingSign = th < 0 ? -1 : 1;
+    $('#th0').value = clamp(Math.round(Math.abs(th) / D2R), 1, 170);
+    readParams();
+    S.measRun = makePendRun(th, 0, P.gam, swingDur(), 'swing');
+    S.run = S.measRun; S.phase = 'run'; S.t = 0; S.paused = false;
+    updateAll();
+  } else if (!p.moved) {
+    let b = worldToBody(S2W(X, Y));
+    const r = Math.hypot(b[0], b[1]), rmax = 2.5 * G.Rb;
+    if (r > rmax) b = [b[0] * rmax / r, b[1] * rmax / r];
+    setPivot(b);
+  }
+}
+cv.addEventListener('pointerup', (e) => endPointer(e, false));
+cv.addEventListener('pointercancel', (e) => endPointer(e, true));
+cv.addEventListener('pointerleave', () => { if (S.mode === 'draw' && S.tool === 'poly') { S.hover = null; dirty = true; } });
+cv.addEventListener('dblclick', (e) => { if (S.mode === 'draw' && S.tool === 'poly' && S.poly.length >= 3) { e.preventDefault(); finishPoly(); } });
+
+/* ---------- chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 270, chartGeom = null;
+function chartSpec() {
+  const tab = S.chartTab;
+  if (tab === 'td') return { type: 'td' };
+  let run = null;
+  if (S.mode === 'pend') run = S.run || S.measRun;
+  else if (S.mode === 'throw') run = S.throwRun;
+  else if (S.mode === 'torque') run = S.torqueRun;
+  if (!run || !(run.T > 0)) return { type: 'none' };
+  const m = P.m, g = P.g;
+  if (S.mode === 'pend') {
+    const Ip = PD.Ip, mgd = m * g * PD.d;
+    if (tab === 'th') {
+      const list = [{ name: tr('lgSim'), color: col.crimson, get: q => q.th / D2R }];
+      if (run.kind === 'swing') { const wd = Math.sqrt(Math.max(0, PD.w2 - run.gam * run.gam / 4)); list.push({ name: tr('lgLin'), color: col.blue, dash: [6, 5], get: q => run.th0 / D2R * Math.exp(-run.gam * q.t / 2) * Math.cos(wd * q.t) }); }
+      return { type: 'ts', run, unit: '°', ylab: 'θ [°]', note: 'cnTh', list };
+    }
+    if (tab === 'om') return { type: 'ts', run, unit: 'rad/s', ylab: 'ω [rad/s]', note: 'cnOm', list: [{ name: tr('lgSim'), color: col.crimson, get: q => q.om }] };
+    return { type: 'ts', run, unit: 'J', ylab: 'E [J]', note: 'cnEnP', list: [
+      { name: tr('ep'), color: col.violet, get: q => mgd * (1 - Math.cos(q.th)) },
+      { name: tr('ek'), color: col.amber, get: q => 0.5 * Ip * q.om * q.om },
+      { name: tr('et'), color: col.ink, width: 2.4, get: q => mgd * (1 - Math.cos(q.th)) + 0.5 * Ip * q.om * q.om }] };
+  }
+  if (S.mode === 'throw') {
+    const rim = G.ringsM[0][G.far], Er = 0.5 * MM.Ic * P.w0 * P.w0;
+    if (tab === 'y') return { type: 'ts', run, unit: 'm', ylab: 'y [m]', note: 'cnY', list: [
+      { name: tr('lgCom'), color: col.crimson, get: q => q.y },
+      { name: tr('lgRim'), color: col.amber, dash: [5, 4], get: q => q.y + Math.sin(q.phi) * rim[0] + Math.cos(q.phi) * rim[1] }] };
+    if (tab === 'phi') return { type: 'ts', run, unit: 'rad', ylab: 'φ [rad]', note: 'cnPhi', list: [{ name: 'φ(t)', color: col.violet, get: q => q.phi }] };
+    return { type: 'ts', run, unit: 'J', ylab: 'E [J]', note: 'cnEnT', list: [
+      { name: tr('etr'), color: col.blue, get: q => 0.5 * m * (q.vx * q.vx + q.vy * q.vy) },
+      { name: tr('erot'), color: col.amber, get: () => Er },
+      { name: tr('ep'), color: col.violet, get: q => m * g * q.y },
+      { name: tr('et'), color: col.ink, width: 2.4, get: q => 0.5 * m * (q.vx * q.vx + q.vy * q.vy) + Er + m * g * q.y }] };
+  }
+  const mw = P.mw, H = P.H, Ic = MM.Ic;
+  if (tab === 'om') return { type: 'ts', run, unit: 'rad/s', ylab: 'ω [rad/s]', note: 'cnOmQ', list: [{ name: 'ω(t)', color: col.crimson, get: q => q.om }] };
+  if (tab === 'h') return { type: 'ts', run, unit: 'cm', ylab: 'h [cm]', note: 'cnH', list: [{ name: 'h(t)', color: col.blue, get: q => q.h * 100 }] };
+  return { type: 'ts', run, unit: 'J', ylab: 'E [J]', note: 'cnEnQ', list: [
+    { name: tr('epw'), color: col.violet, get: q => mw * g * (H - q.h) },
+    { name: tr('ekw'), color: col.blue, get: q => 0.5 * mw * q.v * q.v },
+    { name: tr('erot'), color: col.amber, get: q => 0.5 * Ic * q.om * q.om },
+    { name: tr('et'), color: col.ink, width: 2.4, get: q => mw * g * (H - q.h) + 0.5 * mw * q.v * q.v + 0.5 * Ic * q.om * q.om }] };
+}
+function updateChartLegend(cs) {
+  let h = '';
+  if (cs.type === 'ts') h = cs.list.map(s => `<span><i class="sw-line" style="border-top:${s.width ? 3 : 2.5}px ${s.dash ? 'dashed' : 'solid'} ${s.color}"></i>${s.name}</span>`).join('');
+  else if (cs.type === 'td') h = `<span><i class="sw-line" style="border-top-color:${col.ink}"></i>T(d)</span><span><i class="sw-dot" style="border-color:${col.crimson};background:${col.crimson}"></i>${tr('lgCur')}</span><span><i class="sw-dot" style="border-color:${col.blue}"></i>${tr('lgConj')}</span><span><i class="sw-dot"></i>${tr('lgMin')}</span>`;
+  $('#clegend').innerHTML = h;
+  $('#cnote').innerHTML = cs.type === 'ts' ? tr(cs.note) : cs.type === 'td' ? tr('cnTd') : tr('cnNone');
+}
+function axisLabels(c, lo, hi, ystep, Y, L, W, R) {
+  const ydec = ystep < 1 ? (ystep < 0.1 ? (ystep < 0.01 ? 3 : 2) : 1) : 0;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = lo; y <= hi + ystep * 1e-6; y += ystep) {
+    const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke();
+    c.fillText(fmt(y, ydec), L - 8, yy);
+  }
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, W, H);
+  const cs = chartSpec();
+  updateChartLegend(cs);
+  c.font = `500 11px ${FONT_MONO}`;
+  if (cs.type === 'none') {
+    chartGeom = null;
+    c.fillStyle = col.ink3; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `500 13px ${FONT_BODY}`;
+    c.fillText(tr('cnNone'), W / 2, H / 2); return;
+  }
+  if (cs.type === 'td') { drawTd(c, W, H); return; }
+  const run = cs.run, Tm = run.T, pts = run.pts;
+  let lo = Infinity, hi = -Infinity;
+  for (const s of cs.list) for (const q of pts) { const v = s.get(q); if (v > hi) hi = v; if (v < lo) lo = v; }
+  if (lo > 0) lo = 0;
+  if (!(hi > lo)) hi = lo + 1;
+  const ystep = niceStep(hi - lo, 4);
+  hi = Math.ceil(hi * 1.02 / ystep) * ystep; lo = Math.floor(lo / ystep) * ystep;
+  if (hi - lo < ystep) hi = lo + ystep;
+  const ydec = ystep < 1 ? (ystep < 0.1 ? (ystep < 0.01 ? 3 : 2) : 1) : 0;
+  let labW = 0; for (let y = lo; y <= hi + ystep * 1e-6; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 12, T = 18, Bm = 26, pw = W - L - R, ph = H - T - Bm;
+  const X = t => L + t / Tm * pw, Y = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  chartGeom = { type: 'ts', L, pw, Tm, cs };
+  axisLabels(c, lo, hi, ystep, Y, L, W, R);
+  const xstep = niceStep(Tm, 5), xdec = xstep < 1 ? (xstep < 0.1 ? 2 : 1) : 0;
+  c.textAlign = 'center'; c.textBaseline = 'top'; c.fillStyle = col.ink2;
+  for (let t = 0; t <= Tm + 1e-9; t += xstep) c.fillText(fmt(t, xdec), X(t), H - Bm + 8);
+  if (lo < 0 && hi > 0) { c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Math.round(Y(0)) + 0.5); c.lineTo(W - R, Math.round(Y(0)) + 0.5); c.stroke(); }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(cs.ylab, 4, 0);
+  c.textAlign = 'right'; c.fillText('t [s]', W - R, 0);
+  for (const s of cs.list) {
+    c.beginPath(); pts.forEach((q, i) => (i ? c.lineTo(X(q.t), Y(s.get(q))) : c.moveTo(X(q.t), Y(s.get(q)))));
+    c.save(); c.strokeStyle = s.color; c.lineWidth = s.width || 2; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); c.stroke(); c.restore();
+  }
+  const live = (S.mode === 'pend' ? S.run === run : true) && S.phase !== 'idle' && S.phase !== 'rest';
+  const cur = S.hoverX != null ? S.hoverX : live ? S.t : null;
+  if (cur != null) {
+    const xx = Math.round(X(clamp(cur, 0, Tm))) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    const q = run.at(clamp(cur, 0, Tm));
+    for (const s of cs.list) { c.save(); c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, Y(s.get(q)), 4.5, 0, TAU); c.fill(); c.stroke(); c.restore(); }
+  }
+}
+function drawTd(c, W, H) {
+  const k = MM.k, g = P.g, Tf = d => TAU * Math.sqrt((k * k + d * d) / (g * d));
+  const dc = PD.d, has = dc > 1e-3, Tc = has ? Tf(dc) : Infinity, Tmin = Tf(k);
+  let dmax = Math.max(3 * k, has ? dc * 1.25 : 0, has ? k * k / dc * 1.15 : 0); dmax = Math.min(dmax, 8 * k);
+  let Tmax = Math.max(Tmin * 1.9, isFinite(Tc) ? Tc * 1.15 : 0); Tmax = Math.min(Tmax, Tmin * 4);
+  let lo = Tmin * 0.85;
+  const ystep = niceStep(Tmax - lo, 4);
+  lo = Math.floor(lo / ystep) * ystep; const hi = Math.ceil(Tmax / ystep) * ystep;
+  const ydec = ystep < 1 ? (ystep < 0.1 ? 2 : 1) : 0;
+  c.font = `500 11px ${FONT_MONO}`;
+  let labW = 0; for (let y = lo; y <= hi + 1e-9; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 12, T = 18, Bm = 26, pw = W - L - R, ph = H - T - Bm;
+  const X = d => L + d / dmax * pw, Y = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  chartGeom = { type: 'td', L, pw, dmax, Tf };
+  axisLabels(c, lo, hi, ystep, Y, L, W, R);
+  const xs = niceStep(dmax * 100, 5), xdec = xs < 1 ? 1 : 0;
+  c.textAlign = 'center'; c.textBaseline = 'top'; c.fillStyle = col.ink2;
+  for (let d = 0; d <= dmax * 100 + 1e-9; d += xs) c.fillText(fmt(d, xdec), X(d / 100), H - Bm + 8);
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.fillText('T [s]', 4, 0); c.textAlign = 'right'; c.fillText('d [cm]', W - R, 0);
+  c.save(); c.beginPath(); c.rect(L, T, pw, ph); c.clip();
+  c.beginPath();
+  for (let i = 1; i <= 400; i++) { const d = dmax * i / 400, yy = Y(Tf(d)); i > 1 ? c.lineTo(X(d), yy) : c.moveTo(X(d), yy); }
+  c.strokeStyle = col.ink; c.lineWidth = 2.2; c.lineJoin = 'round'; c.stroke();
+  // minimum at d = k
+  c.setLineDash([3, 3]); c.strokeStyle = col.violet; c.lineWidth = 1; c.beginPath(); c.moveTo(X(k), Y(Tmin)); c.lineTo(X(k), T + ph); c.stroke(); c.setLineDash([]);
+  if (has && isFinite(Tc)) {
+    const d2 = k * k / dc;
+    c.setLineDash([5, 4]); c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Y(Tc)); c.lineTo(L + pw, Y(Tc)); c.stroke(); c.setLineDash([]);
+    if (d2 <= dmax) { c.fillStyle = col.surface; c.strokeStyle = col.blue; c.lineWidth = 2.2; c.beginPath(); c.arc(X(d2), Y(Tc), 5, 0, TAU); c.fill(); c.stroke(); }
+    c.fillStyle = col.crimson; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(X(dc), Y(Tc), 5.5, 0, TAU); c.fill(); c.stroke();
+  }
+  c.fillStyle = col.surface; c.strokeStyle = col.violet; c.lineWidth = 2.2; c.beginPath(); c.arc(X(k), Y(Tmin), 5, 0, TAU); c.fill(); c.stroke();
+  if (S.hoverX != null) {
+    const d = clamp(S.hoverX, dmax / 400, dmax), xx = Math.round(X(d)) + 0.5;
+    c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.setLineDash([]);
+    c.fillStyle = col.ink; c.beginPath(); c.arc(xx, Y(Tf(d)), 3.5, 0, TAU); c.fill();
+  }
+  c.restore();
+  c.font = `italic 13px ${FONT_MATH}`; c.fillStyle = col.violet; c.textAlign = 'center'; c.textBaseline = 'top';
+  c.fillText('k', X(k), T + ph - 16);
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom;
+  if (x < g.L || x > g.L + g.pw) { S.hoverX = null; tip.hidden = true; chartDirty = true; return; }
+  let html;
+  if (g.type === 'ts') {
+    const t = (x - g.L) / g.pw * g.Tm; S.hoverX = t;
+    const q = g.cs.run.at(t);
+    html = `<div>t = ${fmt(t, 2)} s</div>` + g.cs.list.map(s => `<div class="row"><i class="k" style="background:${s.color}"></i>${s.name}: ${fs(s.get(q), 3)} ${g.cs.unit}</div>`).join('');
+  } else {
+    const d = Math.max((x - g.L) / g.pw * g.dmax, g.dmax / 400); S.hoverX = d;
+    html = `<div>d = ${fmt(d * 100, 1)} cm</div><div>T = ${fmt(g.Tf(d), 3)} s</div>`;
+  }
+  tip.innerHTML = html; tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverX = null; tip.hidden = true; chartDirty = true; });
+cbox.addEventListener('click', (e) => {
+  if (!chartGeom || chartGeom.type !== 'td' || S.mode !== 'pend') return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom;
+  if (x < g.L || x > g.L + g.pw) return;
+  const d = clamp((x - g.L) / g.pw * g.dmax, 0.002, g.dmax);
+  setPivot(pivotAtDistance(d), { autoSwing: true });
+});
+
+/* ---------- main loop ---------- */
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.mode !== 'draw') {
+    const tv = targetView();
+    if (!V.ready) { V.s = tv.s; V.ox = tv.ox; V.oy = tv.oy; V.ready = true; dirty = true; }
+    else {
+      const f = reduceMotion ? 1 : 1 - Math.exp(-dt * 6);
+      const ls = Math.log(V.s), lt = Math.log(tv.s);
+      if (Math.abs(lt - ls) > 1e-4 || Math.abs(tv.ox - V.ox) > 0.3 || Math.abs(tv.oy - V.oy) > 0.3) {
+        V.s = Math.exp(ls + (lt - ls) * f); V.ox += (tv.ox - V.ox) * f; V.oy += (tv.oy - V.oy) * f; dirty = true;
+      } else if (V.s !== tv.s || V.ox !== tv.ox || V.oy !== tv.oy) { V.s = tv.s; V.ox = tv.ox; V.oy = tv.oy; dirty = true; }
+    }
+    if (S.cam[0] !== 0 || S.cam[1] !== 0) {
+      const f = reduceMotion ? 0 : Math.exp(-dt * 4.5);
+      S.cam = [S.cam[0] * f, S.cam[1] * f];
+      if (Math.hypot(S.cam[0], S.cam[1]) * V.s < 0.3) S.cam = [0, 0];
+      dirty = true;
+    }
+  }
+  if (S.phase === 'run' && !S.paused && S.run) {
+    S.t += dt * S.speed;
+    if (S.t >= S.run.T) { S.t = S.run.T; onRunEnd(); }
+    setStateChip(); updateHud(); updateScrub(); updateDynamicCards(now);
+    dirty = true; chartDirty = true;
+  }
+  if (dirty) { drawScene(); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+['th0', 'gam', 'g', 'm', 'v0', 'beta', 'w0', 'mw', 'rd', 'H'].forEach(id => $('#' + id).addEventListener('input', () => {
+  if (id === 'th0') S.swingSign = 1;
+  onParam();
+}));
+$('#size').addEventListener('input', onSize);
+$$('#presets .chip[data-preset]').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
+$('#pr-own').addEventListener('click', () => setMode('draw'));
+$$('#planets .chip').forEach(b => b.addEventListener('click', () => { $('#g').value = b.dataset.g; onParam(); }));
+$$('#modebar .mtab').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+$('#fire').addEventListener('click', fire);
+$('#done').addEventListener('click', fire);
+$('#reset').addEventListener('click', reset);
+$('#pause').addEventListener('click', togglePause);
+$('#step-back').addEventListener('click', () => seek((S.phase === 'idle' || S.phase === 'rest' ? 0 : S.t) - stepSize()));
+$('#step-fwd').addEventListener('click', () => seek((S.phase === 'idle' || S.phase === 'rest' ? 0 : S.t) + stepSize()));
+$('#scrub').addEventListener('input', (e) => { const r = S.mode === 'pend' ? (S.run || S.measRun) : timelineRun(); if (r) seek(+e.target.value / 1000 * r.T); });
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+$$('#toggles .tg').forEach(b => b.addEventListener('click', () => {
+  const k = b.dataset.key; S.show[k] = !S.show[k]; b.setAttribute('aria-pressed', String(S.show[k]));
+  updateLegend(); dirty = true;
+}));
+$$('#tools button').forEach(b => b.addEventListener('click', () => {
+  S.tool = b.dataset.tool; S.poly = []; S.stroke = []; S.hover = null;
+  $$('#tools button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); dirty = true;
+}));
+$('#tg-hole').addEventListener('click', (e) => { S.holeMode = !S.holeMode; e.currentTarget.setAttribute('aria-pressed', String(S.holeMode)); setStateChip(); updateLegend(); dirty = true; });
+$('#tg-snap').addEventListener('click', (e) => { S.snap = !S.snap; e.currentTarget.setAttribute('aria-pressed', String(S.snap)); });
+$('#undo').addEventListener('click', undo);
+$('#rm-holes').addEventListener('click', removeHoles);
+$('#btn-huy').addEventListener('click', () => {
+  if (!PD.O) return;
+  const Tb = curT(); setPivot(PD.O, { autoSwing: true, quiet: true });
+  toast(trf('msgHuy', { a: fmt(curT(), 3), b: fmt(Tb, 3) }));
+});
+$('#btn-k').addEventListener('click', () => {
+  setPivot(pivotAtDistance(MM.k), { autoSwing: true, quiet: true });
+  toast(trf('msgK', { a: fmt(PD.T0, 3) }));
+});
+$('#btn-clr').addEventListener('click', () => { S.hist = []; dirty = true; });
+$$('.fsbtn').forEach(btn => {
+  if (!document.fullscreenEnabled) btn.hidden = true;
+  btn.addEventListener('click', () => {
+    const st = $('#stage');
+    if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+    else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+  });
+});
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (S.mode === 'draw') {
+    if (e.key === 'Enter' && tag !== 'button') { e.preventDefault(); if (S.tool === 'poly' && S.poly.length) finishPoly(); else fire(); return; }
+    if (e.key === 'Backspace' && S.tool === 'poly' && S.poly.length && tag !== 'input') { e.preventDefault(); S.poly.pop(); dirty = true; return; }
+    if (e.key === 'Escape') { S.poly = []; S.stroke = []; S.drawing = false; dirty = true; return; }
+  }
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePause(); return; }
+  if (tag === 'input') return;
+  if (['1', '2', '3', '4'].includes(e.key)) { setMode(['draw', 'pend', 'throw', 'torque'][+e.key - 1]); return; }
+  if (e.key === 'r' || e.key === 'R') reset();
+  else if (e.key === ',') seek((S.phase === 'idle' || S.phase === 'rest' ? 0 : S.t) - stepSize());
+  else if (e.key === '.') seek((S.phase === 'idle' || S.phase === 'rest' ? 0 : S.t) + stepSize());
+  else if ((e.key === 'o' || e.key === 'O') && S.mode === 'pend') $('#btn-huy').click();
+  else if ((e.key === 'f' || e.key === 'F') && document.fullscreenEnabled) $('#fs').click();
+  else if (S.mode === 'pend' && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    const el = $('#th0'); el.value = +el.value + (e.key === 'ArrowUp' ? 5 : -5); S.swingSign = 1; onParam(); e.preventDefault();
+  }
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#sp-01').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  $$('#planets .gv').forEach(s => { s.textContent = fmt(+s.parentElement.dataset.g, 2); });
+  cv.setAttribute('aria-label', tr('title'));
+  pauseIconState = null;
+  updateModeUI(); updateAll();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('bryla-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+new ResizeObserver(resize).observe(box);
+new ResizeObserver(() => { ccw = Math.max(1, cbox.clientWidth); cch = Math.max(1, cbox.clientHeight); ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+
+/* ---------- initial state: irregular blob hanging and swinging, one earlier plumb line ---------- */
+readTokens();
+resize();
+readParams();
+loadPreset('blob', false);
+{
+  // an earlier hanging from the right-hand side, so two plumb lines already cross at the COM
+  const R = G.ringsM[0]; let rt = R[0];
+  for (const q of R) if (q[0] > rt[0]) rt = q;
+  const side = [0.8 * rt[0], 0.8 * rt[1]];
+  if (pointInShape(side, G.ringsM)) S.hist = [side];
+}
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>

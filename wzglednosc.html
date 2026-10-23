@@ -1,0 +1,1974 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Względność</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: spacetime bench. Scene tabs sit on top of one shared stage (light clock, Minkowski
+   diagram, twin journey); one β control drives every scene, the panel, the derivations and the charts. */
+:root{
+  --bg:#E9EAF1; --surface:#F7F7FB; --paper:#FCFCFE; --sunk:#EEEFF5;
+  --ink:#14152A; --ink-2:#4A4C66; --ink-3:#80829B; --line:#D3D4E1;
+  --grid:#E7E8F1; --grid-major:#CFD1DF;
+  --crim:#E41C55; --blue:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(20,21,42,.04), 0 8px 24px -12px rgba(20,21,42,.2);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#090A13; --surface:#11121F; --paper:#0D0E19; --sunk:#171829;
+    --ink:#E7E8F3; --ink-2:#A5A8C0; --ink-3:#6E7190; --line:#25273B;
+    --grid:#151729; --grid-major:#23263E;
+    --crim:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#090A13; --surface:#11121F; --paper:#0D0E19; --sunk:#171829;
+  --ink:#E7E8F3; --ink-2:#A5A8C0; --ink-3:#6E7190; --line:#25273B;
+  --grid:#151729; --grid-major:#23263E;
+  --crim:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(30px, 4.6vw, 54px); line-height:.98; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.3em}
+.brand h1 svg{width:.9em; height:.9em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.scenes{display:flex; border-bottom:1px solid var(--line); overflow-x:auto; scrollbar-width:none}
+.scenes::-webkit-scrollbar{display:none}
+.scenes button{flex:1 0 auto; display:flex; align-items:baseline; gap:10px; border:0; background:none; padding:12px 16px 10px; text-align:left; cursor:pointer; color:var(--ink-3); border-bottom:2.5px solid transparent; margin-bottom:-1px; min-width:0}
+.scenes button b{font-family:var(--f-display); font-weight:700; font-size:16.5px; letter-spacing:-.005em; color:var(--ink-2); white-space:nowrap}
+.scenes button small{font-size:12px; white-space:nowrap}
+.scenes button .no{font-family:var(--f-mono); font-size:11px; border:1px solid var(--line); border-radius:6px; padding:0 6px; align-self:center}
+.scenes button[aria-selected="true"]{border-bottom-color:var(--crim)}
+.scenes button[aria-selected="true"] b{color:var(--ink)}
+.scenes button[aria-selected="true"] .no{background:var(--crim); border-color:var(--crim); color:var(--on-accent)}
+.scenes button:hover b{color:var(--ink)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:9px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3); white-space:nowrap}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.5ch; color:var(--ink); white-space:nowrap}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.hud dd.big{font-family:var(--f-display); font-weight:700; font-size:17px; color:var(--crim)}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-line{display:inline-block; width:20px; height:0; border-top:2.5px solid var(--crim)}
+.sw-dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--amber); box-shadow:0 0 6px var(--amber)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="play"]{border-color:var(--crim); color:var(--crim)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="end"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(360px, 60vh, 660px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.ov-note{position:absolute; left:12px; bottom:12px; max-width:min(560px, calc(100% - 24px)); background:var(--surface); border:1px solid var(--line); border-radius:10px; padding:7px 11px; font-size:12.5px; color:var(--ink-2); box-shadow:var(--shadow); pointer-events:none}
+.ov-note b{color:var(--ink); font-weight:600}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--crim)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:15ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:42px; height:42px; background:var(--crim); color:var(--on-accent); border-color:var(--crim); box-shadow:0 6px 18px -8px var(--crim)}
+.icon-btn.main svg{width:16px; height:16px}
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn:disabled{opacity:.45; cursor:default}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2); white-space:nowrap}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.seg.frame button{font-family:var(--f-body); font-size:12.5px}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--crim); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.kbd-hint{font-size:11.5px; color:var(--ink-3); font-family:var(--f-mono)}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:6px 12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums}
+.res th, .res td{padding:7px 10px; text-align:left; border-bottom:1px solid var(--line); vertical-align:baseline}
+.res tbody th{font-weight:500; color:var(--ink-2); white-space:nowrap}
+.res tbody th i{font-family:var(--f-math); font-size:16px}
+.res td.v{font-family:var(--f-mono); font-size:14px; text-align:right; white-space:nowrap; color:var(--ink)}
+.res td.n{font-size:12.5px; color:var(--ink-3)}
+.res tr.sec th{font-family:var(--f-mono); font-size:11px; font-weight:500; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3); padding-top:14px}
+.res tr.sec th .sw-line{margin-right:8px; vertical-align:middle; width:14px}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+.res td.v.hl{color:var(--crim)}
+.res td.v.hb{color:var(--blue)}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.gauge{display:flex; flex-direction:column; gap:6px; padding:12px 14px 12px; border-radius:10px; background:var(--sunk)}
+.gbig{font-family:var(--f-display); font-weight:800; font-size:40px; line-height:1; letter-spacing:-.02em; font-variant-numeric:tabular-nums; display:flex; align-items:baseline; gap:.22em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.gbig i{font-family:var(--f-math); font-weight:400; font-size:38px; color:var(--crim)}
+.gbig .eqs{font-family:var(--f-math); font-weight:400; font-size:30px; color:var(--ink-3)}
+.gsub{font-family:var(--f-mono); font-size:12.5px; color:var(--ink-2); font-variant-numeric:tabular-nums}
+.cbar{position:relative; height:8px; border-radius:4px; background:var(--line); overflow:hidden}
+.cbar span{position:absolute; inset:0 auto 0 0; background:linear-gradient(90deg, var(--blue), var(--crim)); border-radius:4px}
+.cscale{display:flex; justify-content:space-between; font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.hint{font-size:11.5px; color:var(--ink-3); margin:0}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+#beta{--c:var(--crim)}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.switch{display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500}
+.switch input{position:absolute; opacity:0; width:1px; height:1px}
+.switch .sw{width:38px; height:22px; border-radius:999px; background:var(--line); position:relative; transition:background .15s; flex:none}
+.switch .sw::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--paper); transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .sw{background:var(--crim)}
+.switch input:checked + .sw::after{transform:translateX(16px)}
+.switch input:focus-visible + .sw{outline:2px solid var(--blue); outline-offset:2px}
+.pills{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 9px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:13px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill.s span{color:var(--blue)} .pill.p span{color:var(--crim)}
+table.ev{width:100%; border-collapse:collapse; font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums}
+.ev th, .ev td{padding:4px 5px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.ev thead th{font-family:var(--f-math); font-style:italic; font-size:15px; font-weight:400}
+.ev thead th.s{color:var(--blue)} .ev thead th.p{color:var(--crim)}
+.ev tbody th{text-align:left; font-family:var(--f-display); font-weight:700; font-size:14px}
+.ev tr:last-child td, .ev tr:last-child th{border-bottom:0; color:var(--ink-2)}
+.ivl{display:flex; align-items:center; gap:8px 10px; flex-wrap:wrap; font-family:var(--f-mono); font-size:13px}
+.ivl i{font-family:var(--f-math); font-size:16px}
+.tchip{font-family:var(--f-body); font-size:12px; font-weight:600; padding:3px 10px; border-radius:999px; border:1.5px solid currentColor}
+.tchip[data-k="time"]{color:var(--blue)} .tchip[data-k="light"]{color:var(--amber)} .tchip[data-k="space"]{color:var(--violet)}
+.order{font-size:12.5px; color:var(--ink-2); margin:0; display:flex; flex-direction:column; gap:2px}
+.order b{font-weight:600}
+.order .s{color:var(--blue)} .order .p{color:var(--crim)}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--crim); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.b{color:var(--blue)}
+.eq .r.vi{color:var(--violet)}
+.eq .mu{color:var(--ink-3); font-family:var(--f-body); font-size:13px}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; flex-wrap:wrap; gap:2px; border:1px solid var(--line); border-radius:18px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.chart-box{position:relative; height:270px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .leftcol{display:contents}
+  .stage{order:0} .panel{order:1} .results{order:2}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.9; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.6ch; font-size:12.5px}
+  .bar .spacer, .kbd-hint{display:none}
+  .scenes button small{display:none}
+  .scenes button{padding:10px 12px 8px}
+  .scenes button b{font-size:14.5px}
+  table.res, .res tbody{display:block}
+  .res tr{display:grid; grid-template-columns:minmax(0,1fr) auto; column-gap:10px; border-bottom:1px solid var(--line); padding:6px 0}
+  .res tr.sec{border-bottom:0; padding:0}
+  .res th, .res td{border-bottom:0; padding:2px 4px}
+  .res td.n{grid-column:1 / -1; padding-top:0}
+  .res tbody th{white-space:normal}
+}
+@media (prefers-reduced-motion: reduce){
+  .switch .sw, .switch .sw::after{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka współczesna · laboratorium czasoprzestrzeni</span>
+      <h1>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M4 6h12M24 6h12M4 34h12M24 34h12" stroke="var(--ink)" stroke-width="3.2" stroke-linecap="round"/><path d="M8 34 L18 6 L28 34 L36 12" fill="none" stroke="var(--amber)" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5"/><circle cx="36" cy="12" r="3.4" fill="var(--crim)"/></svg>
+        <span data-i18n="title">Szczególna teoria względności</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Jedna prędkość, trzy doświadczenia myślowe.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="scenes" role="tablist" id="scenes">
+          <button type="button" role="tab" id="sc-1" data-scene="1" aria-selected="true"><span class="no">1</span><b data-i18n="sc1">Zegar świetlny</b><small data-i18n="sc1s"></small></button>
+          <button type="button" role="tab" id="sc-2" data-scene="2" aria-selected="false"><span class="no">2</span><b data-i18n="sc2">Diagram Minkowskiego</b><small data-i18n="sc2s"></small></button>
+          <button type="button" role="tab" id="sc-3" data-scene="3" aria-selected="false"><span class="no">3</span><b data-i18n="sc3">Paradoks bliźniąt</b><small data-i18n="sc3s"></small></button>
+        </div>
+        <div class="strip">
+          <dl class="hud" id="hud"></dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" aria-label="Animacja"></canvas><div class="ov-note" id="ov-note" hidden></div></div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <div class="seg frame" role="group" id="frame">
+            <span class="lbl" data-i18n="frame">Widok z układu</span>
+            <button type="button" id="fr-s" data-view="S" aria-pressed="true" data-i18n="frS">peronu S</button>
+            <button type="button" id="fr-p" data-view="P" aria-pressed="false" data-i18n="frP">pociągu S′</button>
+          </div>
+          <div class="toggles" id="toggles"></div>
+          <span class="spacer"></span>
+          <span class="kbd-hint" data-i18n="keys">spacja · 1 2 3 · ← → · V</span>
+          <button type="button" class="btn" id="fs" aria-label="Pełny ekran">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="tbl-wrap">
+          <table class="res"><tbody id="res-body"></tbody></table>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia">
+      <fieldset class="grp" id="g-speed">
+        <h3 data-i18n="gSpeed">Prędkość</h3>
+        <div class="gauge">
+          <div class="gbig"><i>γ</i><span class="eqs">=</span><span id="gamma-big">1,667</span></div>
+          <div class="gsub" id="v-big"></div>
+          <div class="cbar"><span id="cbar"></span></div>
+          <div class="cscale"><span>0</span><span>0,5 c</span><span>c</span></div>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="beta" data-i18n-html="lbeta">Prędkość <i>β</i></label><output id="beta-out" for="beta"></output></div>
+          <input type="range" id="beta" min="0" max="0.995" step="0.001" value="0.8">
+        </div>
+        <div class="chips" id="presets"></div>
+        <p class="hint" id="preset-note" hidden></p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-s1">
+        <h3 data-i18n="g1">Pociąg i peron</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="L0" data-i18n-html="lL0">Długość własna <i>L</i><sub>0</sub></label><output id="L0-out" for="L0"></output></div>
+          <input type="range" id="L0" min="10" max="500" step="5" value="100">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="dt0" data-i18n-html="ldt0">Czas własny <i>Δt</i><sub>0</sub></label><output id="dt0-out" for="dt0"></output></div>
+          <input type="range" id="dt0" min="1" max="60" step="1" value="10">
+        </div>
+        <p class="hint" data-i18n="hint1"></p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-s2" hidden>
+        <h3 data-i18n="g2">Zdarzenia A i B</h3>
+        <div class="tbl-wrap"><table class="ev" id="ev-table"></table></div>
+        <div class="ivl" id="ivl"></div>
+        <p class="order" id="order"></p>
+        <div class="chips">
+          <button type="button" class="btn" id="set-frame"></button>
+          <button type="button" class="btn" id="reset-ev" data-i18n="resetEv">Przywróć zdarzenia</button>
+        </div>
+        <p class="hint" id="frame-hint" data-i18n="evHint"></p>
+      </fieldset>
+
+      <fieldset class="grp" id="g-s3" hidden>
+        <h3 data-i18n="g3">Podróż</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="D" data-i18n-html="lD">Odległość <i>D</i></label><output id="D-out" for="D"></output></div>
+          <input type="range" id="D" min="1" max="20" step="0.5" value="4">
+        </div>
+        <label class="switch"><input type="checkbox" id="accel"><span class="sw"></span><span data-i18n="laccel">Stałe przyspieszenie własne</span></label>
+        <div class="ctl" id="a-ctl">
+          <div class="ctl-head"><label for="acc" data-i18n-html="la">Przyspieszenie <i>a</i></label><output id="acc-out" for="acc"></output></div>
+          <input type="range" id="acc" min="0.1" max="5" step="0.1" value="1">
+          <span class="hint" data-i18n="aHint"></span>
+        </div>
+        <div class="pills">
+          <div class="pill s"><small data-i18n="pHome">Ziemia</small><span id="pl-home">—</span></div>
+          <div class="pill p"><small data-i18n="pTrav">Podróżnik</small><span id="pl-trav">—</span></div>
+          <div class="pill"><small data-i18n="pK">Doppler k</small><span id="pl-k">—</span></div>
+          <div class="pill"><small data-i18n="pBmax">β maks.</small><span id="pl-bmax">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub"></p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" id="tab-gamma" data-tab="gamma" aria-selected="true">γ(β)</button>
+        <button type="button" role="tab" id="tab-factor" data-tab="factor" aria-selected="false" data-i18n="tabFactor">Skrócenie</button>
+        <button type="button" role="tab" id="tab-energy" data-tab="energy" aria-selected="false" data-i18n="tabEnergy">Energia i pęd</button>
+        <button type="button" role="tab" id="tab-twin" data-tab="twin" aria-selected="false" data-i18n="tabTwin">Bliźnięta</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ---------- constants ---------- */
+const C_KMS = 299792.458;           // speed of light, km/s
+const C_MS = 299792458;             // m/s
+const G_LY = 1.0322952755535966;    // 1 g expressed in ly/yr^2 (c = 1 ly/yr)
+const ME_MEV = 0.51099895;          // electron rest energy, MeV
+const MU_TAU0 = 2.2e-6;             // muon proper lifetime, s
+const MU_H = 15e3;                  // production height, m
+const BETA_ANIM_MAX = 0.998;        // animation clamp (LHC is drawn at this value)
+const DEG = 180 / Math.PI;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const clamp = (x, a, b) => Math.max(a, Math.min(b, x));
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka współczesna · laboratorium czasoprzestrzeni', title:'Szczególna teoria względności',
+    lede:'Jedna prędkość, trzy doświadczenia myślowe. Ustaw β = v/c i zobacz, jak zegar świetlny w pociągu zwalnia, pociąg się skraca, osie układu S′ przechylają się ku stożkowi światła, a bliźniak wraca z podróży młodszy.',
+    sc1:'Zegar świetlny', sc1s:'dylatacja czasu, skrócenie długości', sc2:'Diagram Minkowskiego', sc2s:'interwał, jednoczesność', sc3:'Paradoks bliźniąt', sc3s:'czas własny, sygnały',
+    gSpeed:'Prędkość', lbeta:'Prędkość względna <i>β</i> = <i>v</i>/<i>c</i>',
+    pISS:'ISS', pGPS:'Satelita GPS', pLHC:'Proton w LHC', pMuon:'Mion z atmosfery',
+    noteLHC:'Animacja pokazuje β = 0,998. Wszystkie liczby są liczone dla dokładnej wartości.',
+    noteTiny:'Przy tej prędkości efekty są za małe, żeby je zobaczyć: γ − 1 =',
+    g1:'Pociąg i peron', lL0:'Długość własna <i>L</i><sub>0</sub>', ldt0:'Czas własny <i>Δt</i><sub>0</sub>',
+    hint1:'Pociąg i peron mają tę samą długość własną. Rysunek jest poglądowy: jedno tyknięcie to przelot fotonu między lustrami, a liczby w tabeli dotyczą L₀ i Δt₀.',
+    g2:'Zdarzenia A i B', evHint:'Przeciągnij zdarzenia A i B na diagramie (działa też dotykiem).', resetEv:'Przywróć zdarzenia',
+    setSim:'Ustaw β, przy którym A i B są jednoczesne', setSame:'Ustaw β, przy którym A i B zachodzą w tym samym miejscu',
+    noFrameNeg:'Taki układ musiałby poruszać się w lewo (β < 0). Zamień zdarzenia miejscami.', noFrameLight:'Interwał świetlny: żaden układ nie zrobi z nich zdarzeń jednoczesnych.', noFrameFast:'Potrzebne β przekracza zakres suwaka.',
+    cTime:'czasopodobny', cLight:'świetlny', cSpace:'przestrzennopodobny',
+    ordIn:'W układzie', ordFirst:'najpierw', ordThen:'potem', ordSim:'A i B są jednoczesne', ordCausal:'Interwał czasopodobny: kolejność jest taka sama w każdym układzie, A może być przyczyną B.', ordCausalBA:'Interwał czasopodobny: kolejność jest taka sama w każdym układzie, B może być przyczyną A.', ordSpace:'Interwał przestrzennopodobny: kolejność zależy od układu, żadne z nich nie może wpłynąć na drugie.',
+    g3:'Podróż', lD:'Odległość do gwiazdy <i>D</i>', laccel:'Stałe przyspieszenie własne', la:'Przyspieszenie <i>a</i>',
+    aHint:'Wtedy β to prędkość przelotowa. Rakieta przyspiesza, leci, hamuje przy gwieździe i wraca tak samo.',
+    pHome:'Ziemia', pTrav:'Podróżnik', pK:'Doppler k', pBmax:'β maks.',
+    reset:'Od nowa', speed:'Tempo', frame:'Widok z układu', frS:'peronu S', frP:'pociągu S′', frS2:'S', frP2:'S′', fullscreen:'Pełny ekran', keys:'spacja · 1 2 3 · ← → · V',
+    pause:'Pauza', play:'Odtwórz', timeline:'Oś czasu',
+    tTri:'Trójkąt', tTrail:'Ślad fotonu', tHyp:'Hiperbole', tGridP:'Siatka S′', tSim:'Jednoczesność', tNow:'Linie „teraz”', tSig:'Sygnały', tSimT:'„Teraz” podróżnika', tLoop:'Pętla',
+    sPlay:'odtwarzanie', sPause:'pauza', sEnd:'koniec',
+    lgPhoton:'foton', lgS:'S · peron', lgP:'S′ · pociąg', lgLight:'światło', lgHyp:'hiperbole', lgHome:'Ziemia', lgTrav:'podróżnik', lgSigEvery:'sygnał co',
+    laneS:'Układ S · peron', laneP:'Układ S′ · pociąg', atRest:'spoczywa', moves:'porusza się', ticks:'tyk.', tickWord:'tyknięcia',
+    nowS:'teraz w S', nowP:'teraz w S′', star:'gwiazda', earth:'Ziemia', traveller:'podróżnik', turn:'zawrócenie', simJump:'skok', travNow:'„teraz” podróżnika',
+    younger:'Podróżnik jest młodszy o', received:'odebrane sygnały', homeTwin:'Bliźniak na Ziemi', travTwin:'Bliźniak w rakiecie',
+    noTrip:'Przy β = 0 rakieta nigdzie nie leci. Ustaw prędkość większą od zera.',
+    hudT:'czas', hudTauP:'zegar w ruchu', hudNowS:'teraz S', hudNowP:'teraz S′',
+    results:'Wyniki', rKin:'Kinematyka', rTwin:'Paradoks bliźniąt', rMuon:'Miony z wysokości 15 km',
+    rBeta:'Prędkość <i>β</i>', rV:'Prędkość <i>v</i>', rGamma:'Czynnik Lorentza <i>γ</i>', rDil:'Dylatacja <i>Δt</i>/<i>Δt</i><sub>0</sub>', rLen:'Skrócenie <i>L</i>/<i>L</i><sub>0</sub>', rDay:'Różnica na dobę', rDop:'Doppler <i>k</i>',
+    rHome:'Ziemia, czas <i>T</i>', rTrav:'Podróżnik, czas własny <i>τ</i>', rDiff:'Różnica wieku',
+    rFlight:'Czas lotu w układzie Ziemi', rClass:'Dolatuje (bez dylatacji)', rRel:'Dolatuje (z dylatacją)',
+    nV:'c = 299 792 km/s', nCminusV:'c − v =', nGamma:'1/√(1 − β²)', nDil:'Δt₀ = {a} w pociągu, na peronie Δt = {b}', nLen:'pociąg L₀ = {a} widziany z peronu: L = {b}',
+    nDay:'(γ − 1) · 24 h: tyle zegar w ruchu traci na dobę', nDop:'zbliżanie k, oddalanie 1/k',
+    nHome:'D = {d} ly', nTrav:'{n}', nInstant:'zawrócenie natychmiastowe', nAccel:'przyspieszenie {a} g',
+    nFlight:'t = h/v', nClass:'na milion mionów: {n}', nRel:'na milion mionów: {n}; w układzie mionu atmosfera ma h/γ = {h}',
+    resSub:'Przy β = {b} zegar w ruchu tyka {g} razy wolniej.', resSubTiny:'Przy β = {b} zegar w ruchu traci {d} na dobę.',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżących ustawień.',
+    fGamma:'Czynnik Lorentza', fClock:'Zegar świetlny: twierdzenie Pitagorasa', fLen:'Skrócenie długości', fLorentz:'Transformacja Lorentza (zdarzenie A)', fIvl:'Niezmiennik: interwał A–B',
+    fVel:'Składanie prędkości', fEn:'Energia i pęd elektronu', fDop:'Relatywistyczny efekt Dopplera', fTwin:'Paradoks bliźniąt', fMuon:'Miony z górnej atmosfery',
+    nfGamma:'Dla β bliskiego 1 liczymy 1 − β² jako (1 − β)(1 + β), żeby nie stracić cyfr.',
+    nfClock:'Ten sam trójkąt jest narysowany na scenie 1: pionowa przyprostokątna to droga fotonu w pociągu, przeciwprostokątna to jego droga widziana z peronu.',
+    nfLen:'Skrócenie dotyczy tylko wymiaru wzdłuż ruchu. Wysokość zegara się nie zmienia, dlatego zegar świetlny działa.',
+    nfIvl:'Tę samą wartość daje każdy układ inercjalny.',
+    nfVelA:'Rakieta nadlatująca z naprzeciwka z prędkością u = −v. Klasycznie wyszłoby',
+    nfVelB:'Światło: u = c daje u′ = c w każdym układzie.',
+    nfEn:'Klasycznie',
+    nfDop:'Bliźniak wysyła sygnał co rok. Podczas oddalania odbiera się go co k lat, podczas zbliżania co 1/k roku.',
+    nfTwinI:'Podróżnik zmienia układ inercjalny przy gwieździe. Właśnie dlatego sytuacja nie jest symetryczna.',
+    nfTwinA:'Fazy przyspieszania liczone ze wzorów na ruch hiperboliczny.',
+    nfMuon:'W układzie mionu ten sam wynik daje skrócona atmosfera: h′ = h/γ =',
+    classical:'klasycznie', relativistic:'relatywistycznie',
+    charts:'Wykresy', tabFactor:'Skrócenie', tabEnergy:'Energia i pęd', tabTwin:'Bliźnięta',
+    cGamma:'czynnik γ', cFactor:'L/L₀ = Δt₀/Δt = 1/γ', cEkRel:'Eₖ relatywistyczna', cEkCl:'Eₖ klasyczna', cpRel:'pc relatywistyczny', cpCl:'pc klasyczny', cHome:'Ziemia', cTrav:'podróżnik',
+    cnGamma:'Oś γ w skali logarytmicznej. Punkt to bieżąca prędkość; dla β → 1 czynnik γ rośnie bez ograniczeń.',
+    cnFactor:'Krzywa to ćwiartka okręgu: (L/L₀)² + β² = 1. Do β ≈ 0,3 skrócenie jest mniejsze niż 5 %.',
+    cnEnergy:'Elektron, mc² = 0,511 MeV. Linie przerywane: fizyka klasyczna (½mv², mv). Klasyczna Eₖ przy v = c wynosi tylko 0,256 MeV.',
+    cnTwin:'Wiek obu bliźniąt w funkcji czasu ziemskiego. Nachylenie linii podróżnika to 1/γ.',
+    years:'lat', yearsAxis:'t [lata]', ageAxis:'wiek [lata]', ly:'ly', none:'—'
+  },
+  en: {
+    eyebrow:'Modern physics · spacetime lab', title:'Special relativity',
+    lede:'One speed, three thought experiments. Set β = v/c and watch the light clock on the train slow down, the train shrink, the axes of frame S′ tilt towards the light cone, and the travelling twin come home younger.',
+    sc1:'Light clock', sc1s:'time dilation, length contraction', sc2:'Minkowski diagram', sc2s:'interval, simultaneity', sc3:'Twin paradox', sc3s:'proper time, signals',
+    gSpeed:'Speed', lbeta:'Relative speed <i>β</i> = <i>v</i>/<i>c</i>',
+    pISS:'ISS', pGPS:'GPS satellite', pLHC:'LHC proton', pMuon:'Atmospheric muon',
+    noteLHC:'The animation shows β = 0.998. Every number uses the exact value.',
+    noteTiny:'At this speed the effects are far too small to see: γ − 1 =',
+    g1:'Train and platform', lL0:'Proper length <i>L</i><sub>0</sub>', ldt0:'Proper time <i>Δt</i><sub>0</sub>',
+    hint1:'Train and platform have the same proper length. The drawing is schematic: one tick is one photon trip between the mirrors, and the table uses L₀ and Δt₀.',
+    g2:'Events A and B', evHint:'Drag events A and B on the diagram (touch works too).', resetEv:'Reset events',
+    setSim:'Set β that makes A and B simultaneous', setSame:'Set β that puts A and B at the same place',
+    noFrameNeg:'That frame would have to move to the left (β < 0). Swap the events.', noFrameLight:'Lightlike interval: no frame makes these events simultaneous.', noFrameFast:'The required β is outside the slider range.',
+    cTime:'timelike', cLight:'lightlike', cSpace:'spacelike',
+    ordIn:'In frame', ordFirst:'first', ordThen:'then', ordSim:'A and B are simultaneous', ordCausal:'Timelike interval: the order is the same in every frame, A can cause B.', ordCausalBA:'Timelike interval: the order is the same in every frame, B can cause A.', ordSpace:'Spacelike interval: the order depends on the frame, neither event can affect the other.',
+    g3:'Journey', lD:'Distance to the star <i>D</i>', laccel:'Constant proper acceleration', la:'Acceleration <i>a</i>',
+    aHint:'β is then the cruise speed. The rocket speeds up, cruises, brakes at the star and comes back the same way.',
+    pHome:'Earth', pTrav:'Traveller', pK:'Doppler k', pBmax:'max β',
+    reset:'Restart', speed:'Speed', frame:'View from', frS:'platform S', frP:'train S′', frS2:'S', frP2:'S′', fullscreen:'Full screen', keys:'space · 1 2 3 · ← → · V',
+    pause:'Pause', play:'Play', timeline:'Timeline',
+    tTri:'Triangle', tTrail:'Photon trail', tHyp:'Hyperbolae', tGridP:'S′ grid', tSim:'Simultaneity', tNow:'“Now” lines', tSig:'Signals', tSimT:'Traveller’s “now”', tLoop:'Loop',
+    sPlay:'playing', sPause:'paused', sEnd:'end',
+    lgPhoton:'photon', lgS:'S · platform', lgP:'S′ · train', lgLight:'light', lgHyp:'hyperbolae', lgHome:'Earth', lgTrav:'traveller', lgSigEvery:'signal every',
+    laneS:'Frame S · platform', laneP:'Frame S′ · train', atRest:'at rest', moves:'moving', ticks:'ticks', tickWord:'ticks',
+    nowS:'now in S', nowP:'now in S′', star:'star', earth:'Earth', traveller:'traveller', turn:'turnaround', simJump:'jump', travNow:'traveller’s “now”',
+    younger:'The traveller is younger by', received:'signals received', homeTwin:'Twin on Earth', travTwin:'Twin on the rocket',
+    noTrip:'At β = 0 the rocket goes nowhere. Set a speed above zero.',
+    hudT:'time', hudTauP:'moving clock', hudNowS:'now S', hudNowP:'now S′',
+    results:'Results', rKin:'Kinematics', rTwin:'Twin paradox', rMuon:'Muons from 15 km up',
+    rBeta:'Speed <i>β</i>', rV:'Speed <i>v</i>', rGamma:'Lorentz factor <i>γ</i>', rDil:'Dilation <i>Δt</i>/<i>Δt</i><sub>0</sub>', rLen:'Contraction <i>L</i>/<i>L</i><sub>0</sub>', rDay:'Lag per day', rDop:'Doppler <i>k</i>',
+    rHome:'Earth, time <i>T</i>', rTrav:'Traveller, proper time <i>τ</i>', rDiff:'Age difference',
+    rFlight:'Flight time in Earth frame', rClass:'Reaching ground (no dilation)', rRel:'Reaching ground (with dilation)',
+    nV:'c = 299 792 km/s', nCminusV:'c − v =', nGamma:'1/√(1 − β²)', nDil:'Δt₀ = {a} on the train, Δt = {b} on the platform', nLen:'train L₀ = {a} seen from the platform: L = {b}',
+    nDay:'(γ − 1) · 24 h: how much the moving clock loses per day', nDop:'approaching k, receding 1/k',
+    nHome:'D = {d} ly', nTrav:'{n}', nInstant:'instant turnaround', nAccel:'acceleration {a} g',
+    nFlight:'t = h/v', nClass:'per million muons: {n}', nRel:'per million muons: {n}; in the muon frame the atmosphere is h/γ = {h}',
+    resSub:'At β = {b} the moving clock runs {g} times slower.', resSubTiny:'At β = {b} the moving clock loses {d} per day.',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current settings.',
+    fGamma:'Lorentz factor', fClock:'Light clock: Pythagoras', fLen:'Length contraction', fLorentz:'Lorentz transformation (event A)', fIvl:'Invariant: interval A–B',
+    fVel:'Velocity addition', fEn:'Electron energy and momentum', fDop:'Relativistic Doppler effect', fTwin:'Twin paradox', fMuon:'Muons from the upper atmosphere',
+    nfGamma:'For β close to 1 we compute 1 − β² as (1 − β)(1 + β) so no digits are lost.',
+    nfClock:'Scene 1 draws this triangle: the vertical leg is the photon path on the train, the hypotenuse is the same path seen from the platform.',
+    nfLen:'Only the length along the motion shrinks. The clock height stays the same, which is why the light clock works.',
+    nfIvl:'Every inertial frame gives the same value.',
+    nfVelA:'A rocket approaching head-on at u = −v. Classically you would get',
+    nfVelB:'Light: u = c gives u′ = c in every frame.',
+    nfEn:'Classically',
+    nfDop:'Each twin sends a signal every year. While receding it arrives every k years, while approaching every 1/k year.',
+    nfTwinI:'The traveller changes inertial frame at the star. That is why the situation is not symmetric.',
+    nfTwinA:'Acceleration phases use the formulas for hyperbolic motion.',
+    nfMuon:'In the muon frame the same result comes from a contracted atmosphere: h′ = h/γ =',
+    classical:'classically', relativistic:'relativistically',
+    charts:'Charts', tabFactor:'Contraction', tabEnergy:'Energy & momentum', tabTwin:'Twins',
+    cGamma:'factor γ', cFactor:'L/L₀ = Δt₀/Δt = 1/γ', cEkRel:'Eₖ relativistic', cEkCl:'Eₖ classical', cpRel:'pc relativistic', cpCl:'pc classical', cHome:'Earth', cTrav:'traveller',
+    cnGamma:'Logarithmic γ axis. The dot is the current speed; as β → 1, γ grows without bound.',
+    cnFactor:'The curve is a quarter circle: (L/L₀)² + β² = 1. Up to β ≈ 0.3 the contraction stays below 5 %.',
+    cnEnergy:'Electron, mc² = 0.511 MeV. Dashed lines: classical physics (½mv², mv). Classical Eₖ at v = c would be only 0.256 MeV.',
+    cnTwin:'Age of both twins against Earth time. The traveller’s slope is 1/γ.',
+    years:'years', yearsAxis:'t [years]', ageAxis:'age [years]', ly:'ly', none:'—'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('sr-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function nf(minD, maxD) {
+  const key = lang + minD + '_' + maxD;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: minD, maximumFractionDigits: maxD });
+  return nfCache[key];
+}
+function fmt(x, dec = 2, minDec = dec) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  return nf(minDec, dec).format(x).replace('-', '−');
+}
+const SUP = { '-': '⁻', '0': '⁰', '1': '¹', '2': '²', '3': '³', '4': '⁴', '5': '⁵', '6': '⁶', '7': '⁷', '8': '⁸', '9': '⁹' };
+const sup = (n) => String(n).split('').map(c => SUP[c] ?? c).join('');
+function fsci(x, d = 2) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const sg = x < 0 ? '−' : '', a = Math.abs(x);
+  let e = Math.floor(Math.log10(a)), m = a / Math.pow(10, e);
+  if (+m.toFixed(d) >= 10) { m /= 10; e += 1; }
+  return `${sg}${fmt(m, d)}·10${sup(e)}`;
+}
+// Significant-figure formatter: switches to scientific notation for very large or very small values.
+function fnum(x, sig = 4) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const a = Math.abs(x);
+  if (a >= 1e7 || a < 1e-3) return fsci(x, sig - 1);
+  const dec = clamp(sig - 1 - Math.floor(Math.log10(a)), 0, 6);
+  return fmt(x, dec);
+}
+function fmtBeta(b, eps) {
+  if (b === 0) return '0';
+  if (b < 1e-3) return fsci(b, 3);
+  if (eps < 1e-3) { const dec = clamp(Math.ceil(-Math.log10(eps)) + 1, 4, 14); return fmt(b, dec, 3); }
+  return fmt(b, 3);
+}
+function fmtGamma(R) {
+  if (R.gm1 < 1e-4) return R.gm1 === 0 ? '1' : `1 + ${fsci(R.gm1, 2)}`;
+  if (R.gamma < 10) return fmt(R.gamma, 3);
+  if (R.gamma < 100) return fmt(R.gamma, 2);
+  if (R.gamma < 1e6) return fmt(R.gamma, 1);
+  return fsci(R.gamma, 3);
+}
+// Duration formatter for seconds over many orders of magnitude.
+function fdur(s) {
+  if (!isFinite(s)) return '∞';
+  const a = Math.abs(s);
+  if (a === 0) return '0 s';
+  if (a < 1e-6) return `${fnum(s * 1e9, 3)} ns`;
+  if (a < 1e-3) return `${fnum(s * 1e6, 3)} µs`;
+  if (a < 1) return `${fnum(s * 1e3, 3)} ms`;
+  if (a < 120) return `${fnum(s, 3)} s`;
+  if (a < 7200) return `${fnum(s / 60, 3)} min`;
+  if (a < 172800) return `${fnum(s / 3600, 3)} h`;
+  return `${fnum(s / 86400, 3)} ${lang === 'pl' ? 'dni' : 'days'}`;
+}
+function flen(m) {
+  if (m >= 1000) return `${fnum(m / 1000, 3)} km`;
+  if (m >= 1) return `${fnum(m, 3)} m`;
+  if (m >= 1e-3) return `${fnum(m * 1000, 3)} mm`;
+  return `${fsci(m, 2)} m`;
+}
+// Polish plural for years (fractional values take the genitive singular "roku").
+function yrs(v, dec = 1) {
+  const s = fmt(v, dec);
+  if (lang === 'en') return `${s} ${dec === 0 && Math.round(v) === 1 ? 'year' : 'years'}`;
+  if (dec > 0) return `${s} roku`;
+  const n = Math.abs(Math.round(v)), u = n % 10, t = n % 100;
+  if (n === 1) return `${s} rok`;
+  if (u >= 2 && u <= 4 && !(t >= 12 && t <= 14)) return `${s} lata`;
+  return `${s} lat`;
+}
+// Survival fraction e^(-n), printed without underflow.
+function fexp(n) {
+  if (n < 6.9) return `${fnum(100 * Math.exp(-n), 3)} %`;
+  const lg = -n / Math.LN10, e = Math.floor(lg), m = Math.pow(10, lg - e);
+  return `${fmt(m, 1)}·10${sup(e)}`;
+}
+function fperMillion(n) {
+  const lg = 6 - n / Math.LN10;
+  if (lg >= 0) return fmt(Math.pow(10, lg), lg > 3 ? 0 : 1);
+  const e = Math.floor(lg), m = Math.pow(10, lg - e);
+  return `${fmt(m, 1)}·10${sup(e)}`;
+}
+
+/* ---------- relativity core ---------- */
+// All quantities from beta and eps = 1 - beta (eps carried separately for beta -> 1).
+function rel(beta, eps) {
+  const s2 = eps * (1 + beta), s = Math.sqrt(s2);        // s = sqrt(1 - beta^2) = 1/gamma
+  const gamma = 1 / s;
+  const gm1 = beta * beta / (s * (1 + s));               // gamma - 1 without cancellation
+  const k = eps > 0 ? Math.sqrt((1 + beta) / eps) : Infinity;   // Doppler factor (approaching)
+  const phi = 0.5 * Math.log((1 + beta) / eps);          // rapidity
+  return { beta, eps, s, gamma, gm1, k, phi };
+}
+const lorentz = (b, g, x, ct) => [g * (x - b * ct), g * (ct - b * x)];
+
+const PRESETS = [
+  { id: 'iss', key: 'pISS', beta: 7.66 / C_KMS, sub: '7,66 km/s' },
+  { id: 'gps', key: 'pGPS', beta: 3.874 / C_KMS, sub: '3,87 km/s' },
+  { id: 'b05', label: '0,5 c', beta: 0.5 },
+  { id: 'b08', label: '0,8 c', beta: 0.8 },
+  { id: 'b09', label: '0,9 c', beta: 0.9 },
+  { id: 'muon', key: 'pMuon', beta: 0.998 },
+  { id: 'lhc', key: 'pLHC', beta: 0.999999991, eps: 9e-9 }
+];
+
+/* ---------- twin model ---------- */
+// Outbound leg: accelerate from rest to rapidity phi at proper acceleration a, coast, decelerate at the star.
+// The return leg mirrors the outbound one in time. Units: c = 1, years and light years.
+function twinModel(R, D, accel, aG) {
+  const m = { D, accel, ok: R.beta > 0 };
+  if (!m.ok) return m;
+  if (!accel) {
+    Object.assign(m, { a: Infinity, ta: 0, taua: 0, xa: 0, bc: R.beta, gc: R.gamma, sc: R.s });
+    m.tc = D / R.beta;
+  } else {
+    const a = aG * G_LY;
+    let phi = R.phi, xa = R.gm1 / a;
+    if (2 * xa > D) { phi = Math.acosh(1 + a * D / 2); xa = D / 2; }
+    const bc = Math.tanh(phi), gc = Math.cosh(phi);
+    Object.assign(m, { a, phi, ta: Math.sinh(phi) / a, taua: phi / a, xa, bc, gc, sc: 1 / gc });
+    m.tc = 2 * xa >= D ? 0 : (D - 2 * xa) / bc;
+  }
+  m.T = 2 * (2 * m.ta + m.tc);
+  m.tau = 2 * (2 * m.taua + m.tc * m.sc);
+  if (!accel) m.tau = m.T * R.s;              // exact for the instant-turnaround case
+  m.bmax = m.bc;
+  m.k = Math.sqrt((1 + m.bc) / (1 - m.bc));
+  return m;
+}
+function twinOut(m, t) {          // 0 <= t <= T/2
+  if (t < m.ta) {
+    const at = m.a * t, q = Math.sqrt(1 + at * at);
+    return { x: at * at / ((1 + q) * m.a), tau: Math.asinh(at) / m.a, b: at / q };
+  }
+  if (t <= m.ta + m.tc) return { x: m.xa + m.bc * (t - m.ta), tau: m.taua + (t - m.ta) * m.sc, b: m.bc };
+  const u = Math.max(0, m.T / 2 - t), au = m.a * u, q = Math.sqrt(1 + au * au);
+  return { x: m.D - au * au / ((1 + q) * m.a), tau: m.tau / 2 - Math.asinh(au) / m.a, b: au / q };
+}
+function twinAt(m, t) {
+  t = clamp(t, 0, m.T);
+  if (t <= m.T / 2) return twinOut(m, t);
+  const r = twinOut(m, m.T - t);
+  return { x: r.x, tau: m.tau - r.tau, b: -r.b };
+}
+function bisect(f, lo, hi, n = 60) {
+  let flo = f(lo);
+  for (let i = 0; i < n; i++) {
+    const mid = 0.5 * (lo + hi), fm = f(mid);
+    if ((fm > 0) === (flo > 0)) { lo = mid; flo = fm; } else hi = mid;
+  }
+  return 0.5 * (lo + hi);
+}
+function twinSignals(m) {
+  const per = (span) => { const steps = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6]; for (const s of steps) if (span / s <= 40) return s; return 1e7; };
+  const step = per(m.T);
+  const home = [], trav = [];
+  for (let ts = step; ts < m.T - 1e-9; ts += step) {
+    const tr_ = bisect(t => twinAt(m, t).x - (t - ts), ts, m.T);
+    home.push({ ts, tr: tr_, xr: tr_ - ts });
+  }
+  for (let tk = step; tk < m.tau - 1e-9; tk += step) {
+    const te = bisect(t => twinAt(m, t).tau - tk, 0, m.T);
+    const xe = twinAt(m, te).x;
+    trav.push({ te, xe, tr: te + xe, tau: tk });
+  }
+  return { step, home, trav };
+}
+
+/* ---------- state ---------- */
+const S = {
+  scene: 1, view: 'S', playing: !reduceMotion, speed: 1, hold: 0,
+  t: { 1: 0, 2: 0, 3: 0 },
+  tg: { tri: true, trail: true, hyp: true, gridP: false, sim: true, now: true, sig: true, simT: true, loop: true },
+  chartTab: 'gamma', hoverX: null, drag: null
+};
+const B = { beta: 0.8, eps: 0.2 };
+const EV0 = { A: { x: -1.5, ct: 2 }, B: { x: 2.5, ct: 3 } };
+const EV = { A: { ...EV0.A }, B: { ...EV0.B } };
+let R = rel(0.8, 0.2), AR = R, TW = null, SIG = null;
+const P = { L0: 100, dt0: 10, D: 4, accel: false, aG: 1 };
+let dirty = true, chartDirty = true;
+
+function setBeta(beta, eps) {
+  B.beta = beta; B.eps = eps != null ? eps : 1 - beta;
+  recompute();
+}
+function recompute() {
+  R = rel(B.beta, B.eps);
+  AR = B.beta <= BETA_ANIM_MAX ? R : rel(BETA_ANIM_MAX, 1 - BETA_ANIM_MAX);
+  P.L0 = +$('#L0').value; P.dt0 = +$('#dt0').value; P.D = +$('#D').value;
+  P.accel = $('#accel').checked; P.aG = +$('#acc').value;
+  const oldT = TW && TW.ok ? TW.T : null;
+  TW = twinModel(R, P.D, P.accel, P.aG);
+  SIG = TW.ok ? twinSignals(TW) : null;
+  if (TW.ok && oldT) S.t[3] = clamp(S.t[3] / oldT * TW.T, 0, TW.T);
+  updatePanel(); updateResults(); updateFormulas(); updateLegend(); updateHud(true); updateScrub(); updateNote();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- timeline ---------- */
+function minkView() {
+  const W = cw, H = ch;
+  const s = Math.min((H - 30) / 10, W / 11);
+  const ox = W / 2, oy = H - 16 - 2.4 * s;
+  return { s, ox, oy, xMin: -ox / s, xMax: (W - ox) / s, ctMin: -(H - oy) / s, ctMax: oy / s };
+}
+function evDraw() {        // event coordinates in the drawing (rest) frame and in the other frame
+  const b = AR.beta, g = AR.gamma;
+  const out = {};
+  for (const k of ['A', 'B']) {
+    const e = EV[k];
+    const p = lorentz(b, g, e.x, e.ct);
+    if (S.view === 'S') out[k] = { r: [e.x, e.ct], o: p };
+    else out[k] = { r: p, o: [e.x, e.ct] };
+  }
+  return out;
+}
+function range(sc = S.scene) {
+  if (sc === 1) return [0, 30];
+  if (sc === 2) {
+    const v = minkView(), E = evDraw();
+    const lo = v.ctMin, hi = Math.max(v.ctMax, E.A.r[1], E.B.r[1], E.A.o[1], E.B.o[1]) + 0.6;
+    return [Math.min(lo, E.A.o[1] - 0.6, E.B.o[1] - 0.6), hi];
+  }
+  return TW && TW.ok ? [0, TW.T] : [0, 1];
+}
+const rate = () => {
+  const [a, b] = range();
+  if (S.scene === 1) return 1.3;
+  if (S.scene === 2) return (b - a) / 11;
+  return (b - a) / 15;
+};
+const stepSize = () => (S.scene === 1 ? 0.25 : S.scene === 2 ? 0.25 : (SIG ? SIG.step / 4 : 0.25));
+const timeUnit = () => (S.scene === 1 ? tr('ticks') : S.scene === 2 ? '' : tr('years'));
+
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIcon = null;
+function atEnd() { const [, b] = range(); return S.t[S.scene] >= b - 1e-9; }
+function stateKey() { return S.playing ? 'play' : atEnd() ? 'end' : 'pause'; }
+function updateScrub() {
+  const [a, b] = range(), t = clamp(S.t[S.scene], a, b);
+  const el = $('#scrub');
+  el.value = b > a ? Math.round((t - a) / (b - a) * 1000) : 0; setFill(el);
+  const d = S.scene === 3 ? (TW && TW.T > 100 ? 0 : 1) : 1;
+  const u = timeUnit();
+  $('#scrub-time').textContent = S.scene === 2 ? `ct = ${fmt(t, 1)}` : `${fmt(t, d)} / ${fmt(b, d)} ${u}`;
+  const key = S.playing + lang;
+  if (pauseIcon !== key) {
+    pauseIcon = key;
+    const pb = $('#pause'); pb.innerHTML = S.playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(S.playing ? 'pause' : 'play'));
+  }
+  const st = $('#state'); if (st) { const k = stateKey(); if (st.dataset.s !== k) { st.dataset.s = k; st.textContent = tr({ play: 'sPlay', pause: 'sPause', end: 'sEnd' }[k]); } }
+}
+function seek(t) {
+  const [a, b] = range();
+  S.t[S.scene] = clamp(t, a, b); S.playing = false; S.hold = 0;
+  updateHud(); updateScrub(); dirty = true; chartDirty = true;
+}
+function togglePlay() {
+  if (!S.playing && atEnd()) { S.t[S.scene] = range()[0]; }
+  S.playing = !S.playing; S.hold = 0; updateScrub(); dirty = true;
+}
+function restart() { S.t[S.scene] = range()[0]; S.playing = true; S.hold = 0; updateHud(); updateScrub(); dirty = true; chartDirty = true; }
+
+/* ---------- panel ---------- */
+function setFill(el) {
+  const p = (el.value - el.min) / (el.max - el.min) * 100;
+  el.style.setProperty('--p', p + '%');
+}
+function buildPresets() {
+  $('#presets').innerHTML = PRESETS.map(p => {
+    const name = p.key ? tr(p.key) : (lang === 'pl' ? p.label : p.label.replace(',', '.'));
+    let small = p.sub ? (lang === 'pl' ? p.sub : p.sub.replace(',', '.')) : `β = ${fmtBeta(p.beta, p.eps ?? 1 - p.beta)}`;
+    if (!p.key) small = `γ = ${fmtGamma(rel(p.beta, 1 - p.beta))}`;
+    return `<button type="button" class="chip" id="pr-${p.id}" data-preset="${p.id}" aria-pressed="false"><span>${name}</span><small>${small}</small></button>`;
+  }).join('');
+  $$('#presets .chip').forEach(b => b.addEventListener('click', () => {
+    const p = PRESETS.find(q => q.id === b.dataset.preset);
+    $('#beta').value = Math.min(p.beta, 0.995);
+    setBeta(p.beta, p.eps ?? 1 - p.beta);
+  }));
+}
+function updatePanel() {
+  $('#gamma-big').textContent = fmtGamma(R);
+  const v = R.beta * C_KMS;
+  $('#v-big').textContent = `v = ${fmtBeta(R.beta, R.eps)} c = ${R.beta < 1e-3 ? fmt(v, 2) : fmt(v, R.eps < 1e-6 ? 3 : 0)} km/s`;
+  $('#cbar').style.width = (R.beta * 100) + '%';
+  $('#beta-out').textContent = fmtBeta(R.beta, R.eps);
+  $('#L0-out').textContent = `${fmt(P.L0, 0)} m`;
+  $('#dt0-out').textContent = `${fmt(P.dt0, 0)} s`;
+  $('#D-out').textContent = `${fmt(P.D, 1)} ${tr('ly')}`;
+  $('#acc-out').textContent = `${fmt(P.aG, 1)} g`;
+  $('#a-ctl').style.opacity = P.accel ? '' : '.4';
+  $('#acc').disabled = !P.accel;
+  $$('input[type=range]').forEach(setFill);
+  $$('#presets .chip').forEach(b => {
+    const p = PRESETS.find(q => q.id === b.dataset.preset);
+    const pe = p.eps ?? 1 - p.beta;
+    b.setAttribute('aria-pressed', String(Math.abs(p.beta - R.beta) < 1e-12 && Math.abs(pe - R.eps) / pe < 1e-6));
+  });
+  const pn = $('#preset-note');
+  if (R.beta > BETA_ANIM_MAX) { pn.hidden = false; pn.textContent = tr('noteLHC'); } else pn.hidden = true;
+  // scene groups
+  $('#g-s1').hidden = S.scene !== 1; $('#g-s2').hidden = S.scene !== 2; $('#g-s3').hidden = S.scene !== 3;
+  // twin pills
+  if (TW.ok) {
+    $('#pl-home').textContent = yrs(TW.T, TW.T > 100 ? 0 : 1);
+    $('#pl-trav').textContent = yrs(TW.tau, TW.tau > 100 ? 0 : 1);
+    $('#pl-k').textContent = fnum(TW.k, 4);
+    $('#pl-bmax').textContent = fmtBeta(TW.bmax, 1 - TW.bmax);
+  } else ['#pl-home', '#pl-trav', '#pl-k', '#pl-bmax'].forEach(s => { $(s).textContent = tr('none'); });
+  updateEvents();
+}
+function ivlKind(ds2) { return Math.abs(ds2) < 1e-9 ? 'light' : ds2 > 0 ? 'time' : 'space'; }
+function updateEvents() {
+  const b = R.beta, g = R.gamma;
+  const A = EV.A, Bv = EV.B;
+  const Ap = lorentz(b, g, A.x, A.ct), Bp = lorentz(b, g, Bv.x, Bv.ct);
+  const big = (x) => (Math.abs(x) >= 1000 ? fsci(x, 2) : fmt(x, 2));
+  const row = (n, x, ct, xp, ctp) => `<tr><th>${n}</th><td>${big(x)}</td><td>${big(ct)}</td><td>${big(xp)}</td><td>${big(ctp)}</td></tr>`;
+  $('#ev-table').innerHTML = `<thead><tr><th></th><th class="s">x</th><th class="s">ct</th><th class="p">x′</th><th class="p">ct′</th></tr></thead><tbody>
+    ${row('A', A.x, A.ct, Ap[0], Ap[1])}${row('B', Bv.x, Bv.ct, Bp[0], Bp[1])}${row('Δ', Bv.x - A.x, Bv.ct - A.ct, Bp[0] - Ap[0], Bp[1] - Ap[1])}</tbody>`;
+  const dx = Bv.x - A.x, dct = Bv.ct - A.ct, ds2 = dct * dct - dx * dx;
+  const kind = ivlKind(ds2);
+  $('#ivl').innerHTML = `<span><i>Δs</i>² = ${fmt(ds2, 2)}</span><span class="tchip" data-k="${kind}">${tr({ time: 'cTime', light: 'cLight', space: 'cSpace' }[kind])}</span>`;
+  const ord = (d) => (Math.abs(d) < 1e-9 ? tr('ordSim') : d > 0 ? `${tr('ordFirst')} A, ${tr('ordThen')} B` : `${tr('ordFirst')} B, ${tr('ordThen')} A`);
+  const dctp = Bp[1] - Ap[1];
+  const expl = kind === 'time' ? (dct > 0 ? tr('ordCausal') : tr('ordCausalBA')) : kind === 'space' ? tr('ordSpace') : '';
+  $('#order').innerHTML = `<span><b class="s">${tr('ordIn')} S:</b> ${ord(dct)}</span><span><b class="p">${tr('ordIn')} S′:</b> ${ord(dctp)}</span><span>${expl}</span>`;
+  // frame finder
+  const btn = $('#set-frame'), hint = $('#frame-hint');
+  let target = null, msg = '';
+  if (kind === 'space') { target = dct / dx; btn.textContent = tr('setSim'); }
+  else if (kind === 'time') { target = dx / dct; btn.textContent = tr('setSame'); }
+  else { btn.textContent = tr('setSim'); msg = tr('noFrameLight'); }
+  if (target != null) {
+    if (target < 0) msg = tr('noFrameNeg');
+    else if (target > 0.995) msg = tr('noFrameFast');
+  }
+  btn.disabled = !!msg || target == null;
+  btn.dataset.target = target != null ? String(target) : '';
+  if (target != null && !msg) btn.textContent += ` (β = ${fmt(target, 3)})`;
+  hint.textContent = msg || tr('evHint');
+}
+
+/* ---------- results ---------- */
+function updateResults() {
+  const v = R.beta * C_KMS;
+  const rows = [];
+  const sec = (k, color) => rows.push(`<tr class="sec"><th colspan="3">${color ? `<i class="sw-line" style="border-top-color:${color}"></i>` : ''}${tr(k)}</th></tr>`);
+  const row = (k, val, note, cls = '') => rows.push(`<tr><th>${tr(k)}</th><td class="v ${cls}">${val}</td><td class="n">${note}</td></tr>`);
+  sec('rKin');
+  row('rBeta', fmtBeta(R.beta, R.eps), 'v/c');
+  row('rV', `${R.beta < 1e-3 ? fmt(v, 2) : fmt(v, R.eps < 1e-6 ? 3 : 0)} km/s`, R.eps < 1e-3 ? `${tr('nCminusV')} ${fnum(R.eps * C_MS, 3)} m/s` : tr('nV'));
+  row('rGamma', fmtGamma(R), tr('nGamma'), 'hl');
+  row('rDil', fmtGamma(R), fill(tr('nDil'), { a: fdur(P.dt0), b: fdur(P.dt0 * R.gamma) }));
+  row('rLen', R.beta < 1e-3 ? `1 − ${fsci(R.beta * R.beta / (1 + R.s), 2)}` : fnum(R.s, 4), fill(tr('nLen'), { a: flen(P.L0), b: flen(P.L0 * R.s) }));
+  row('rDay', fdur(R.gm1 * 86400), tr('nDay'));
+  row('rDop', R.beta < 1e-3 ? `1 + ${fsci(R.k - 1, 2)}` : fnum(R.k, 4), tr('nDop'));
+  sec('rTwin');
+  if (TW.ok) {
+    const d = TW.T > 100 ? 0 : 1;
+    const mode = P.accel ? fill(tr('nAccel'), { a: fmt(P.aG, 1) }) : tr('nInstant');
+    row('rHome', yrs(TW.T, d), fill(tr('nHome'), { d: fmt(P.D, 1) }), 'hb');
+    row('rTrav', yrs(TW.tau, d), mode, 'hl');
+    row('rDiff', yrs(TW.T - TW.tau, d), `τ/T = ${fnum(TW.tau / TW.T, 4)}`);
+  } else row('rHome', tr('none'), tr('noTrip'));
+  sec('rMuon');
+  const tf = R.beta > 0 ? MU_H / (R.beta * C_MS) : Infinity;
+  const nc = tf / MU_TAU0, nr = nc * R.s;
+  row('rFlight', R.beta > 0 ? fdur(tf) : '∞', `${tr('nFlight')}, τ₀ = 2,2 µs`.replace('2,2', lang === 'pl' ? '2,2' : '2.2'));
+  row('rClass', R.beta > 0 ? fexp(nc) : '0', fill(tr('nClass'), { n: R.beta > 0 ? fperMillion(nc) : '0' }));
+  row('rRel', R.beta > 0 ? fexp(nr) : '0', fill(tr('nRel'), { n: R.beta > 0 ? fperMillion(nr) : '0', h: flen(MU_H * R.s) }), 'hl');
+  $('#res-body').innerHTML = rows.join('');
+  $('#res-sub').textContent = R.gm1 < 1e-3 ? fill(tr('resSubTiny'), { b: fmtBeta(R.beta, R.eps), d: fdur(R.gm1 * 86400) }) : fill(tr('resSub'), { b: fmtBeta(R.beta, R.eps), g: fmtGamma(R) });
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+function updateFormulas() {
+  const b = R.beta, g = R.gamma;
+  const bs = fmtBeta(b, R.eps), gs = fmtGamma(R), gsp = gs.includes('+') ? `(${gs})` : gs;
+  const tiny = b < 1e-2;
+  const r = (x, cls = '') => `<span class="r ${cls}">${x}</span>`;
+  const c = [];
+  const ps = (x) => (x < 0 ? `(${fmt(x, 2)})` : fmt(x, 2));
+  // gamma
+  c.push(`<div class="fcard"><h4>${tr('fGamma')}</h4>
+    <div class="eq">${V('γ')}${EQ}${FR('1', RT(`1 − ${V('β')}<sup>2</sup>`))}${EQ}${FR('1', RT(`(1 − ${V('β')})(1 + ${V('β')})`))}</div>
+    <div class="eq num">${V('γ')}${EQ}${FR('1', RT(tiny ? `1 − (${bs})<sup>2</sup>` : `${R.eps < 1e-3 ? fsci(R.eps, 1) : fmt(R.eps, 3)} · ${fmt(1 + b, R.eps < 1e-3 ? 9 : 3)}`))}${EQ}${r(gs)}</div>
+    <p class="fnote">${tr('nfGamma')}</p></div>`);
+  // light clock
+  c.push(`<div class="fcard"><h4>${tr('fClock')}</h4>
+    <div class="eq">(${V('c')}${V('Δt')})<sup>2</sup>${EQ}(${V('c')}${V('Δt', '0')})<sup>2</sup> + (${V('v')}${V('Δt')})<sup>2</sup></div>
+    <div class="eq">${V('Δt')}${EQ}${FR(V('Δt', '0'), RT(`1 − ${V('v')}<sup>2</sup>/${V('c')}<sup>2</sup>`))}${EQ}${V('γ')}${V('Δt', '0')}</div>
+    <div class="eq num">${V('Δt')}${EQ}${gsp} · ${fmt(P.dt0, 0)} s${EQ}${r(fdur(P.dt0 * g))}</div>
+    <p class="fnote">${tr('nfClock')}</p></div>`);
+  // length
+  c.push(`<div class="fcard"><h4>${tr('fLen')}</h4>
+    <div class="eq">${V('L')}${EQ}${FR(V('L', '0'), V('γ'))}${EQ}${V('L', '0')}${RT(`1 − ${V('β')}<sup>2</sup>`)}</div>
+    <div class="eq num">${V('L')}${EQ}${FR(`${fmt(P.L0, 0)} m`, gs)}${EQ}${r(flen(P.L0 * R.s))}</div>
+    <p class="fnote">${tr('nfLen')}</p></div>`);
+  // velocity addition
+  const up = -2 * b / (1 + b * b);
+  c.push(`<div class="fcard"><h4>${tr('fVel')}</h4>
+    <div class="eq">${V('u′')}${EQ}${FR(`${V('u')} − ${V('v')}`, `1 − ${V('u')}${V('v')}/${V('c')}<sup>2</sup>`)}</div>
+    <div class="eq num">${V('u′')}${EQ}${FR(`−${bs}${V('c')} − ${bs}${V('c')}`, `1 + (${bs})<sup>2</sup>`)}${EQ}${r(`${tiny ? fnum(up, 4) : fmt(up, 4)} c`)}</div>
+    <p class="fnote">${tr('nfVelA')} ${tiny ? fnum(-2 * b, 4) : fmt(-2 * b, 3)} c. ${tr('nfVelB')}</p></div>`);
+  // Lorentz transformation for event A
+  const A = EV.A, Ap = lorentz(b, g, A.x, A.ct);
+  c.push(`<div class="fcard wide"><h4>${tr('fLorentz')}</h4>
+    <div class="eq">${V('x′')}${EQ}${V('γ')}(${V('x')} − ${V('β')}${V('ct')})${EQ}${gsp} · (${ps(A.x)} − ${bs} · ${ps(A.ct)})${EQ}${r(fnum(Ap[0], 4))}</div>
+    <div class="eq">${V('ct′')}${EQ}${V('γ')}(${V('ct')} − ${V('β')}${V('x')})${EQ}${gsp} · (${ps(A.ct)} − ${bs} · ${ps(A.x)})${EQ}${r(fnum(Ap[1], 4))}</div></div>`);
+  // interval
+  const Bv = EV.B, Bp = lorentz(b, g, Bv.x, Bv.ct);
+  const dx = Bv.x - A.x, dct = Bv.ct - A.ct, dxp = Bp[0] - Ap[0], dctp = Bp[1] - Ap[1];
+  const ds2 = dct * dct - dx * dx, ds2p = dctp * dctp - dxp * dxp, kind = ivlKind(ds2);
+  c.push(`<div class="fcard wide"><h4>${tr('fIvl')}</h4>
+    <div class="eq">${V('Δs')}<sup>2</sup>${EQ}(${V('c')}${V('Δt')})<sup>2</sup> − ${V('Δx')}<sup>2</sup>${EQ}${ps(dct)}<sup>2</sup> − ${ps(dx)}<sup>2</sup>${EQ}${r(fmt(ds2, 2), 'vi')}</div>
+    <div class="eq">${V('Δs′')}<sup>2</sup>${EQ}(${V('c')}${V('Δt′')})<sup>2</sup> − ${V('Δx′')}<sup>2</sup>${EQ}${ps(dctp)}<sup>2</sup> − ${ps(dxp)}<sup>2</sup>${EQ}${r(fmt(ds2p, 2), 'vi')}</div>
+    <p class="fnote">${tr('nfIvl')} <span class="tchip" data-k="${kind}">${tr({ time: 'cTime', light: 'cLight', space: 'cSpace' }[kind])}</span></p></div>`);
+  // energy
+  const E = g * ME_MEV, Ek = R.gm1 * ME_MEV, pc = g * b * ME_MEV, EkCl = 0.5 * b * b * ME_MEV, pcCl = b * ME_MEV;
+  const mev = (x) => (x >= 1000 ? `${fnum(x / 1000, 4)} GeV` : x < 1e-3 ? `${fnum(x * 1e6, 3)} eV` : `${fnum(x, 4)} MeV`);
+  c.push(`<div class="fcard"><h4>${tr('fEn')}</h4>
+    <div class="eq">${V('E')}${EQ}${V('γ')}${V('mc')}<sup>2</sup>${EQ}${gsp} · 0,511 MeV${EQ}${r(mev(E))}</div>
+    <div class="eq">${V('E', 'k')}${EQ}(${V('γ')} − 1)${V('mc')}<sup>2</sup>${EQ}${r(mev(Ek))}</div>
+    <div class="eq">${V('p')}${EQ}${V('γ')}${V('mv')}${EQ}${V('γβ')}·${FR(`${V('mc')}<sup>2</sup>`, V('c'))}${EQ}${r(mev(pc) + '/c')}</div>
+    <p class="fnote">${tr('nfEn')}: ½<i>mv</i>² = ${mev(EkCl)}, <i>mv</i> = ${mev(pcCl)}/c.</p></div>`.replace(/0,511/g, lang === 'pl' ? '0,511' : '0.511'));
+  // Doppler
+  c.push(`<div class="fcard"><h4>${tr('fDop')}</h4>
+    <div class="eq">${FR(V('f', 'obs'), V('f', 'src'))}${EQ}${RT(FR(`1 + ${V('β')}`, `1 − ${V('β')}`))}${EQ}${RT(FR(fmt(1 + b, tiny ? 7 : R.eps < 1e-3 ? 9 : 3), R.eps < 1e-3 ? fsci(R.eps, 1) : fmt(R.eps, tiny ? 7 : 3)))}${EQ}${r(R.beta < 1e-3 ? `1 + ${fsci(R.k - 1, 2)}` : fnum(R.k, 4))}</div>
+    <div class="eq num">${lang === 'pl' ? 'oddalanie' : 'receding'}: 1/<i>k</i>${EQ}${r(R.beta < 1e-3 ? `1 − ${fsci(1 - 1 / R.k, 2)}` : fnum(1 / R.k, 4), 'b')}</div>
+    <p class="fnote">${tr('nfDop')}</p></div>`);
+  // twin
+  if (TW.ok) {
+    const d = TW.T > 100 ? 0 : 2;
+    let body;
+    if (!P.accel) {
+      body = `<div class="eq">${V('T')}${EQ}${FR(`2${V('D')}`, V('v'))}${EQ}${FR(`2 · ${fmt(P.D, 1)} ly`, `${bs} c`)}${EQ}${r(yrs(TW.T, d), 'b')}</div>
+        <div class="eq">${V('τ')}${EQ}${FR(V('T'), V('γ'))}${EQ}${FR(fmt(TW.T, d), gs)}${EQ}${r(yrs(TW.tau, d))}</div>
+        <p class="fnote">${tr('nfTwinI')}</p>`;
+    } else {
+      const a = TW.a;
+      body = `<div class="eq">${V('φ')}${EQ}${V('a')}${V('τ', 'a')}${EQ}${fmt(TW.phi, 3)}, &nbsp; ${V('τ', 'a')}${EQ}${FR(V('φ'), V('a'))}${EQ}${FR(fmt(TW.phi, 3), `${fmt(a, 3)} ly/r²`.replace('r²', lang === 'pl' ? 'rok²' : 'yr²'))}${EQ}${r(yrs(TW.taua, 2))}</div>
+        <div class="eq">${V('t', 'a')}${EQ}${FR(`sinh ${V('φ')}`, V('a'))}${EQ}${r(yrs(TW.ta, 2), 'b')}, &nbsp; ${V('x', 'a')}${EQ}${FR(`cosh ${V('φ')} − 1`, V('a'))}${EQ}${fmt(TW.xa, 3)} ly</div>
+        <div class="eq">${V('T')}${EQ}4${V('t', 'a')} + 2${V('t', 'c')}${EQ}${r(yrs(TW.T, d), 'b')}, &nbsp; ${V('τ')}${EQ}4${V('τ', 'a')} + 2${FR(V('t', 'c'), V('γ', 'c'))}${EQ}${r(yrs(TW.tau, d))}</div>
+        <p class="fnote">${tr('nfTwinA')} β<sub>max</sub> = ${fmtBeta(TW.bmax, 1 - TW.bmax)}.</p>`;
+    }
+    c.push(`<div class="fcard wide"><h4>${tr('fTwin')}</h4>${body}</div>`);
+  }
+  // muon
+  if (b > 0) {
+    const tf = MU_H / (b * C_MS), nc = tf / MU_TAU0, nr = nc * R.s;
+    c.push(`<div class="fcard wide"><h4>${tr('fMuon')}</h4>
+      <div class="eq">${V('t')}${EQ}${FR(V('h'), V('v'))}${EQ}${FR('15 km', `${bs} c`)}${EQ}${r(fdur(tf), 'b')}</div>
+      <div class="eq num"><span class="mu">${tr('classical')}</span> ${FR(V('N'), V('N', '0'))}${EQ}e<sup>−<i>t</i>/<i>τ</i><sub>0</sub></sup>${EQ}e<sup>−${fnum(nc, 3)}</sup>${EQ}${r(fexp(nc), 'b')}</div>
+      <div class="eq num"><span class="mu">${tr('relativistic')}</span> ${FR(V('N'), V('N', '0'))}${EQ}e<sup>−<i>t</i>/(<i>γτ</i><sub>0</sub>)</sup>${EQ}e<sup>−${fnum(nr, 3)}</sup>${EQ}${r(fexp(nr))}</div>
+      <p class="fnote">${tr('nfMuon')} ${flen(MU_H * R.s)}.</p></div>`);
+  }
+  $('#fgrid').innerHTML = c.join('');
+}
+
+/* ---------- HUD, legend, overlay note ---------- */
+let hudKey = '';
+function updateHud(force) {
+  const t = S.t[S.scene];
+  const key = [S.scene, S.view, t.toFixed(3), lang, R.beta, R.eps].join('|');
+  if (!force && key === hudKey) return; hudKey = key;
+  const it = (dt, dd, cls = '') => `<div><dt>${dt}</dt><dd class="${cls}">${dd}</dd></div>`;
+  let h = it('β', fmtBeta(R.beta, R.eps)) + it('γ', fmtGamma(R), 'big');
+  if (S.scene === 1) {
+    const g = AR.gamma;
+    const nRest = S.view === 'S' ? 'S' : 'S′', nMov = S.view === 'S' ? 'S′' : 'S';
+    h += it(`t<sub>${nRest}</sub>`, `${fmt(t, 2)} <span>${tr('ticks')}</span>`);
+    h += it(`τ<sub>${nMov}</sub>`, `${fmt(t / g, 2)} <span>${tr('ticks')}</span>`);
+    h += it('τ/t', fnum(1 / g, 4));
+  } else if (S.scene === 2) {
+    const dx = EV.B.x - EV.A.x, dct = EV.B.ct - EV.A.ct;
+    h += it(S.view === 'S' ? 'ct' : 'ct′', fmt(t, 2));
+    h += it('Δs²', fmt(dct * dct - dx * dx, 2));
+  } else if (TW.ok) {
+    const q = twinAt(TW, t);
+    const d = TW.T > 100 ? 0 : 2;
+    h += it('t', `${fmt(t, d)} <span>${tr('years')}</span>`);
+    h += it('τ', `${fmt(q.tau, d)} <span>${tr('years')}</span>`);
+    h += it('x', `${fmt(q.x, 2)} <span>ly</span>`);
+    h += it('v/c', fmt(q.b, 3));
+  }
+  $('#hud').innerHTML = h;
+}
+function updateLegend() {
+  let h = '';
+  const L = (color, text, dash) => `<span><i class="sw-line" style="border-top:2.5px ${dash ? 'dashed' : 'solid'} ${color}"></i>${text}</span>`;
+  if (S.scene === 1) h = `<span><i class="sw-dot"></i>${tr('lgPhoton')}</span>` + L(col.blue, tr('lgS')) + L(col.crim, tr('lgP'));
+  else if (S.scene === 2) h = L(col.blue, 'S') + L(col.crim, 'S′') + L(col.amber, tr('lgLight')) + (S.tg.hyp ? L(col.violet, tr('lgHyp'), true) : '');
+  else h = L(col.blue, tr('lgHome')) + L(col.crim, tr('lgTrav')) + (SIG ? `<span>${tr('lgSigEvery')} ${yrs(SIG.step, 0)}</span>` : '');
+  const k = stateKey();
+  h += `<span class="state" id="state" data-s="${k}">${tr({ play: 'sPlay', pause: 'sPause', end: 'sEnd' }[k])}</span>`;
+  $('#legend').innerHTML = h;
+}
+function updateNote() {
+  const el = $('#ov-note');
+  let msg = '';
+  if (S.scene === 3 && !TW.ok) msg = tr('noTrip');
+  else if (R.beta > 0 && R.beta < 0.02 && S.scene !== 3) msg = `${tr('noteTiny')} <b>${fsci(R.gm1, 2)}</b>.`;
+  else if (R.beta > BETA_ANIM_MAX && S.scene !== 3) msg = tr('noteLHC');
+  el.hidden = !msg; el.innerHTML = msg;
+}
+
+/* ---------- toggles in the transport bar ---------- */
+const TOGGLES = {
+  1: [['tri', 'tTri'], ['trail', 'tTrail'], ['loop', 'tLoop']],
+  2: [['hyp', 'tHyp'], ['gridP', 'tGridP'], ['sim', 'tSim'], ['now', 'tNow'], ['loop', 'tLoop']],
+  3: [['sig', 'tSig'], ['simT', 'tSimT'], ['loop', 'tLoop']]
+};
+function buildToggles() {
+  $('#toggles').innerHTML = TOGGLES[S.scene].map(([k, l]) => `<button type="button" class="tg" id="tg-${k}" data-k="${k}" aria-pressed="${S.tg[k]}">${tr(l)}</button>`).join('');
+  $$('#toggles .tg').forEach(b => b.addEventListener('click', () => {
+    const k = b.dataset.k; S.tg[k] = !S.tg[k]; b.setAttribute('aria-pressed', String(S.tg[k])); updateLegend(); dirty = true;
+  }));
+  $('#frame').hidden = S.scene === 3;
+  $('#fr-s').textContent = S.scene === 1 ? tr('frS') : tr('frS2');
+  $('#fr-p').textContent = S.scene === 1 ? tr('frP') : tr('frP2');
+  $$('#frame button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === S.view)));
+}
+
+/* ---------- canvas helpers ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 450, dpr = 1;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_DISP = '"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'crim', 'blue', 'amber', 'violet'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim() || '#888888';
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+function withAlpha(hex, a) {
+  const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle', c = ctx) {
+  c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(x1, y1, x2, y2, color, w = 2, head = 9, dash = null) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.4) * head, y2 - Math.sin(a - 0.4) * head);
+  c.lineTo(x2 - Math.cos(a + 0.4) * head, y2 - Math.sin(a + 0.4) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function line(x1, y1, x2, y2, color, w = 1, dash = null, alpha = 1) {
+  const c = ctx; c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2, y2); c.stroke(); c.restore();
+}
+function hatch(x0, y0, w, h, color, step = 7) {
+  const c = ctx; c.save(); c.beginPath(); c.rect(x0, y0, w, h); c.clip();
+  c.strokeStyle = color; c.lineWidth = 1; c.beginPath();
+  for (let x = x0 - h; x < x0 + w + h; x += step) { c.moveTo(x, y0 + h); c.lineTo(x + h, y0); }
+  c.stroke(); c.restore();
+}
+function rrect(x, y, w, h, r) {
+  const c = ctx; r = Math.max(0, Math.min(r, w / 2, h / 2));
+  c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r);
+  c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h);
+  c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath();
+}
+function pill(text, x, y, color, align = 'left', font = `600 12px ${FONT_MONO}`) {
+  const c = ctx; c.font = font; const w = c.measureText(text).width + 14, h = 20;
+  let x0 = align === 'center' ? x - w / 2 : align === 'right' ? x - w : x;
+  x0 = clamp(x0, 4, cw - w - 4);
+  c.save(); rrect(x0, y - h / 2, w, h, 10); c.fillStyle = col.surface; c.fill(); c.strokeStyle = color; c.lineWidth = 1.2; c.stroke(); c.restore();
+  c.fillStyle = color; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(text, x0 + 7, y + 0.5);
+  return w;
+}
+function photon(x, y, r = 5) {
+  const c = ctx; c.save();
+  const g = c.createRadialGradient(x, y, 0, x, y, r * 3.2);
+  g.addColorStop(0, withAlpha(col.amber, 0.55)); g.addColorStop(1, withAlpha(col.amber, 0));
+  c.fillStyle = g; c.beginPath(); c.arc(x, y, r * 3.2, 0, Math.PI * 2); c.fill();
+  c.fillStyle = col.amber; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+  c.fillStyle = 'rgba(255,255,255,.8)'; c.beginPath(); c.arc(x - r * 0.3, y - r * 0.3, r * 0.35, 0, Math.PI * 2); c.fill();
+  c.restore();
+}
+
+/* ---------- scene 1: light clocks, train and platform ---------- */
+function drawClockScene() {
+  const c = ctx, W = cw, H = ch, t = S.t[1];
+  const b = AR.beta, g = AR.gamma;
+  const labView = S.view === 'S';
+  const laneH = (H - 6) / 2;
+  const Hc = clamp(Math.min(laneH - 104, 190, (W - 50) / (1.3 * b * g + 0.7)), 24, 400);
+  const vpx = b * Hc;                          // object speed, px per tick (light covers Hc px per tick)
+  const Lp = clamp(W * 0.34, 130, 340);        // proper length on screen
+  const wc = Math.min(70, Lp * 0.3);           // proper clock width
+  const xsC = W * 0.3;                         // canonical centre of the resting object
+  const Lm = Lp / g, wm = wc / g;
+  const xEntry = -Lm / 2 - 40, Pd = W + Lm + 80, off0 = xsC - xEntry;
+  let xmC = xsC, tw = 0;
+  if (vpx > 1e-9) {
+    const q = off0 + vpx * t, k = Math.floor(q / Pd);
+    xmC = xEntry + (q - k * Pd);
+    tw = k === 0 ? 0 : (k * Pd - off0) / vpx;
+  }
+  const dir = labView ? 1 : -1;
+  const X = (x) => (dir > 0 ? x : W - x);
+  const movingKind = labView ? 'train' : 'platform';
+  const speedTxt = `v = ${fmt(b, 3)} c`;
+
+  for (const kind of ['platform', 'train']) {
+    const li = kind === 'platform' ? 0 : 1;
+    const y0 = 3 + li * laneH, yG = y0 + laneH - 40;
+    const yM0 = yG - 22, yM1 = yM0 - Hc;
+    const moving = kind === movingKind;
+    const len = moving ? Lm : Lp, cwid = moving ? wm : wc;
+    const xc = moving ? X(xmC) : X(xsC);
+    const tau = moving ? t / g : t;
+    const fc = kind === 'platform' ? col.blue : col.crim;
+
+    // lane background
+    if (li === 1) line(0, y0, W, y0, col.line, 1, [3, 5]);
+    // decorations attached to S (posts, sleepers) move with S
+    const sMoving = !labView;
+    const shift = sMoving ? -vpx * t : 0, scl = sMoving ? 1 / g : 1;
+    const originX = labView ? X(xsC) : W - xsC;
+    if (kind === 'platform') {
+      const sp = 150 * scl, base = ((originX + shift) % sp + sp) % sp;
+      c.save(); c.strokeStyle = withAlpha(col.ink3, 0.45); c.lineWidth = 1.5;
+      for (let x = base - sp; x < W + sp; x += sp) {
+        c.beginPath(); c.moveTo(x, yG); c.lineTo(x, yM1 - 6); c.stroke();
+        c.beginPath(); c.ellipse(x + 7 * scl, yM1 - 6, 7 * scl, 2.5, 0, 0, Math.PI * 2); c.stroke();
+      }
+      c.restore();
+      c.fillStyle = col.sunk; c.fillRect(0, yG, W, y0 + laneH - yG - 2);
+      line(0, yG + 0.5, W, yG + 0.5, col.ink, 1.4);
+    } else {
+      const sp = 24 * scl, base = ((originX + shift) % sp + sp) % sp;
+      c.fillStyle = col.sunk; c.fillRect(0, yG + 2, W, y0 + laneH - yG - 4);
+      c.save(); c.fillStyle = withAlpha(col.ink3, 0.5);
+      for (let x = base - sp; x < W + sp; x += sp) c.fillRect(x - 3 * scl, yG + 1, 6 * scl, 7);
+      c.restore();
+      line(0, yG + 0.5, W, yG + 0.5, col.ink2, 2);
+      line(0, yG + 4.5, W, yG + 4.5, col.ink3, 1);
+    }
+
+    // object body
+    const xl = xc - len / 2;
+    if (kind === 'platform') {
+      c.save(); c.fillStyle = col.surface; c.fillRect(xl, yG - 15, len, 15);
+      hatch(xl, yG - 15, len, 15, withAlpha(col.blue, 0.35), 6);
+      c.strokeStyle = fc; c.lineWidth = 1.6; c.strokeRect(xl + 0.5, yG - 15 + 0.5, len - 1, 15);
+      c.strokeStyle = fc; c.lineWidth = 1;
+      for (let i = 0; i <= 10; i++) { const x = xl + len * i / 10; c.beginPath(); c.moveTo(x, yG - 15); c.lineTo(x, yG - 15 - (i % 5 === 0 ? 8 : 4)); c.stroke(); }
+      c.restore();
+    } else {
+      const top = yM1 - 16, bot = yG - 11;
+      c.save(); rrect(xl, top, len, bot - top, Math.min(16, len / 4));
+      c.fillStyle = withAlpha(col.crim, 0.07); c.fill(); c.strokeStyle = fc; c.lineWidth = 2; c.stroke();
+      c.fillStyle = withAlpha(col.crim, 0.22); c.fillRect(xl + 3, bot - 9, Math.max(0, len - 6), 3);
+      c.fillStyle = col.ink2;
+      for (const f of [0.14, 0.27, 0.73, 0.86]) { c.beginPath(); c.ellipse(xl + len * f, yG - 6, Math.max(0.8, 6 / g * (moving ? 1 : g)), 6, 0, 0, Math.PI * 2); c.fill(); }
+      c.restore();
+    }
+
+    // light clock
+    const xL = xc - cwid / 2, xR = xc + cwid / 2;
+    c.save(); c.fillStyle = withAlpha(fc, 0.05); c.fillRect(xL, yM1, cwid, Hc); c.restore();
+    line(xL, yM1, xL, yM0, col.ink3, 1); line(xR, yM1, xR, yM0, col.ink3, 1);
+    const p = tau, n = Math.floor(p), f = p - n;
+    const flashTop = (n % 2 === 0 && f > 0.9) || (n % 2 === 1 && f < 0.12);
+    const flashBot = (n % 2 === 1 && f > 0.9) || (n % 2 === 0 && f < 0.12 && n > 0);
+    for (const [y, fl, out] of [[yM1, flashTop, -1], [yM0, flashBot, 1]]) {
+      hatch(xL, out < 0 ? y - 7 : y, cwid, 7, withAlpha(col.ink3, 0.6), 4);
+      c.save(); if (fl) { c.shadowColor = col.amber; c.shadowBlur = 14; }
+      c.fillStyle = fl ? col.amber : col.ink; c.fillRect(xL - 1, y - 2, cwid + 2, 4); c.restore();
+    }
+    const yOf = (pp) => { const m = Math.floor(pp), ff = pp - m; return m % 2 === 0 ? yM0 - Hc * ff : yM1 + Hc * ff; };
+
+    // photon path
+    if (moving) {
+      const xAt = (tt) => X(xmC - vpx * (t - tt));
+      if (S.tg.trail) {
+        c.save(); c.strokeStyle = col.amber; c.lineWidth = 1.8; c.globalAlpha = 0.85; c.lineJoin = 'round';
+        c.beginPath(); c.moveTo(xAt(tw), yOf(tw / g));
+        for (let m = Math.ceil(tw / g + 1e-9); m * g < t; m++) c.lineTo(xAt(m * g), m % 2 === 0 ? yM0 : yM1);
+        c.lineTo(xAt(t), yOf(p)); c.stroke(); c.restore();
+      }
+      if (S.tg.tri && vpx * g > 14) {
+        const tn = n * g, P0x = xAt(tn), P0y = n % 2 === 0 ? yM0 : yM1;
+        const P1x = X(xmC - vpx * (t - tn) + vpx * g), P1y = n % 2 === 0 ? yM1 : yM0;
+        c.save();
+        line(P0x, P0y, P1x, P1y, col.amber, 1.4, [5, 5], 0.9);
+        line(P0x, P0y, P1x, P0y, col.crim, 2, null, 0.9);
+        line(P1x, P0y, P1x, P1y, col.blue, 2, null, 0.9);
+        const sx = Math.sign(P0x - P1x) * 9, sy = Math.sign(P1y - P0y) * 9;
+        c.strokeStyle = col.ink2; c.lineWidth = 1; c.beginPath(); c.moveTo(P1x + sx, P0y); c.lineTo(P1x + sx, P0y + sy); c.lineTo(P1x, P0y + sy); c.stroke();
+        c.restore();
+        const lab = `italic 15px ${FONT_MATH}`;
+        halo('v·Δt', (P0x + P1x) / 2, P0y + (n % 2 === 0 ? 12 : -12), col.crim, lab, 'center');
+        halo('c·Δt₀', P1x + (dir > 0 ? 8 : -8), (P0y + P1y) / 2, col.blue, lab, dir > 0 ? 'left' : 'right');
+        const mx = (P0x + P1x) / 2, my = (P0y + P1y) / 2;
+        halo('c·Δt', mx - (dir > 0 ? 10 : -10), my - 4, col.amber, lab, dir > 0 ? 'right' : 'left');
+      }
+      photon(xAt(t), yOf(p));
+    } else {
+      line(xc, yM1, xc, yM0, col.amber, 1.4, [3, 4], 0.6);
+      if (S.tg.tri) halo('c·Δt₀', xR + 8, (yM0 + yM1) / 2, col.blue, `italic 15px ${FONT_MATH}`, 'left');
+      photon(xc, yOf(p));
+    }
+
+    // tick counter above the clock
+    {
+      const txt = String(Math.floor(tau));
+      c.font = `700 18px ${FONT_MONO}`; const tw0 = c.measureText(txt).width;
+      c.font = `500 10.5px ${FONT_MONO}`; const tw1 = c.measureText(tr('ticks')).width;
+      const bw = tw0 + tw1 + 22, bh = 24, bx = clamp(xL - 10 - bw, 4, W - bw - 4), by = (yM0 + yM1) / 2 - bh / 2;
+      c.save(); rrect(bx, by, bw, bh, 6); c.fillStyle = col.ink; c.fill(); c.restore();
+      c.fillStyle = col.paper; c.textBaseline = 'middle'; c.textAlign = 'left';
+      c.font = `700 18px ${FONT_MONO}`; c.fillText(txt, bx + 8, by + bh / 2 + 1);
+      c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = withAlpha(col.paper, 0.7); c.fillText(tr('ticks'), bx + 14 + tw0, by + bh / 2 + 2);
+      c.fillStyle = moving ? col.crim : col.blue; c.fillRect(bx, by + bh - 3, bw * (tau - Math.floor(tau)), 3);
+    }
+
+    // length bracket below the ground
+    {
+      const yb = yG + 22, xa = xc - len / 2, xb = xc + len / 2;
+      line(xa, yb - 6, xa, yb + 6, fc, 1.2); line(xb, yb - 6, xb, yb + 6, fc, 1.2);
+      if (len > 26) { arrow(xc, yb, xa + 1, yb, fc, 1.2, 6); arrow(xc, yb, xb - 1, yb, fc, 1.2, 6); }
+      else line(xa, yb, xb, yb, fc, 1.2);
+      const txt = moving ? `L = L₀/γ = ${flen(P.L0 * R.s)}` : `L₀ = ${flen(P.L0)}`;
+      pill(txt, xc, yb, fc, 'center');
+    }
+
+    // lane label
+    {
+      const name = kind === 'platform' ? tr('laneS') : tr('laneP');
+      const state = moving ? `${tr('moves')} ${dir > 0 ? '→' : '←'} ${speedTxt}` : tr('atRest');
+      halo(name, 12, y0 + 16, fc, `700 14px ${FONT_DISP}`, 'left');
+      c.font = `700 14px ${FONT_DISP}`; const w0 = c.measureText(name).width;
+      halo(state, 20 + w0, y0 + 16.5, col.ink3, `500 11.5px ${FONT_MONO}`, 'left');
+    }
+  }
+}
+
+/* ---------- scene 2: Minkowski diagram ---------- */
+function drawMinkowski() {
+  const c = ctx, W = cw, H = ch, u = S.t[2];
+  const v = minkView(), s = v.s;
+  const X = (x) => v.ox + x * s, Y = (ct) => v.oy - ct * s;
+  const b = AR.beta, g = AR.gamma;
+  const bo = S.view === 'S' ? b : -b;                 // velocity of the other frame in the drawing frame
+  const restC = S.view === 'S' ? col.blue : col.crim, othC = S.view === 'S' ? col.crim : col.blue;
+  const restN = S.view === 'S' ? ['x', 'ct'] : ['x′', 'ct′'], othN = S.view === 'S' ? ['x′', 'ct′'] : ['x', 'ct'];
+  const E = evDraw();
+
+  // lab grid
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.beginPath();
+  for (let x = Math.ceil(v.xMin); x <= v.xMax; x++) { const xx = Math.round(X(x)) + 0.5; c.moveTo(xx, 0); c.lineTo(xx, H); }
+  for (let y = Math.ceil(v.ctMin); y <= v.ctMax; y++) { const yy = Math.round(Y(y)) + 0.5; c.moveTo(0, yy); c.lineTo(W, yy); }
+  c.stroke();
+
+  // light cone wedges
+  const R0 = Math.max(v.xMax - v.xMin, v.ctMax - v.ctMin) * 2;
+  c.save(); c.fillStyle = withAlpha(col.amber, 0.07);
+  c.beginPath(); c.moveTo(X(0), Y(0)); c.lineTo(X(-R0), Y(R0)); c.lineTo(X(R0), Y(R0)); c.closePath(); c.fill();
+  c.beginPath(); c.moveTo(X(0), Y(0)); c.lineTo(X(-R0), Y(-R0)); c.lineTo(X(R0), Y(-R0)); c.closePath(); c.fill();
+  c.restore();
+
+  // invariant hyperbolae
+  if (S.tg.hyp) {
+    c.save(); c.strokeStyle = withAlpha(col.violet, 0.32); c.lineWidth = 1; c.setLineDash([4, 4]);
+    const K = Math.ceil(Math.max(v.xMax, -v.xMin, v.ctMax, -v.ctMin));
+    for (let k = 1; k <= K; k++) {
+      for (const sg of [1, -1]) {
+        c.beginPath();
+        for (let i = 0; i <= 120; i++) { const x = v.xMin + (v.xMax - v.xMin) * i / 120, ct = sg * Math.sqrt(k * k + x * x); i ? c.lineTo(X(x), Y(ct)) : c.moveTo(X(x), Y(ct)); }
+        c.stroke();
+        c.beginPath();
+        for (let i = 0; i <= 120; i++) { const ct = v.ctMin + (v.ctMax - v.ctMin) * i / 120, x = sg * Math.sqrt(k * k + ct * ct); i ? c.lineTo(X(x), Y(ct)) : c.moveTo(X(x), Y(ct)); }
+        c.stroke();
+      }
+    }
+    c.restore();
+    halo('c²t² − x² = 1', X(0) + 6, Y(1) - 9, col.violet, `italic 12px ${FONT_MATH}`, 'left');
+  }
+
+  // other-frame grid
+  const span = R0;
+  if (S.tg.gridP && Math.abs(bo) < 0.999) {
+    c.save(); c.strokeStyle = withAlpha(othC, 0.18); c.lineWidth = 1; c.beginPath();
+    for (let k = -30; k <= 30; k++) {
+      // constant ct_O = k: through (g bo k, g k), direction (1, bo)
+      let x0 = g * bo * k, y0 = g * k;
+      c.moveTo(X(x0 - span), Y(y0 - bo * span)); c.lineTo(X(x0 + span), Y(y0 + bo * span));
+      // constant x_O = k: through (g k, g bo k), direction (bo, 1)
+      x0 = g * k; y0 = g * bo * k;
+      c.moveTo(X(x0 - bo * span), Y(y0 - span)); c.lineTo(X(x0 + bo * span), Y(y0 + span));
+    }
+    c.stroke(); c.restore();
+  }
+
+  // light lines
+  line(X(-R0), Y(-R0), X(R0), Y(R0), col.amber, 1.6);
+  line(X(R0), Y(-R0), X(-R0), Y(R0), col.amber, 1.6);
+  { const lc = Math.min(v.ctMax, v.xMax) * 0.86; halo('x = ct', X(lc) - 8, Y(lc), col.amber, `500 11px ${FONT_MONO}`, 'right'); }
+
+  // rest axes
+  arrow(0, Y(0), W - 4, Y(0), restC, 1.8, 9);
+  arrow(X(0), H, X(0), 4, restC, 1.8, 9);
+  halo(restN[0], W - 10, Y(0) - 14, restC, `italic 17px ${FONT_MATH}`, 'right');
+  halo(restN[1], X(0) - 10, 14, restC, `italic 17px ${FONT_MATH}`, 'right');
+  c.fillStyle = col.ink3;
+  for (let x = Math.ceil(v.xMin); x <= v.xMax; x++) { if (!x) continue; line(X(x), Y(0) - 4, X(x), Y(0) + 4, restC, 1); if (x % 2 === 0) halo(fmt(x, 0), X(x), Y(0) + 13, col.ink3, `500 10.5px ${FONT_MONO}`, 'center'); }
+  for (let y = Math.ceil(v.ctMin); y <= v.ctMax; y++) { if (!y) continue; line(X(0) - 4, Y(y), X(0) + 4, Y(y), restC, 1); if (y % 2 === 0) halo(fmt(y, 0), X(0) - 8, Y(y), col.ink3, `500 10.5px ${FONT_MONO}`, 'right'); }
+
+  // other axes with hyperbola-calibrated ticks
+  {
+    arrow(X(-bo * span), Y(-span), X(bo * span), Y(span), othC, 2, 9);
+    arrow(X(-span), Y(-bo * span), X(span), Y(bo * span), othC, 2, 9);
+    // clip-aware labels for the axes near the canvas edge
+    const tTop = Math.min(v.ctMax - 0.4, (bo > 0 ? (v.xMax - 0.4) / bo : bo < 0 ? (v.xMin + 0.4) / bo : 1e9));
+    halo(othN[1], X(bo * tTop) + 10, Y(tTop) + 6, othC, `italic 17px ${FONT_MATH}`, 'left');
+    const xEnd = Math.min(v.xMax - 0.5, bo > 0 ? (v.ctMax - 0.4) / bo : bo < 0 ? (v.ctMin + 0.4) / bo : 1e9);
+    halo(othN[0], X(xEnd), Y(bo * xEnd) - 14, othC, `italic 17px ${FONT_MATH}`, 'right');
+    const ang = Math.atan(bo);
+    for (let k = -40; k <= 40; k++) {
+      if (!k) continue;
+      // ct_O axis tick at (g bo k, g k); perpendicular on screen to direction (bo, 1)
+      let px = X(g * bo * k), py = Y(g * k);
+      if (px > -5 && px < W + 5 && py > -5 && py < H + 5) {
+        const ca = Math.cos(ang), sa = Math.sin(ang);
+        line(px - 5 * ca, py - 5 * sa, px + 5 * ca, py + 5 * sa, othC, 1.5);
+        if (k > 0 && (k % 1 === 0)) halo(String(k), px + 8 * ca, py + 8 * sa, othC, `600 10.5px ${FONT_MONO}`, 'left');
+      }
+      px = X(g * k); py = Y(g * bo * k);
+      if (px > -5 && px < W + 5 && py > -5 && py < H + 5) {
+        const ca = Math.sin(ang), sa = Math.cos(ang);
+        line(px - 5 * ca, py - 5 * sa, px + 5 * ca, py + 5 * sa, othC, 1.5);
+        if (k > 0) halo(String(k), px + 2, py + 13, othC, `600 10.5px ${FONT_MONO}`, 'center');
+      }
+    }
+    // angle arc
+    if (Math.abs(bo) > 0.02) {
+      const r = 44, a0 = -Math.PI / 2, a1 = Math.atan2(-1, bo);
+      c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.2; c.beginPath(); c.arc(X(0), Y(0), r, Math.min(a0, a1), Math.max(a0, a1)); c.stroke();
+      c.beginPath(); c.arc(X(0), Y(0), r, Math.min(0, -Math.atan(bo)), Math.max(0, -Math.atan(bo))); c.stroke(); c.restore();
+      const am = (a0 + a1) / 2;
+      halo(`α = ${fmt(Math.atan(Math.abs(bo)) * DEG, 1)}°`, X(0) + Math.cos(am) * (r + 10) + (bo > 0 ? 4 : -4), Y(0) + Math.sin(am) * (r + 10), col.ink, `600 11.5px ${FONT_MONO}`, bo > 0 ? 'left' : 'right');
+    }
+  }
+
+  // simultaneity lines through events
+  if (S.tg.sim) {
+    for (const k of ['A', 'B']) {
+      const [x, ct] = E[k].r;
+      line(0, Y(ct), W, Y(ct), restC, 1, [2, 5], 0.7);
+      line(X(x - span), Y(ct - bo * span), X(x + span), Y(ct + bo * span), othC, 1.2, [6, 5], 0.75);
+    }
+  }
+
+  // "now" lines
+  if (S.tg.now) {
+    line(0, Y(u), W, Y(u), restC, 2.4, null, 0.9);
+    const x0 = g * bo * u, y0 = g * u;
+    line(X(x0 - span), Y(y0 - bo * span), X(x0 + span), Y(y0 + bo * span), othC, 2.4, null, 0.9);
+    // labels near the right edge
+    pill(S.view === 'S' ? tr('nowS') : tr('nowP'), W - 8, Y(u) - 12, restC, 'right', `600 11px ${FONT_BODY}`);
+    const xr = v.xMax - 2.2, yr = y0 + bo * (xr - x0);
+    if (yr > v.ctMin && yr < v.ctMax) pill(S.view === 'S' ? tr('nowP') : tr('nowS'), X(xr), Y(yr) + 14, othC, 'center', `600 11px ${FONT_BODY}`);
+    // observers riding their own time axes
+    c.save();
+    c.fillStyle = restC; c.beginPath(); c.arc(X(0), Y(u), 6, 0, Math.PI * 2); c.fill();
+    c.fillStyle = othC; c.beginPath(); c.arc(X(x0), Y(y0), 6, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+
+  // interval segment
+  {
+    const [ax, ay] = E.A.r, [bx, by] = E.B.r;
+    const dx = EV.B.x - EV.A.x, dct = EV.B.ct - EV.A.ct, kind = ivlKind(dct * dct - dx * dx);
+    const kc = kind === 'time' ? col.blue : kind === 'light' ? col.amber : col.violet;
+    line(X(ax), Y(ay), X(bx), Y(by), kc, 2.2, [1, 5]);
+  }
+
+  // projections and events
+  for (const k of ['A', 'B']) {
+    const [x, ct] = E[k].r;
+    const ex = X(x), ey = Y(ct);
+    // rest-frame projections
+    line(ex, ey, X(0), ey, restC, 1, [3, 3], 0.8);
+    line(ex, ey, ex, Y(0), restC, 1, [3, 3], 0.8);
+    // other-frame projections (parallel to the other axes)
+    const den = 1 - bo * bo;
+    if (den > 1e-6) {
+      const l1 = (bo * ct - x) / den, l2 = (bo * x - ct) / den;
+      line(ex, ey, X(x + l1), Y(ct + l1 * bo), othC, 1.2, [3, 3], 0.85);
+      line(ex, ey, X(x + l2 * bo), Y(ct + l2), othC, 1.2, [3, 3], 0.85);
+    }
+  }
+  for (const k of ['A', 'B']) {
+    const [x, ct] = E[k].r, [xo, cto] = E[k].o;
+    const ex = X(x), ey = Y(ct);
+    const passR = u >= ct, passO = u >= cto;
+    // pulses when a "now" line sweeps through the event
+    for (const [pv, cc] of [[u - ct, restC], [u - cto, othC]]) {
+      if (S.tg.now && pv >= 0 && pv < 0.6) { c.save(); c.globalAlpha = 1 - pv / 0.6; c.strokeStyle = cc; c.lineWidth = 2.5; c.beginPath(); c.arc(ex, ey, 11 + pv * 40, 0, Math.PI * 2); c.stroke(); c.restore(); }
+    }
+    c.save();
+    c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 6;
+    c.fillStyle = col.paper; c.beginPath(); c.arc(ex, ey, 12, 0, Math.PI * 2); c.fill(); c.restore();
+    c.save(); c.lineWidth = 3;
+    c.strokeStyle = S.tg.now && passR ? restC : withAlpha(col.ink3, 0.6); c.beginPath(); c.arc(ex, ey, 12, Math.PI / 2, Math.PI * 1.5); c.stroke();
+    c.strokeStyle = S.tg.now && passO ? othC : withAlpha(col.ink3, 0.6); c.beginPath(); c.arc(ex, ey, 12, -Math.PI / 2, Math.PI / 2); c.stroke();
+    c.restore();
+    c.fillStyle = col.ink; c.font = `800 13px ${FONT_DISP}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(k, ex, ey + 0.5);
+    const right = ex < W - 190;
+    const lx = right ? ex + 18 : ex - 18, al = right ? 'left' : 'right';
+    halo(`(${restN[0]}, ${restN[1]}) = (${fmt(x, 1)}; ${fmt(ct, 1)})`, lx, ey - 8, restC, `500 11px ${FONT_MONO}`, al);
+    halo(`(${othN[0]}, ${othN[1]}) = (${fmt(xo, 2)}; ${fmt(cto, 2)})`, lx, ey + 8, othC, `500 11px ${FONT_MONO}`, al);
+  }
+}
+
+/* ---------- scene 3: twin paradox ---------- */
+function drawTwins() {
+  const c = ctx, W = cw, H = ch;
+  if (!TW.ok) return;
+  const m = TW, t = S.t[3], D = m.D, T = m.T;
+  const padL = 46, padB = 30, padT = 24, padR = 16;
+  const wide = W >= 560;
+  const maxW = wide ? Math.max(W * 0.5, W - 400) : W - 150;
+  const s = Math.min((H - padT - padB) / (T * 1.02), (maxW - padL - padR) / (D * 1.22));
+  const X = (x) => padL + (x + 0.08 * D) * s, Y = (tt) => H - padB - tt * s;
+  const dW = padL + D * 1.22 * s + padR;
+  const q = twinAt(m, t);
+  const gs = (() => { const st = [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 2000, 5000, 1e4, 2e4, 5e4, 1e5]; for (const z of st) if (z * s >= 22) return z; return 2e5; })();
+
+  // grid
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.beginPath();
+  for (let yy = 0; yy <= T * 1.02; yy += gs) { const py = Math.round(Y(yy)) + 0.5; c.moveTo(X(-0.08 * D), py); c.lineTo(X(1.14 * D), py); }
+  const gx = (() => { const st = [0.5, 1, 2, 5, 10]; for (const z of st) if (z * s >= 26) return z; return 20; })();
+  for (let xx = 0; xx <= D * 1.14; xx += gx) { const px = Math.round(X(xx)) + 0.5; c.moveTo(px, Y(0)); c.lineTo(px, Y(T * 1.02)); }
+  c.stroke();
+  // axis labels
+  for (let yy = 0; yy <= T * 1.02; yy += gs) halo(fmt(yy, 0), X(-0.08 * D) - 6, Y(yy), col.ink3, `500 10.5px ${FONT_MONO}`, 'right');
+  for (let xx = 0; xx <= D * 1.14; xx += gx) halo(fmt(xx, gx < 1 ? 1 : 0), X(xx), Y(0) + 13, col.ink3, `500 10.5px ${FONT_MONO}`, 'center');
+  halo(tr('yearsAxis'), 6, 12, col.ink3, `500 11px ${FONT_MONO}`, 'left');
+  halo('x [ly]', dW - 6, Y(0) + 25, col.ink3, `500 11px ${FONT_MONO}`, 'right');
+  line(X(-0.08 * D), Y(0) + 0.5, X(1.14 * D), Y(0) + 0.5, col.ink2, 1.2);
+
+  // star worldline
+  line(X(D), Y(0), X(D), Y(T), col.amber, 1.6, [6, 5]);
+  halo(tr('star'), X(D), Y(T) - 12, col.amber, `600 11.5px ${FONT_BODY}`, 'center');
+
+  // signals
+  if (S.tg.sig && SIG) {
+    for (const sg of SIG.home) {
+      if (sg.ts > t) break;
+      const te = Math.min(t, sg.tr), done = t >= sg.tr;
+      line(X(0), Y(sg.ts), X(te - sg.ts), Y(te), col.blue, 1.2, null, done ? 0.55 : 0.95);
+      if (!done) { c.fillStyle = col.blue; c.beginPath(); c.arc(X(te - sg.ts), Y(te), 2.8, 0, Math.PI * 2); c.fill(); }
+      else { c.fillStyle = col.blue; c.beginPath(); c.arc(X(sg.xr), Y(sg.tr), 2.4, 0, Math.PI * 2); c.fill(); }
+    }
+    for (const sg of SIG.trav) {
+      if (sg.te > t) break;
+      const te = Math.min(t, sg.tr), done = t >= sg.tr;
+      const xe = sg.xe - (te - sg.te);
+      line(X(sg.xe), Y(sg.te), X(xe), Y(te), col.crim, 1.2, null, done ? 0.55 : 0.95);
+      c.fillStyle = col.crim; c.beginPath(); c.arc(X(xe), Y(te), done ? 2.4 : 2.8, 0, Math.PI * 2); c.fill();
+    }
+  }
+
+  // worldline previews
+  const N = 300;
+  c.save(); c.strokeStyle = withAlpha(col.crim, 0.35); c.lineWidth = 1.5; c.setLineDash([3, 5]); c.beginPath();
+  for (let i = 0; i <= N; i++) { const tt = T * i / N, p = twinAt(m, tt); i ? c.lineTo(X(p.x), Y(tt)) : c.moveTo(X(p.x), Y(tt)); }
+  c.stroke(); c.restore();
+  line(X(0), Y(0), X(0), Y(T), col.blue, 1.5, [3, 5], 0.4);
+  // drawn up to now
+  line(X(0), Y(0), X(0), Y(t), col.blue, 3.2);
+  c.save(); c.strokeStyle = col.crim; c.lineWidth = 3.2; c.lineJoin = 'round'; c.beginPath();
+  const Nn = Math.max(2, Math.ceil(N * t / T));
+  for (let i = 0; i <= Nn; i++) { const tt = t * i / Nn, p = twinAt(m, tt); i ? c.lineTo(X(p.x), Y(tt)) : c.moveTo(X(p.x), Y(tt)); }
+  c.stroke(); c.restore();
+
+  // proper-time ticks
+  if (SIG) {
+    const lab = Math.max(1, Math.ceil(16 / (SIG.step * s)));
+    let i = 0;
+    for (let yy = SIG.step; yy <= T + 1e-9; yy += SIG.step) {
+      i++; const on = yy <= t;
+      c.fillStyle = on ? col.blue : withAlpha(col.blue, 0.35); c.beginPath(); c.arc(X(0), Y(yy), 3.4, 0, Math.PI * 2); c.fill();
+    }
+    i = 0;
+    for (const sg of SIG.trav) {
+      i++; const on = sg.te <= t;
+      c.save(); c.fillStyle = on ? col.paper : withAlpha(col.paper, 0.5); c.strokeStyle = on ? col.crim : withAlpha(col.crim, 0.4); c.lineWidth = 2;
+      c.beginPath(); c.arc(X(sg.xe), Y(sg.te), 3.6, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+      if (on && i % lab === 0) halo(`τ=${fmt(sg.tau, 0)}`, X(sg.xe) + (sg.te < T / 2 ? 8 : -8), Y(sg.te), col.crim, `500 10px ${FONT_MONO}`, sg.te < T / 2 ? 'left' : 'right');
+    }
+  }
+  // turnaround mark
+  halo(tr('turn'), X(D) + 6, Y(T / 2), col.ink2, `500 10.5px ${FONT_BODY}`, 'left');
+
+  // traveller's simultaneity
+  if (S.tg.simT) {
+    const pairs = [];
+    const tA = Math.max(0, T / 2 - m.ta - 1e-7), tB = Math.min(T, T / 2 + m.ta + 1e-7);
+    for (const tt of [tA, tB]) { const p = twinAt(m, tt); pairs.push({ x: p.x, t: tt, th: tt - p.b * p.x }); }
+    for (const pr of pairs) line(X(pr.x), Y(pr.t), X(0), Y(pr.th), col.crim, 1, [2, 4], 0.45);
+    // jump bracket on Earth's axis
+    const y1 = Y(pairs[0].th), y2 = Y(pairs[1].th);
+    line(X(0) - 12, y1, X(0) - 12, y2, col.crim, 1.4, null, 0.7);
+    line(X(0) - 16, y1, X(0) - 8, y1, col.crim, 1.4, null, 0.7); line(X(0) - 16, y2, X(0) - 8, y2, col.crim, 1.4, null, 0.7);
+    if (Math.abs(y2 - y1) > 40) {
+      c.save(); c.translate(X(0) - 20, (y1 + y2) / 2); c.rotate(-Math.PI / 2);
+      halo(`${tr('simJump')} ${yrs(pairs[1].th - pairs[0].th, 1)}`, 0, 0, col.crim, `500 10.5px ${FONT_MONO}`, 'center');
+      c.restore();
+    }
+    if (t > 0 && t < T) {
+      const th = t - q.b * q.x;
+      line(X(q.x), Y(t), X(0), Y(th), col.crim, 1.6, [6, 4], 0.95);
+      c.fillStyle = col.crim; c.beginPath(); c.arc(X(0), Y(th), 3.5, 0, Math.PI * 2); c.fill();
+    }
+  }
+
+  // twins at now
+  c.save();
+  c.fillStyle = col.blue; c.beginPath(); c.arc(X(0), Y(t), 7, 0, Math.PI * 2); c.fill();
+  c.fillStyle = col.crim; c.beginPath(); c.arc(X(q.x), Y(t), 7, 0, Math.PI * 2); c.fill();
+  c.restore();
+  line(X(0), Y(t), X(q.x), Y(t), col.ink3, 1, [1, 3], 0.7);
+
+  // info pane
+  const x0 = dW + (wide ? 18 : 8), x1 = Math.min(W - 14, x0 + 400);
+  const pw = x1 - x0;
+  let y = wide ? 22 : 12;
+  // spatial view
+  {
+    const sx0 = x0 + 14, sx1 = x1 - 14, sy = y + 30;
+    const SX = (x) => sx0 + (sx1 - sx0) * x / D;
+    line(sx0, sy, sx1, sy, col.line, 2);
+    c.fillStyle = col.blue; c.beginPath(); c.arc(sx0, sy, 9, 0, Math.PI * 2); c.fill();
+    c.save(); c.translate(sx1, sy); c.fillStyle = col.amber; c.beginPath();
+    for (let i = 0; i < 8; i++) { const r = i % 2 ? 4 : 11, a = i * Math.PI / 4 - Math.PI / 2; i ? c.lineTo(Math.cos(a) * r, Math.sin(a) * r) : c.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+    c.closePath(); c.fill(); c.restore();
+    halo(tr('earth'), sx0, sy + 20, col.blue, `600 11px ${FONT_BODY}`, 'center');
+    halo(tr('star'), sx1, sy + 20, col.amber, `600 11px ${FONT_BODY}`, 'center');
+    halo(`D = ${fmt(D, 1)} ly`, (sx0 + sx1) / 2, sy + 20, col.ink3, `500 10.5px ${FONT_MONO}`, 'center');
+    if (S.tg.sig && SIG) {
+      for (const sg of SIG.home) { if (sg.ts <= t && t < sg.tr) { c.fillStyle = col.blue; c.beginPath(); c.arc(SX(t - sg.ts), sy - 7, 2.6, 0, Math.PI * 2); c.fill(); } }
+      for (const sg of SIG.trav) { if (sg.te <= t && t < sg.tr) { c.fillStyle = col.crim; c.beginPath(); c.arc(SX(sg.xe - (t - sg.te)), sy + 7, 2.6, 0, Math.PI * 2); c.fill(); } }
+    }
+    // rocket glyph
+    const rx = SX(q.x), dirr = q.b >= 0 ? 1 : -1;
+    c.save(); c.translate(rx, sy); c.scale(dirr, 1);
+    c.fillStyle = col.crim; c.beginPath(); c.moveTo(13, 0); c.lineTo(-8, -6); c.lineTo(-4, 0); c.lineTo(-8, 6); c.closePath(); c.fill();
+    if (Math.abs(q.b) > 0.01 && t < T) { c.fillStyle = col.amber; c.beginPath(); c.moveTo(-6, -2.5); c.lineTo(-15 - 6 * Math.abs(q.b), 0); c.lineTo(-6, 2.5); c.closePath(); c.fill(); }
+    c.restore();
+    y = sy + 40;
+  }
+  // age bars
+  const d = T > 100 ? 0 : 1;
+  const bars = [
+    { name: tr('homeTwin'), v: t, end: T, color: col.blue, rec: SIG ? SIG.trav.filter(z => z.tr <= t).length : 0, tot: SIG ? SIG.trav.length : 0 },
+    { name: tr('travTwin'), v: q.tau, end: m.tau, color: col.crim, rec: SIG ? SIG.home.filter(z => z.tr <= t).length : 0, tot: SIG ? SIG.home.length : 0 }
+  ];
+  for (const br of bars) {
+    halo(br.name, x0, y, col.ink2, `600 ${wide ? 12 : 10.5}px ${FONT_BODY}`, 'left');
+    y += 22;
+    c.font = `800 ${wide ? 26 : 19}px ${FONT_DISP}`; c.fillStyle = br.color; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.fillText(yrs(br.v, d), x0, y);
+    y += wide ? 22 : 18;
+    const bw = pw;
+    c.save(); rrect(x0, y - 4, bw, 8, 4); c.fillStyle = col.sunk; c.fill(); c.restore();
+    c.save(); rrect(x0, y - 4, Math.max(0, bw * br.v / T), 8, 4); c.fillStyle = br.color; c.fill(); c.restore();
+    line(x0 + bw * br.end / T, y - 7, x0 + bw * br.end / T, y + 7, br.color, 1.5);
+    y += 16;
+    if (S.tg.sig) halo(wide ? `${tr('received')}: ${br.rec} / ${br.tot}` : `↘ ${br.rec} / ${br.tot}`, x0, y, col.ink3, `500 10.5px ${FONT_MONO}`, 'left');
+    y += wide ? 28 : 20;
+  }
+  if (t >= T - 1e-9) {
+    c.save(); rrect(x0, y - 6, pw, wide ? 56 : 50, 10); c.fillStyle = col.ink; c.fill(); c.restore();
+    c.fillStyle = col.paper; c.font = `500 ${wide ? 12 : 10.5}px ${FONT_BODY}`; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.fillText(tr('younger'), x0 + 10, y + 9);
+    c.font = `800 ${wide ? 20 : 16}px ${FONT_DISP}`; c.fillText(yrs(T - m.tau, d), x0 + 10, y + 30);
+  } else if (wide && S.tg.sig) {
+    c.font = `500 11.5px ${FONT_BODY}`; c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'middle';
+    c.fillText(`k = ${fnum(m.k, 3)}`, x0, y + 4);
+  }
+}
+
+/* ---------- frame ---------- */
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  if (S.scene === 1) drawClockScene();
+  else if (S.scene === 2) drawMinkowski();
+  else drawTwins();
+}
+let lastT = performance.now();
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.playing && !S.drag) {
+    const [a, b] = range();
+    let t = S.t[S.scene];
+    if (t >= b - 1e-9) {
+      S.hold += dt;
+      if (S.tg.loop && S.hold > (S.scene === 3 ? 3 : 1.4)) { S.t[S.scene] = a; S.hold = 0; }
+      else if (!S.tg.loop) { S.playing = false; updateScrub(); }
+    } else {
+      t = Math.min(b, t + dt * S.speed * rate());
+      S.t[S.scene] = t;
+    }
+    updateHud(); updateScrub(); dirty = true;
+    if (S.scene === 3 && S.chartTab === 'twin') chartDirty = true;
+  }
+  if (dirty) { drawScene(); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- pointer: dragging events in scene 2 ---------- */
+function pointerPos(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function hitEvent(px, py) {
+  if (S.scene !== 2) return null;
+  const v = minkView(), E = evDraw();
+  let best = null, bd = 26;
+  for (const k of ['A', 'B']) { const d = Math.hypot(v.ox + E[k].r[0] * v.s - px, v.oy - E[k].r[1] * v.s - py); if (d < bd) { bd = d; best = k; } }
+  return best;
+}
+cv.addEventListener('pointerdown', (e) => {
+  const [px, py] = pointerPos(e);
+  const k = hitEvent(px, py);
+  if (k) { S.drag = k; try { cv.setPointerCapture(e.pointerId); } catch (er) {} cv.style.cursor = 'grabbing'; e.preventDefault(); return; }
+  if (S.scene !== 2) togglePlay();
+});
+cv.addEventListener('pointermove', (e) => {
+  const [px, py] = pointerPos(e);
+  if (!S.drag) { cv.style.cursor = hitEvent(px, py) ? 'grab' : (S.scene === 2 ? 'default' : 'pointer'); return; }
+  const v = minkView();
+  const xr = clamp(Math.round((px - v.ox) / v.s * 10) / 10, v.xMin + 0.3, v.xMax - 0.3);
+  const cr = clamp(Math.round((v.oy - py) / v.s * 10) / 10, v.ctMin + 0.3, v.ctMax - 0.3);
+  if (S.view === 'S') { EV[S.drag].x = xr; EV[S.drag].ct = cr; }
+  else { const l = lorentz(-AR.beta, AR.gamma, xr, cr); EV[S.drag].x = l[0]; EV[S.drag].ct = l[1]; }
+  updateEvents(); updateFormulas(); updateHud(true); dirty = true;
+});
+const endDrag = () => { if (S.drag) { S.drag = null; cv.style.cursor = 'grab'; updateScrub(); } };
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 270, chartGeom = null;
+function sampleBeta(x0, x1) {
+  const xs = [];
+  for (let i = 0; i <= 300; i++) xs.push(x0 + (x1 - x0) * i / 300);
+  for (let j = 1; j <= 80; j++) { const x = 1 - Math.pow(10, -j / 16); if (x > x0 && x < x1) xs.push(x); }
+  return xs.sort((a, b) => a - b);
+}
+function chartSpec() {
+  const tab = S.chartTab;
+  const bnow = R.beta;
+  if (tab === 'gamma') {
+    const gam = (x) => 1 / Math.sqrt((1 - x) * (1 + x));
+    return {
+      x0: 0, x1: 1, y0: 1, y1: 100, log: true, yTicks: [1, 2, 5, 10, 20, 50, 100], xLab: 'β', yLab: 'γ',
+      series: [{ name: tr('cGamma'), color: col.crim, xs: sampleBeta(0, 0.99995), f: gam, w: 2.4 }],
+      cursor: bnow, curY: [{ y: R.gamma, color: col.crim }],
+      tip: (x) => [`β = ${fmt(x, 4)}`, [col.crim, `γ = ${fnum(gam(x), 5)}`], [col.ink3, `1/γ = ${fnum(1 / gam(x), 4)}`]],
+      legend: [[col.crim, tr('cGamma')]], note: tr('cnGamma')
+    };
+  }
+  if (tab === 'factor') {
+    const f = (x) => Math.sqrt((1 - x) * (1 + x));
+    return {
+      x0: 0, x1: 1, y0: 0, y1: 1, yTicks: [0, 0.2, 0.4, 0.6, 0.8, 1], xLab: 'β', yLab: 'L/L₀',
+      series: [{ name: tr('cFactor'), color: col.crim, xs: sampleBeta(0, 1), f, w: 2.4 }, { name: '1', color: col.ink3, xs: [0, 1], f: () => 1, dash: [5, 5], w: 1.2 }],
+      cursor: bnow, curY: [{ y: R.s, color: col.crim }],
+      tip: (x) => [`β = ${fmt(x, 4)}`, [col.crim, `1/γ = ${fnum(f(x), 4)}`], [col.ink3, `γ = ${fnum(1 / f(x), 4)}`]],
+      legend: [[col.crim, tr('cFactor')]], note: tr('cnFactor')
+    };
+  }
+  if (tab === 'energy') {
+    const g = (x) => 1 / Math.sqrt((1 - x) * (1 + x));
+    const ek = (x) => x * x / (Math.sqrt((1 - x) * (1 + x)) * (1 + Math.sqrt((1 - x) * (1 + x)))) * ME_MEV;
+    const xm = 0.995;
+    return {
+      x0: 0, x1: xm, y0: 0, y1: 6, yTicks: [0, 1, 2, 3, 4, 5, 6], xLab: 'β', yLab: 'MeV',
+      series: [
+        { name: tr('cEkRel'), color: col.crim, xs: sampleBeta(0, xm), f: ek, w: 2.4 },
+        { name: tr('cEkCl'), color: col.crim, xs: sampleBeta(0, xm), f: (x) => 0.5 * x * x * ME_MEV, dash: [6, 5], w: 1.6 },
+        { name: tr('cpRel'), color: col.blue, xs: sampleBeta(0, xm), f: (x) => g(x) * x * ME_MEV, w: 2.4 },
+        { name: tr('cpCl'), color: col.blue, xs: sampleBeta(0, xm), f: (x) => x * ME_MEV, dash: [6, 5], w: 1.6 }
+      ],
+      cursor: Math.min(bnow, xm), curY: [{ y: R.gm1 * ME_MEV, color: col.crim }, { y: R.gamma * R.beta * ME_MEV, color: col.blue }],
+      tip: (x) => [`β = ${fmt(x, 4)}`, [col.crim, `Eₖ = ${fnum(ek(x), 4)} MeV`], [col.crim, `½mv² = ${fnum(0.5 * x * x * ME_MEV, 4)} MeV`], [col.blue, `pc = ${fnum(g(x) * x * ME_MEV, 4)} MeV`], [col.blue, `mvc = ${fnum(x * ME_MEV, 4)} MeV`]],
+      legend: [[col.crim, tr('cEkRel')], [col.crim, tr('cEkCl'), true], [col.blue, tr('cpRel')], [col.blue, tr('cpCl'), true]], note: tr('cnEnergy')
+    };
+  }
+  // twin ages
+  if (!TW.ok) return { empty: true, legend: [], note: tr('noTrip') };
+  const m = TW, xs = [];
+  for (let i = 0; i <= 300; i++) xs.push(m.T * i / 300);
+  const step = m.T > 40 ? (m.T > 400 ? 100 : 10) : m.T > 10 ? 2 : 1;
+  const yt = []; for (let y = 0; y <= m.T * 1.05; y += step) yt.push(y);
+  return {
+    x0: 0, x1: m.T, y0: 0, y1: m.T * 1.05, yTicks: yt, xLab: tr('yearsAxis'), yLab: tr('ageAxis'),
+    series: [{ name: tr('cHome'), color: col.blue, xs, f: (x) => x, w: 2.4 }, { name: tr('cTrav'), color: col.crim, xs, f: (x) => twinAt(m, x).tau, w: 2.4 }],
+    cursor: S.t[3], curY: null,
+    tip: (x) => [`t = ${fmt(x, 2)}`, [col.blue, `${tr('cHome')}: ${fmt(x, 2)}`], [col.crim, `${tr('cTrav')}: ${fmt(twinAt(m, x).tau, 2)}`]],
+    legend: [[col.blue, tr('cHome')], [col.crim, tr('cTrav')]], note: tr('cnTwin'), xIsTime: true
+  };
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.clearRect(0, 0, W, H);
+  const sp = chartSpec();
+  $('#clegend').innerHTML = sp.legend.map(([cl, n, d]) => `<span><i class="sw-line" style="border-top:2.5px ${d ? 'dashed' : 'solid'} ${cl}"></i>${n}</span>`).join('');
+  $('#cnote').innerHTML = sp.note;
+  if (sp.empty) { chartGeom = null; return; }
+  const yf = sp.log ? Math.log10 : (v) => v;
+  const ly0 = yf(sp.y0), ly1 = yf(sp.y1);
+  c.font = `500 11px ${FONT_MONO}`;
+  const ylab = (v) => (sp.log ? fmt(v, 0) : fmt(v, Number.isInteger(v) ? 0 : 1));
+  let labW = 0; for (const v of sp.yTicks) labW = Math.max(labW, c.measureText(ylab(v)).width);
+  const L = labW + 14, Rr = 14, T = 20, Bb = 28, pw = W - L - Rr, ph = H - T - Bb;
+  const X = (x) => L + (x - sp.x0) / (sp.x1 - sp.x0) * pw;
+  const Y = (v) => T + (1 - (yf(Math.max(v, sp.log ? sp.y0 * 0.5 : -1e9)) - ly0) / (ly1 - ly0)) * ph;
+  chartGeom = { L, pw, sp, X, Y, T, ph };
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (const v of sp.yTicks) { const yy = Math.round(Y(v)) + 0.5; c.setLineDash([2, 3]); c.beginPath(); c.moveTo(L, yy); c.lineTo(W - Rr, yy); c.stroke(); c.setLineDash([]); c.fillText(ylab(v), L - 8, yy); }
+  // x ticks
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  let xt;
+  if (sp.xIsTime) { const st = (() => { for (const z of [1, 2, 5, 10, 20, 50, 100, 200, 500, 1000, 1e4, 1e5]) if (sp.x1 / z <= 7) return z; return 1e6; })(); xt = []; for (let x = 0; x <= sp.x1 + 1e-9; x += st) xt.push(x); }
+  else xt = [0, 0.2, 0.4, 0.6, 0.8, 1].filter(x => x <= sp.x1 + 1e-9);
+  for (const x of xt) c.fillText(fmt(x, sp.xIsTime ? 0 : 1), X(x), H - Bb + 8);
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, T + ph + 0.5); c.lineTo(W - Rr, T + ph + 0.5); c.stroke();
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.font = `italic 13px ${FONT_MATH}`; c.fillText(sp.yLab, 2, 0);
+  c.textAlign = 'right'; c.font = sp.xIsTime ? `500 11px ${FONT_MONO}` : `italic 14px ${FONT_MATH}`; c.fillText(sp.xLab, W - Rr, H - 14);
+  // series
+  c.save(); c.beginPath(); c.rect(L, T - 2, pw, ph + 4); c.clip();
+  for (const s of sp.series) {
+    c.beginPath();
+    s.xs.forEach((x, i) => { const yy = Y(s.f(x)); i ? c.lineTo(X(x), yy) : c.moveTo(X(x), yy); });
+    c.strokeStyle = s.color; c.lineWidth = s.w || 2; c.lineJoin = 'round'; c.setLineDash(s.dash || []); c.stroke(); c.setLineDash([]);
+  }
+  c.restore();
+  // cursor (synced with the animation or the current beta)
+  const hov = S.hoverX;
+  const cur = hov != null ? hov : sp.cursor;
+  if (cur != null) {
+    const xc = clamp(cur, sp.x0, sp.x1), xx = Math.round(X(xc)) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    const pts = hov != null || !sp.curY ? sp.series.filter(s => !s.dash || hov != null).map(s => ({ y: s.f(xc), color: s.color })) : sp.curY;
+    for (const p of pts) {
+      let yy = Y(p.y); const over = p.y > sp.y1;
+      if (over) yy = T + 2;
+      c.save(); c.fillStyle = p.color; c.strokeStyle = col.surface; c.lineWidth = 2;
+      c.beginPath(); c.arc(xx, yy, 5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+      if (over) { c.fillStyle = p.color; c.font = `600 11px ${FONT_MONO}`; c.textAlign = 'right'; c.textBaseline = 'top'; c.fillText(`↑ ${sp.log ? 'γ = ' + fmtGamma(R) : fnum(p.y, 3)}`, xx - 8, T + 6); }
+    }
+  }
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom, sp = g.sp;
+  if (x < g.L || x > g.L + g.pw) { S.hoverX = null; tip.hidden = true; chartDirty = true; return; }
+  let xv = sp.x0 + (x - g.L) / g.pw * (sp.x1 - sp.x0);
+  if (!sp.xIsTime) xv = Math.min(xv, 0.99995);
+  S.hoverX = xv;
+  const rows = sp.tip(xv);
+  tip.innerHTML = `<div>${rows[0]}</div>` + rows.slice(1).map(([cl, s]) => `<div class="row"><i class="k" style="background:${cl}"></i>${s}</div>`).join('');
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverX = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- wiring ---------- */
+function setScene(n) {
+  S.scene = n; S.hold = 0;
+  $$('#scenes button').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.scene === n)));
+  if (n === 3 && S.chartTab !== 'twin') setTab('twin');
+  else if (n !== 3 && S.chartTab === 'twin') setTab('gamma');
+  if (n === 2 && S.t[2] === 0) S.t[2] = range(2)[0] + (reduceMotion ? (range(2)[1] - range(2)[0]) * 0.55 : 0);
+  if (n === 3 && reduceMotion && S.t[3] === 0 && TW.ok) S.t[3] = TW.T;
+  buildToggles(); updatePanel(); updateLegend(); updateHud(true); updateScrub(); updateNote();
+  cv.setAttribute('aria-label', tr('sc' + n));
+  dirty = true; chartDirty = true;
+}
+function setTab(tab) {
+  S.chartTab = tab; S.hoverX = null; tip.hidden = true;
+  $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === tab))); chartDirty = true;
+}
+$$('#scenes button').forEach(b => b.addEventListener('click', () => setScene(+b.dataset.scene)));
+$('#beta').addEventListener('input', (e) => setBeta(+e.target.value));
+['L0', 'dt0', 'D', 'acc'].forEach(id => $('#' + id).addEventListener('input', recompute));
+$('#accel').addEventListener('change', recompute);
+$('#pause').addEventListener('click', togglePlay);
+$('#reset').addEventListener('click', restart);
+$('#step-back').addEventListener('click', () => seek(S.t[S.scene] - stepSize()));
+$('#step-fwd').addEventListener('click', () => seek(S.t[S.scene] + stepSize()));
+$('#scrub').addEventListener('input', (e) => { const [a, b] = range(); seek(a + (b - a) * +e.target.value / 1000); });
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+function setView(vw) {
+  S.view = vw; $$('#frame button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.view === vw)));
+  updateHud(true); updateScrub(); dirty = true;
+}
+$$('#frame button').forEach(b => b.addEventListener('click', () => setView(b.dataset.view)));
+$$('#tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+$('#reset-ev').addEventListener('click', () => { EV.A = { ...EV0.A }; EV.B = { ...EV0.B }; updateEvents(); updateFormulas(); updateHud(true); dirty = true; });
+$('#set-frame').addEventListener('click', (e) => {
+  const tg = +e.currentTarget.dataset.target;
+  if (!(tg >= 0 && tg <= 0.995)) return;
+  $('#beta').value = tg; setBeta(tg);
+});
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+}
+fsBtn.addEventListener('click', toggleFs);
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePlay(); return; }
+  if (tag === 'input') return;
+  const nudge = (d) => { const nb = clamp(Math.round((Math.min(R.beta, 0.995) + d) * 1000) / 1000, 0, 0.995); $('#beta').value = nb; setBeta(nb); e.preventDefault(); };
+  if (e.key === 'ArrowRight') nudge(e.shiftKey ? 0.001 : 0.01);
+  else if (e.key === 'ArrowLeft') nudge(e.shiftKey ? -0.001 : -0.01);
+  else if (e.key === '1' || e.key === '2' || e.key === '3') setScene(+e.key);
+  else if (e.key === 'v' || e.key === 'V') { if (S.scene !== 3) setView(S.view === 'S' ? 'P' : 'S'); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+  else if (e.key === ',') seek(S.t[S.scene] - stepSize());
+  else if (e.key === '.') seek(S.t[S.scene] + stepSize());
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#scrub').setAttribute('aria-label', tr('timeline'));
+  $('#fs').setAttribute('aria-label', tr('fullscreen'));
+  $('.cscale').innerHTML = `<span>0</span><span>${lang === 'pl' ? '0,5' : '0.5'} c</span><span>c</span>`;
+  pauseIcon = null;
+  buildPresets(); buildToggles(); recompute();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('sr-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readTokens(); updateLegend(); });
+new MutationObserver(() => { readTokens(); updateLegend(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+new ResizeObserver(resize).observe(box);
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+
+readTokens();
+resize();
+if (reduceMotion) S.t[1] = 6.5;
+applyLang();
+setScene(1);
+// expose the pure model for offline checks (harmless in the page)
+window.__sr = { rel, twinModel, twinAt, twinSignals };
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>

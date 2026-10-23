@@ -1,0 +1,2195 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Orbity</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: mission console. A deep-space stage (dark in both themes) with telemetry above and a transport
+   bar below, launch controls on the right, the three Kepler laws as switchable cards, then live formulas and plots. */
+:root{
+  --bg:#E7EAF1; --surface:#F7F8FB; --paper:#FCFCFE; --sunk:#ECEFF5;
+  --ink:#121A2C; --ink-2:#465068; --ink-3:#7B849A; --line:#CDD3DF;
+  --grid:#E3E7EF; --grid-major:#C9D0DD;
+  --crimson:#E41C55; --blue:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF; --on-accent:#FFFFFF;
+  --shadow:0 1px 0 rgba(18,26,44,.04), 0 8px 24px -12px rgba(18,26,44,.2);
+  /* deep-space stage: one committed dark look, identical in both themes */
+  --sp-bg:#050912; --sp-surface:#0B1222; --sp-paper:#0F172B; --sp-sunk:#141D35;
+  --sp-ink:#E7EDF8; --sp-ink-2:#A3B0C6; --sp-ink-3:#637190; --sp-line:#1F2B46; --sp-grid:#16223B;
+  --sp-crimson:#FF4D7A; --sp-blue:#5AA8FF; --sp-amber:#F0A04A; --sp-violet:#A396FF;
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#080B14; --surface:#0F1424; --paper:#0C111F; --sunk:#151B2E;
+    --ink:#E6EAF4; --ink-2:#A6AEC2; --ink-3:#6D768C; --line:#232B42;
+    --grid:#151C30; --grid-major:#222B44;
+    --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080B14; --surface:#0F1424; --paper:#0C111F; --sunk:#151B2E;
+  --ink:#E6EAF4; --ink-2:#A6AEC2; --ink-3:#6D768C; --line:#232B42;
+  --grid:#151C30; --grid-major:#222B44;
+  --crimson:#EE3A68; --blue:#4E9DFF; --amber:#BD7A2A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 56px); line-height:.98; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.28em}
+.brand h1 svg{width:1.05em; height:.66em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage: re-scopes the page tokens to the space palette, so every control inside turns dark */
+.stage{--surface:var(--sp-surface); --paper:var(--sp-paper); --sunk:var(--sp-sunk); --ink:var(--sp-ink); --ink-2:var(--sp-ink-2);
+  --ink-3:var(--sp-ink-3); --line:var(--sp-line); --crimson:var(--sp-crimson); --blue:var(--sp-blue); --amber:var(--sp-amber); --violet:var(--sp-violet);
+  color-scheme:dark; color:var(--ink); display:flex; flex-direction:column; overflow:hidden; border-color:var(--sp-line)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt.w{font-family:var(--f-mono); font-style:normal; font-size:11px; letter-spacing:.06em}
+.hud dd{margin:0; font-size:13.5px; min-width:7.6ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.hud dd.short{min-width:2ch}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-line{display:inline-block; width:22px; height:0; border-top:2.5px solid var(--crimson)}
+.sw-line.dash{border-top:2px dashed var(--ink-2)}
+.sw-sect{display:inline-block; width:18px; height:10px; border-radius:2px; background:linear-gradient(90deg, color-mix(in srgb, var(--crimson) 45%, transparent) 50%, color-mix(in srgb, var(--blue) 45%, transparent) 50%)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="play"]{border-color:var(--blue); color:var(--blue)}
+.state[data-s="pause"], .state[data-s="aim"]{border-color:var(--amber); color:var(--amber)}
+.state[data-s="impact"]{background:var(--crimson); border-color:var(--crimson); color:var(--on-accent)}
+.state[data-s="escape"]{background:var(--violet); border-color:var(--violet); color:var(--on-accent)}
+.state[data-s="done"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(380px, 64vh, 720px); background:var(--sp-bg)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.badge{position:absolute; left:12px; top:12px; display:inline-flex; align-items:baseline; gap:9px; padding:6px 12px 6px 10px; border-radius:999px;
+  background:color-mix(in srgb, var(--sp-paper) 84%, transparent); border:1px solid var(--line); pointer-events:none; max-width:calc(100% - 24px)}
+.badge .dot{width:9px; height:9px; border-radius:50%; background:var(--kc, var(--blue)); align-self:center; box-shadow:0 0 10px var(--kc, var(--blue))}
+.badge b{font-family:var(--f-display); font-weight:700; font-size:15px; letter-spacing:-.005em; white-space:nowrap}
+.badge span:last-child{font-family:var(--f-mono); font-size:12px; color:var(--ink-2); white-space:nowrap}
+.hint{position:absolute; right:12px; top:12px; max-width:min(300px, 46%); font-size:12px; line-height:1.4; color:var(--ink-2); padding:7px 11px; border-radius:10px;
+  background:color-mix(in srgb, var(--sp-paper) 84%, transparent); border:1px dashed var(--line); pointer-events:none; transition:opacity .4s}
+.hint.gone{opacity:0}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--crimson)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:15ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+.bar{display:flex; align-items:center; gap:10px 12px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--crimson); color:var(--on-accent); padding:9px 18px 9px 14px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:16.5px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--crimson); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn.accent{border-color:var(--amber); color:var(--amber)}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.warp{font-family:var(--f-mono); font-size:12px; color:var(--ink-3); white-space:nowrap}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--crimson); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+
+/* Kepler laws strip */
+.laws{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:12px}
+.law{--lc:var(--violet); text-align:left; border:1px solid var(--line); background:var(--surface); border-radius:var(--r); padding:12px 14px 13px; display:flex; flex-direction:column; gap:6px; cursor:pointer; box-shadow:var(--shadow); min-width:0; color:var(--ink); transition:border-color .15s, box-shadow .15s}
+.law:hover{border-color:var(--ink-3)}
+.law .lh{display:flex; align-items:baseline; gap:10px}
+.law .num{font-family:var(--f-display); font-weight:800; font-size:30px; line-height:1; letter-spacing:-.02em; color:var(--lc); transition:opacity .15s}
+.law .tt{font-family:var(--f-mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3)}
+.law .ind{margin-left:auto; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3); border:1px solid var(--line); border-radius:999px; padding:1px 8px; white-space:nowrap}
+.law p{margin:0; font-size:13px; color:var(--ink-2); line-height:1.4}
+.law .live{font-family:var(--f-mono); font-size:12px; color:var(--ink); font-variant-numeric:tabular-nums; line-height:1.5}
+.law[aria-pressed="true"]{border-color:var(--lc); box-shadow:inset 0 0 0 1px var(--lc), var(--shadow)}
+.law[aria-pressed="true"] .ind{border-color:var(--lc); color:var(--lc)}
+.law[aria-pressed="false"] .num{opacity:.38}
+.law.l2{--lc:var(--crimson)}
+.law.l3{--lc:var(--amber)}
+.law[aria-disabled="true"]{opacity:.55; cursor:default}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.verdict{display:flex; gap:10px 14px; align-items:center; flex-wrap:wrap; padding:10px 12px; border-radius:10px; background:var(--sunk)}
+.tchip{--kc:var(--blue); display:inline-flex; gap:8px; align-items:center; padding:4px 12px 4px 10px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:15px; border:1.5px solid var(--kc); color:var(--kc); white-space:nowrap}
+.tchip::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--kc)}
+.verdict p{margin:0; font-size:14px; color:var(--ink-2); flex:1; min-width:220px}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:480px}
+.res th, .res td{padding:7px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res thead th:first-child, .res tbody th{text-align:left}
+.res tbody th{font-weight:500; color:var(--ink-2)}
+.res tbody th i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.res td{font-family:var(--f-mono); font-size:14px}
+.res td.note{color:var(--ink-3); font-family:var(--f-body); font-size:13px; text-align:left}
+.res td.note i{font-family:var(--f-math); font-size:15px}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl.off{opacity:.42}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pill i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); text-align:right}
+.ctl .hint2{font-size:11.5px; color:var(--ink-3)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]:disabled{cursor:default}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2; text-align:left}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.scen{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.scen .chip{padding:8px 10px; min-width:0}
+.scen .chip span{font-family:var(--f-display); font-weight:700; font-size:14px; color:var(--ink)}
+.scen .chip small{font-family:var(--f-body); font-size:11.5px; margin-top:2px}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.ruler{position:relative; height:30px; margin:2px 9px 0}
+.ruler .band{position:absolute; left:0; right:0; top:3px; height:7px; border-radius:4px}
+.ruler .tk{position:absolute; top:0; transform:translateX(-50%); font-family:var(--f-math); font-style:italic; font-size:13px; color:var(--ink); padding-top:13px; line-height:1}
+.ruler .tk::before{content:""; position:absolute; left:50%; top:0; width:2px; height:12px; background:var(--ink); transform:translateX(-50%); border-radius:1px}
+.ruler .tk sub{font-size:9.5px; font-style:normal}
+.rleg{display:flex; gap:4px 12px; flex-wrap:wrap; font-size:11.5px; color:var(--ink-3)}
+.rleg span{display:inline-flex; align-items:center; gap:5px}
+.rleg i{width:9px; height:9px; border-radius:2px; display:inline-block}
+.keys{margin:12px 0 0; font-size:11.5px; color:var(--ink-3); line-height:1.6}
+.keys kbd{font-family:var(--f-mono); font-size:10.5px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 4px; color:var(--ink-2); background:var(--paper)}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:6px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:15.5px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--crimson); font-family:var(--f-mono); font-size:14.5px; font-weight:500; font-style:normal}
+.eq .r.b{color:var(--blue)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.ctabs{display:flex; gap:8px; flex-wrap:wrap; align-items:center; justify-content:space-between}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); flex-wrap:wrap}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.clegend .mk{width:10px; height:10px; border-radius:50%; display:inline-block}
+.chart-box{position:relative; height:280px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 760px){
+  .laws{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:1 / 1.05; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .hint{display:none}
+  .scen{grid-template-columns:minmax(0,1fr)}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .law, .hint, .law .num{transition:none}
+}
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Grawitacja · pracownia orbit</span>
+      <h1>
+        <svg viewBox="0 0 66 42" aria-hidden="true"><ellipse cx="33" cy="21" rx="30" ry="17" fill="none" stroke="var(--violet)" stroke-width="3" stroke-dasharray="1.5 6.5" stroke-linecap="round"/><circle cx="17" cy="21" r="6.5" fill="var(--blue)"/><circle cx="63" cy="21" r="3.6" fill="var(--crimson)"/></svg>
+        <span data-i18n="title">Orbity i prawa Keplera</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Wystrzel satelitę z dowolnego miejsca i zobacz trzy prawa Keplera w działaniu. Od kuli armatniej, która spada, przez orbitę zamkniętą, aż po ucieczkę z pola grawitacji.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>t</dt><dd id="hud-t">0</dd></div>
+            <div><dt>h</dt><dd id="hud-h">0</dd></div>
+            <div><dt>r</dt><dd id="hud-r">0</dd></div>
+            <div><dt>|v|</dt><dd id="hud-v">0</dd></div>
+            <div><dt>ε</dt><dd id="hud-e">0</dd></div>
+            <div><dt class="w" data-i18n="lap">okr.</dt><dd class="short" id="hud-lap">0</dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="scene" aria-label="Orbita satelity"></canvas>
+          <div class="badge" id="badge"><span class="dot"></span><b id="badge-t">Elipsa</b><span id="badge-e"></span></div>
+          <div class="hint" id="hint"></div>
+        </div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="fire">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="fire-l">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn accent" id="salvo" hidden><span data-i18n="salvo">Salwa</span></button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+            <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
+          </div>
+          <span class="warp" id="warp"></span>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-vectors" aria-pressed="true" data-i18n="vectors">Wektory</button>
+            <button type="button" class="tg" id="tg-conic" aria-pressed="true" data-i18n="conic">Orbita z elementów</button>
+            <button type="button" class="tg" id="tg-trails" aria-pressed="false" data-i18n="trails">Ślady</button>
+          </div>
+          <button type="button" class="btn" id="clear" hidden><span data-i18n="clear">Wyczyść ślady</span></button>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Domyślne</span>
+          </button>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+
+      <section class="laws" aria-label="Prawa Keplera">
+        <button type="button" class="law l1" id="law1" aria-pressed="true">
+          <span class="lh"><span class="num">I</span><span class="tt" data-i18n="law1T">Prawo elips</span><span class="ind" id="law1-ind"></span></span>
+          <p data-i18n="law1S"></p>
+          <span class="live" id="law1-live"></span>
+        </button>
+        <button type="button" class="law l2" id="law2" aria-pressed="true">
+          <span class="lh"><span class="num">II</span><span class="tt" data-i18n="law2T">Prawo pól</span><span class="ind" id="law2-ind"></span></span>
+          <p data-i18n="law2S"></p>
+          <span class="live" id="law2-live"></span>
+        </button>
+        <button type="button" class="law l3" id="law3" aria-pressed="false">
+          <span class="lh"><span class="num">III</span><span class="tt" data-i18n="law3T">Prawo okresów</span><span class="ind" id="law3-ind"></span></span>
+          <p data-i18n="law3S"></p>
+          <span class="live" id="law3-live"></span>
+        </button>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Parametry orbity</h2><p data-i18n="resultsSub"></p></div>
+        <div class="verdict"><span class="tchip" id="tchip">Elipsa</span><p id="verdict"></p></div>
+        <div class="tbl-wrap">
+          <table class="res">
+            <thead><tr><th data-i18n="colQ">Wielkość</th><th data-i18n="colV">Wartość</th><th style="text-align:left" data-i18n="colN">Uwagi</th></tr></thead>
+            <tbody id="res-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gScen">Scenariusz</h3>
+        <div class="scen" id="scen">
+          <button type="button" class="chip" id="sc-kepler" data-scen="kepler" aria-pressed="true"><span data-i18n="scKepler">Prawa Keplera</span><small data-i18n="scKeplerS"></small></button>
+          <button type="button" class="chip" id="sc-cannon" data-scen="cannon" aria-pressed="false"><span data-i18n="scCannon">Działo Newtona</span><small data-i18n="scCannonS"></small></button>
+          <button type="button" class="chip" id="sc-hohmann" data-scen="hohmann" aria-pressed="false"><span data-i18n="scHohmann">Transfer Hohmanna</span><small data-i18n="scHohmannS"></small></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" style="--c:var(--violet)">
+        <h3 data-i18n="gBody">Ciało centralne</h3>
+        <div class="chips" id="bodies">
+          <button type="button" class="chip" id="b-earth" data-body="earth" aria-pressed="true"><span data-i18n="earth">Ziemia</span><small></small></button>
+          <button type="button" class="chip" id="b-moon" data-body="moon" aria-pressed="false"><span data-i18n="moon">Księżyc</span><small></small></button>
+          <button type="button" class="chip" id="b-mars" data-body="mars" aria-pressed="false"><span data-i18n="mars">Mars</span><small></small></button>
+          <button type="button" class="chip" id="b-sun" data-body="sun" aria-pressed="false"><span data-i18n="sun">Słońce</span><small></small></button>
+          <button type="button" class="chip" id="b-custom" data-body="custom" aria-pressed="false"><span data-i18n="custom">Własne</span><small>M, R</small></button>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="mass" data-i18n-html="lM">Masa <i>M</i></label><output id="mass-out" for="mass"></output></div>
+          <input type="range" id="mass" min="0" max="1000" step="1" value="500">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="rad" data-i18n-html="lR">Promień <i>R</i></label><output id="rad-out" for="rad"></output></div>
+          <input type="range" id="rad" min="0" max="1000" step="1" value="500">
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pg">g na powierzchni</small><span id="pill-g">—</span></div>
+          <div class="pill"><small data-i18n-html="pv1">I kosmiczna <i>v</i><sub>1</sub></small><span id="pill-v1">—</span></div>
+          <div class="pill"><small data-i18n-html="pv2">II kosmiczna <i>v</i><sub>2</sub></small><span id="pill-v2">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="grp-start" style="--c:var(--blue)">
+        <h3 id="start-h" data-i18n="gStart">Start satelity</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h0" id="h0-l" data-i18n-html="lh0">Wysokość startu <i>h</i><sub>0</sub></label><output id="h0-out" for="h0"></output></div>
+          <input type="range" id="h0" min="0" max="2000" step="1" value="200">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="v0" data-i18n-html="lv0">Prędkość <i>v</i><sub>0</sub></label><output id="v0-out" for="v0"></output></div>
+          <input type="range" id="v0" min="0" max="2000" step="1" value="1000">
+          <div class="ruler" id="ruler" aria-hidden="true"><div class="band" id="ruler-band"></div><span class="tk" id="tk-v1"><i>v</i><sub>1</sub></span><span class="tk" id="tk-v2"><i>v</i><sub>2</sub></span></div>
+          <div class="rleg"><span><i style="background:var(--crimson)"></i><span data-i18n="rImpact">upadek</span></span><span><i style="background:var(--blue)"></i><span data-i18n="rOrbit">orbita zamknięta</span></span><span><i style="background:var(--violet)"></i><span data-i18n="rEscape">ucieczka</span></span></div>
+          <span class="hint2" data-i18n="rulerNote"></span>
+        </div>
+        <div class="ctl" id="gam-ctl">
+          <div class="ctl-head"><label for="gam" data-i18n-html="lgam">Kąt do poziomu <i>γ</i></label><output id="gam-out" for="gam"></output></div>
+          <input type="range" id="gam" min="-180" max="180" step="0.5" value="0">
+          <span class="hint2" id="gam-hint"></span>
+        </div>
+        <div class="chips" id="quick">
+          <button type="button" class="chip" id="q-sub" data-q="sub" aria-pressed="false"><span data-i18n="qSub">Suborbitalna</span></button>
+          <button type="button" class="chip" id="q-circ" data-q="circ" aria-pressed="false"><span data-i18n="qCirc">Kołowa</span><small>v₁</small></button>
+          <button type="button" class="chip" id="q-ell" data-q="ell" aria-pressed="false"><span data-i18n="qEll">Eliptyczna</span></button>
+          <button type="button" class="chip" id="q-para" data-q="para" aria-pressed="false"><span data-i18n="qPara">Paraboliczna</span><small>v₂</small></button>
+          <button type="button" class="chip" id="q-hyp" data-q="hyp" aria-pressed="false"><span data-i18n="qHyp">Hiperboliczna</span></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="grp-hoh" style="--c:var(--amber)" hidden>
+        <h3 data-i18n="gHoh">Transfer między orbitami kołowymi</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h1" data-i18n-html="lh1">Orbita początkowa <i>h</i><sub>1</sub></label><output id="h1-out" for="h1"></output></div>
+          <input type="range" id="h1" min="0" max="2000" step="1" value="100">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="h2" data-i18n-html="lh2">Orbita docelowa <i>h</i><sub>2</sub></label><output id="h2-out" for="h2"></output></div>
+          <input type="range" id="h2" min="0" max="2000" step="1" value="1500">
+        </div>
+        <div class="pills">
+          <div class="pill"><small>Δ<i>v</i><sub>1</sub></small><span id="pill-dv1">—</span></div>
+          <div class="pill"><small>Δ<i>v</i><sub>2</sub></small><span id="pill-dv2">—</span></div>
+          <div class="pill"><small>Σ|Δ<i>v</i>|</small><span id="pill-dvt">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="grp-sect">
+        <h3 data-i18n="gSect">II prawo: liczba sektorów</h3>
+        <div class="seg" role="group" id="nsect">
+          <button type="button" id="n-6" data-n="6" aria-pressed="false">6</button>
+          <button type="button" id="n-8" data-n="8" aria-pressed="false">8</button>
+          <button type="button" id="n-12" data-n="12" aria-pressed="true">12</button>
+          <button type="button" id="n-16" data-n="16" aria-pressed="false">16</button>
+          <button type="button" id="n-24" data-n="24" aria-pressed="false">24</button>
+        </div>
+        <p class="keys" id="keys"></p>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub"></p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="ctabs">
+        <div class="tabs" role="tablist" id="tabs">
+          <button type="button" role="tab" id="tab-r" data-tab="r" aria-selected="true" data-i18n="tabR">Odległość</button>
+          <button type="button" role="tab" id="tab-v" data-tab="v" aria-selected="false" data-i18n="tabV">Prędkość</button>
+          <button type="button" role="tab" id="tab-e" data-tab="e" aria-selected="false" data-i18n="tabE">Energia</button>
+          <button type="button" role="tab" id="tab-k" data-tab="k" aria-selected="false">T² ∝ a³</button>
+        </div>
+        <div class="seg" role="group" id="kscale" hidden>
+          <button type="button" id="ks-lin" data-ks="lin" aria-pressed="true">lin</button>
+          <button type="button" id="ks-log" data-ks="log" aria-pressed="false">log</button>
+        </div>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+// ==PHYSICS-START==
+const G = 6.674e-11, M_EARTH = 5.9722e24, AU = 1.495978707e11, TAU = 2 * Math.PI, D2R = Math.PI / 180;
+const BODIES = {
+  earth: { GM: 3.986004418e14, R: 6.371e6, Fmax: 12 },
+  moon:  { GM: 4.9048695e12,   R: 1.7374e6, Fmax: 10 },
+  mars:  { GM: 4.282837e13,    R: 3.3895e6, Fmax: 10 },
+  sun:   { GM: 1.32712440018e20, R: 6.957e8, Fmax: 400 }
+};
+
+// Osculating two-body elements from a planar state vector (focus at the origin).
+function elements(GM, x, y, vx, vy) {
+  const r = Math.hypot(x, y), v2 = vx * vx + vy * vy, rv = x * vx + y * vy;
+  const h = x * vy - y * vx, eps = v2 / 2 - GM / r, k = v2 - GM / r;
+  const ex = (k * x - rv * vx) / GM, ey = (k * y - rv * vy) / GM;
+  const e = Math.hypot(ex, ey), p = h * h / GM;
+  const a = eps !== 0 ? -GM / (2 * eps) : Infinity;
+  const rp = p / (1 + e), ra = e < 1 ? p / (1 - e) : Infinity;
+  const om = e > 1e-6 ? Math.atan2(ey, ex) : Math.atan2(y, x);
+  const T = (e < 1 && a > 0) ? TAU * Math.sqrt(a * a * a / GM) : Infinity;
+  const b = e < 1 ? a * Math.sqrt(1 - e * e) : (e > 1 ? -a * Math.sqrt(e * e - 1) : NaN);
+  return { r, v: Math.sqrt(v2), h, eps, e, p, a, rp, ra, om, T, b,
+    vp: rp > 0 ? Math.abs(h) / rp : NaN, va: e < 1 ? Math.abs(h) / ra : NaN, vinf: eps > 0 ? Math.sqrt(2 * eps) : 0,
+    gam: Math.atan2(rv / r, Math.abs(h) / r) };
+}
+
+// Velocity Verlet (kick-drift-kick) with an adaptive step dt = eta * sqrt(r^3 / GM), evaluated at the
+// half-drift position so the step stays nearly time-symmetric (no secular energy drift in practice).
+// Stops on surface impact, on leaving rStop, at tEnd, or after maxSteps. Prograde burns change |v| at given times.
+function integrate(o) {
+  const GM = o.GM, R = o.R, eta = o.eta, burns = o.burns || [], tEnd = o.tEnd, rStop = o.rStop, maxSteps = o.maxSteps || 160000;
+  let x = o.x, y = o.y, vx = o.vx, vy = o.vy, t = 0;
+  const tau = (px, py) => { const r = Math.hypot(px, py); return Math.sqrt(r * r * r / GM); };
+  let r2 = x * x + y * y, kk = -GM / (r2 * Math.sqrt(r2)), ax = kk * x, ay = kk * y;
+  const pts = [{ t, x, y, vx, vy }], done = [];
+  let bi = 0, end = 'cap';
+  for (let n = 0; n < maxSteps; n++) {
+    let dt = eta * tau(x, y);
+    dt = eta * tau(x + 0.5 * dt * vx, y + 0.5 * dt * vy);
+    const burnT = bi < burns.length ? burns[bi].t : Infinity;
+    const tNext = Math.min(tEnd, burnT);
+    let land = false;
+    if (t + dt >= tNext) { dt = tNext - t; land = true; }
+    if (dt > 0) {
+      vx += 0.5 * dt * ax; vy += 0.5 * dt * ay;
+      x += dt * vx; y += dt * vy;
+      r2 = x * x + y * y; kk = -GM / (r2 * Math.sqrt(r2)); ax = kk * x; ay = kk * y;
+      vx += 0.5 * dt * ax; vy += 0.5 * dt * ay;
+      t += dt;
+      const r = Math.sqrt(r2);
+      if (r < R) {
+        const q = pts[pts.length - 1], rq = Math.hypot(q.x, q.y), f = (rq - R) / (rq - r);
+        const ix = q.x + f * (x - q.x), iy = q.y + f * (y - q.y), s = R / Math.hypot(ix, iy);
+        pts.push({ t: q.t + f * (t - q.t), x: ix * s, y: iy * s, vx: q.vx + f * (vx - q.vx), vy: q.vy + f * (vy - q.vy) });
+        end = 'impact'; break;
+      }
+      pts.push({ t, x, y, vx, vy });
+      if (r > rStop) { end = 'escape'; break; }
+    }
+    if (land) {
+      if (burnT <= tEnd && tNext === burnT) {
+        const v = Math.hypot(vx, vy), ux = vx / v, uy = vy / v, dv = burns[bi].dv;
+        vx += dv * ux; vy += dv * uy;
+        done.push({ t, x, y, dv, ux, uy, after: { x, y, vx, vy } });
+        pts.push({ t, x, y, vx, vy });
+        bi++;
+      } else { end = 'tend'; break; }
+    }
+  }
+  return { pts, end, burns: done };
+}
+
+function idxAt(p, t) {
+  let lo = 0, hi = p.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (p[m].t <= t) lo = m; else hi = m; }
+  return lo;
+}
+// Cubic Hermite in position (uses the stored velocities), linear in velocity.
+function sampleAt(path, t) {
+  const p = path.pts, n = p.length;
+  if (t <= p[0].t) return p[0];
+  if (t >= p[n - 1].t) return p[n - 1];
+  const i = idxAt(p, t), a = p[i], b = p[i + 1], h = b.t - a.t;
+  if (!(h > 0)) return b;
+  const u = (t - a.t) / h, u2 = u * u, u3 = u2 * u;
+  const h00 = 2 * u3 - 3 * u2 + 1, h10 = u3 - 2 * u2 + u, h01 = -2 * u3 + 3 * u2, h11 = u3 - u2;
+  return { t, x: h00 * a.x + h10 * h * a.vx + h01 * b.x + h11 * h * b.vx, y: h00 * a.y + h10 * h * a.vy + h01 * b.y + h11 * h * b.vy,
+    vx: a.vx + u * (b.vx - a.vx), vy: a.vy + u * (b.vy - a.vy) };
+}
+
+function measureOrbit(path) {
+  const p = path.pts; let th = 0, rmin = Infinity, rmax = 0;
+  for (let i = 0; i < p.length; i++) {
+    const r = Math.hypot(p[i].x, p[i].y); if (r < rmin) rmin = r; if (r > rmax) rmax = r;
+    if (i) { const a = p[i - 1], b = p[i]; th += Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y); }
+  }
+  return { a: (rmin + rmax) / 2, T: path.T * TAU / Math.abs(th), rp: rmin, ra: rmax, sweep: th };
+}
+
+function buildShot(o) {
+  const el = elements(o.GM, o.x, o.y, o.vx, o.vy);
+  const bound = el.e < 1 && el.a > 0;
+  const tEnd = o.tEnd != null ? o.tEnd : (bound ? el.T : Infinity);
+  const rStop = o.rStop != null ? o.rStop : 12 * Math.max(el.r, 1.2 * o.R);
+  const eta = 0.0022 * Math.min(1, Math.max(0.3, 1.5 * Math.sqrt(Math.abs(1 - el.e))));
+  const res = integrate({ ...o, eta, tEnd, rStop });
+  let kind;
+  if (res.end === 'impact') kind = 'impact';
+  else if (o.burns && o.burns.length) kind = 'transfer';
+  else if (res.end === 'tend' && bound) kind = 'orbit';
+  else kind = bound ? 'leaving' : 'escape';
+  const pts = res.pts, n = pts.length;
+  const En = (q) => 0.5 * (q.vx * q.vx + q.vy * q.vy) - o.GM / Math.hypot(q.x, q.y);
+  const E0 = En(pts[0]); let dE = 0;
+  if (kind !== 'transfer' && E0 !== 0) for (const q of pts) { const d = Math.abs(En(q) / E0 - 1); if (d > dE) dE = d; }
+  const bx0 = new Float64Array(n), bx1 = new Float64Array(n), by0 = new Float64Array(n), by1 = new Float64Array(n);
+  let a0 = Infinity, a1 = -Infinity, c0 = Infinity, c1 = -Infinity;
+  for (let i = 0; i < n; i++) {
+    const q = pts[i]; if (q.x < a0) a0 = q.x; if (q.x > a1) a1 = q.x; if (q.y < c0) c0 = q.y; if (q.y > c1) c1 = q.y;
+    bx0[i] = a0; bx1[i] = a1; by0[i] = c0; by1[i] = c1;
+  }
+  const path = { pts, T: pts[n - 1].t, kind, el, burns: res.burns, GM: o.GM, R: o.R, dE, bx0, bx1, by0, by1,
+    closure: kind === 'orbit' ? Math.hypot(pts[n - 1].x - pts[0].x, pts[n - 1].y - pts[0].y) : null };
+  if (kind === 'orbit') path.meas = measureOrbit(path);
+  return path;
+}
+
+// Area swept by the radius vector between t0 and t1 (shoelace over the integrated polyline, focus at origin).
+function sweepArea(path, t0, t1) {
+  const p = path.pts, a = sampleAt(path, t0), b = sampleAt(path, t1);
+  let s = 0, px = a.x, py = a.y;
+  for (let i = idxAt(p, t0) + 1; i < p.length && p[i].t < t1; i++) { s += px * p[i].y - p[i].x * py; px = p[i].x; py = p[i].y; }
+  s += px * b.y - b.x * py;
+  return Math.abs(s) / 2;
+}
+function sectorsFor(path, N) {
+  const dt = path.T / N, list = [];
+  for (let k = 0; k < N; k++) list.push({ t0: k * dt, t1: (k + 1) * dt, A: sweepArea(path, k * dt, (k + 1) * dt) });
+  let lo = Infinity, hi = 0, sum = 0;
+  for (const s of list) { if (s.A < lo) lo = s.A; if (s.A > hi) hi = s.A; sum += s.A; }
+  const mean = sum / N;
+  return { dt, list, mean, spread: mean > 0 ? (hi - lo) / mean : 0 };
+}
+
+function hohmannPlan(GM, r1, r2) {
+  const at = (r1 + r2) / 2, v1c = Math.sqrt(GM / r1), v2c = Math.sqrt(GM / r2);
+  const vt1 = Math.sqrt(GM * (2 / r1 - 1 / at)), vt2 = Math.sqrt(GM * (2 / r2 - 1 / at));
+  return { at, et: Math.abs(r2 - r1) / (r1 + r2), v1c, v2c, vt1, vt2, dv1: vt1 - v1c, dv2: v2c - vt2,
+    ttr: Math.PI * Math.sqrt(at * at * at / GM), T1: TAU * Math.sqrt(r1 * r1 * r1 / GM), T2: TAU * Math.sqrt(r2 * r2 * r2 / GM) };
+}
+
+// Fate of a launch from radius r0 with speed v at flight-path angle gam (rad, + = outward).
+function classify(GM, R, r0, v, gam) {
+  const vr = v * Math.sin(gam), vt = v * Math.cos(gam);
+  const h = r0 * vt, eps = v * v / 2 - GM / r0;
+  const e = Math.sqrt(Math.max(0, 1 + 2 * eps * h * h / (GM * GM)));
+  const rp = h * h / GM / (1 + e);
+  if (rp < R * (1 - 1e-9) && (eps < 0 || vr < 0)) return 'impact';
+  return eps < 0 ? 'orbit' : 'escape';
+}
+// ==PHYSICS-END==
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Grawitacja · pracownia orbit', title:'Orbity i prawa Keplera',
+    lede:'Wystrzel satelitę z dowolnego miejsca i zobacz trzy prawa Keplera w działaniu. Od kuli armatniej, która spada, przez orbitę zamkniętą, aż po ucieczkę z pola grawitacji.',
+    lap:'okr.', kbd:'spacja', fire:'Start', fireCannon:'Ognia!', salvo:'Salwa 6 strzałów', speed:'Tempo', vectors:'Wektory', conic:'Orbita z elementów', trails:'Ślady', clear:'Wyczyść ślady', reset:'Domyślne', fullscreen:'Pełny ekran',
+    pause:'Pauza', play:'Odtwórz', timeline:'Oś czasu', scene:'Orbita satelity',
+    sAim:'celowanie', sPlay:'w locie', sPause:'pauza', sImpact:'upadek', sEscape:'ucieczka', sDone:'koniec',
+    lgTrail:'tor z całkowania', lgConic:'stożkowa z elementów orbity', lgSect:'sektory co Δt =',
+    hintKepler:'Przeciągnij grot niebieskiej strzałki, żeby zmienić prędkość. Kliknij w dowolnym miejscu kadru, żeby przenieść start.',
+    hintCannon:'Przeciągnij grot strzałki, żeby zmienić v₀, albo odpal salwę.', hintHoh:'Ustaw wysokości obu orbit w panelu.',
+    law1T:'Prawo elips', law1S:'Orbita jest elipsą, a ciało centralne leży w jednym z jej ognisk.',
+    law2T:'Prawo pól', law2S:'Promień wodzący zakreśla równe pola w równych odstępach czasu.',
+    law3T:'Prawo okresów', law3S:'Stosunek T²/a³ jest taki sam dla każdej orbity wokół tego samego ciała.',
+    indOn:'pokazane', indOff:'ukryte', indChart:'wykres', indOpen:'otwórz wykres',
+    law1Open:'Tor otwarty: brak drugiego ogniska, stożkowa ma jedno ognisko w środku ciała.', law1Arc:'łuk elipsy przecina powierzchnię',
+    law2Off:'Niedostępne w transferze Hohmanna: silnik zmienia moment pędu.', law3n:'orbity z lotu', spread:'rozrzut (max − min)/A =', law3Hoh:'trzy orbity transferu na jednej prostej',
+    results:'Parametry orbity', resultsSub:'Elementy liczone z wektora stanu na starcie, sprawdzone całkowaniem numerycznym.',
+    colQ:'Wielkość', colV:'Wartość', colN:'Uwagi',
+    tCircle:'Okrąg', tEllipse:'Elipsa', tParabola:'Parabola', tHyperbola:'Hiperbola', tImpact:'Lot suborbitalny · upadek', tTransfer:'Transfer Hohmanna',
+    vOrbit:'Orbita zamknięta. Satelita wraca do punktu startu po {T}. Błąd domknięcia po jednym okrążeniu: {c}.',
+    vLeaving:'Orbita zamknięta, ale apocentrum leży daleko poza kadrem. Satelita wróci po {T}.',
+    vImpact:'Prędkość za mała na orbitę: tor przecina powierzchnię. Upadek po {t}, {d} od startu licząc po powierzchni.',
+    vEscape:'Energia nieujemna: satelita opuszcza pole grawitacji i już nie wraca. Prędkość w nieskończoności {v}.',
+    vTransfer:'Dwa krótkie odpalenia silnika przenoszą satelitę z orbity na orbitę. Łączny koszt {dv}, przelot trwa {t}.',
+    rA:'Półoś wielka <i>a</i>', rB:'Półoś mała <i>b</i>', rE:'Mimośród <i>e</i>', rRp:'Perycentrum <i>r</i><sub>p</sub>', rRa:'Apocentrum <i>r</i><sub>a</sub>',
+    rT:'Okres <i>T</i>', rVp:'Prędkość w perycentrum <i>v</i><sub>p</sub>', rVa:'Prędkość w apocentrum <i>v</i><sub>a</sub>', rVinf:'Prędkość w nieskończoności <i>v</i><sub>∞</sub>',
+    rEps:'Energia właściwa <i>ε</i>', rH:'Moment pędu <i>h</i> (na 1 kg)', rTf:'Czas lotu', rRange:'Zasięg po powierzchni',
+    hR1:'Orbita początkowa <i>r</i><sub>1</sub>', hR2:'Orbita docelowa <i>r</i><sub>2</sub>', hAt:'Półoś transferu <i>a</i><sub>t</sub>', hEt:'Mimośród transferu <i>e</i><sub>t</sub>',
+    hDv1:'Pierwsze odpalenie Δ<i>v</i><sub>1</sub>', hDv2:'Drugie odpalenie Δ<i>v</i><sub>2</sub>', hDvt:'Razem Σ|Δ<i>v</i>|', hTt:'Czas przelotu', hT1:'Okres na <i>r</i><sub>1</sub>', hT2:'Okres na <i>r</i><sub>2</sub>',
+    nAlt:'wysokość', nBelow:'pod powierzchnią', nBound:'ε < 0: orbita związana', nUnbound:'ε ≥ 0: tor otwarty', nConst:'stały wzdłuż całego toru',
+    nHypA:'tor otwarty: a ≤ 0', nOpen:'tor otwarty, brak okresu', nRatio:'v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub> =', nRange:'łuk koła wielkiego', nPrograde:'zgodnie z ruchem', nRetro:'przeciwnie do ruchu',
+    gScen:'Scenariusz', scKepler:'Prawa Keplera', scKeplerS:'start z dowolnego miejsca', scCannon:'Działo Newtona', scCannonS:'strzał poziomy ze szczytu góry', scHohmann:'Transfer Hohmanna', scHohmannS:'dwa odpalenia silnika',
+    gBody:'Ciało centralne', earth:'Ziemia', moon:'Księżyc', mars:'Mars', sun:'Słońce', custom:'Własne',
+    lM:'Masa <i>M</i>', lR:'Promień <i>R</i>', pg:'g na powierzchni', pv1:'I kosmiczna <i>v</i><sub>1</sub>', pv2:'II kosmiczna <i>v</i><sub>2</sub>',
+    gStart:'Start satelity', gStartCannon:'Działo na szczycie góry', lh0:'Wysokość startu <i>h</i><sub>0</sub>', lh0c:'Wysokość góry <i>h</i><sub>0</sub>',
+    lv0:'Prędkość <i>v</i><sub>0</sub>', lgam:'Kąt do poziomu <i>γ</i>', gamHintK:'0° poziomo, + w górę, ± 180° wstecz', gamHintC:'Działo strzela poziomo: γ = 0°.',
+    rImpact:'upadek', rOrbit:'orbita zamknięta', rEscape:'ucieczka', rulerNote:'Pasek: los satelity dla danej v₀. v₁ = √(GM/r₀), v₂ = √2·v₁ na wysokości startu.',
+    qSub:'Suborbitalna', qCirc:'Kołowa', qEll:'Eliptyczna', qPara:'Paraboliczna', qHyp:'Hiperboliczna',
+    gHoh:'Transfer między orbitami kołowymi', lh1:'Orbita początkowa <i>h</i><sub>1</sub>', lh2:'Orbita docelowa <i>h</i><sub>2</sub>',
+    gSect:'II prawo: liczba sektorów',
+    keys:'Skróty: <kbd>spacja</kbd> start i pauza · <kbd>←</kbd> <kbd>→</kbd> krok o Δt · <kbd>↑</kbd> <kbd>↓</kbd> prędkość · <kbd>R</kbd> od nowa · <kbd>F</kbd> pełny ekran',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo dla bieżącego położenia satelity. Najedź na wykres, żeby wybrać inną chwilę.',
+    fGrav:'Prawo powszechnego ciążenia', fV1:'I prędkość kosmiczna', fV2:'II prędkość kosmiczna', fVis:'Równanie vis-viva', fT:'Okres obiegu · III prawo Keplera',
+    fE:'Mimośród', fEps:'Energia właściwa', fH:'Moment pędu i prędkość polowa · II prawo Keplera', fHoh:'Transfer Hohmanna',
+    nGrav:'Na 1 kg masy satelity w jego bieżącym położeniu. Na powierzchni', nV1:'Na wysokości startu', nVis:'Całkowanie numeryczne w tym samym punkcie daje',
+    nT:'Ten sam stosunek dla każdej orbity wokół tego ciała:', nTopen:'Tor otwarty: satelita nie wraca, okres nie istnieje.',
+    nE:'Z niego: <i>r</i><sub>p</sub> = <i>a</i>(1 − <i>e</i>), <i>r</i><sub>a</sub> = <i>a</i>(1 + <i>e</i>), <i>b</i> = <i>a</i>√(1 − <i>e</i>²).', nEopen:'Dla toru otwartego mimośród liczymy z energii i momentu pędu.',
+    nEps:'<i>ε</i> < 0: elipsa, <i>ε</i> = 0: parabola, <i>ε</i> > 0: hiperbola.', nH:'Pole zakreślone w czasie Δt jednego sektora:', nHsect:'Średnie pole sektora z całkowania numerycznego:',
+    nHoh:'Oba odpalenia są styczne do toru. Drugie następuje w apocentrum elipsy transferowej, po połowie jej okresu.',
+    charts:'Wykresy', tabR:'Odległość', tabV:'Prędkość', tabE:'Energia',
+    sR:'r(t)', sV:'|v|(t)', sVesc:'v₂(r) lokalna ucieczka', sEk:'kinetyczna v²/2', sEp:'potencjalna −GM/r', sEt:'całkowita',
+    kRef:'znane obiekty', kFlown:'orbity z lotu', kNow:'bieżąca orbita', kLine:'T² = (4π²/GM)·a³', kEmpty:'Przeleć pełne okrążenie, żeby dodać punkt.',
+    cnoteR:'Odległość od środka ciała <i>r</i>(<i>t</i>). Linie przerywane: <i>r</i><sub>p</sub>, <i>r</i><sub>a</sub> i promień <i>R</i>. Daleko od ciała satelita porusza się wolno i spędza tam najwięcej czasu.',
+    cnoteV:'Prędkość |<i>v</i>|(<i>t</i>) i lokalna prędkość ucieczki <i>v</i><sub>2</sub>(<i>r</i>) = √(2<i>GM</i>/<i>r</i>). Orbita jest zamknięta, dopóki |<i>v</i>| leży poniżej tej krzywej.',
+    cnoteE:'Energia na 1 kg: kinetyczna rośnie, gdy potencjalna maleje. Suma jest stała; największe odchylenie z całkowania:', cnoteEh:'Energia na 1 kg. Suma jest stała między odpaleniami i skacze tylko wtedy, gdy pracuje silnik.',
+    cnoteK:'Każdy punkt to jedna orbita. Pełne: orbity z lotu (dopisują się po pełnym okrążeniu, a i T zmierzone z toru). Puste: znane obiekty. Wszystkie leżą na prostej o nachyleniu 4π²/GM.',
+    refISS:'ISS', refGPS:'GPS', refGEO:'GEO', refPhobos:'Fobos', refDeimos:'Dejmos', refMercury:'Merkury', refVenus:'Wenus', refEarth:'Ziemia', refMars:'Mars',
+    hohO1:'orbita 1', hohO2:'orbita 2', hohTr:'elipsa transferowa',
+    au:'j.a.', year:'lat', geoSum:'r₁ + r₂ = 2a =',
+    peri:{ earth:'perygeum', moon:'peryselenium', mars:'periareum', sun:'peryhelium', custom:'perycentrum' },
+    apo:{ earth:'apogeum', moon:'aposelenium', mars:'apoareum', sun:'aphelium', custom:'apocentrum' }
+  },
+  en: {
+    eyebrow:'Gravitation · orbit lab', title:'Orbits and Kepler’s laws',
+    lede:'Launch a satellite from anywhere and watch Kepler’s three laws at work. From a cannonball that falls back, through a closed orbit, to escaping gravity altogether.',
+    lap:'lap', kbd:'space', fire:'Launch', fireCannon:'Fire!', salvo:'Salvo of 6', speed:'Speed', vectors:'Vectors', conic:'Orbit from elements', trails:'Trails', clear:'Clear trails', reset:'Defaults', fullscreen:'Full screen',
+    pause:'Pause', play:'Play', timeline:'Timeline', scene:'Satellite orbit',
+    sAim:'aiming', sPlay:'in flight', sPause:'paused', sImpact:'impact', sEscape:'escape', sDone:'done',
+    lgTrail:'integrated path', lgConic:'conic from orbital elements', lgSect:'sectors every Δt =',
+    hintKepler:'Drag the tip of the blue arrow to change the velocity. Click anywhere in the frame to move the launch point.',
+    hintCannon:'Drag the arrow tip to change v₀, or fire a salvo.', hintHoh:'Set both orbit altitudes in the panel.',
+    law1T:'Law of ellipses', law1S:'The orbit is an ellipse with the central body at one focus.',
+    law2T:'Law of areas', law2S:'The radius vector sweeps out equal areas in equal intervals of time.',
+    law3T:'Law of periods', law3S:'T²/a³ is the same for every orbit around the same body.',
+    indOn:'shown', indOff:'hidden', indChart:'chart', indOpen:'open chart',
+    law1Open:'Open path: no second focus; the conic has a single focus at the body’s centre.', law1Arc:'the ellipse arc crosses the surface',
+    law2Off:'Not available for a Hohmann transfer: the engine changes the angular momentum.', law3n:'orbits flown', spread:'spread (max − min)/A =', law3Hoh:'all three transfer orbits on one line',
+    results:'Orbit parameters', resultsSub:'Elements computed from the launch state vector and checked against the numerical integration.',
+    colQ:'Quantity', colV:'Value', colN:'Notes',
+    tCircle:'Circle', tEllipse:'Ellipse', tParabola:'Parabola', tHyperbola:'Hyperbola', tImpact:'Suborbital · impact', tTransfer:'Hohmann transfer',
+    vOrbit:'Closed orbit. The satellite returns to its launch point after {T}. Closure error after one lap: {c}.',
+    vLeaving:'Closed orbit, but the apoapsis lies far outside the frame. The satellite returns after {T}.',
+    vImpact:'Too slow for orbit: the path crosses the surface. Impact after {t}, {d} from the launch point along the surface.',
+    vEscape:'Non-negative energy: the satellite leaves the gravity field for good. Speed at infinity {v}.',
+    vTransfer:'Two short engine burns move the satellite from one orbit to the other. Total cost {dv}; the transfer takes {t}.',
+    rA:'Semi-major axis <i>a</i>', rB:'Semi-minor axis <i>b</i>', rE:'Eccentricity <i>e</i>', rRp:'Periapsis <i>r</i><sub>p</sub>', rRa:'Apoapsis <i>r</i><sub>a</sub>',
+    rT:'Period <i>T</i>', rVp:'Speed at periapsis <i>v</i><sub>p</sub>', rVa:'Speed at apoapsis <i>v</i><sub>a</sub>', rVinf:'Speed at infinity <i>v</i><sub>∞</sub>',
+    rEps:'Specific energy <i>ε</i>', rH:'Angular momentum <i>h</i> (per kg)', rTf:'Flight time', rRange:'Ground range',
+    hR1:'Initial orbit <i>r</i><sub>1</sub>', hR2:'Target orbit <i>r</i><sub>2</sub>', hAt:'Transfer semi-major axis <i>a</i><sub>t</sub>', hEt:'Transfer eccentricity <i>e</i><sub>t</sub>',
+    hDv1:'First burn Δ<i>v</i><sub>1</sub>', hDv2:'Second burn Δ<i>v</i><sub>2</sub>', hDvt:'Total Σ|Δ<i>v</i>|', hTt:'Transfer time', hT1:'Period at <i>r</i><sub>1</sub>', hT2:'Period at <i>r</i><sub>2</sub>',
+    nAlt:'altitude', nBelow:'below the surface', nBound:'ε < 0: bound orbit', nUnbound:'ε ≥ 0: open path', nConst:'constant along the whole path',
+    nHypA:'open path: a ≤ 0', nOpen:'open path, no period', nRatio:'v<sub>p</sub>/v<sub>a</sub> = r<sub>a</sub>/r<sub>p</sub> =', nRange:'great-circle arc', nPrograde:'prograde', nRetro:'retrograde',
+    gScen:'Scenario', scKepler:'Kepler’s laws', scKeplerS:'launch from anywhere', scCannon:'Newton’s cannon', scCannonS:'horizontal shot from a mountain', scHohmann:'Hohmann transfer', scHohmannS:'two engine burns',
+    gBody:'Central body', earth:'Earth', moon:'Moon', mars:'Mars', sun:'Sun', custom:'Custom',
+    lM:'Mass <i>M</i>', lR:'Radius <i>R</i>', pg:'surface g', pv1:'1st cosmic <i>v</i><sub>1</sub>', pv2:'2nd cosmic <i>v</i><sub>2</sub>',
+    gStart:'Satellite launch', gStartCannon:'Cannon on the mountain top', lh0:'Launch altitude <i>h</i><sub>0</sub>', lh0c:'Mountain height <i>h</i><sub>0</sub>',
+    lv0:'Speed <i>v</i><sub>0</sub>', lgam:'Angle to horizontal <i>γ</i>', gamHintK:'0° horizontal, + upward, ± 180° backward', gamHintC:'The cannon fires horizontally: γ = 0°.',
+    rImpact:'impact', rOrbit:'closed orbit', rEscape:'escape', rulerNote:'Bar: the satellite’s fate for each v₀. v₁ = √(GM/r₀), v₂ = √2·v₁ at launch altitude.',
+    qSub:'Suborbital', qCirc:'Circular', qEll:'Elliptical', qPara:'Parabolic', qHyp:'Hyperbolic',
+    gHoh:'Transfer between circular orbits', lh1:'Initial orbit <i>h</i><sub>1</sub>', lh2:'Target orbit <i>h</i><sub>2</sub>',
+    gSect:'Law II: number of sectors',
+    keys:'Keys: <kbd>space</kbd> launch and pause · <kbd>←</kbd> <kbd>→</kbd> step by Δt · <kbd>↑</kbd> <kbd>↓</kbd> speed · <kbd>R</kbd> restart · <kbd>F</kbd> full screen',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live for the satellite’s current position. Hover a chart to pick another moment.',
+    fGrav:'Law of universal gravitation', fV1:'First cosmic speed', fV2:'Second cosmic speed', fVis:'Vis-viva equation', fT:'Orbital period · Kepler’s third law',
+    fE:'Eccentricity', fEps:'Specific energy', fH:'Angular momentum and areal velocity · Kepler’s second law', fHoh:'Hohmann transfer',
+    nGrav:'Per 1 kg of satellite at its current position. At the surface', nV1:'At launch altitude', nVis:'Numerical integration at the same point gives',
+    nT:'The same ratio for every orbit around this body:', nTopen:'Open path: the satellite never returns, so there is no period.',
+    nE:'From it: <i>r</i><sub>p</sub> = <i>a</i>(1 − <i>e</i>), <i>r</i><sub>a</sub> = <i>a</i>(1 + <i>e</i>), <i>b</i> = <i>a</i>√(1 − <i>e</i>²).', nEopen:'For an open path the eccentricity follows from energy and angular momentum.',
+    nEps:'<i>ε</i> < 0: ellipse, <i>ε</i> = 0: parabola, <i>ε</i> > 0: hyperbola.', nH:'Area swept during the Δt of one sector:', nHsect:'Mean sector area from the numerical integration:',
+    nHoh:'Both burns are tangent to the path. The second fires at the transfer ellipse’s apoapsis, half a transfer period later.',
+    charts:'Charts', tabR:'Distance', tabV:'Speed', tabE:'Energy',
+    sR:'r(t)', sV:'|v|(t)', sVesc:'v₂(r) local escape', sEk:'kinetic v²/2', sEp:'potential −GM/r', sEt:'total',
+    kRef:'known bodies', kFlown:'orbits flown', kNow:'current orbit', kLine:'T² = (4π²/GM)·a³', kEmpty:'Fly a full lap to add a point.',
+    cnoteR:'Distance from the body’s centre <i>r</i>(<i>t</i>). Dashed lines: <i>r</i><sub>p</sub>, <i>r</i><sub>a</sub> and the radius <i>R</i>. Far from the body the satellite moves slowly and spends most of its time there.',
+    cnoteV:'Speed |<i>v</i>|(<i>t</i>) and the local escape speed <i>v</i><sub>2</sub>(<i>r</i>) = √(2<i>GM</i>/<i>r</i>). The orbit stays closed while |<i>v</i>| is below that curve.',
+    cnoteE:'Energy per kg: kinetic rises as potential falls. The total is constant; largest deviation from the integration:', cnoteEh:'Energy per kg. The total is constant between burns and jumps only while the engine fires.',
+    cnoteK:'Each point is one orbit. Filled: orbits flown (added after a full lap, with a and T measured from the path). Hollow: known bodies. All lie on one line with slope 4π²/GM.',
+    refISS:'ISS', refGPS:'GPS', refGEO:'GEO', refPhobos:'Phobos', refDeimos:'Deimos', refMercury:'Mercury', refVenus:'Venus', refEarth:'Earth', refMars:'Mars',
+    hohO1:'orbit 1', hohO2:'orbit 2', hohTr:'transfer ellipse',
+    au:'au', year:'yr', geoSum:'r₁ + r₂ = 2a =',
+    peri:{ earth:'perigee', moon:'perilune', mars:'periareion', sun:'perihelion', custom:'periapsis' },
+    apo:{ earth:'apogee', moon:'apolune', mars:'apoareion', sun:'aphelion', custom:'apoapsis' }
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('orbity-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return x > 0 ? '∞' : '−∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUP = { '0':'⁰', '1':'¹', '2':'²', '3':'³', '4':'⁴', '5':'⁵', '6':'⁶', '7':'⁷', '8':'⁸', '9':'⁹', '-':'⁻' };
+const sup = (n) => String(n).split('').map(c => SUP[c] ?? c).join('');
+function fsci(x, sig = 4) {
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return '0';
+  const s = x < 0 ? '−' : ''; x = Math.abs(x);
+  let e = Math.floor(Math.log10(x)), m = x / Math.pow(10, e);
+  if (+m.toFixed(sig - 1) >= 10) { m /= 10; e++; }
+  if (e === 0) return s + fmt(m, sig - 1);
+  return `${s}${fmt(m, sig - 1)}·10${sup(e)}`;
+}
+function fnum(x) {
+  if (!isFinite(x)) return '∞';
+  const a = Math.abs(x);
+  if (a === 0) return '0';
+  if (a >= 1e7 || a < 1e-3) return fsci(x, 3);
+  return fmt(x, a >= 1000 ? 0 : a >= 100 ? 1 : a >= 10 ? 2 : 3);
+}
+const isSolar = () => P.R > 1e8;
+function fdist(m) {
+  if (!isFinite(m)) return '∞';
+  if (isSolar() && Math.abs(m) > 0.005 * AU) return `${fmt(m / AU, Math.abs(m / AU) >= 10 ? 2 : 3)} ${tr('au')}`;
+  return `${fnum(m / 1000)} km`;
+}
+const fspd = (v) => `${fmt(v / 1000, Math.abs(v) >= 1e4 ? 2 : 3)} km/s`;
+function fdur(s) {
+  if (!isFinite(s)) return '∞';
+  if (s < 120) return `${fmt(s, 1)} s`;
+  if (s < 7200) return `${fmt(s / 60, 1)} min`;
+  if (s < 172800) return `${fmt(s / 3600, 2)} h`;
+  return `${fmt(s / 86400, s / 86400 >= 100 ? 1 : 2)} d`;
+}
+function fdurAlt(s) {
+  if (!isFinite(s)) return '';
+  if (s < 7200) return `= ${fmt(s, 0)} s`;
+  if (s < 172800) return `= ${fmt(s / 60, 1)} min`;
+  if (s > 2 * 365.25 * 86400 || isSolar()) return `= ${fmt(s / (365.25 * 86400), 3)} ${tr('year')}`;
+  return `= ${fmt(s / 3600, 1)} h`;
+}
+const fen = (e) => `${fmt(e / 1e6, Math.abs(e) >= 1e8 ? 1 : Math.abs(e) >= 1e6 ? 2 : 3)} MJ/kg`;
+const fh = (h) => `${fnum(Math.abs(h) / 1e6)} km²/s`;
+const farea = (A) => `${fsci(A / 1e6, 3)} km²`;
+function timeUnit(T) {
+  if (T <= 300) return { u: 1, s: 's' };
+  if (T <= 4 * 3600) return { u: 60, s: 'min' };
+  if (T <= 4 * 86400) return { u: 3600, s: 'h' };
+  return { u: 86400, s: 'd' };
+}
+
+/* ---------- parameters & state ---------- */
+const P = { scen: 'kepler', body: 'earth', GM: BODIES.earth.GM, R: BODIES.earth.R, h0: 6e5, v0: 9000, gam: 0, phi: Math.PI, h1: 4e5, h2: 3.5786e7, N: 12 };
+const S = { mode: 'play', t: 0, lap: 0, speed: 1, vectors: true, conic: true, trails: false, law1: true, law2: true,
+  chartTab: 'r', k3log: false, hoverT: null, ghosts: [], k3: {}, drag: null, hinted: false, mainDone: false };
+let main = null;
+
+const REFS = {
+  earth: [{ n: 'refISS', a: 6.797e6, T: 92.9 * 60 }, { n: 'refGPS', a: 2.6560e7, T: 11.967 * 3600 }, { n: 'refGEO', a: 4.2164e7, T: 86164 }],
+  mars: [{ n: 'refPhobos', a: 9.376e6, T: 7.654 * 3600 }, { n: 'refDeimos', a: 2.3463e7, T: 30.312 * 3600 }],
+  sun: [{ n: 'refMercury', a: 0.387098 * AU, T: 87.969 * 86400 }, { n: 'refVenus', a: 0.723332 * AU, T: 224.701 * 86400 },
+        { n: 'refEarth', a: 1.000001 * AU, T: 365.256 * 86400 }, { n: 'refMars', a: 1.523679 * AU, T: 686.98 * 86400 }],
+  moon: []
+};
+const LOOKS = {
+  earth: { c0: '#8CC8FF', c1: '#2F7FE0', c2: '#081E46', halo: '#5AA8FF' },
+  moon: { c0: '#ECECE8', c1: '#9C9C98', c2: '#34353B' },
+  mars: { c0: '#F6AE86', c1: '#C4532F', c2: '#3E150C' },
+  sun: { c0: '#FFF8E0', c1: '#FFC24A', c2: '#E2701A', halo: '#FFB040' },
+  custom: { c0: '#D2CCFF', c1: '#6A5CFF', c2: '#1A1448' }
+};
+
+const r0 = () => P.R + P.h0;
+const vCirc = (r) => Math.sqrt(P.GM / r);
+const vEsc = (r) => Math.sqrt(2 * P.GM / r);
+const Fmax = () => (P.body === 'custom' ? 20 : BODIES[P.body].Fmax);
+function niceCeil(v) { const p = Math.pow(10, Math.floor(Math.log10(v)) - 1); return Math.ceil(v / p) * p; }
+const vMax = () => niceCeil(1.3 * vEsc(r0()));
+const bodyKey = () => (P.body === 'custom' ? 'c' + P.GM.toPrecision(5) : P.body);
+
+function startState() {
+  const r = r0(), rx = Math.cos(P.phi), ry = Math.sin(P.phi);
+  const tx = ry, ty = -rx;                      // clockwise ("forward") local horizontal
+  const c = Math.cos(P.gam), s = Math.sin(P.gam);
+  return { x: r * rx, y: r * ry, vx: P.v0 * (c * tx + s * rx), vy: P.v0 * (c * ty + s * ry) };
+}
+function roundTo(x, step) { return Math.round(x / step) * step; }
+function scenarioDefaults() {
+  const R = P.R;
+  if (P.scen === 'kepler') {
+    P.phi = Math.PI; P.gam = 0;
+    if (P.body === 'sun') { P.h0 = AU - R; P.v0 = 34000; }
+    else { P.h0 = roundTo(0.094 * R, 1e4); P.v0 = roundTo(1.19 * vCirc(R + P.h0), 10); }
+  } else if (P.scen === 'cannon') {
+    P.phi = Math.PI / 2; P.gam = 0;
+    P.h0 = P.body === 'sun' ? roundTo(0.063 * R, 1e6) : roundTo(0.063 * R, 1e4);
+    P.v0 = roundTo(0.8 * vCirc(R + P.h0), 10);
+  } else {
+    const H = { earth: [4e5, 3.5786e7], moon: [1e5, 3 * R], mars: [3e5, 1.7032e7], sun: [AU - R, 1.523679 * AU - R] }[P.body] || [0.1 * R, 3 * R];
+    P.h1 = H[0]; P.h2 = H[1];
+  }
+}
+function clampParams() {
+  const hmax = P.R * (Fmax() - 1);
+  P.h0 = Math.min(Math.max(P.h0, 0), hmax);
+  P.h1 = Math.min(Math.max(P.h1, 0), hmax); P.h2 = Math.min(Math.max(P.h2, 0), hmax);
+  P.v0 = Math.min(Math.max(P.v0, 0), vMax());
+  if (P.scen === 'cannon') { P.gam = 0; P.phi = Math.PI / 2; }
+}
+
+function computeMain() {
+  if (P.scen === 'hohmann') {
+    const r1 = P.R + P.h1, r2 = P.R + P.h2, H = hohmannPlan(P.GM, r1, r2);
+    const tb1 = H.T1 / 4, tb2 = tb1 + H.ttr;
+    main = buildShot({ GM: P.GM, R: P.R, x: 0, y: -r1, vx: -H.v1c, vy: 0,
+      burns: [{ t: tb1, dv: H.dv1 }, { t: tb2, dv: H.dv2 }], tEnd: tb2 + H.T2 / 2, rStop: Infinity });
+    main.hoh = { ...H, r1, r2, tb1, tb2 };
+    const b = main.burns[0];
+    main.elTr = b ? elements(P.GM, b.after.x, b.after.y, b.after.vx, b.after.vy) : main.el;
+    main.sect = null;
+    main.warp = main.T / 20;
+  } else {
+    main = buildShot({ GM: P.GM, R: P.R, ...startState() });
+    main.sect = sectorsFor(main, P.N);
+    main.warp = main.T / 14;
+  }
+  main.v0 = P.v0;
+}
+
+/* ---------- edit / launch flow ---------- */
+function archive() {
+  if (!S.trails || !main || main.kind === 'transfer') return;
+  if (!(S.t > 0 || S.lap > 0 || S.mode === 'end')) return;
+  const last = S.ghosts[S.ghosts.length - 1];
+  if (last && last.path === main) return;
+  S.ghosts.push({ path: main, anim: false, done: true, v0: main.v0 });
+  if (S.ghosts.length > 10) S.ghosts.shift();
+}
+function beginEdit() {
+  if (S.mode !== 'aim') {
+    archive();
+    S.ghosts.forEach(g => { g.anim = false; g.done = true; });
+    S.mode = 'aim'; S.t = 0; S.lap = 0; parts.length = 0; rings.length = 0;
+  }
+}
+function commitEdit() { if (S.mode === 'aim') launch(); }
+function launch() {
+  S.mode = 'play'; S.t = 0; S.lap = 0; S.mainDone = false; S.recoil = 1;
+  S.ghosts.forEach(g => { if (g.anim) { g.done = false; } });
+  if (P.scen === 'cannon' && !reduceMotion) {
+    const s0 = startState(), p = W2S(s0.x, s0.y);
+    burst(p.x + 16, p.y, 0, -1, st.ink3, true);
+  }
+  setState(); updateScrub(); dirty = true; chartDirty = true;
+}
+function hideHint() { if (!S.hinted) { S.hinted = true; $('#hint').classList.add('gone'); } }
+
+function recompute() {
+  clampParams();
+  computeMain();
+  updateOutputs(); updateRuler(); updateResults(); updateLaws(); updateFormulas(); updateLegend(); updateBadge(); updateHud(); updateScrub(); updateWarp();
+  dirty = true; chartDirty = true;
+}
+
+function addK3(path) {
+  if (!path || !path.meas || P.scen === 'hohmann') return;
+  const key = bodyKey(), list = (S.k3[key] = S.k3[key] || []), m = path.meas;
+  if (list.some(q => Math.abs(q.a / m.a - 1) < 0.002)) return;
+  list.push({ a: m.a, T: m.T, e: path.el.e });
+  if (list.length > 14) list.shift();
+  updateLaws(); chartDirty = true;
+}
+
+/* ---------- UI: outputs ---------- */
+const ALT_N = 2000;
+const altToSlider = (h) => Math.round(Math.log((P.R + h) / P.R) / Math.log(Fmax()) * ALT_N);
+const sliderToAlt = (s) => P.R * (Math.exp(s / ALT_N * Math.log(Fmax())) - 1);
+const M_LO = Math.log10(0.005), M_HI = Math.log10(5e5), R_LO = Math.log10(500), R_HI = Math.log10(1e6);
+const massFromSlider = (s) => Math.pow(10, M_LO + s / 1000 * (M_HI - M_LO)) * M_EARTH;
+const sliderFromMass = (M) => Math.round((Math.log10(M / M_EARTH) - M_LO) / (M_HI - M_LO) * 1000);
+const radFromSlider = (s) => Math.pow(10, R_LO + s / 1000 * (R_HI - R_LO)) * 1000;
+const sliderFromRad = (R) => Math.round((Math.log10(R / 1000) - R_LO) / (R_HI - R_LO) * 1000);
+
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+function altOut(h) { return isSolar() ? `${fdist(P.R + h)} (r)` : fdist(h); }
+function updateOutputs() {
+  const M = P.GM / G;
+  $('#h0').value = altToSlider(P.h0); $('#v0').value = Math.round(P.v0 / vMax() * 2000); $('#gam').value = P.gam / D2R;
+  $('#mass').value = sliderFromMass(M); $('#rad').value = sliderFromRad(P.R);
+  $('#h1').value = altToSlider(P.h1); $('#h2').value = altToSlider(P.h2);
+  $('#h0-out').textContent = altOut(P.h0);
+  $('#v0-out').textContent = fspd(P.v0);
+  $('#gam-out').textContent = `${fmt(P.gam / D2R, 1)}°`;
+  $('#mass-out').textContent = `${fnum(M / M_EARTH)} M⊕`;
+  $('#rad-out').textContent = `${fnum(P.R / 1000)} km`;
+  $('#h1-out').textContent = altOut(P.h1); $('#h2-out').textContent = altOut(P.h2);
+  $$('input[type=range]').forEach(setFill);
+  $$('#bodies .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.body === P.body)));
+  $$('#scen .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.scen === P.scen)));
+  $('#pill-g').textContent = `${fnum(P.GM / (P.R * P.R))} m/s²`;
+  $('#pill-v1').textContent = fspd(vCirc(P.R));
+  $('#pill-v2').textContent = fspd(vEsc(P.R));
+  const q = quickTargets();
+  $$('#quick .chip').forEach(b => {
+    const v = q[b.dataset.q];
+    b.setAttribute('aria-pressed', String(Math.abs(P.gam) < 1e-6 && Math.abs(P.v0 - v) < Math.max(1, 1e-4 * v)));
+  });
+  if (main && main.hoh) {
+    const H = main.hoh, sg = (x) => (x >= 0 ? '+' : '−') + fspd(Math.abs(x));
+    $('#pill-dv1').textContent = sg(H.dv1); $('#pill-dv2').textContent = sg(H.dv2);
+    $('#pill-dvt').textContent = fspd(Math.abs(H.dv1) + Math.abs(H.dv2));
+  }
+}
+function quickTargets() {
+  const r = r0(), vc = vCirc(r), ve = vEsc(r);
+  // impact boundary for a horizontal launch: apoapsis at r, periapsis exactly at R
+  const vImp = Math.sqrt(2 * P.GM * P.R / (r * (r + P.R)));
+  return { sub: roundTo(0.85 * vImp, 10), circ: vc, ell: roundTo(1.19 * vc, 10), para: ve, hyp: roundTo(1.25 * ve, 10) };
+}
+function updateRuler() {
+  if (P.scen === 'hohmann') return;
+  const vm = vMax(), r = r0(), n = 200, colors = { impact: 'var(--crimson)', orbit: 'var(--blue)', escape: 'var(--violet)' };
+  let stops = [], prev = null, start = 0;
+  for (let i = 0; i <= n; i++) {
+    const v = i / n * vm, k = classify(P.GM, P.R, r, Math.max(v, 1e-6), P.gam);
+    if (k !== prev) { if (prev) stops.push(`${colors[prev]} ${start}% ${(i / n * 100).toFixed(2)}%`); prev = k; start = (i / n * 100).toFixed(2); }
+  }
+  stops.push(`${colors[prev]} ${start}% 100%`);
+  $('#ruler-band').style.background = `linear-gradient(to right, ${stops.join(', ')})`;
+  const p1 = vCirc(r) / vm * 100, p2 = vEsc(r) / vm * 100;
+  $('#tk-v1').style.left = p1 + '%'; $('#tk-v2').style.left = p2 + '%';
+}
+
+function orbitType(path) {
+  if (path.kind === 'transfer') return 'transfer';
+  if (path.kind === 'impact') return 'impact';
+  const e = path.el.e;
+  if (e < 0.01) return 'circle';
+  if (Math.abs(e - 1) < 0.01) return 'parabola';
+  return e < 1 ? 'ellipse' : 'hyperbola';
+}
+const TYPE_KEY = { circle: 'tCircle', ellipse: 'tEllipse', parabola: 'tParabola', hyperbola: 'tHyperbola', impact: 'tImpact', transfer: 'tTransfer' };
+const TYPE_COL = { circle: 'var(--blue)', ellipse: 'var(--blue)', parabola: 'var(--amber)', hyperbola: 'var(--violet)', impact: 'var(--crimson)', transfer: 'var(--amber)' };
+function updateBadge() {
+  const t = orbitType(main), b = $('#badge');
+  b.style.setProperty('--kc', TYPE_COL[t]);
+  $('#badge-t').textContent = tr(TYPE_KEY[t]);
+  const el = main.kind === 'transfer' ? main.elTr : main.el;
+  $('#badge-e').textContent = main.kind === 'transfer' ? `e = ${fmt(el.e, 3)}` : `e = ${fmt(main.el.e, 3)}`;
+}
+
+function groundRange(path) {
+  const p = path.pts; let th = 0;
+  for (let i = 1; i < p.length; i++) { const a = p[i - 1], b = p[i]; th += Math.atan2(a.x * b.y - a.y * b.x, a.x * b.x + a.y * b.y); }
+  return Math.abs(th) * P.R;
+}
+function updateResults() {
+  const t = orbitType(main), chip = $('#tchip');
+  chip.style.setProperty('--kc', TYPE_COL[t]); chip.textContent = tr(TYPE_KEY[t]);
+  const el = main.el, rows = [];
+  const altN = (r) => (r < P.R ? `<i>h</i> = ${fdist(r - P.R)} · ${tr('nBelow')}` : `<i>h</i> = ${fdist(r - P.R)}`);
+  let verdict = '';
+  if (main.kind === 'transfer') {
+    const H = main.hoh, sg = (x) => (x >= 0 ? '+' : '−') + fspd(Math.abs(x));
+    verdict = fill(tr('vTransfer'), { dv: fspd(Math.abs(H.dv1) + Math.abs(H.dv2)), t: fdur(H.ttr) });
+    rows.push(['hR1', fdist(H.r1), altN(H.r1)], ['hR2', fdist(H.r2), altN(H.r2)], ['hAt', fdist(H.at), '<i>a</i><sub>t</sub> = (<i>r</i><sub>1</sub> + <i>r</i><sub>2</sub>)/2'],
+      ['hEt', fmt(H.et, 4), ''], ['hDv1', sg(H.dv1), H.dv1 >= 0 ? tr('nPrograde') : tr('nRetro')], ['hDv2', sg(H.dv2), H.dv2 >= 0 ? tr('nPrograde') : tr('nRetro')],
+      ['hDvt', fspd(Math.abs(H.dv1) + Math.abs(H.dv2)), ''], ['hTt', fdur(H.ttr), fdurAlt(H.ttr)], ['hT1', fdur(H.T1), ''], ['hT2', fdur(H.T2), '']);
+  } else {
+    const bound = el.e < 1 && el.a > 0;
+    if (main.kind === 'orbit') verdict = fill(tr('vOrbit'), { T: fdur(el.T), c: main.closure < 1000 ? `${fmt(main.closure, 1)} m` : fdist(main.closure) });
+    else if (main.kind === 'leaving') verdict = fill(tr('vLeaving'), { T: fdur(el.T) });
+    else if (main.kind === 'impact') verdict = fill(tr('vImpact'), { t: fdur(main.T), d: fdist(groundRange(main)) });
+    else verdict = fill(tr('vEscape'), { v: fspd(el.vinf) });
+    rows.push(['rA', isFinite(el.a) ? fdist(el.a) : '∞', bound ? `<i>a</i> / <i>R</i> = ${fmt(el.a / P.R, 3)}` : tr('nHypA')]);
+    if (bound) rows.push(['rB', fdist(el.b), '<i>b</i> = <i>a</i>√(1 − <i>e</i>²)']);
+    rows.push(['rE', fmt(el.e, 4), tr(TYPE_KEY[t === 'impact' ? (el.e < 1 ? 'ellipse' : 'hyperbola') : t])]);
+    rows.push(['rRp', fdist(el.rp), `${tr('peri')[P.body]} · ${altN(el.rp)}`]);
+    if (bound) rows.push(['rRa', fdist(el.ra), `${tr('apo')[P.body]} · ${altN(el.ra)}`]);
+    rows.push(['rT', bound ? fdur(el.T) : '—', bound ? fdurAlt(el.T) : tr('nOpen')]);
+    rows.push(['rVp', fspd(el.vp), bound ? `${tr('nRatio')} ${fmt(el.ra / el.rp, 3)}` : '']);
+    rows.push(bound ? ['rVa', fspd(el.va), ''] : ['rVinf', fspd(el.vinf), '']);
+    rows.push(['rEps', fen(el.eps), el.eps < 0 ? tr('nBound') : tr('nUnbound')]);
+    rows.push(['rH', fh(el.h), tr('nConst')]);
+    if (main.kind === 'impact') { rows.push(['rTf', fdur(main.T), '']); rows.push(['rRange', fdist(groundRange(main)), tr('nRange')]); }
+  }
+  $('#verdict').textContent = verdict;
+  $('#res-body').innerHTML = rows.map(([k, v, n]) => `<tr><th>${tr(k)}</th><td>${v}</td><td class="note">${n}</td></tr>`).join('');
+}
+
+function updateLaws() {
+  const l1 = $('#law1'), l2 = $('#law2'), l3 = $('#law3');
+  const el = main.kind === 'transfer' ? main.elTr : main.el;
+  l1.setAttribute('aria-pressed', String(S.law1));
+  $('#law1-ind').textContent = tr(S.law1 ? 'indOn' : 'indOff');
+  if (el.e < 1 && el.a > 0) {
+    let s = `e = ${fmt(el.e, 3)} · 2c = ${fdist(2 * el.a * el.e)} · ${tr('geoSum')} ${fdist(2 * el.a)}`;
+    if (main.kind === 'impact') s += ` · ${tr('law1Arc')}`;
+    $('#law1-live').textContent = s;
+  } else $('#law1-live').textContent = tr('law1Open');
+  const off2 = !main.sect;
+  l2.setAttribute('aria-disabled', String(off2));
+  l2.setAttribute('aria-pressed', String(S.law2 && !off2));
+  $('#law2-ind').textContent = tr(S.law2 && !off2 ? 'indOn' : 'indOff');
+  if (main.sect) {
+    const sc = main.sect;
+    $('#law2-live').textContent = `${P.N} × Δt = ${fdur(sc.dt)} · A = ${farea(sc.mean)} · ${tr('spread')} ${sc.spread < 1e-4 ? fsci(sc.spread, 2) : fmt(sc.spread * 100, 3) + ' %'}`;
+  } else $('#law2-live').textContent = tr('law2Off');
+  l3.setAttribute('aria-pressed', String(S.chartTab === 'k'));
+  $('#law3-ind').textContent = tr(S.chartTab === 'k' ? 'indChart' : 'indOpen');
+  const n = (S.k3[bodyKey()] || []).length;
+  $('#law3-live').textContent = P.scen === 'hohmann'
+    ? `T²/a³ = 4π²/GM = ${fsci(4 * Math.PI * Math.PI / P.GM, 4)} s²/m³ · ${tr('law3Hoh')}`
+    : `T²/a³ = 4π²/GM = ${fsci(4 * Math.PI * Math.PI / P.GM, 4)} s²/m³ · ${tr('law3n')}: ${n}`;
+}
+
+function updateLegend() {
+  let h = `<span><i class="sw-line"></i>${tr('lgTrail')}</span>`;
+  if (S.conic) h += `<span><i class="sw-line dash"></i>${tr('lgConic')}</span>`;
+  if (S.law2 && main.sect) h += `<span><i class="sw-sect"></i>${tr('lgSect')} ${fdur(main.sect.dt)}</span>`;
+  const sk = stateKey();
+  h += `<span class="state" id="state" data-s="${sk}">${tr(STATE_LABEL[sk])}</span>`;
+  $('#legend').innerHTML = h;
+}
+const STATE_LABEL = { aim: 'sAim', play: 'sPlay', pause: 'sPause', impact: 'sImpact', escape: 'sEscape', done: 'sDone' };
+function stateKey() {
+  if (S.mode === 'aim') return 'aim';
+  if (S.mode === 'play') return 'play';
+  if (S.mode === 'pause') return 'pause';
+  return main.kind === 'impact' ? 'impact' : main.kind === 'escape' ? 'escape' : 'done';
+}
+function setState() {
+  const el = $('#state'); if (!el) return;
+  const s = stateKey();
+  if (el.dataset.s !== s) { el.dataset.s = s; el.textContent = tr(STATE_LABEL[s]); }
+}
+function updateWarp() {
+  const w = main.warp * S.speed;
+  $('#warp').textContent = `1 s ≙ ${fdur(w)}`;
+}
+
+function curT() { return S.mode === 'aim' ? 0 : Math.min(S.t, main.T); }
+let hudLast = '';
+function updateHud() {
+  const tt = S.hoverT != null ? Math.min(S.hoverT, main.T) : curT();
+  const q = sampleAt(main, tt), r = Math.hypot(q.x, q.y), v = Math.hypot(q.vx, q.vy);
+  const tu = timeUnit(main.T);
+  const key = [tt.toPrecision(6), r.toPrecision(6), S.lap, lang].join('|');
+  if (key === hudLast) return; hudLast = key;
+  const dist = (m) => (isSolar() ? `${fmt(m / AU, 4)} <span>${tr('au')}</span>` : `${fnum(m / 1000)} <span>km</span>`);
+  $('#hud-t').innerHTML = `${fmt(tt / tu.u, 2)} <span>${tu.s}</span>`;
+  $('#hud-h').innerHTML = dist(r - P.R);
+  $('#hud-r').innerHTML = dist(r);
+  $('#hud-v').innerHTML = `${fmt(v / 1000, 3)} <span>km/s</span>`;
+  $('#hud-e').innerHTML = `${fmt((0.5 * v * v - P.GM / r) / 1e6, 2)} <span>MJ/kg</span>`;
+  $('#hud-lap').textContent = String(S.lap);
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+const res = (s, b) => `<span class="r${b ? ' b' : ''}">${s}</span>`;
+function updateFormulas() {
+  const tt = S.hoverT != null ? Math.min(S.hoverT, main.T) : curT();
+  const q = sampleAt(main, tt), r = Math.hypot(q.x, q.y), v = Math.hypot(q.vx, q.vy);
+  const GM = P.GM, R = P.R, M = GM / G, rs = r0();
+  const elC = elements(GM, q.x, q.y, q.vx, q.vy);
+  const sci = (x) => fsci(x, 4);
+  const cards = [];
+  // gravitation
+  cards.push(`<div class="fcard"><h4>${tr('fGrav')}</h4>
+    <div class="eq">${V('F')}${EQ}${FR(`${V('G')}${V('M')}${V('m')}`, `${V('r')}<sup>2</sup>`)}</div>
+    <div class="eq num">${FR(V('F'), V('m'))}${EQ}${FR(`${fsci(G, 4)} · ${sci(M)}`, `(${sci(r)})<sup>2</sup>`)}${EQ}${res(`${fnum(GM / (r * r))} N/kg`)}</div>
+    <p class="fnote">${tr('nGrav')}: <i>g</i> = <i>GM</i>/<i>R</i>² = ${fnum(GM / (R * R))} m/s².</p></div>`);
+  // first cosmic
+  cards.push(`<div class="fcard"><h4>${tr('fV1')}</h4>
+    <div class="eq">${V('v', '1')}${EQ}${RT(FR(`${V('G')}${V('M')}`, V('R')))}${EQ}${RT(FR(sci(GM), sci(R)))}${EQ}${res(fspd(vCirc(R)), true)}</div>
+    <p class="fnote">${tr('nV1')} <i>r</i><sub>0</sub> = ${fdist(rs)}: √(<i>GM</i>/<i>r</i><sub>0</sub>) = ${fspd(vCirc(rs))}.</p></div>`);
+  // second cosmic
+  cards.push(`<div class="fcard"><h4>${tr('fV2')}</h4>
+    <div class="eq">${V('v', '2')}${EQ}${RT(FR(`2${V('G')}${V('M')}`, V('R')))}${EQ}√2 · ${V('v', '1')}${EQ}${fmt(Math.SQRT2, 3)} · ${fspd(vCirc(R))}${EQ}${res(fspd(vEsc(R)), true)}</div>
+    <p class="fnote">${tr('nV1')} <i>r</i><sub>0</sub>: √(2<i>GM</i>/<i>r</i><sub>0</sub>) = ${fspd(vEsc(rs))}.</p></div>`);
+  // vis-viva at the current point (osculating a, so it also holds during a Hohmann transfer)
+  const a = elC.a, inv = !isFinite(a) ? '' : a > 0 ? ` − ${FR('1', sci(a))}` : ` + ${FR('1', sci(-a))}`;
+  const vv = Math.sqrt(Math.max(0, GM * (2 / r - (isFinite(a) ? 1 / a : 0))));
+  cards.push(`<div class="fcard"><h4>${tr('fVis')}</h4>
+    <div class="eq">${V('v')}<sup>2</sup>${EQ}${V('G')}${V('M')}(${FR('2', V('r'))} − ${FR('1', V('a'))})</div>
+    <div class="eq num">${V('v')}${EQ}${RT(`${sci(GM)} · (${FR('2', sci(r))}${inv})`)}${EQ}${res(fspd(vv))}</div>
+    <p class="fnote">${tr('nVis')} |<i>v</i>| = ${fspd(v)}.</p></div>`);
+  // period
+  const elP = main.kind === 'transfer' ? main.elTr : main.el;
+  const k3 = 4 * Math.PI * Math.PI / GM;
+  if (elP.e < 1 && elP.a > 0) {
+    cards.push(`<div class="fcard"><h4>${tr('fT')}</h4>
+      <div class="eq">${V('T')}${EQ}2π${RT(FR(`${V('a')}<sup>3</sup>`, `${V('G')}${V('M')}`))}${EQ}2π${RT(FR(`(${sci(elP.a)})<sup>3</sup>`, sci(GM)))}${EQ}${res(fdur(elP.T))}</div>
+      <p class="fnote">${tr('nT')} <i>T</i>²/<i>a</i>³ = 4π²/<i>GM</i> = ${fsci(k3, 4)} s²/m³.</p></div>`);
+  } else cards.push(`<div class="fcard"><h4>${tr('fT')}</h4><div class="eq">${V('T')}${EQ}2π${RT(FR(`${V('a')}<sup>3</sup>`, `${V('G')}${V('M')}`))}</div><p class="fnote">${tr('nTopen')}</p></div>`);
+  // eccentricity
+  if (elP.e < 1 && elP.a > 0) {
+    cards.push(`<div class="fcard"><h4>${tr('fE')}</h4>
+      <div class="eq">${V('e')}${EQ}${FR(`${V('r', 'a')} − ${V('r', 'p')}`, `${V('r', 'a')} + ${V('r', 'p')}`)}${EQ}${FR(`${fnum(elP.ra / 1000)} − ${fnum(elP.rp / 1000)}`, `${fnum(elP.ra / 1000)} + ${fnum(elP.rp / 1000)}`)}${EQ}${res(fmt(elP.e, 4))}</div>
+      <p class="fnote">${tr('nE')}</p></div>`);
+  } else {
+    cards.push(`<div class="fcard"><h4>${tr('fE')}</h4>
+      <div class="eq">${V('e')}${EQ}${RT(`1 + ${FR(`2${V('ε')}${V('h')}<sup>2</sup>`, `(${V('G')}${V('M')})<sup>2</sup>`)}`)}${EQ}${res(fmt(elP.e, 4))}</div>
+      <p class="fnote">${tr('nEopen')}</p></div>`);
+  }
+  // specific energy
+  const eps = 0.5 * v * v - GM / r;
+  cards.push(`<div class="fcard"><h4>${tr('fEps')}</h4>
+    <div class="eq">${V('ε')}${EQ}${FR(`${V('v')}<sup>2</sup>`, '2')} − ${FR(`${V('G')}${V('M')}`, V('r'))}${EQ}−${FR(`${V('G')}${V('M')}`, `2${V('a')}`)}</div>
+    <div class="eq num">${V('ε')}${EQ}${FR(`(${sci(v)})<sup>2</sup>`, '2')} − ${FR(sci(GM), sci(r))}${EQ}${res(fen(eps))}</div>
+    <p class="fnote">${tr('nEps')}</p></div>`);
+  // angular momentum, areal velocity
+  const hh = Math.abs(q.x * q.vy - q.y * q.vx), cg = v > 0 ? hh / (r * v) : 1, gdeg = Math.acos(Math.min(1, cg)) / D2R;
+  let hb = `<div class="eq">${V('h')}${EQ}|${V('<b>r</b>')} × ${V('<b>v</b>')}|${EQ}${V('r')}${V('v')} cos ${V('γ')}${EQ}${sci(r)} · ${sci(v)} · cos ${fmt(gdeg, 1)}°${EQ}${res(`${fsci(hh, 4)} m²/s`)}</div>
+    <div class="eq">${FR(`d${V('A')}`, `d${V('t')}`)}${EQ}${FR(V('h'), '2')}${EQ}${res(`${fsci(hh / 2e6, 4)} km²/s`)}</div>`;
+  if (main.sect) {
+    hb += `<div class="eq num">Δ${V('A')}${EQ}${FR(V('h'), '2')} · Δ${V('t')}${EQ}${fsci(hh / 2e6, 4)} · ${fmt(main.sect.dt, 1)} s${EQ}${res(farea(hh / 2 * main.sect.dt))}</div>
+      <p class="fnote">${tr('nHsect')} ${farea(main.sect.mean)}.</p>`;
+  }
+  cards.push(`<div class="fcard wide"><h4>${tr('fH')}</h4>${hb}</div>`);
+  if (main.hoh) {
+    const H = main.hoh;
+    cards.push(`<div class="fcard wide"><h4>${tr('fHoh')}</h4>
+      <div class="eq">Δ${V('v', '1')}${EQ}${RT(FR(`${V('G')}${V('M')}`, V('r', '1')))}(${RT(FR(`2${V('r', '2')}`, `${V('r', '1')} + ${V('r', '2')}`))} − 1)${EQ}${res((H.dv1 >= 0 ? '+' : '−') + fspd(Math.abs(H.dv1)))}</div>
+      <div class="eq">Δ${V('v', '2')}${EQ}${RT(FR(`${V('G')}${V('M')}`, V('r', '2')))}(1 − ${RT(FR(`2${V('r', '1')}`, `${V('r', '1')} + ${V('r', '2')}`))})${EQ}${res((H.dv2 >= 0 ? '+' : '−') + fspd(Math.abs(H.dv2)))}</div>
+      <div class="eq num">${V('t')}${EQ}π${RT(FR(`${V('a', 't')}<sup>3</sup>`, `${V('G')}${V('M')}`))}${EQ}π${RT(FR(`(${sci(H.at)})<sup>3</sup>`, sci(GM)))}${EQ}${res(fdur(H.ttr))}</div>
+      <p class="fnote">${tr('nHoh')}</p></div>`);
+  }
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- canvas: scene ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 500, dpr = 1, dirty = true, chartDirty = true;
+const col = {}, st = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement), g = (k) => cs.getPropertyValue('--' + k).trim();
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'crimson', 'blue', 'amber', 'violet']) col[k.replace('-', '')] = g(k);
+  for (const k of ['bg', 'paper', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'crimson', 'blue', 'amber', 'violet']) st[k.replace('-', '')] = g('sp-' + k);
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+  // resizing clears the bitmap: repaint now instead of waiting for the next animation frame
+  if (main) { updateCamera(0); drawScene(); dirty = false; }
+}
+new ResizeObserver(resize).observe(box);
+
+const view = { cx: 0, cy: 0, s: 1e-5, ready: false };
+const W2S = (x, y) => ({ x: cw / 2 + (x - view.cx) * view.s, y: ch / 2 - (y - view.cy) * view.s });
+const S2W = (X, Y) => ({ x: view.cx + (X - cw / 2) / view.s, y: view.cy - (Y - ch / 2) / view.s });
+const Lref = () => Math.max(56, Math.min(118, 0.2 * Math.min(cw, ch)));
+const arrowScale = () => Lref() / vEsc(r0());
+
+function targetView() {
+  let x0 = -P.R, x1 = P.R, y0 = -P.R, y1 = P.R;
+  const add = (ax0, ax1, ay0, ay1) => { if (ax0 < x0) x0 = ax0; if (ax1 > x1) x1 = ax1; if (ay0 < y0) y0 = ay0; if (ay1 > y1) y1 = ay1; };
+  if (P.scen !== 'hohmann') { const s0 = startState(); add(s0.x, s0.x, s0.y, s0.y); }
+  if (main) {
+    let i = main.pts.length - 1;
+    if ((main.kind === 'escape' || main.kind === 'leaving') && S.mode !== 'aim') {
+      const tt = S.mode === 'end' ? main.T : Math.max(S.t, main.T * 0.05);
+      i = idxAt(main.pts, tt);
+    }
+    add(main.bx0[i], main.bx1[i], main.by0[i], main.by1[i]);
+  }
+  const lim = 4 * Math.max(r0(), 1.2 * P.R), cl = (v) => Math.max(-lim, Math.min(lim, v));
+  for (const g of S.ghosts) { const p = g.path, i = p.pts.length - 1; add(cl(p.bx0[i]), cl(p.bx1[i]), cl(p.by0[i]), cl(p.by1[i])); }
+  const padX = 28, padT = 52, padB = 44;
+  const w = Math.max(x1 - x0, 1), h = Math.max(y1 - y0, 1);
+  const s = Math.min((cw - 2 * padX) / w, (ch - padT - padB) / h);
+  return { cx: (x0 + x1) / 2, cy: (y0 + y1) / 2 + ((padT - padB) / 2) / s, s };
+}
+function updateCamera(dt) {
+  if (S.drag) return;
+  const tv = targetView();
+  if (!view.ready) { Object.assign(view, tv, { ready: true }); dirty = true; return; }
+  const f = reduceMotion ? 1 : 1 - Math.exp(-dt * 4.5);
+  const ls = Math.log(view.s), lt = Math.log(tv.s);
+  const far = Math.abs(lt - ls) > 1e-4 || Math.hypot(tv.cx - view.cx, tv.cy - view.cy) * view.s > 0.3;
+  if (far) { view.s = Math.exp(ls + (lt - ls) * f); view.cx += (tv.cx - view.cx) * f; view.cy += (tv.cy - view.cy) * f; dirty = true; }
+  else if (view.s !== tv.s || view.cx !== tv.cx || view.cy !== tv.cy) { Object.assign(view, tv); dirty = true; }
+}
+
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function withAlpha(hex, a) {
+  const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = st.bg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function mathLabel(b, s, x, y, color, align = 'left') {
+  const c = ctx, fb = `italic 17px ${FONT_MATH}`, fs = `12px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fs; const ws = s ? c.measureText(s).width : 0;
+  const x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb, 'left'); if (s) halo(s, x0 + wb + 1, y + 5, color, fs, 'left');
+}
+function arrow(x1, y1, x2, y2, color, w = 2, dash = null, head = 9) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.42) * head, y2 - Math.sin(a - 0.42) * head);
+  c.lineTo(x2 - Math.cos(a + 0.42) * head, y2 - Math.sin(a + 0.42) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function strokeWith(color, w, alpha = 1, dash = null, glow = 0) {
+  const c = ctx; c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineJoin = 'round'; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  if (glow) { c.shadowColor = color; c.shadowBlur = glow; }
+  c.stroke(); c.restore();
+}
+// Adds the path segment [t0, t1] to the current canvas path, skipping sub-pixel vertices.
+function tracePts(path, t0, t1, move = true) {
+  if (!(t1 > t0)) return;
+  const p = path.pts, a = sampleAt(path, t0), A = W2S(a.x, a.y);
+  if (move) ctx.moveTo(A.x, A.y); else ctx.lineTo(A.x, A.y);
+  const i0 = idxAt(p, t0) + 1, i1 = idxAt(p, t1);
+  let lx = A.x, ly = A.y;
+  for (let i = i0; i <= i1; i++) {
+    const X = cw / 2 + (p[i].x - view.cx) * view.s, Y = ch / 2 - (p[i].y - view.cy) * view.s;
+    if (Math.abs(X - lx) + Math.abs(Y - ly) > 0.7) { ctx.lineTo(X, Y); lx = X; ly = Y; }
+  }
+  const b = sampleAt(path, t1), B = W2S(b.x, b.y); ctx.lineTo(B.x, B.y);
+}
+function sectorPoly(path, t0, t1) {
+  const p = path.pts, out = [], a = sampleAt(path, t0), A = W2S(a.x, a.y); out.push(A.x, A.y);
+  let lx = A.x, ly = A.y;
+  for (let i = idxAt(p, t0) + 1; i < p.length && p[i].t < t1; i++) {
+    const X = cw / 2 + (p[i].x - view.cx) * view.s, Y = ch / 2 - (p[i].y - view.cy) * view.s;
+    if (Math.abs(X - lx) + Math.abs(Y - ly) > 1) { out.push(X, Y); lx = X; ly = Y; }
+  }
+  const b = sampleAt(path, t1), B = W2S(b.x, b.y); out.push(B.x, B.y);
+  return out;
+}
+function conicTrace(el, rLim) {
+  if (!(el.p > 0)) return;
+  const n = 420; let th0 = -Math.PI, th1 = Math.PI;
+  if (el.e >= 1) { const ti = Math.acos(-1 / el.e); th0 = -ti + 1e-3; th1 = ti - 1e-3; }
+  let pen = false;
+  for (let i = 0; i <= n; i++) {
+    const th = th0 + (th1 - th0) * i / n, r = el.p / (1 + el.e * Math.cos(th));
+    if (!(r > 0) || r > rLim) { pen = false; continue; }
+    const P2 = W2S(r * Math.cos(th + el.om), r * Math.sin(th + el.om));
+    if (pen) ctx.lineTo(P2.x, P2.y); else { ctx.moveTo(P2.x, P2.y); pen = true; }
+  }
+}
+function circleW(r) { const B = W2S(0, 0); ctx.moveTo(B.x + r * view.s, B.y); ctx.arc(B.x, B.y, r * view.s, 0, TAU); }
+
+/* stars: fixed to the screen, seeded so they do not jump between frames */
+const STARS = (() => { let s = 7; const rnd = () => (s = (s * 16807) % 2147483647) / 2147483647; return Array.from({ length: 230 }, () => ({ u: rnd(), v: rnd(), r: 0.5 + rnd() * rnd() * 1.6, a: 0.18 + rnd() * 0.7, t: rnd() })); })();
+
+/* particles */
+const parts = [], rings = [];
+function burst(x, y, nx, ny, color, smoke = false) {
+  if (reduceMotion) return;
+  const base = Math.atan2(ny, nx), n = smoke ? 14 : 30;
+  for (let i = 0; i < n; i++) {
+    const a = base + (Math.random() - 0.5) * (smoke ? 1.2 : 2.2), sp = (smoke ? 20 : 50) + Math.random() * (smoke ? 60 : 170);
+    parts.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, decay: 0.8 + Math.random() * 0.9, r: 1 + Math.random() * 2.4, color, smoke });
+  }
+  if (!smoke) rings.push({ x, y, r: 3, life: 1, color });
+}
+function stepParticles(dt) {
+  const B = W2S(0, 0);
+  for (let i = parts.length - 1; i >= 0; i--) {
+    const q = parts[i];
+    q.life -= dt * q.decay;
+    const dx = B.x - q.x, dy = B.y - q.y, d = Math.hypot(dx, dy) || 1;
+    if (!q.smoke) { q.vx += dx / d * 260 * dt; q.vy += dy / d * 260 * dt; }
+    else { q.vx *= 1 - 2.5 * dt; q.vy *= 1 - 2.5 * dt; }
+    q.x += q.vx * dt; q.y += q.vy * dt;
+    if (q.life <= 0) parts.splice(i, 1);
+  }
+  for (let i = rings.length - 1; i >= 0; i--) { const r = rings[i]; r.r += 70 * dt; r.life -= dt * 1.5; if (r.life <= 0) rings.splice(i, 1); }
+}
+
+function drawBody(X, Y, Rp) {
+  const c = ctx, key = P.body, L = LOOKS[key];
+  if (key === 'sun') {
+    const g = c.createRadialGradient(X, Y, Rp * 0.85, X, Y, Rp * 2.6);
+    g.addColorStop(0, withAlpha(L.halo, 0.5)); g.addColorStop(0.35, withAlpha(L.halo, 0.12)); g.addColorStop(1, withAlpha(L.halo, 0));
+    c.fillStyle = g; c.beginPath(); c.arc(X, Y, Rp * 2.6, 0, TAU); c.fill();
+  } else if (key === 'earth') {
+    const g = c.createRadialGradient(X, Y, Rp, X, Y, Rp * 1.07 + 4);
+    g.addColorStop(0, withAlpha(L.halo, 0.55)); g.addColorStop(1, withAlpha(L.halo, 0));
+    c.fillStyle = g; c.beginPath(); c.arc(X, Y, Rp * 1.07 + 4, 0, TAU); c.fill();
+  }
+  const g = c.createRadialGradient(X - Rp * 0.38, Y - Rp * 0.42, Rp * 0.05, X, Y, Rp);
+  g.addColorStop(0, L.c0); g.addColorStop(0.55, L.c1); g.addColorStop(1, L.c2);
+  c.fillStyle = g; c.beginPath(); c.arc(X, Y, Rp, 0, TAU); c.fill();
+  if (Rp > 16) {
+    c.save(); c.beginPath(); c.arc(X, Y, Rp, 0, TAU); c.clip();
+    if (key === 'earth' || key === 'custom') {
+      c.strokeStyle = 'rgba(255,255,255,0.09)'; c.lineWidth = 1;
+      for (let k = -2; k <= 2; k++) { const lat = k * 0.5, yy = Y - Rp * Math.sin(lat), hw = Rp * Math.cos(lat); c.beginPath(); c.moveTo(X - hw, yy); c.lineTo(X + hw, yy); c.stroke(); }
+      for (let k = 1; k <= 3; k++) { c.beginPath(); c.ellipse(X, Y, Rp * Math.sin(k * 0.45), Rp, 0, 0, TAU); c.stroke(); }
+    } else if (key === 'moon') {
+      for (const [u, v, s] of [[-0.3, -0.2, 0.17], [0.28, 0.12, 0.12], [0.05, 0.45, 0.1], [-0.48, 0.32, 0.08], [0.42, -0.4, 0.11], [-0.05, -0.55, 0.07]]) {
+        c.fillStyle = 'rgba(20,20,26,0.16)'; c.beginPath(); c.arc(X + u * Rp, Y + v * Rp, s * Rp, 0, TAU); c.fill();
+        c.strokeStyle = 'rgba(255,255,255,0.1)'; c.lineWidth = 1; c.beginPath(); c.arc(X + u * Rp, Y + v * Rp, s * Rp, Math.PI * 0.9, Math.PI * 1.7); c.stroke();
+      }
+    } else if (key === 'mars') {
+      c.fillStyle = 'rgba(255,255,255,0.75)'; c.beginPath(); c.ellipse(X, Y - Rp * 0.96, Rp * 0.34, Rp * 0.12, 0, 0, TAU); c.fill();
+      c.fillStyle = 'rgba(60,18,8,0.25)'; c.beginPath(); c.ellipse(X + Rp * 0.15, Y + Rp * 0.1, Rp * 0.45, Rp * 0.12, -0.3, 0, TAU); c.fill();
+    }
+    if (key !== 'sun') {
+      const sh = c.createLinearGradient(X - Rp * 0.3, Y - Rp * 0.3, X + Rp, Y + Rp);
+      sh.addColorStop(0, 'rgba(0,0,0,0)'); sh.addColorStop(1, 'rgba(0,0,10,0.45)');
+      c.fillStyle = sh; c.fillRect(X - Rp, Y - Rp, 2 * Rp, 2 * Rp);
+    }
+    c.restore();
+  }
+}
+function drawMountain(B, Rp) {
+  const c = ctx, phi = P.phi, hp = Math.max(6, P.h0 * view.s);
+  const half = Math.max(0.025, Math.min(0.45, 1.05 * Math.max(hp, 6) / Math.max(Rp, 1)));
+  const pk = { x: B.x + (Rp + hp) * Math.cos(phi), y: B.y - (Rp + hp) * Math.sin(phi) };
+  const a1 = phi - half, a2 = phi + half, ri = Rp * 0.985;
+  c.save();
+  const g = c.createLinearGradient(pk.x, pk.y, B.x + ri * Math.cos(phi), B.y - ri * Math.sin(phi));
+  g.addColorStop(0, '#9A958F'); g.addColorStop(1, '#3B3733');
+  c.fillStyle = g; c.beginPath();
+  c.moveTo(B.x + ri * Math.cos(a1), B.y - ri * Math.sin(a1));
+  c.quadraticCurveTo(B.x + (Rp + hp * 0.35) * Math.cos(phi - half * 0.45), B.y - (Rp + hp * 0.35) * Math.sin(phi - half * 0.45), pk.x, pk.y);
+  c.quadraticCurveTo(B.x + (Rp + hp * 0.3) * Math.cos(phi + half * 0.5), B.y - (Rp + hp * 0.3) * Math.sin(phi + half * 0.5), B.x + ri * Math.cos(a2), B.y - ri * Math.sin(a2));
+  c.closePath(); c.fill();
+  c.strokeStyle = 'rgba(255,255,255,0.18)'; c.lineWidth = 1; c.stroke();
+  // cannon on the summit, barrel along the local horizontal
+  c.translate(pk.x, pk.y); c.rotate(-phi + Math.PI / 2);
+  const rec = (S.recoil || 0) * 4;
+  c.fillStyle = '#1B2030'; c.strokeStyle = st.ink2; c.lineWidth = 1.2;
+  c.beginPath(); c.rect(-6 - rec, -9, 20, 6); c.fill(); c.stroke();
+  c.beginPath(); c.arc(-2, -3, 4, 0, TAU); c.fill(); c.stroke();
+  c.restore();
+}
+function crater(x, y, Rp) {
+  const c = ctx, B = W2S(0, 0), P0 = W2S(x, y), nx = (P0.x - B.x) / Rp, ny = (P0.y - B.y) / Rp;
+  const X = P0.x - nx * 2, Y = P0.y - ny * 2;
+  c.save(); c.fillStyle = 'rgba(0,0,0,0.55)'; c.beginPath(); c.arc(X, Y, 4.5, 0, TAU); c.fill();
+  c.strokeStyle = withAlpha(st.crimson, 0.85); c.lineWidth = 1.5; c.beginPath(); c.arc(X, Y, 6, 0, TAU); c.stroke(); c.restore();
+}
+
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = st.bg; c.fillRect(0, 0, cw, ch);
+  const B = W2S(0, 0), Rp = Math.max(2.5, P.R * view.s);
+  const tNow = curT(), full = S.lap > 0, playing = S.mode !== 'aim';
+
+  // stars + faint glow around the body
+  for (const s of STARS) { c.globalAlpha = s.a; c.fillStyle = s.t > 0.85 ? '#FFD9A8' : s.t > 0.7 ? '#BFD6FF' : '#E8EEF8'; c.fillRect(s.u * cw, s.v * ch, s.r, s.r); }
+  c.globalAlpha = 1;
+  {
+    const g = c.createRadialGradient(B.x, B.y, Rp, B.x, B.y, Rp * 6 + 60);
+    g.addColorStop(0, withAlpha(st.blue, 0.08)); g.addColorStop(1, withAlpha(st.blue, 0));
+    c.fillStyle = g; c.fillRect(0, 0, cw, ch);
+  }
+  // range rings around the body
+  {
+    const corner = Math.max(Math.hypot(B.x, B.y), Math.hypot(cw - B.x, B.y), Math.hypot(B.x, ch - B.y), Math.hypot(cw - B.x, ch - B.y)) / view.s;
+    const step = niceStep(corner, 6);
+    c.save(); c.strokeStyle = st.grid; c.lineWidth = 1; c.beginPath();
+    for (let r = step; r <= corner; r += step) { if (r * view.s < Rp + 10) continue; c.moveTo(B.x + r * view.s, B.y); c.arc(B.x, B.y, r * view.s, 0, TAU); }
+    c.stroke(); c.restore();
+  }
+
+  // kept shots
+  const craters = [];
+  for (const g of S.ghosts) {
+    const p = g.path, tt = g.anim ? (playing ? Math.min(S.t, p.T) : 0) : p.T;
+    if (tt > 0) { c.beginPath(); tracePts(p, 0, tt); strokeWith(g.anim ? st.amber : st.ink2, g.anim ? 1.7 : 1.3, g.anim ? 0.8 : 0.45); }
+    if (p.kind === 'impact' && tt >= p.T) craters.push(p.pts[p.pts.length - 1]);
+    if (g.anim && !g.done && tt > 0 && tt < p.T) {
+      const q = sampleAt(p, tt), Q = W2S(q.x, q.y);
+      c.save(); c.fillStyle = st.amber; c.shadowColor = st.amber; c.shadowBlur = 10; c.beginPath(); c.arc(Q.x, Q.y, 4, 0, TAU); c.fill(); c.restore();
+    }
+    if (tt >= p.T || !g.anim) {
+      let L;
+      if (p.kind === 'orbit') { let bi = 0, br = 0; for (let i = 0; i < p.pts.length; i += 8) { const r = Math.hypot(p.pts[i].x, p.pts[i].y); if (r > br) { br = r; bi = i; } } L = p.pts[bi]; }
+      else L = p.pts[p.pts.length - 1];
+      const Q = W2S(L.x, L.y), d = Math.hypot(Q.x - B.x, Q.y - B.y) || 1;
+      const lx = Math.max(30, Math.min(cw - 30, Q.x + (Q.x - B.x) / d * 16)), ly = Math.max(14, Math.min(ch - 14, Q.y + (Q.y - B.y) / d * 16));
+      halo(`${fmt(g.v0 / 1000, 2)}`, lx, ly, g.anim ? st.amber : st.ink2, `500 10.5px ${FONT_MONO}`, 'center');
+    }
+  }
+
+  // predicted conic(s) from orbital elements
+  const rLim = 3 * Math.max(cw, ch) / view.s + Math.hypot(view.cx, view.cy);
+  if (S.conic && main) {
+    if (main.kind === 'transfer') {
+      const H = main.hoh;
+      c.beginPath(); circleW(H.r1); strokeWith(st.blue, 1.3, 0.55, [5, 6]);
+      c.beginPath(); conicTrace(main.elTr, rLim); strokeWith(st.amber, 1.3, 0.6, [5, 6]);
+      c.beginPath(); circleW(H.r2); strokeWith(st.violet, 1.3, 0.6, [5, 6]);
+    } else { c.beginPath(); conicTrace(main.el, rLim); strokeWith(st.ink2, 1.3, 0.5, [5, 6]); }
+  }
+
+  // Kepler II: equal-time sectors
+  let sectLabels = [];
+  if (S.law2 && main.sect && playing) {
+    const sc = main.sect, lim = full || S.mode === 'end' ? Infinity : tNow;
+    const E = Math.floor(Math.log10(sc.mean / 1e6));
+    for (let k = 0; k < sc.list.length; k++) {
+      const s = sc.list[k];
+      if (s.t0 >= lim) break;
+      const t1 = Math.min(s.t1, lim), done = t1 >= s.t1 - 1e-9;
+      const cur = tNow >= s.t0 && tNow < s.t1 && S.mode !== 'end';
+      const poly = sectorPoly(main, s.t0, t1);
+      c.beginPath(); c.moveTo(B.x, B.y);
+      for (let i = 0; i < poly.length; i += 2) c.lineTo(poly[i], poly[i + 1]);
+      c.closePath();
+      const hue = k % 2 ? st.blue : st.crimson;
+      c.fillStyle = withAlpha(hue, cur ? 0.42 : done ? 0.22 : 0.32); c.fill();
+      c.save(); c.strokeStyle = withAlpha(hue, 0.6); c.lineWidth = 1;
+      c.beginPath(); c.moveTo(B.x, B.y); c.lineTo(poly[0], poly[1]); c.moveTo(B.x, B.y); c.lineTo(poly[poly.length - 2], poly[poly.length - 1]); c.stroke(); c.restore();
+      if (done) {
+        // polygon centroid (screen space) for the area label
+        let A2 = 0, cx = 0, cy = 0; const pts = [B.x, B.y, ...poly];
+        for (let i = 0; i < pts.length; i += 2) {
+          const j = (i + 2) % pts.length, cr = pts[i] * pts[j + 1] - pts[j] * pts[i + 1];
+          A2 += cr; cx += (pts[i] + pts[j]) * cr; cy += (pts[i + 1] + pts[j + 1]) * cr;
+        }
+        if (Math.abs(A2) / 2 > 1700) sectLabels.push({ x: cx / (3 * A2), y: cy / (3 * A2), txt: fmt(s.A / 1e6 / Math.pow(10, E), 2), hue });
+      }
+    }
+    if (sectLabels.length) sectLabels.E = E;
+  }
+
+  // main trail
+  if (main) {
+    if (!playing) { c.beginPath(); tracePts(main, 0, main.T); strokeWith(st.crimson, 2, 0.85, [7, 6]); }
+    else {
+      if (full) { c.beginPath(); tracePts(main, 0, main.T); strokeWith(st.crimson, 2, 0.55); }
+      else { c.beginPath(); tracePts(main, 0, tNow); strokeWith(st.crimson, 2.1, 0.8); }
+      const tail = main.T * 0.1;
+      c.beginPath(); tracePts(main, Math.max(0, tNow - tail), tNow);
+      if (full && tNow - tail < 0) tracePts(main, main.T + (tNow - tail), main.T);
+      strokeWith(st.crimson, 2.8, 1, null, reduceMotion ? 0 : 9);
+    }
+  }
+
+  // central body, mountain, craters
+  drawBody(B.x, B.y, Rp);
+  if (P.scen === 'cannon') drawMountain(B, Rp);
+  for (const q of craters) crater(q.x, q.y, Rp);
+  if (main.kind === 'impact' && playing && S.mainDone) { const q = main.pts[main.pts.length - 1]; crater(q.x, q.y, Rp); }
+
+  // sector area labels (after the body so labels near the focus stay readable)
+  for (const l of sectLabels) halo(l.txt, l.x, l.y, st.ink, `600 11.5px ${FONT_MONO}`, 'center');
+
+  // Kepler I: ellipse geometry
+  const elG = main.kind === 'transfer' ? main.elTr : main.el;
+  if (S.law1 && elG && elG.p > 0) drawGeometry(elG, B, Rp, tNow, playing);
+  else if (S.law1) { c.save(); c.strokeStyle = st.violet; c.lineWidth = 1.6; c.beginPath(); c.moveTo(B.x - 6, B.y); c.lineTo(B.x + 6, B.y); c.moveTo(B.x, B.y - 6); c.lineTo(B.x, B.y + 6); c.stroke(); c.restore(); }
+
+  // launch point and velocity arrow
+  if (P.scen !== 'hohmann') drawLauncher(playing);
+
+  // Hohmann burns
+  if (main.kind === 'transfer') {
+    main.burns.forEach((b, i) => {
+      const Q = W2S(b.x, b.y), shown = !playing || S.t >= b.t - 1e-9;
+      c.save(); c.globalAlpha = shown ? 1 : 0.4;
+      c.fillStyle = st.amber; c.beginPath(); c.moveTo(Q.x, Q.y - 6); c.lineTo(Q.x + 6, Q.y); c.lineTo(Q.x, Q.y + 6); c.lineTo(Q.x - 6, Q.y); c.closePath(); c.fill();
+      const Lp = 38 * Math.sign(b.dv || 1);
+      arrow(Q.x, Q.y, Q.x + b.ux * Lp, Q.y - b.uy * Lp, st.amber, 2.2, null, 8);
+      const d = Math.hypot(Q.x - B.x, Q.y - B.y) || 1, ox = (Q.x - B.x) / d, oy = (Q.y - B.y) / d;
+      halo(`Δv${i ? '₂' : '₁'} = ${b.dv >= 0 ? '+' : '−'}${fmt(Math.abs(b.dv) / 1000, 3)} km/s`, Q.x + ox * 20, Q.y + oy * 20 + (oy > 0 ? 8 : -8), st.amber, `600 12px ${FONT_MONO}`, ox >= 0 ? 'left' : 'right');
+      c.restore();
+      if (playing && S.mode === 'play' && !reduceMotion) {
+        const age = (S.t - b.t) / (main.T * 0.03);
+        if (age >= 0 && age < 1) { c.save(); c.globalAlpha = 1 - age; c.strokeStyle = st.amber; c.lineWidth = 2; c.beginPath(); c.arc(Q.x, Q.y, 6 + age * 30, 0, TAU); c.stroke(); c.restore(); dirty = true; }
+      }
+    });
+    const H = main.hoh, lab = (r, txt, color, ang) => { const Q = W2S(r * Math.cos(ang), r * Math.sin(ang)); halo(txt, Q.x + 6, Q.y - 8, color, `500 11px ${FONT_MONO}`, 'left'); };
+    if (S.conic) { lab(H.r1, tr('hohO1'), st.blue, -2.2); lab(H.r2, tr('hohO2'), st.violet, 2.3); }
+  }
+
+  // satellite
+  if (main) {
+    const crashed = main.kind === 'impact' && playing && S.mainDone;
+    const q = sampleAt(main, tNow), Q = W2S(q.x, q.y);
+    if (!crashed) {
+      if (S.vectors && playing) {
+        const k = arrowScale(), ex = Q.x + q.vx * k, ey = Q.y - q.vy * k;
+        arrow(Q.x, Q.y, ex, ey, st.blue, 2.2, null, 9);
+        mathLabel('v', '', ex + (q.vx >= 0 ? 6 : -14), ey - 7, st.blue);
+        const r = Math.hypot(q.x, q.y), gl = Math.max(12, Math.min(80, 42 * Math.pow(r0() / r, 2)));
+        const gx = Q.x - q.x / r * gl, gy = Q.y + q.y / r * gl;
+        arrow(Q.x, Q.y, gx, gy, st.amber, 2.2, null, 9);
+        mathLabel('F', 'g', gx + 6, gy + 4, st.amber);
+      }
+      c.save(); c.shadowColor = st.crimson; c.shadowBlur = reduceMotion ? 0 : 14;
+      c.fillStyle = st.crimson; c.beginPath(); c.arc(Q.x, Q.y, 6, 0, TAU); c.fill();
+      c.shadowBlur = 0; c.fillStyle = 'rgba(255,255,255,0.85)'; c.beginPath(); c.arc(Q.x - 1.8, Q.y - 1.8, 2.2, 0, TAU); c.fill(); c.restore();
+    }
+  }
+  // chart hover marker
+  if (S.hoverT != null && S.chartTab !== 'k') {
+    const q = sampleAt(main, Math.min(S.hoverT, main.T)), Q = W2S(q.x, q.y);
+    c.save(); c.strokeStyle = st.ink; c.lineWidth = 1.6; c.setLineDash([3, 3]); c.beginPath(); c.arc(Q.x, Q.y, 11, 0, TAU); c.stroke(); c.restore();
+  }
+
+  // particles
+  for (const r of rings) { c.save(); c.globalAlpha = r.life * 0.8; c.strokeStyle = r.color; c.lineWidth = 2; c.beginPath(); c.arc(r.x, r.y, r.r, 0, TAU); c.stroke(); c.restore(); }
+  for (const q of parts) {
+    c.save(); c.globalAlpha = Math.max(0, q.life) * (q.smoke ? 0.45 : 0.95); c.fillStyle = q.smoke ? st.ink3 : q.color;
+    c.beginPath(); c.arc(q.x, q.y, q.smoke ? q.r * (1 + (1 - q.life) * 3) : q.r, 0, TAU); c.fill(); c.restore();
+  }
+
+  // scale bar (bottom left) + sector unit (bottom right)
+  {
+    const Lw = niceStep(100 / view.s, 1), px = Lw * view.s, x0 = 16, y0 = ch - 16;
+    c.save(); c.strokeStyle = st.ink; c.lineWidth = 1.6; c.beginPath();
+    c.moveTo(x0, y0 - 5); c.lineTo(x0, y0); c.lineTo(x0 + px, y0); c.lineTo(x0 + px, y0 - 5); c.stroke(); c.restore();
+    const km = Lw / 1000, e = Math.floor(Math.log10(km) + 1e-9), m = Math.round(km / Math.pow(10, e));
+    const txt = km >= 1e6 ? `${m === 1 ? '' : m + '·'}10${sup(e)} km` : `${fmt(km, km < 1 ? 1 : 0)} km`;
+    halo(txt, x0, y0 - 12, st.ink2, `500 11px ${FONT_MONO}`, 'left');
+    if (sectLabels.E != null) halo(`${tr('lgSect').split(' ')[0]} · A [10${sup(sectLabels.E)} km²]`, cw - 14, ch - 16, st.ink2, `500 11px ${FONT_MONO}`, 'right');
+  }
+}
+
+function drawGeometry(el, B, Rp, tNow, playing) {
+  const c = ctx, ux = Math.cos(el.om), uy = Math.sin(el.om);
+  const peri = W2S(el.rp * ux, el.rp * uy);
+  const fontL = `600 12px ${FONT_MONO}`;
+  const outward = (Q, txt, color, dist = 16) => {
+    const d = Math.hypot(Q.x - B.x, Q.y - B.y) || 1, ox = (Q.x - B.x) / d, oy = (Q.y - B.y) / d;
+    let X = Q.x + ox * dist, Y = Q.y + oy * dist, al = Math.abs(ox) < 0.3 ? 'center' : ox > 0 ? 'left' : 'right';
+    c.font = fontL; const w = c.measureText(txt).width;
+    const X0 = X;
+    if (al === 'left') X = Math.min(X, cw - w - 8); else if (al === 'right') X = Math.max(X, w + 8); else X = Math.max(w / 2 + 8, Math.min(cw - w / 2 - 8, X));
+    if (Math.abs(X - X0) > 2) Y += 20;   // clamped against the frame edge: drop below the marker
+    Y = Math.max(14, Math.min(ch - 30, Y));
+    halo(txt, X, Y, color, fontL, al);
+  };
+  const isEll = el.e < 1 && el.a > 0;
+  if (isEll) {
+    const a = el.a, e = el.e, b = el.b;
+    const A = W2S(-el.ra * ux, -el.ra * uy), C = W2S(-a * e * ux, -a * e * uy), F2 = W2S(-2 * a * e * ux, -2 * a * e * uy);
+    const Bm = W2S(-a * e * ux - b * uy, -a * e * uy + b * ux);
+    c.save(); c.strokeStyle = withAlpha(st.violet, 0.85); c.lineWidth = 1.3;
+    c.beginPath(); c.moveTo(peri.x, peri.y); c.lineTo(A.x, A.y); c.stroke();
+    c.setLineDash([4, 4]); c.beginPath(); c.moveTo(C.x, C.y); c.lineTo(Bm.x, Bm.y); c.stroke(); c.restore();
+    c.fillStyle = st.violet; c.beginPath(); c.arc(C.x, C.y, 2.5, 0, TAU); c.fill();
+    // labels a and b at segment midpoints, nudged off the line
+    const nrm = (x1, y1, x2, y2) => { const dx = x2 - x1, dy = y2 - y1, L = Math.hypot(dx, dy) || 1; return [-dy / L, dx / L, L]; };
+    const [nx, ny, La] = nrm(C.x, C.y, A.x, A.y);
+    if (La > 40) mathLabel('a', '', (C.x + A.x) / 2 + nx * 12 - 4, (C.y + A.y) / 2 + ny * 12, st.violet);
+    const [mx, my, Lb] = nrm(C.x, C.y, Bm.x, Bm.y);
+    if (Lb > 30 && e > 0.01) mathLabel('b', '', (C.x + Bm.x) / 2 + mx * 12 - 4, (C.y + Bm.y) / 2 + my * 12, st.violet);
+    // second focus
+    if (e > 0.01) {
+      c.save(); c.strokeStyle = st.violet; c.lineWidth = 1.8; c.fillStyle = st.bg; c.beginPath(); c.arc(F2.x, F2.y, 5, 0, TAU); c.fill(); c.stroke(); c.restore();
+      mathLabel('F', '₂', F2.x + 8, F2.y - 10, st.violet);
+    }
+    // r1 + r2 = 2a strings from the satellite to both foci
+    if (playing && e > 0.01) {
+      const q = sampleAt(main, tNow), Q = W2S(q.x, q.y);
+      c.save(); c.strokeStyle = withAlpha(st.violet, 0.55); c.lineWidth = 1; c.setLineDash([2, 4]);
+      c.beginPath(); c.moveTo(Q.x, Q.y); c.lineTo(B.x, B.y); c.moveTo(Q.x, Q.y); c.lineTo(F2.x, F2.y); c.stroke(); c.restore();
+      const r1 = Math.hypot(q.x, q.y), r2 = Math.hypot(q.x + 2 * a * e * ux, q.y + 2 * a * e * uy);
+      halo(`r₁ + r₂ = ${fnum(r1 / 1000)} + ${fnum(r2 / 1000)} = ${fnum((r1 + r2) / 1000)} km = 2a`, cw - 14, ch - 34, st.violet, `500 11px ${FONT_MONO}`, 'right');
+    }
+    if (el.ra > P.R && e > 0.01) {
+      c.fillStyle = st.violet; c.beginPath(); c.arc(A.x, A.y, 3.5, 0, TAU); c.fill();
+      outward(A, `${tr('apo')[P.body]} · h = ${fdist(el.ra - P.R)}`, st.ink);
+    }
+  }
+  if (el.rp > P.R && (el.e > 0.01 || !isEll)) {
+    c.fillStyle = st.violet; c.beginPath(); c.arc(peri.x, peri.y, 3.5, 0, TAU); c.fill();
+    outward(peri, `${tr('peri')[P.body]} · h = ${fdist(el.rp - P.R)}`, st.ink);
+  }
+  // F1 at the centre of the body
+  c.save(); c.strokeStyle = '#FFFFFF'; c.lineWidth = 1.6; c.beginPath(); c.moveTo(B.x - 6, B.y); c.lineTo(B.x + 6, B.y); c.moveTo(B.x, B.y - 6); c.lineTo(B.x, B.y + 6); c.stroke(); c.restore();
+  mathLabel('F', '₁', B.x + 7, B.y - 10, '#FFFFFF');
+}
+
+function drawLauncher(playing) {
+  const c = ctx, s0 = startState(), Sp = W2S(s0.x, s0.y), k = arrowScale(), r = r0();
+  const strong = S.drag != null || S.mode === 'aim';
+  const tip = { x: Sp.x + s0.vx * k, y: Sp.y - s0.vy * k };
+  // v1 / v2 rings around the launch point
+  const R1 = vCirc(r) * k, R2 = vEsc(r) * k;
+  c.save(); c.lineWidth = 1.2; c.setLineDash([3, 5]);
+  c.globalAlpha = strong ? 0.75 : 0.35; c.strokeStyle = st.blue; c.beginPath(); c.arc(Sp.x, Sp.y, R1, 0, TAU); c.stroke();
+  c.strokeStyle = st.violet; c.beginPath(); c.arc(Sp.x, Sp.y, R2, 0, TAU); c.stroke(); c.restore();
+  const la = Math.atan2(tip.y - Sp.y, tip.x - Sp.x) + Math.PI * 0.8;   // ring labels away from the arrow
+  c.save(); c.globalAlpha = strong ? 1 : 0.6;
+  mathLabel('v', '₁', Sp.x + Math.cos(la) * R1 + 3, Sp.y + Math.sin(la) * R1 - 4, st.blue);
+  mathLabel('v', '₂', Sp.x + Math.cos(la) * R2 + 3, Sp.y + Math.sin(la) * R2 - 4, st.violet);
+  c.restore();
+  // local horizontal through the launch point
+  const tx = Math.sin(P.phi), ty = Math.cos(P.phi);
+  c.save(); c.strokeStyle = withAlpha(st.ink2, strong ? 0.5 : 0.25); c.lineWidth = 1; c.setLineDash([2, 4]);
+  c.beginPath(); c.moveTo(Sp.x - tx * R2 * 1.15, Sp.y - ty * R2 * 1.15); c.lineTo(Sp.x + tx * R2 * 1.15, Sp.y + ty * R2 * 1.15); c.stroke(); c.restore();
+  // flight-path angle arc
+  if (Math.abs(P.gam) > 0.6 * D2R && P.v0 > 0) {
+    const a0 = Math.atan2(ty, tx), a1 = Math.atan2(tip.y - Sp.y, tip.x - Sp.x);
+    c.save(); c.strokeStyle = st.ink2; c.lineWidth = 1.1; c.beginPath(); c.arc(Sp.x, Sp.y, 28, a0, a1, P.gam > 0); c.stroke(); c.restore();
+    const am = a0 + (P.gam > 0 ? -1 : 1) * Math.abs(P.gam) / 2;
+    halo(`γ = ${fmt(P.gam / D2R, 1)}°`, Sp.x + Math.cos(am) * 42, Sp.y + Math.sin(am) * 42, st.ink, `600 11.5px ${FONT_MONO}`, 'center');
+  }
+  // arrow + draggable handle
+  c.save(); c.globalAlpha = playing && !strong ? 0.7 : 1;
+  arrow(Sp.x, Sp.y, tip.x, tip.y, st.blue, 2.8, null, 11);
+  c.restore();
+  c.save(); c.fillStyle = st.paper; c.strokeStyle = st.blue; c.lineWidth = 2.2;
+  c.beginPath(); c.arc(tip.x, tip.y, strong ? 9 : 7.5, 0, TAU); c.fill(); c.stroke(); c.restore();
+  const d = Math.hypot(tip.x - Sp.x, tip.y - Sp.y) || 1;
+  halo(`v₀ = ${fmt(P.v0 / 1000, 3)} km/s`, tip.x + (tip.x - Sp.x) / d * 16, tip.y + (tip.y - Sp.y) / d * 16, st.blue, `600 12px ${FONT_MONO}`, tip.x >= Sp.x ? 'left' : 'right');
+  if (P.scen === 'kepler') {
+    c.save(); c.strokeStyle = st.ink; c.fillStyle = st.bg; c.lineWidth = 1.6; c.beginPath(); c.arc(Sp.x, Sp.y, 4.5, 0, TAU); c.fill(); c.stroke(); c.restore();
+  }
+}
+
+/* ---------- transport ---------- */
+const looping = () => main.kind === 'orbit' && !S.ghosts.some(g => g.anim);
+const timelineEnd = () => Math.max(main.T, ...S.ghosts.filter(g => g.anim).map(g => g.path.T));
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIcon = null;
+function updateScrub() {
+  const T = timelineEnd(), tt = S.mode === 'aim' ? 0 : Math.min(S.t, T), tu = timeUnit(T);
+  const el = $('#scrub');
+  el.value = T > 0 ? Math.round(tt / T * 1000) : 0; setFill(el);
+  $('#scrub-time').textContent = `${fmt(tt / tu.u, 2)} / ${fmt(T / tu.u, 2)} ${tu.s}`;
+  const playing = S.mode === 'play', key = playing + lang;
+  if (pauseIcon !== key) { pauseIcon = key; const pb = $('#pause'); pb.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(playing ? 'pause' : 'play')); }
+}
+function seek(t) {
+  const T = timelineEnd(); if (!(T > 0)) return;
+  if (S.mode === 'aim') { S.mode = 'pause'; }
+  S.t = Math.max(0, Math.min(T, t)); S.mode = 'pause';
+  S.mainDone = S.t >= main.T && main.kind !== 'orbit';
+  S.ghosts.forEach(g => { if (g.anim) g.done = S.t >= g.path.T; });
+  setState(); updateHud(); updateScrub(); updateFormulas(); dirty = true; chartDirty = true;
+}
+function togglePlay() {
+  if (S.mode === 'play') { S.mode = 'pause'; }
+  else if (S.mode === 'pause') { if (!looping() && S.t >= timelineEnd() - 1e-9) launch(); else S.mode = 'play'; }
+  else launch();
+  setState(); updateScrub();
+}
+const stepDt = () => (main.sect && P.scen !== 'hohmann' ? main.sect.dt : timelineEnd() / 40);
+function stepBy(dir) {
+  const d = stepDt(), t = S.mode === 'aim' ? 0 : S.t;
+  const n = dir > 0 ? Math.floor(t / d + 1e-6) + 1 : Math.ceil(t / d - 1e-6) - 1;
+  seek(n * d);
+}
+function onMainEnd() {
+  if (main.kind === 'impact') {
+    const q = main.pts[main.pts.length - 1], Q = W2S(q.x, q.y), B = W2S(0, 0), d = Math.hypot(Q.x - B.x, Q.y - B.y) || 1;
+    burst(Q.x, Q.y, (Q.x - B.x) / d, (Q.y - B.y) / d, st.crimson);
+    if (!reduceMotion) shake = 1;
+  } else if (main.kind === 'orbit') addK3(main);
+}
+function advance(dt) {
+  const tEnd = timelineEnd();
+  S.t += dt * main.warp * S.speed;
+  if (looping()) {
+    while (S.t >= main.T) { S.t -= main.T; S.lap++; if (S.lap === 1) addK3(main); }
+  } else {
+    if (!S.mainDone && S.t >= main.T) { S.mainDone = true; onMainEnd(); }
+    if (S.t >= tEnd) { S.t = tEnd; S.mode = 'end'; setState(); }
+  }
+  for (const g of S.ghosts) {
+    if (g.anim && !g.done && S.t >= g.path.T) {
+      g.done = true;
+      const p = g.path;
+      if (p.kind === 'impact') { const q = p.pts[p.pts.length - 1], Q = W2S(q.x, q.y), B = W2S(0, 0), d = Math.hypot(Q.x - B.x, Q.y - B.y) || 1; burst(Q.x, Q.y, (Q.x - B.x) / d, (Q.y - B.y) / d, st.amber); }
+      else if (p.kind === 'orbit') addK3(p);
+    }
+  }
+  updateHud(); updateScrub(); dirty = true; chartDirty = true;
+}
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), lastF = 0, shake = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.mode === 'play' && main) advance(dt);
+  updateCamera(dt);
+  if (S.recoil > 0) { S.recoil = Math.max(0, S.recoil - dt * 3.5); dirty = true; }
+  if (parts.length || rings.length) { stepParticles(dt); dirty = true; }
+  if (shake > 0) { shake = Math.max(0, shake - dt * 5); box.style.transform = shake > 0 ? `translate(${(Math.random() - 0.5) * 3 * shake}px, ${(Math.random() - 0.5) * 3 * shake}px)` : ''; }
+  if (S.mode === 'play' && now - lastF > 150) { lastF = now; updateFormulas(); }
+  if (dirty) { dirty = false; drawScene(); }
+  if (chartDirty) { chartDirty = false; drawChart(); }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 280, chartGeom = null;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); if (main) drawChart(); else chartDirty = true; }).observe(cbox);
+
+function timeSeries() {
+  const el = main.el, GM = P.GM, solar = isSolar();
+  const dU = solar ? AU : 1000, dS = solar ? tr('au') : 'km';
+  if (S.chartTab === 'r') {
+    const refs = [{ v: P.R / dU, label: 'R', color: col.ink3 }];
+    if (main.kind !== 'transfer') { refs.push({ v: el.rp / dU, label: 'rₚ', color: col.violet }); if (el.e < 1 && el.ra < 50 * r0()) refs.push({ v: el.ra / dU, label: 'rₐ', color: col.violet }); }
+    else refs.push({ v: main.hoh.r1 / dU, label: 'r₁', color: col.blue }, { v: main.hoh.r2 / dU, label: 'r₂', color: col.violet });
+    return { unit: dS, ylab: `r [${dS}]`, zero: true, refs, list: [{ name: tr('sR'), color: col.crimson, width: 2.4, get: q => Math.hypot(q.x, q.y) / dU }] };
+  }
+  if (S.chartTab === 'v') {
+    const refs = main.kind !== 'transfer' && el.e < 1 ? [{ v: el.vp / 1000, label: 'vₚ', color: col.violet }, { v: el.va / 1000, label: 'vₐ', color: col.violet }] : [];
+    return { unit: 'km/s', ylab: '|v| [km/s]', zero: true, refs, list: [
+      { name: tr('sV'), color: col.crimson, width: 2.4, get: q => Math.hypot(q.vx, q.vy) / 1000 },
+      { name: tr('sVesc'), color: col.violet, dash: [6, 5], get: q => Math.sqrt(2 * GM / Math.hypot(q.x, q.y)) / 1000 }] };
+  }
+  const small = Math.abs(el.eps) < 1e6 && GM / r0() < 2e6;
+  const eu = small ? 1e3 : 1e6, es = small ? 'kJ/kg' : 'MJ/kg';
+  return { unit: es, ylab: `ε [${es}]`, zero: true, refs: [], list: [
+    { name: tr('sEk'), color: col.amber, get: q => 0.5 * (q.vx * q.vx + q.vy * q.vy) / eu },
+    { name: tr('sEp'), color: col.violet, get: q => -GM / Math.hypot(q.x, q.y) / eu },
+    { name: tr('sEt'), color: col.ink, width: 2.6, get: q => (0.5 * (q.vx * q.vx + q.vy * q.vy) - GM / Math.hypot(q.x, q.y)) / eu }] };
+}
+function updateChartLegend(cs) {
+  if (S.chartTab === 'k') {
+    $('#clegend').innerHTML = `<span><i class="mk" style="background:${col.crimson}"></i>${tr('kFlown')}</span><span><i class="mk" style="border:1.5px solid ${col.ink2}"></i>${tr('kRef')}</span><span><i class="mk" style="border:2px solid ${col.blue}"></i>${tr('kNow')}</span><span><i class="sw-line" style="border-top:2px solid ${col.amber}"></i>${tr('kLine')}</span>`;
+    $('#cnote').innerHTML = tr('cnoteK');
+    return;
+  }
+  $('#clegend').innerHTML = cs.list.map(s => `<span><i class="sw-line" style="border-top:${s.width ? 3 : 2}px ${s.dash ? 'dashed' : 'solid'} ${s.color}"></i>${s.name}</span>`).join('');
+  $('#cnote').innerHTML = S.chartTab === 'r' ? tr('cnoteR') : S.chartTab === 'v' ? tr('cnoteV')
+    : main.kind === 'transfer' ? tr('cnoteEh') : `${tr('cnoteE')} |Δ<i>ε</i>/<i>ε</i>| = ${main.dE > 0 ? fsci(main.dE, 2) : '0'}.`;
+}
+function drawChart() {
+  if (!main) return;
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  if (S.chartTab === 'k') { updateChartLegend(null); drawK3(); return; }
+  const cs = timeSeries(); updateChartLegend(cs);
+  const Tm = main.T, pts = main.pts, stp = Math.max(1, Math.floor(pts.length / 700));
+  let lo = cs.zero ? 0 : Infinity, hi = cs.zero ? 0 : -Infinity;
+  for (const s of cs.list) for (let i = 0; i < pts.length; i += stp) { const v = s.get(pts[i]); if (v > hi) hi = v; if (v < lo) lo = v; }
+  for (const r of cs.refs) { if (r.v > hi) hi = r.v; if (r.v < lo) lo = r.v; }
+  if (!(hi > lo)) hi = lo + 1;
+  const ystep = niceStep(hi - lo, 4);
+  hi = Math.ceil((hi + (hi - lo) * 0.04) / ystep) * ystep; lo = Math.floor(lo / ystep) * ystep;
+  c.font = `500 11px ${FONT_MONO}`;
+  const ydec = ystep < 1 ? (ystep < 0.1 ? (ystep < 0.01 ? 3 : 2) : 1) : 0;
+  let labW = 0; for (let y = lo; y <= hi + 1e-9; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 30, T = 18, B = 26, pw = W - L - R, ph = H - T - B;
+  const tu = timeUnit(Tm);
+  const X = t => L + t / Tm * pw, Y = v => T + (1 - (v - lo) / (hi - lo)) * ph;
+  chartGeom = { L, R, T, B, pw, ph, Tm, X, Y, cs, tu };
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = lo; y <= hi + 1e-9; y += ystep) { const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fmt(y, ydec), L - 8, yy); }
+  const xstep = niceStep(Tm / tu.u, 5), xdec = xstep < 1 ? (xstep < 0.1 ? 2 : 1) : 0;
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let t = 0; t <= Tm / tu.u + 1e-9; t += xstep) c.fillText(fmt(t, xdec), X(t * tu.u), H - B + 8);
+  if (lo < 0 && hi > 0) { c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Math.round(Y(0)) + 0.5); c.lineTo(W - R, Math.round(Y(0)) + 0.5); c.stroke(); }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(cs.ylab, 4, 0);
+  c.textAlign = 'right'; c.fillText(`t [${tu.s}]`, W - 4, H - B + 8);
+  // sector boundaries (Kepler II) as faint ticks along the time axis
+  if (main.sect && S.law2) { c.save(); c.strokeStyle = col.grid; c.setLineDash([2, 3]); for (const s of main.sect.list) { const xx = Math.round(X(s.t1)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); } c.restore(); }
+  for (const r of cs.refs) {
+    const yy = Math.round(Y(r.v)) + 0.5;
+    c.save(); c.strokeStyle = r.color; c.globalAlpha = 0.8; c.setLineDash([4, 4]); c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.restore();
+    c.fillStyle = r.color; c.textAlign = 'left'; c.textBaseline = 'middle'; c.font = `italic 13px ${FONT_MATH}`; c.fillText(r.label, W - R + 4, yy); c.font = `500 11px ${FONT_MONO}`;
+  }
+  for (const s of cs.list) {
+    c.beginPath();
+    for (let i = 0; i < pts.length; i += stp) { const q = pts[i]; i ? c.lineTo(X(q.t), Y(s.get(q))) : c.moveTo(X(q.t), Y(s.get(q))); }
+    const e = pts[pts.length - 1]; c.lineTo(X(e.t), Y(s.get(e)));
+    c.save(); c.strokeStyle = s.color; c.lineWidth = s.width || 1.8; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); c.stroke(); c.restore();
+  }
+  const cur = S.hoverT != null ? S.hoverT : (S.mode !== 'aim' ? Math.min(S.t, Tm) : null);
+  if (cur != null) {
+    const xx = Math.round(X(Math.min(cur, Tm))) + 0.5, q = sampleAt(main, Math.min(cur, Tm));
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.restore();
+    for (const s of cs.list) { c.save(); c.fillStyle = s.color; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, Y(s.get(q)), 4.5, 0, TAU); c.fill(); c.stroke(); c.restore(); }
+  }
+}
+
+function k3Points() {
+  const solar = isSolar(), Lu = solar ? AU : 1e6, Tu = solar ? 86400 : 3600;
+  const pts = [];
+  for (const r of REFS[P.body] || []) pts.push({ x: Math.pow(r.a / Lu, 3), y: Math.pow(r.T / Tu, 2), kind: 'ref', label: tr(r.n), a: r.a, T: r.T });
+  for (const f of S.k3[bodyKey()] || []) pts.push({ x: Math.pow(f.a / Lu, 3), y: Math.pow(f.T / Tu, 2), kind: 'flown', a: f.a, T: f.T, e: f.e });
+  if (main.kind === 'transfer') {
+    const H = main.hoh;
+    for (const [a, lab] of [[H.r1, tr('hohO1')], [H.at, tr('hohTr')], [H.r2, tr('hohO2')]]) { const T = TAU * Math.sqrt(a * a * a / P.GM); pts.push({ x: Math.pow(a / Lu, 3), y: Math.pow(T / Tu, 2), kind: 'now', label: lab, a, T }); }
+  } else if (main.el.e < 1 && main.el.a > 0) pts.push({ x: Math.pow(main.el.a / Lu, 3), y: Math.pow(main.el.T / Tu, 2), kind: 'now', a: main.el.a, T: main.el.T, e: main.el.e });
+  const slope = 4 * Math.PI * Math.PI / P.GM * Math.pow(Lu, 3) / (Tu * Tu);
+  return { pts, slope, xl: solar ? `a³ [${tr('au')}³]` : 'a³ [(10³ km)³]', yl: solar ? 'T² [d²]' : 'T² [h²]' };
+}
+function drawK3() {
+  const c = cctx, W = ccw, H = cch, d = k3Points(), log = S.k3log;
+  const L = 52, R = 14, T = 18, B = 28, pw = W - L - R, ph = H - T - B;
+  let xmax = 0, xmin = Infinity;
+  for (const p of d.pts) { xmax = Math.max(xmax, p.x); xmin = Math.min(xmin, p.x); }
+  if (!(xmax > 0)) { xmax = Math.pow(3 * P.R / (isSolar() ? AU : 1e6), 3); xmin = xmax / 30; }
+  let X, Y, x0, x1, y0, y1;
+  if (!log) {
+    x0 = 0; x1 = xmax * 1.1; y0 = 0; y1 = d.slope * x1 * 1.02;
+    X = x => L + (x - x0) / (x1 - x0) * pw; Y = y => T + (1 - (y - y0) / (y1 - y0)) * ph;
+  } else {
+    x0 = Math.floor(Math.log10(xmin) - 0.15); x1 = Math.ceil(Math.log10(xmax) + 0.15); if (x1 - x0 < 2) x1 = x0 + 2;
+    y0 = Math.log10(d.slope) + x0; y1 = Math.log10(d.slope) + x1;
+    X = x => L + (Math.log10(x) - x0) / (x1 - x0) * pw; Y = y => T + (1 - (Math.log10(y) - y0) / (y1 - y0)) * ph;
+  }
+  c.font = `500 11px ${FONT_MONO}`; c.lineWidth = 1;
+  const tick = (v) => (log ? `10${sup(v)}` : fnum(v));
+  // axes, grid
+  c.strokeStyle = col.grid; c.fillStyle = col.ink2;
+  if (!log) {
+    const xs = niceStep(x1, 4), ys = niceStep(y1, 4);
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let x = 0; x <= x1 + 1e-9; x += xs) { const xx = Math.round(X(x)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.fillText(fnum(x), xx, H - B + 8); }
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (let y = 0; y <= y1 + 1e-9; y += ys) { const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fnum(y), L - 6, yy); }
+  } else {
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let k = x0; k <= x1; k++) { const xx = Math.round(X(Math.pow(10, k))) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.fillText(tick(k), xx, H - B + 8); }
+    c.textAlign = 'right'; c.textBaseline = 'middle';
+    for (let k = Math.ceil(y0); k <= Math.floor(y1); k++) { const yy = Math.round(Y(Math.pow(10, k))) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(tick(k), L - 6, yy); }
+  }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(d.yl, 4, 0);
+  c.textAlign = 'right'; c.fillText(d.xl, W - 4, H - B + 8 + 12 > H ? H - 12 : H - 13);
+  // Kepler line through the origin
+  c.save(); c.beginPath();
+  if (!log) { c.moveTo(X(0), Y(0)); c.lineTo(X(x1), Y(d.slope * x1)); }
+  else { c.moveTo(X(Math.pow(10, x0)), Y(d.slope * Math.pow(10, x0))); c.lineTo(X(Math.pow(10, x1)), Y(d.slope * Math.pow(10, x1))); }
+  c.strokeStyle = col.amber; c.lineWidth = 2; c.stroke(); c.restore();
+  chartGeom = { k3: true, pts: d.pts.map(p => ({ ...p, X: X(p.x), Y: Y(p.y) })) };
+  for (const p of chartGeom.pts) {
+    c.save();
+    if (p.kind === 'ref') { c.strokeStyle = col.ink2; c.fillStyle = col.surface; c.lineWidth = 1.6; c.beginPath(); c.arc(p.X, p.Y, 4.5, 0, TAU); c.fill(); c.stroke(); }
+    else if (p.kind === 'flown') { c.fillStyle = col.crimson; c.strokeStyle = col.surface; c.lineWidth = 1.5; c.beginPath(); c.arc(p.X, p.Y, 5, 0, TAU); c.fill(); c.stroke(); }
+    else { c.strokeStyle = col.blue; c.lineWidth = 2; c.beginPath(); c.arc(p.X, p.Y, 7.5, 0, TAU); c.stroke(); c.fillStyle = col.blue; c.beginPath(); c.arc(p.X, p.Y, 2, 0, TAU); c.fill(); }
+    c.restore();
+    if (p.label) { c.fillStyle = p.kind === 'ref' ? col.ink2 : col.blue; c.font = `500 11px ${FONT_MONO}`; c.textAlign = p.X > W - 70 ? 'right' : 'left'; c.textBaseline = 'middle'; c.fillText(p.label, p.X + (p.X > W - 70 ? -9 : 9), p.Y + 10); }
+  }
+  if (!(S.k3[bodyKey()] || []).length && P.scen !== 'hohmann') { c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.font = `500 11.5px ${FONT_MONO}`; c.fillText(tr('kEmpty'), L + 8, T + 6); }
+}
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top, g = chartGeom;
+  if (g.k3) {
+    let best = null, bd = 16;
+    for (const p of g.pts) { const d = Math.hypot(p.X - x, p.Y - y); if (d < bd) { bd = d; best = p; } }
+    if (!best) { tip.hidden = true; return; }
+    const name = best.label || (best.kind === 'flown' ? tr('kFlown') : tr('kNow'));
+    tip.innerHTML = `<div>${name}</div><div>a = ${fdist(best.a)}</div><div>T = ${fdur(best.T)}</div><div>T²/a³ = ${fsci(best.T * best.T / Math.pow(best.a, 3), 4)} s²/m³</div>`;
+    tip.hidden = false;
+    const tw = tip.offsetWidth;
+    tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, best.X)) + 'px';
+    tip.style.top = Math.max(tip.offsetHeight + 16, best.Y) + 'px';
+    return;
+  }
+  if (x < g.L || x > g.L + g.pw) { S.hoverT = null; tip.hidden = true; chartDirty = true; dirty = true; updateHud(); return; }
+  const t = (x - g.L) / g.pw * g.Tm; S.hoverT = t;
+  const q = sampleAt(main, t);
+  const rows = g.cs.list.map(s => `<div class="row"><i class="k" style="background:${s.color}"></i>${s.name}: ${fnum(s.get(q))} ${g.cs.unit}</div>`).join('');
+  tip.innerHTML = `<div>t = ${fmt(t / g.tu.u, 2)} ${g.tu.s}</div>${rows}`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, y) + 'px';
+  chartDirty = true; dirty = true; updateHud(); updateFormulas();
+});
+cbox.addEventListener('pointerleave', () => { S.hoverT = null; tip.hidden = true; chartDirty = true; dirty = true; updateHud(); updateFormulas(); });
+
+/* ---------- stage pointer interaction ---------- */
+function evPos(e) { const r = cv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+function setStartAt(w) {
+  const r = Math.min(Math.max(Math.hypot(w.x, w.y), P.R * 1.0002), P.R * Fmax());
+  P.phi = Math.atan2(w.y, w.x); P.h0 = r - P.R;
+}
+function setVelFromScreen(p) {
+  const s0 = startState(), Sp = W2S(s0.x, s0.y), k = arrowScale();
+  let vx = (p.x - Sp.x) / k, vy = -(p.y - Sp.y) / k;
+  const rx = Math.cos(P.phi), ry = Math.sin(P.phi), tx = ry, ty = -rx;
+  const vt = vx * tx + vy * ty, vr = vx * rx + vy * ry;
+  if (P.scen === 'cannon') { P.v0 = Math.min(Math.max(0, vt), vMax()); P.gam = 0; }
+  else { P.v0 = Math.min(Math.hypot(vx, vy), vMax()); P.gam = Math.atan2(vr, vt); }
+}
+function hitTest(p) {
+  if (P.scen === 'hohmann' || !main) return null;
+  const s0 = startState(), Sp = W2S(s0.x, s0.y), k = arrowScale();
+  const tipP = { x: Sp.x + s0.vx * k, y: Sp.y - s0.vy * k };
+  if (Math.hypot(p.x - tipP.x, p.y - tipP.y) < 22) return 'vel';
+  if (P.scen === 'kepler' && Math.hypot(p.x - Sp.x, p.y - Sp.y) < 16) return 'move';
+  if (P.scen === 'kepler') { const w = S2W(p.x, p.y); if (Math.hypot(w.x, w.y) > P.R * 1.001) return 'new'; }
+  return null;
+}
+cv.addEventListener('pointerdown', (e) => {
+  const p = evPos(e), mode = hitTest(p);
+  if (!mode) return;
+  e.preventDefault();
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  beginEdit(); hideHint();
+  S.drag = { mode, x: p.x, y: p.y, moved: false };
+  if (mode === 'new') setStartAt(S2W(p.x, p.y));
+  recompute();
+});
+cv.addEventListener('pointermove', (e) => {
+  const p = evPos(e);
+  if (!S.drag) { const m = hitTest(p); cv.style.cursor = m === 'vel' ? 'grab' : m === 'move' ? 'move' : m === 'new' ? 'crosshair' : 'default'; return; }
+  const d = S.drag;
+  if (!d.moved && Math.hypot(p.x - d.x, p.y - d.y) > 5) d.moved = true;
+  if (d.mode === 'move') setStartAt(S2W(p.x, p.y));
+  else if (d.mode === 'vel' || (d.mode === 'new' && d.moved)) setVelFromScreen(p);
+  else return;
+  cv.style.cursor = 'grabbing';
+  recompute();
+});
+function endDrag() { if (S.drag) { S.drag = null; cv.style.cursor = 'default'; commitEdit(); } }
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ---------- wiring ---------- */
+function setBody(key) {
+  if (key !== 'custom') { P.body = key; P.GM = BODIES[key].GM; P.R = BODIES[key].R; }
+  else { P.body = 'custom'; }
+  S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); launch(); updateClear();
+}
+function setScen(sc) {
+  P.scen = sc; S.ghosts = []; S.trails = sc === 'cannon'; $('#tg-trails').setAttribute('aria-pressed', String(S.trails));
+  scenarioDefaults(); S.mode = 'aim'; applyScenUI(); recompute(); launch(); updateClear();
+}
+function applyScenUI() {
+  const sc = P.scen;
+  $('#grp-start').hidden = sc === 'hohmann';
+  $('#grp-hoh').hidden = sc !== 'hohmann';
+  $('#grp-sect').querySelector('.seg').style.opacity = sc === 'hohmann' ? '.4' : '';
+  $('#quick').hidden = sc !== 'kepler';
+  $('#salvo').hidden = sc !== 'cannon';
+  $('#gam').disabled = sc === 'cannon';
+  $('#gam-ctl').classList.toggle('off', sc === 'cannon');
+  $('#gam-hint').textContent = tr(sc === 'cannon' ? 'gamHintC' : 'gamHintK');
+  $('#start-h').textContent = tr(sc === 'cannon' ? 'gStartCannon' : 'gStart');
+  $('#h0-l').innerHTML = tr(sc === 'cannon' ? 'lh0c' : 'lh0');
+  $('#fire-l').textContent = tr(sc === 'cannon' ? 'fireCannon' : 'fire');
+  $('#hint').textContent = tr(sc === 'cannon' ? 'hintCannon' : sc === 'hohmann' ? 'hintHoh' : 'hintKepler');
+}
+function updateClear() { $('#clear').hidden = S.ghosts.length === 0; }
+
+function sliderEdit(id, apply) {
+  const el = $('#' + id);
+  el.addEventListener('input', () => { beginEdit(); hideHint(); apply(+el.value); recompute(); });
+  el.addEventListener('change', () => { commitEdit(); updateClear(); });
+}
+sliderEdit('h0', v => { P.h0 = sliderToAlt(v); });
+sliderEdit('v0', v => { P.v0 = v / 2000 * vMax(); });
+sliderEdit('gam', v => { P.gam = v * D2R; });
+sliderEdit('h1', v => { P.h1 = sliderToAlt(v); });
+sliderEdit('h2', v => { P.h2 = sliderToAlt(v); });
+for (const id of ['mass', 'rad']) {
+  const el = $('#' + id);
+  el.addEventListener('input', () => {
+    beginEdit(); S.ghosts = [];
+    const relH0 = P.h0 / P.R, relH1 = P.h1 / P.R, relH2 = P.h2 / P.R, relV = P.v0 / vCirc(r0());
+    P.body = 'custom';
+    if (id === 'mass') P.GM = G * massFromSlider(+el.value); else P.R = radFromSlider(+el.value);
+    P.h0 = relH0 * P.R; P.h1 = relH1 * P.R; P.h2 = relH2 * P.R; P.v0 = relV * vCirc(r0());
+    recompute();
+  });
+  el.addEventListener('change', () => { commitEdit(); updateClear(); });
+}
+$$('#bodies .chip').forEach(b => b.addEventListener('click', () => setBody(b.dataset.body)));
+$$('#scen .chip').forEach(b => b.addEventListener('click', () => setScen(b.dataset.scen)));
+$$('#quick .chip').forEach(b => b.addEventListener('click', () => {
+  beginEdit(); P.gam = 0; P.v0 = quickTargets()[b.dataset.q]; recompute(); launch(); updateClear();
+}));
+$$('#nsect button').forEach(b => b.addEventListener('click', () => {
+  if (P.scen === 'hohmann') return;
+  P.N = +b.dataset.n; $$('#nsect button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+  main.sect = sectorsFor(main, P.N); updateLaws(); updateFormulas(); updateLegend(); dirty = true; chartDirty = true;
+}));
+$('#fire').addEventListener('click', () => { launch(); });
+$('#salvo').addEventListener('click', () => {
+  if (P.scen !== 'cannon') return;
+  beginEdit();
+  const r = r0(), vc = vCirc(r), keep = P.v0;
+  S.ghosts = [0.6, 0.75, 0.88, 1.0, 1.2].map(f => {
+    P.v0 = f * vc; const p = buildShot({ GM: P.GM, R: P.R, ...startState() }); p.v0 = P.v0;
+    return { path: p, anim: true, done: false, v0: P.v0 };
+  });
+  P.v0 = keep; P.v0 = vEsc(r);
+  recompute(); launch(); updateClear();
+});
+$('#reset').addEventListener('click', () => { S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); launch(); updateClear(); });
+$('#clear').addEventListener('click', () => { S.ghosts = []; updateClear(); dirty = true; });
+$('#pause').addEventListener('click', togglePlay);
+$('#step-back').addEventListener('click', () => stepBy(-1));
+$('#step-fwd').addEventListener('click', () => stepBy(1));
+$('#scrub').addEventListener('input', (e) => seek(+e.target.value / 1000 * timelineEnd()));
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); updateWarp();
+}));
+const toggles = { 'tg-vectors': 'vectors', 'tg-conic': 'conic', 'tg-trails': 'trails' };
+Object.entries(toggles).forEach(([id, key]) => $('#' + id).addEventListener('click', (e) => {
+  S[key] = !S[key]; e.currentTarget.setAttribute('aria-pressed', String(S[key])); updateLegend(); dirty = true;
+}));
+$('#law1').addEventListener('click', () => { S.law1 = !S.law1; updateLaws(); dirty = true; });
+$('#law2').addEventListener('click', () => { if (!main.sect) return; S.law2 = !S.law2; updateLaws(); updateLegend(); dirty = true; chartDirty = true; });
+$('#law3').addEventListener('click', () => selectTab(S.chartTab === 'k' ? 'r' : 'k'));
+function selectTab(t) {
+  S.chartTab = t; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === t)));
+  $('#kscale').hidden = t !== 'k'; tip.hidden = true; S.hoverT = null; updateLaws(); chartDirty = true; dirty = true;
+}
+$$('#tabs button').forEach(b => b.addEventListener('click', () => selectTab(b.dataset.tab)));
+$$('#kscale button').forEach(b => b.addEventListener('click', () => {
+  S.k3log = b.dataset.ks === 'log'; $$('#kscale button').forEach(x => x.setAttribute('aria-pressed', String(x === b))); chartDirty = true;
+}));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() {
+  const stg = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (stg.requestFullscreen) stg.requestFullscreen().catch(() => {});
+}
+fsBtn.addEventListener('click', toggleFs);
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePlay(); return; }
+  if (tag === 'input') return;
+  if (e.key === 'ArrowLeft') { e.preventDefault(); stepBy(-1); }
+  else if (e.key === 'ArrowRight') { e.preventDefault(); stepBy(1); }
+  else if (e.key === 'ArrowUp' || e.key === 'ArrowDown') {
+    e.preventDefault();
+    const s = e.key === 'ArrowUp' ? 1 : -1;
+    beginEdit();
+    if (P.scen === 'hohmann') P.h2 = Math.max(0, P.h2 * (1 + 0.05 * s));
+    else P.v0 = Math.max(0, P.v0 + s * 0.005 * vCirc(r0()));
+    recompute(); launch(); updateClear();
+  }
+  else if (e.key === 'r' || e.key === 'R') launch();
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#keys').innerHTML = tr('keys');
+  $('#scene').setAttribute('aria-label', tr('scene'));
+  $('#scrub').setAttribute('aria-label', tr('timeline'));
+  $$('#bodies .chip').forEach(b => { const k = b.dataset.body; if (BODIES[k]) b.querySelector('small').textContent = `g ${fmt(BODIES[k].GM / (BODIES[k].R * BODIES[k].R), 2)}`; });
+  applyScenUI();
+  hudLast = ''; pauseIcon = null;
+  recompute();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('orbity-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+readTokens();
+resize();
+applyLang();
+// Open in a working state: the default ellipse has already completed one lap, so all sectors are shaded.
+S.mode = 'play'; S.lap = 1; S.t = main.T * 0.16; addK3(main);
+updateHud(); updateScrub(); setState(); updateFormulas();
+ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr);
+updateCamera(0); drawScene(); dirty = false; drawChart(); chartDirty = false;   // paint once synchronously so thumbnails are never blank
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>

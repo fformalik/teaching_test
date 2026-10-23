@@ -13,7 +13,7 @@
   --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
   --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
   --grid:#DCE3EA;
-  --c1:#E41C55; --c2:#C77A2A; --c3:#6A5CFF; --c4:#2F7FE0; --c5:#1E9A5A; --c6:#0E8F99;
+  --c1:#E41C55; --c2:#C77A2A; --c3:#6A5CFF; --c4:#2F7FE0; --c5:#1E9A5A; --c6:#0E8F99; --c7:#C026D3;
   --shadow:0 1px 0 rgba(18,32,44,.04), 0 10px 28px -14px rgba(18,32,44,.22);
   --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
   --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
@@ -25,7 +25,7 @@
     --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
     --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
     --grid:#122030;
-    --c1:#EE3A68; --c2:#D08A3A; --c3:#8A7FFF; --c4:#3F8EF0; --c5:#35B472; --c6:#22AFB8;
+    --c1:#EE3A68; --c2:#D08A3A; --c3:#8A7FFF; --c4:#3F8EF0; --c5:#35B472; --c6:#22AFB8; --c7:#E070F0;
     --shadow:0 1px 0 rgba(0,0,0,.2), 0 12px 32px -16px rgba(0,0,0,.75);
     color-scheme:dark;
   }
@@ -94,8 +94,34 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <p data-pl="Tor, zasięg i wysokość maksymalna. Porównanie lotu w próżni i z oporem powietrza." data-en="Trajectory, range and maximum height. Flight in vacuum compared with air drag.">Tor, zasięg i wysokość maksymalna. Porównanie lotu w próżni i z oporem powietrza.</p>
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
+    <a class="card" href="bryla-sztywna.html" style="--c:var(--c1)">
+      <div class="top"><span class="tag" data-pl="Mechanika" data-en="Mechanics">Mechanika</span><span class="num">02</span></div>
+      <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="100" y1="6" x2="200" y2="6" stroke="var(--line)" stroke-width="1.5"/>
+        <path d="M150 14 C 175 16, 186 40, 176 62 C 168 82, 132 86, 122 70 C 112 54, 128 46, 132 34 C 136 22, 140 14, 150 14 Z" fill="var(--c1)" fill-opacity=".15" stroke="var(--c1)" stroke-width="2"/>
+        <circle cx="150" cy="20" r="3.5" fill="var(--ink)"/>
+        <circle cx="150" cy="54" r="4" fill="var(--paper)" stroke="var(--ink-2)" stroke-width="1.5"/>
+        <line x1="150" y1="20" x2="150" y2="54" stroke="var(--ink-3)" stroke-width="1.2" stroke-dasharray="3 3"/>
+        <path d="M118 80 Q 150 92 182 80" fill="none" stroke="var(--ink-3)" stroke-width="1.4" stroke-dasharray="4 4"/>
+      </svg>
+      <h2 data-pl="Bryła sztywna" data-en="Rigid body">Bryła sztywna</h2>
+      <p data-pl="Narysuj dowolny kształt i powieś go na gwoździu. Środek masy, moment bezwładności i okres wahań." data-en="Draw any shape and hang it on a nail. Centre of mass, moment of inertia and the period of swing.">Narysuj dowolny kształt i powieś go na gwoździu. Środek masy, moment bezwładności i okres wahań.</p>
+      <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+    </a>
+    <a class="card" href="orbity.html" style="--c:var(--c1)">
+      <div class="top"><span class="tag" data-pl="Grawitacja" data-en="Gravitation">Grawitacja</span><span class="num">03</span></div>
+      <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+        <ellipse cx="160" cy="46" rx="110" ry="34" fill="none" stroke="var(--c1)" stroke-width="2"/>
+        <ellipse cx="160" cy="46" rx="70" ry="26" fill="none" stroke="var(--ink-3)" stroke-width="1.3" stroke-dasharray="4 4"/>
+        <circle cx="108" cy="46" r="14" fill="var(--c4)" fill-opacity=".85"/>
+        <circle cx="270" cy="46" r="5" fill="var(--paper)" stroke="var(--ink)" stroke-width="1.8"/>
+      </svg>
+      <h2 data-pl="Orbity" data-en="Orbits">Orbity</h2>
+      <p data-pl="Wystrzel satelitę i zobacz prawa Keplera. Od rzutu, przez orbitę zamkniętą, po ucieczkę z pola grawitacji." data-en="Launch a satellite and see Kepler’s laws. From a falling cannonball to a closed orbit and escape.">Wystrzel satelitę i zobacz prawa Keplera. Od rzutu, przez orbitę zamkniętą, po ucieczkę z pola grawitacji.</p>
+      <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+    </a>
     <a class="card" href="rezonans.html" style="--c:var(--c2)">
-      <div class="top"><span class="tag" data-pl="Drgania" data-en="Oscillations">Drgania</span><span class="num">02</span></div>
+      <div class="top"><span class="tag" data-pl="Drgania" data-en="Oscillations">Drgania</span><span class="num">04</span></div>
       <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
         <line x1="12" y1="82" x2="288" y2="82" stroke="var(--line)" stroke-width="1.5"/>
         <path d="M14 78 C 90 76, 120 70, 140 40 C 148 22, 152 12, 156 12 C 162 12, 168 30, 178 52 C 200 74, 240 78, 286 79" fill="none" stroke="var(--c2)" stroke-width="2.5"/>
@@ -105,8 +131,24 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <p data-pl="Amplituda w funkcji częstości wymuszenia, wpływ tłumienia i przesunięcie fazy." data-en="Amplitude versus driving frequency, the effect of damping, and the phase shift.">Amplituda w funkcji częstości wymuszenia, wpływ tłumienia i przesunięcie fazy.</p>
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
+    <a class="card" href="efekt-dopplera.html" style="--c:var(--c2)">
+      <div class="top"><span class="tag" data-pl="Fale" data-en="Waves">Fale</span><span class="num">05</span></div>
+      <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+        <g fill="none" stroke="var(--c2)" stroke-width="1.6">
+          <circle cx="120" cy="46" r="40" opacity=".35"/>
+          <circle cx="146" cy="46" r="28" opacity=".55"/>
+          <circle cx="168" cy="46" r="17" opacity=".75"/>
+          <circle cx="184" cy="46" r="7"/>
+        </g>
+        <circle cx="190" cy="46" r="4.5" fill="var(--c2)"/>
+        <path d="M206 46 h26 M226 40 l7 6 -7 6" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
+      </svg>
+      <h2 data-pl="Efekt Dopplera" data-en="Doppler effect">Efekt Dopplera</h2>
+      <p data-pl="Ruchome źródło fal. Zagęszczanie i rozrzedzanie frontów, aż po stożek Macha." data-en="A moving wave source. Fronts bunch up ahead and spread out behind, up to the Mach cone.">Ruchome źródło fal. Zagęszczanie i rozrzedzanie frontów, aż po stożek Macha.</p>
+      <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+    </a>
     <a class="card" href="gaz-doskonaly.html" style="--c:var(--c5)">
-      <div class="top"><span class="tag" data-pl="Termodynamika" data-en="Thermodynamics">Termodynamika</span><span class="num">03</span></div>
+      <div class="top"><span class="tag" data-pl="Termodynamika" data-en="Thermodynamics">Termodynamika</span><span class="num">06</span></div>
       <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
         <rect x="90" y="10" width="120" height="74" rx="4" fill="none" stroke="var(--ink-2)" stroke-width="2"/>
         <rect x="92" y="22" width="116" height="6" fill="var(--ink-2)"/>
@@ -123,7 +165,7 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
     <a class="card" href="pole-elektryczne.html" style="--c:var(--c6)">
-      <div class="top"><span class="tag" data-pl="Elektryczność" data-en="Electricity">Elektryczność</span><span class="num">04</span></div>
+      <div class="top"><span class="tag" data-pl="Elektryczność" data-en="Electricity">Elektryczność</span><span class="num">07</span></div>
       <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
         <g fill="none" stroke="var(--c6)" stroke-width="1.5" opacity=".8">
           <path d="M112 46 L188 46"/>
@@ -139,7 +181,7 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
     <a class="card" href="soczewka.html" style="--c:var(--c4)">
-      <div class="top"><span class="tag" data-pl="Optyka geometryczna" data-en="Geometric optics">Optyka geometryczna</span><span class="num">05</span></div>
+      <div class="top"><span class="tag" data-pl="Optyka geometryczna" data-en="Geometric optics">Optyka geometryczna</span><span class="num">08</span></div>
       <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
         <line x1="12" y1="46" x2="288" y2="46" stroke="var(--line)" stroke-width="1.5"/>
         <path d="M150 8 Q 164 46 150 84 Q 136 46 150 8 Z" fill="var(--c4)" opacity=".2" stroke="var(--c4)" stroke-width="1.5"/>
@@ -155,7 +197,7 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
     <a class="card" href="dwie-szczeliny.html" style="--c:var(--c3)">
-      <div class="top"><span class="tag" data-pl="Optyka falowa" data-en="Wave optics">Optyka falowa</span><span class="num">06</span></div>
+      <div class="top"><span class="tag" data-pl="Optyka falowa" data-en="Wave optics">Optyka falowa</span><span class="num">09</span></div>
       <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
         <line x1="60" y1="6" x2="60" y2="36" stroke="var(--ink-2)" stroke-width="3"/>
         <line x1="60" y1="42" x2="60" y2="50" stroke="var(--ink-2)" stroke-width="3"/>
@@ -176,13 +218,26 @@ footer{margin-top:44px; font-family:var(--f-mono); font-size:12px; color:var(--i
       <p data-pl="Interferencja i dyfrakcja. Jak długość fali i odległość szczelin zmieniają obraz prążków." data-en="Interference and diffraction. How wavelength and slit spacing change the fringe pattern.">Interferencja i dyfrakcja. Jak długość fali i odległość szczelin zmieniają obraz prążków.</p>
       <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
     </a>
+    <a class="card" href="wzglednosc.html" style="--c:var(--c7)">
+      <div class="top"><span class="tag" data-pl="Fizyka współczesna" data-en="Modern physics">Fizyka współczesna</span><span class="num">10</span></div>
+      <svg class="icon" viewBox="0 0 300 92" preserveAspectRatio="none" aria-hidden="true">
+        <line x1="70" y1="86" x2="70" y2="6" stroke="var(--ink-2)" stroke-width="1.8"/>
+        <line x1="70" y1="86" x2="230" y2="86" stroke="var(--ink-2)" stroke-width="1.8"/>
+        <line x1="70" y1="86" x2="150" y2="6" stroke="var(--c2)" stroke-width="1.6" stroke-dasharray="5 4"/>
+        <line x1="70" y1="86" x2="112" y2="6" stroke="var(--c7)" stroke-width="2.2"/>
+        <line x1="70" y1="86" x2="230" y2="44" stroke="var(--c7)" stroke-width="2.2"/>
+      </svg>
+      <h2 data-pl="Względność" data-en="Relativity">Względność</h2>
+      <p data-pl="Dylatacja czasu, skrócenie długości, diagram czasoprzestrzenny i paradoks bliźniąt." data-en="Time dilation, length contraction, spacetime diagrams and the twin paradox.">Dylatacja czasu, skrócenie długości, diagram czasoprzestrzenny i paradoks bliźniąt.</p>
+      <span class="go"><span data-pl="Otwórz" data-en="Open">Otwórz</span> <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+    </a>
   </nav>
 
   <footer>Filip Formalik</footer>
 </main>
 <script>
 (function(){
-  var KEYS=['teaching-lang','gaz-lang','pole-lang','rzut-lang','rezonans-lang','szczeliny-lang','lawa-lang'];
+  var KEYS=['teaching-lang','bryla-lang','orbity-lang','doppler-lang','sr-lang','gaz-lang','pole-lang','rzut-lang','rezonans-lang','szczeliny-lang','lawa-lang'];
   var TITLES={pl:'Fizyka interaktywnie',en:'Interactive physics'};
   function get(){try{var s=localStorage.getItem('teaching-lang');if(s==='pl'||s==='en')return s;}catch(e){}
     return (navigator.language||'').toLowerCase().indexOf('pl')===0?'pl':'en';}
