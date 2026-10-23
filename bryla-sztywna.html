@@ -306,13 +306,13 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           </div>
           <div class="toggles" id="toggles">
             <button type="button" class="tg" id="tg-com" data-key="com" data-modes="pend throw torque" aria-pressed="true" data-i18n="tgCom">Środek masy</button>
-            <button type="button" class="tg" id="tg-plumb" data-key="plumb" data-modes="pend" aria-pressed="true" data-i18n="tgPlumb">Piony</button>
-            <button type="button" class="tg" id="tg-O" data-key="O" data-modes="pend" aria-pressed="true" data-i18n="tgO">Środek wahań</button>
+            <button type="button" class="tg" id="tg-plumb" data-key="plumb" data-modes="pend" aria-pressed="false" data-i18n="tgPlumb">Piony</button>
+            <button type="button" class="tg" id="tg-O" data-key="O" data-modes="pend" aria-pressed="false" data-i18n="tgO">Środek wahań</button>
             <button type="button" class="tg" id="tg-k" data-key="k" data-modes="pend" aria-pressed="false" data-i18n="tgK">Okrąg k</button>
             <button type="button" class="tg" id="tg-axes" data-key="axes" data-modes="pend throw torque" aria-pressed="false" data-i18n="tgAxes">Osie główne</button>
-            <button type="button" class="tg" id="tg-strobe" data-key="strobe" data-modes="throw" aria-pressed="true" data-i18n="tgStrobe">Stroboskop</button>
-            <button type="button" class="tg" id="tg-trace" data-key="trace" data-modes="throw" aria-pressed="true" data-i18n="tgTrace">Ślad punktu</button>
-            <button type="button" class="tg" id="tg-vec" data-key="vec" data-modes="pend throw torque" aria-pressed="true" data-i18n="tgVec">Wektory</button>
+            <button type="button" class="tg" id="tg-strobe" data-key="strobe" data-modes="throw" aria-pressed="false" data-i18n="tgStrobe">Stroboskop</button>
+            <button type="button" class="tg" id="tg-trace" data-key="trace" data-modes="throw" aria-pressed="false" data-i18n="tgTrace">Ślad punktu</button>
+            <button type="button" class="tg" id="tg-vec" data-key="vec" data-modes="pend throw torque" aria-pressed="false" data-i18n="tgVec">Wektory</button>
           </div>
           <span class="spacer"></span>
           <button type="button" class="btn fsbtn" id="fs" aria-label="Pełny ekran">
@@ -872,7 +872,7 @@ const S = {
   piv: [0, 0], hist: [], restTh: 0, swingSign: 1, autoSwing: false, drag: null, ptr: null, cam: [0, 0],
   measRun: null, throwRun: null, torqueRun: null,
   tool: 'free', holeMode: false, snap: true, stroke: [], drawing: false, poly: [], hover: null,
-  show: { com: true, axes: false, plumb: true, O: true, k: false, strobe: true, trace: true, vec: true },
+  show: { com: true, axes: false, plumb: false, O: false, k: false, strobe: false, trace: false, vec: false },
   chartTab: 'th', hoverX: null, undo: []
 };
 let SH = null;   // shape: { key, base (cm rings at sc=1), ref, sc, ext0 }
@@ -1024,6 +1024,12 @@ function startSwing() {
   if (!S.measRun) { S.run = null; S.phase = 'rest'; toast(tr('msgCom'), 'warn'); return; }
   S.run = S.measRun; S.phase = 'run'; S.t = 0; S.paused = false;
 }
+// calm default: show the body at its release angle, paused, until the user presses play
+function pendReady() {
+  S.drag = null;
+  if (!S.measRun) { S.run = null; S.phase = 'rest'; return; }
+  S.run = S.measRun; S.phase = 'run'; S.t = 0; S.paused = true;
+}
 function settleFrom(th) {
   S.run = makePendRun(th, 0, 1.4 * Math.sqrt(PD.w2), 25, 'settle');
   S.phase = 'run'; S.t = 0; S.paused = false;
@@ -1077,7 +1083,7 @@ function shapeChanged(refit) {
   updateAll();
 }
 function modeRefresh() {
-  if (S.mode === 'pend') startSwing();
+  if (S.mode === 'pend') { if (S.phase === 'run' && !S.paused) startSwing(); else pendReady(); }
   else if (S.mode === 'throw') { S.run = S.throwRun; S.phase = 'idle'; S.t = 0; }
   else if (S.mode === 'torque') { S.run = S.torqueRun; S.phase = 'idle'; S.t = 0; }
   else { S.run = null; S.phase = 'idle'; S.t = 0; }
@@ -1695,7 +1701,7 @@ function stateKey() {
   if (S.mode === 'draw') return S.drawing || S.poly.length ? ['sDraw', 'run'] : S.holeMode ? ['sHole', 'pause'] : ['sIdle', 'idle'];
   if (S.mode === 'pend') {
     if (S.drag) return ['sDrag', 'pause'];
-    if (S.phase === 'run') return S.paused ? ['sPause', 'pause'] : S.run.kind === 'settle' ? ['sSettle', 'run'] : ['sSwing', 'run'];
+    if (S.phase === 'run') return S.paused ? (S.t === 0 && S.run === S.measRun ? ['sIdle', 'idle'] : ['sPause', 'pause']) : S.run.kind === 'settle' ? ['sSettle', 'run'] : ['sSwing', 'run'];
     if (S.phase === 'done') return ['sDone', 'done'];
     return ['sRest', 'idle'];
   }
@@ -1993,7 +1999,7 @@ function updateModeUI() {
 function setMode(m) {
   if (S.mode === 'draw' && m !== 'draw') { S.stroke = []; S.poly = []; S.drawing = false; S.hover = null; }
   S.mode = m; S.drag = null; S.ptr = null; S.cam = [0, 0]; V.ready = false; S.hoverX = null; tip.hidden = true;
-  if (m === 'pend') { derivePend(); startSwing(); }
+  if (m === 'pend') { derivePend(); pendReady(); }
   else if (m === 'draw') { S.run = null; S.phase = 'idle'; S.t = 0; fitBoard(); }
   else modeRefresh();
   updateModeUI(); updateAll();

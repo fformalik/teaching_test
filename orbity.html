@@ -337,8 +337,8 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           </div>
           <span class="warp" id="warp"></span>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-vectors" aria-pressed="true" data-i18n="vectors">Wektory</button>
-            <button type="button" class="tg" id="tg-conic" aria-pressed="true" data-i18n="conic">Orbita z elementów</button>
+            <button type="button" class="tg" id="tg-vectors" aria-pressed="false" data-i18n="vectors">Wektory</button>
+            <button type="button" class="tg" id="tg-conic" aria-pressed="false" data-i18n="conic">Orbita z elementów</button>
             <button type="button" class="tg" id="tg-trails" aria-pressed="false" data-i18n="trails">Ślady</button>
           </div>
           <button type="button" class="btn" id="clear" hidden><span data-i18n="clear">Wyczyść ślady</span></button>
@@ -355,12 +355,12 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
       </section>
 
       <section class="laws" aria-label="Prawa Keplera">
-        <button type="button" class="law l1" id="law1" aria-pressed="true">
+        <button type="button" class="law l1" id="law1" aria-pressed="false">
           <span class="lh"><span class="num">I</span><span class="tt" data-i18n="law1T">Prawo elips</span><span class="ind" id="law1-ind"></span></span>
           <p data-i18n="law1S"></p>
           <span class="live" id="law1-live"></span>
         </button>
-        <button type="button" class="law l2" id="law2" aria-pressed="true">
+        <button type="button" class="law l2" id="law2" aria-pressed="false">
           <span class="lh"><span class="num">II</span><span class="tt" data-i18n="law2T">Prawo pól</span><span class="ind" id="law2-ind"></span></span>
           <p data-i18n="law2S"></p>
           <span class="live" id="law2-live"></span>
@@ -860,7 +860,7 @@ function timeUnit(T) {
 
 /* ---------- parameters & state ---------- */
 const P = { scen: 'kepler', body: 'earth', GM: BODIES.earth.GM, R: BODIES.earth.R, h0: 6e5, v0: 9000, gam: 0, phi: Math.PI, h1: 4e5, h2: 3.5786e7, N: 12 };
-const S = { mode: 'play', t: 0, lap: 0, speed: 1, vectors: true, conic: true, trails: false, law1: true, law2: true,
+const S = { mode: 'aim', t: 0, lap: 0, speed: 1, vectors: false, conic: false, trails: false, law1: false, law2: false,
   chartTab: 'r', k3log: false, hoverT: null, ghosts: [], k3: {}, drag: null, hinted: false, mainDone: false };
 let main = null;
 
@@ -2046,11 +2046,11 @@ cv.addEventListener('pointercancel', endDrag);
 function setBody(key) {
   if (key !== 'custom') { P.body = key; P.GM = BODIES[key].GM; P.R = BODIES[key].R; }
   else { P.body = 'custom'; }
-  S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); launch(); updateClear();
+  S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); updateClear();
 }
 function setScen(sc) {
-  P.scen = sc; S.ghosts = []; S.trails = sc === 'cannon'; $('#tg-trails').setAttribute('aria-pressed', String(S.trails));
-  scenarioDefaults(); S.mode = 'aim'; applyScenUI(); recompute(); launch(); updateClear();
+  P.scen = sc; S.ghosts = [];
+  scenarioDefaults(); S.mode = 'aim'; applyScenUI(); recompute(); updateClear();
 }
 function applyScenUI() {
   const sc = P.scen;
@@ -2094,7 +2094,7 @@ for (const id of ['mass', 'rad']) {
 $$('#bodies .chip').forEach(b => b.addEventListener('click', () => setBody(b.dataset.body)));
 $$('#scen .chip').forEach(b => b.addEventListener('click', () => setScen(b.dataset.scen)));
 $$('#quick .chip').forEach(b => b.addEventListener('click', () => {
-  beginEdit(); P.gam = 0; P.v0 = quickTargets()[b.dataset.q]; recompute(); launch(); updateClear();
+  beginEdit(); P.gam = 0; P.v0 = quickTargets()[b.dataset.q]; recompute(); updateClear();
 }));
 $$('#nsect button').forEach(b => b.addEventListener('click', () => {
   if (P.scen === 'hohmann') return;
@@ -2113,7 +2113,7 @@ $('#salvo').addEventListener('click', () => {
   P.v0 = keep; P.v0 = vEsc(r);
   recompute(); launch(); updateClear();
 });
-$('#reset').addEventListener('click', () => { S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); launch(); updateClear(); });
+$('#reset').addEventListener('click', () => { S.ghosts = []; scenarioDefaults(); S.mode = 'aim'; recompute(); updateClear(); });
 $('#clear').addEventListener('click', () => { S.ghosts = []; updateClear(); dirty = true; });
 $('#pause').addEventListener('click', togglePlay);
 $('#step-back').addEventListener('click', () => stepBy(-1));
@@ -2190,8 +2190,8 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { di
 readTokens();
 resize();
 applyLang();
-// Open in a working state: the default ellipse has already completed one lap, so all sectors are shaded.
-S.mode = 'play'; S.lap = 1; S.t = main.T * 0.16; addK3(main);
+// Open calm: aiming state with the predicted path drawn; the user presses Start/play to launch.
+S.mode = 'aim'; S.t = 0; S.lap = 0; addK3(main);
 updateHud(); updateScrub(); setState(); updateFormulas();
 ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr);
 updateCamera(0); drawScene(); dirty = false; drawChart(); chartDirty = false;   // paint once synchronously so thumbnails are never blank

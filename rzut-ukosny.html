@@ -285,9 +285,9 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
             <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
           </div>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-vectors" aria-pressed="true" data-i18n="vectors">Wektory</button>
-            <button type="button" class="tg" id="tg-strobe" aria-pressed="true" data-i18n="strobe">Stroboskop</button>
-            <button type="button" class="tg" id="tg-ideal" aria-pressed="true" data-i18n="ideal">Tor w próżni</button>
+            <button type="button" class="tg" id="tg-vectors" aria-pressed="false" data-i18n="vectors">Wektory</button>
+            <button type="button" class="tg" id="tg-strobe" aria-pressed="false" data-i18n="strobe">Stroboskop</button>
+            <button type="button" class="tg" id="tg-ideal" aria-pressed="false" data-i18n="ideal">Tor w próżni</button>
             <button type="button" class="tg" id="tg-preview" aria-pressed="true" data-i18n="preview">Podgląd toru</button>
             <button type="button" class="tg" id="tg-trails" aria-pressed="false" data-i18n="trails">Ślady</button>
           </div>
@@ -581,7 +581,7 @@ function bestAngle(p, drag) {
 /* ---------- state ---------- */
 const S = {
   mode: 'idle', t: 0, speed: 1, landed: {}, recoil: 0, paused: false,
-  vectors: true, strobe: true, showIdeal: true, preview: true, trails: false,
+  vectors: false, strobe: false, showIdeal: false, preview: true, trails: false,
   kept: [], chartTab: 'y', hoverT: null
 };
 let paths = { vac: null, drag: null };

@@ -310,8 +310,8 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           </div>
           <div class="toggles">
             <button type="button" class="tg" id="tg-rods" aria-pressed="true" data-i18n="rods">Pręty</button>
-            <button type="button" class="tg" id="tg-trails" aria-pressed="true" data-i18n="trails">Ślady</button>
-            <button type="button" class="tg" id="tg-copies" aria-pressed="true" data-i18n="copies">Kopie</button>
+            <button type="button" class="tg" id="tg-trails" aria-pressed="false" data-i18n="trails">Ślady</button>
+            <button type="button" class="tg" id="tg-copies" aria-pressed="false" data-i18n="copies">Kopie</button>
             <button type="button" class="tg" id="tg-linear" aria-pressed="false" data-i18n="linear">Przybliżenie liniowe</button>
           </div>
           <span class="spacer"></span>
@@ -740,8 +740,8 @@ const fdeg = (rad) => `${fmt(wrapPi(rad) * R2D, 1)}°`;
 /* ---------- parameters & state ---------- */
 const P = {};
 const S = {
-  playing: !reduceMotion, speed: 1, acc: 0, viewJ: null, dragging: 0, model: 'point',
-  rods: true, trails: true, copies: true, linear: false, tab: 'div', hover: null, hasDragged: false
+  playing: false, speed: 1, acc: 0, viewJ: null, dragging: 0, model: 'point',
+  rods: true, trails: false, copies: false, linear: false, tab: 'div', hover: null, hasDragged: false
 };
 function readParams() {
   P.m1 = +$('#m1').value; P.m2 = +$('#m2').value; P.l1 = +$('#l1').value; P.l2 = +$('#l2').value;
@@ -1364,6 +1364,7 @@ function stepBy(sign) {
 }
 function togglePause() { S.playing = !S.playing; updatePauseIcon(); dirty = true; }
 function restart() { applyParams(true); S.playing = true; updatePauseIcon(); }
+function restartPaused() { applyParams(true); S.playing = false; updatePauseIcon(); }   // presets / map picks open calm
 function refreshAll() { dirty = true; chartDirty = true; slowDirty = true; }
 
 /* ---------- applying parameter changes ---------- */
@@ -1735,7 +1736,7 @@ mcv.addEventListener('click', (e) => {
   const q = mapPick(e); if (!q) return;
   $('#th1').value = q.th1.toFixed(2); $('#th2').value = q.th2.toFixed(2); $('#w1').value = 0; $('#w2').value = 0;
   S.linear = false; $('#tg-linear').setAttribute('aria-pressed', 'false');
-  restart();
+  restartPaused();
 });
 
 /* ---------- main loop ---------- */
@@ -1768,7 +1769,7 @@ function loadPreset(name) {
   const v = PRESETS[name]();
   $('#th1').value = v.th1.toFixed(2); $('#th2').value = v.th2.toFixed(2); $('#w1').value = v.w1; $('#w2').value = v.w2;
   S.linear = v.lin; $('#tg-linear').setAttribute('aria-pressed', String(S.linear));
-  restart();
+  restartPaused();
 }
 $$('#presets .chip').forEach(b => b.addEventListener('click', () => loadPreset(b.dataset.preset)));
 $$('#model button').forEach(b => b.addEventListener('click', () => { S.model = b.dataset.model; applyParams(true); }));
@@ -1844,7 +1845,6 @@ readParams();
 lastPhysKey = [P.m1, P.m2, P.l1, P.l2, P.g, P.b, P.compound].join('|');
 startRun();
 readTokens();
-advance(3500);   // 3.5 s in: the copies are visibly beginning to separate
 resize(); resizeChart(); resizeMap();
 applyLang();
 drawScene(); updateHud(); updateScrub(); drawChart(); drawMap(); updateSlow();

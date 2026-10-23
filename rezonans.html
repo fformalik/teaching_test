@@ -301,9 +301,9 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
             <button type="button" id="sp-4" data-sp="4" aria-pressed="false">4×</button>
           </div>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-forces" aria-pressed="true" data-i18n="tgForces">Siły</button>
-            <button type="button" class="tg" id="tg-phasor" aria-pressed="true" data-i18n="tgPhasor">Wskazy</button>
-            <button type="button" class="tg" id="tg-env" aria-pressed="true" data-i18n="tgEnv">Obwiednia</button>
+            <button type="button" class="tg" id="tg-forces" aria-pressed="false" data-i18n="tgForces">Siły</button>
+            <button type="button" class="tg" id="tg-phasor" aria-pressed="false" data-i18n="tgPhasor">Wskazy</button>
+            <button type="button" class="tg" id="tg-env" aria-pressed="false" data-i18n="tgEnv">Obwiednia</button>
             <button type="button" class="tg" id="tg-ss" aria-pressed="false" data-i18n="tgSS">Stan ustalony</button>
           </div>
           <span class="spacer"></span>
@@ -719,14 +719,14 @@ function measuredAmp(t) {
 const avgPower = (cum, i) => { const j = Math.max(0, i - SIM.nAvg); return i > j ? (cum[i] - cum[j]) / ((i - j) * SIM.dt) : 0; };
 
 /* ---------- state ---------- */
-const S = { t: 0, playing: !reduceMotion, speed: 1, forces: true, phasor: true, env: true, ss: false, tab: 'x', preset: null, hoverT: null, hoverW: null, hoverI: null };
+const S = { t: 0, playing: false, speed: 1, forces: false, phasor: false, env: false, ss: false, tab: 'x', preset: null, hoverT: null, hoverW: null, hoverI: null };
 let D = null, SIM = null, simId = 0;
 
 function recompute(autoplay = true) {
   readParams();
   D = derive(P); SIM = simulate(P, D); simId++;
   S.t = 0;
-  if (autoplay && !reduceMotion) S.playing = true;
+  if (!autoplay) S.playing = false;   // calm: never auto-start; keeps running only if the user already pressed play
   updateOutputs(); updateResults(); updateFormulas(); updateLegend(); updateHud(); updateScrub(); updateLive(true);
   dirty = true; chartDirty = true;
 }
