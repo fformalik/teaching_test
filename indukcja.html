@@ -1,0 +1,2182 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Indukcja</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: induction bench. Stage with scene chips + HUD on top, transport and timeline below,
+   control panel on the right, live formulas and stacked charts underneath. */
+:root{
+  --bg:#E7EAF2; --surface:#F8F9FC; --paper:#FCFCFE; --sunk:#EEF0F6;
+  --ink:#141A2E; --ink-2:#4A5270; --ink-3:#80879F; --line:#D2D6E2;
+  --grid:#E8EAF2; --grid-major:#CFD4E2;
+  --pos:#E41C55; --neg:#2F7FE0; --cu:#C77A2A; --violet:#6A5CFF;
+  --scope:#0C121B;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(20,26,46,.04), 0 8px 24px -12px rgba(20,26,46,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#080B14; --surface:#0F131E; --paper:#0C101A; --sunk:#151A27;
+    --ink:#E6E9F3; --ink-2:#A6ADC4; --ink-3:#6E7690; --line:#242A3B;
+    --grid:#121725; --grid-major:#1F2639;
+    --pos:#EE3A68; --neg:#4E9DFF; --cu:#BD7A2A; --violet:#8A7FFF;
+    --scope:#060A10;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#080B14; --surface:#0F131E; --paper:#0C101A; --sunk:#151A27;
+  --ink:#E6E9F3; --ink-2:#A6ADC4; --ink-3:#6E7690; --line:#242A3B;
+  --grid:#121725; --grid-major:#1F2639;
+  --pos:#EE3A68; --neg:#4E9DFF; --cu:#BD7A2A; --violet:#8A7FFF;
+  --scope:#060A10;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5; margin:0;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+[hidden]{display:none !important}
+:focus-visible{outline:2px solid var(--neg); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1.05em; height:.62em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; flex-direction:column; gap:8px; padding:10px 14px; border-bottom:1px solid var(--line)}
+.strip-top{display:flex; justify-content:space-between; align-items:center; gap:8px 16px; flex-wrap:wrap}
+.scenes{display:flex; gap:6px; flex-wrap:wrap}
+.scene{display:inline-flex; align-items:center; gap:8px; border:1px solid var(--line); background:var(--paper); border-radius:10px; padding:6px 12px 6px 8px; cursor:pointer; font-size:14px; font-weight:600; color:var(--ink-2)}
+.scene svg{width:26px; height:20px; flex:none}
+.scene[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink); background:var(--surface)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:8.6ch; color:var(--ink)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2); white-space:nowrap}
+.state[data-s="run"]{border-color:var(--pos); color:var(--pos)}
+.state[data-s="pause"]{border-color:var(--cu); color:var(--cu)}
+.state[data-s="live"]{border-color:var(--violet); color:var(--violet)}
+.state[data-s="end"]{background:var(--ink); border-color:var(--ink); color:var(--paper)}
+.canvas-box{position:relative; height:clamp(360px, 60vh, 660px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.callout{position:absolute; left:12px; top:12px; max-width:min(360px, 62%); background:color-mix(in srgb, var(--surface) 88%, transparent); border:1px solid var(--line); border-radius:10px; padding:8px 11px; font-size:13px; line-height:1.4; color:var(--ink-2); pointer-events:none; backdrop-filter:blur(4px); -webkit-backdrop-filter:blur(4px)}
+.callout b{display:block; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--violet); font-weight:500; margin-bottom:2px}
+.callout .l2{color:var(--ink); font-weight:600; margin-top:2px}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.scrub{display:flex; align-items:center; gap:10px; padding:8px 14px; border-top:1px solid var(--line)}
+.scrub input[type=range]{flex:1; min-width:0; --c:var(--pos)}
+.scrub .time{font-family:var(--f-mono); font-size:12.5px; font-variant-numeric:tabular-nums; color:var(--ink-2); white-space:nowrap; min-width:13ch; text-align:right}
+.icon-btn{width:34px; height:34px; border-radius:50%; border:1px solid var(--line); background:var(--paper); display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink); flex:none; padding:0}
+.icon-btn:hover{border-color:var(--ink-3)}
+.icon-btn:disabled{opacity:.35; cursor:default}
+.icon-btn svg{width:14px; height:14px}
+.icon-btn.main{width:40px; height:40px; background:var(--ink); color:var(--paper); border-color:var(--ink)}
+.icon-btn.main svg{width:16px; height:16px}
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn.accent{background:var(--pos); border-color:var(--pos); color:var(--on-accent); font-family:var(--f-display); font-weight:700; font-size:15px; padding:8px 16px 8px 13px; box-shadow:0 6px 18px -8px var(--pos)}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--violet); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.keys{padding:0 14px 10px; font-size:12px; color:var(--ink-3)}
+.keys kbd{font-family:var(--f-mono); font-size:10.5px; border:1px solid var(--line); border-bottom-width:2px; border-radius:4px; padding:0 4px; background:var(--paper); color:var(--ink-2)}
+
+/* Results */
+.results{padding:16px 18px; display:flex; flex-direction:column; gap:14px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tbl-wrap{overflow-x:auto}
+table.res{width:100%; border-collapse:collapse; font-variant-numeric:tabular-nums; min-width:440px}
+.res th, .res td{padding:8px 10px; text-align:right; border-bottom:1px solid var(--line); white-space:nowrap}
+.res thead th{font-size:11.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-weight:500}
+.res tbody th{text-align:left; font-weight:500; color:var(--ink-2)}
+.res tbody th i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.res td{font-family:var(--f-mono); font-size:14px}
+.res td.muted{color:var(--ink-3)}
+.res tr:last-child th, .res tr:last-child td{border-bottom:0}
+.opt{display:flex; gap:8px 20px; align-items:center; flex-wrap:wrap; padding:10px 12px; border-radius:10px; background:var(--sunk)}
+.opt .val{font-family:var(--f-mono); font-size:14px; display:inline-flex; align-items:baseline; gap:8px}
+.opt .val small{font-family:var(--f-body); color:var(--ink-3); font-size:12.5px}
+.opt .val i{font-family:var(--f-math); font-size:16px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp.first{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i, .pills i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.hint{font-size:12px; color:var(--ink-3); margin:0}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]:disabled{opacity:.4; cursor:default}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.switch{display:flex; align-items:center; gap:10px; cursor:pointer; font-size:14px; font-weight:500; position:relative}
+.switch input{position:absolute; opacity:0; width:1px; height:1px}
+.switch .sw{width:38px; height:22px; border-radius:999px; background:var(--line); position:relative; transition:background .15s; flex:none}
+.switch .sw::after{content:""; position:absolute; top:3px; left:3px; width:16px; height:16px; border-radius:50%; background:var(--paper); transition:transform .15s; box-shadow:0 1px 2px rgba(0,0,0,.25)}
+.switch input:checked + .sw{background:var(--pos)}
+.switch input:checked + .sw::after{transform:translateX(16px)}
+.switch input:focus-visible + .sw{outline:2px solid var(--neg); outline-offset:2px}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard.lenz{border-color:color-mix(in srgb, var(--violet) 45%, var(--line)); background:color-mix(in srgb, var(--violet) 6%, var(--paper))}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; scrollbar-width:thin; scrollbar-color:var(--line) transparent; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--pos); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.int{font-size:1.35em; vertical-align:-.12em; margin-right:.05em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.ltext{font-size:14.5px; color:var(--ink); margin:0; line-height:1.5}
+.ltext b{color:var(--violet)}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; flex-wrap:wrap; gap:2px; border:1px solid var(--line); border-radius:18px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.sw-line{display:inline-block; width:20px; height:0; border-top:2.5px solid var(--ink)}
+.chart-box{position:relative; height:320px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:pan-y}
+.tip{position:absolute; pointer-events:none; background:var(--ink); color:var(--paper); border-radius:8px; padding:7px 10px; font-family:var(--f-mono); font-size:12px; line-height:1.5; white-space:nowrap; transform:translate(-50%, calc(-100% - 12px)); box-shadow:0 6px 18px -6px rgba(0,0,0,.4); z-index:2}
+.tip .row{display:flex; align-items:center; gap:7px}
+.tip .k{width:10px; height:3px; border-radius:2px}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp.first{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .brand h1{font-size:27px}
+  .brand h1 svg{display:none}
+  .canvas-box{height:auto; display:flex; flex-direction:column}
+  .canvas-box canvas{position:relative; inset:auto; width:100%; height:auto; aspect-ratio:1 / 1.08}
+  .callout{position:static; max-width:none; border-radius:0; border-width:1px 0 0; backdrop-filter:none; -webkit-backdrop-filter:none; background:var(--surface)}
+  .stage:fullscreen .canvas-box canvas{flex:1; aspect-ratio:auto; min-height:0}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:7.6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .scene{font-size:13px; padding:5px 9px 5px 6px}
+  .scene svg{width:20px; height:16px}
+  .callout{font-size:12.5px; padding:8px 14px}
+  .chart-box{height:280px}
+}
+@media (prefers-reduced-motion: reduce){
+  .switch .sw, .switch .sw::after{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});}
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Elektromagnetyzm · pracownia indukcji</span>
+      <h1>
+        <svg viewBox="0 0 64 38" aria-hidden="true"><rect x="2" y="13" width="14" height="12" rx="2" fill="var(--neg)"/><rect x="16" y="13" width="14" height="12" rx="2" fill="var(--pos)"/><path d="M36 6c3 0 3 26 0 26M42 6c3 0 3 26 0 26M48 6c3 0 3 26 0 26M54 6c3 0 3 26 0 26" fill="none" stroke="var(--cu)" stroke-width="3" stroke-linecap="round"/></svg>
+        <span data-i18n="title">Indukcja elektromagnetyczna</span>
+      </h1>
+      <p class="lede" data-i18n="lede"></p>
+    </div>
+    <div class="lang" role="group" aria-label="Language">
+      <button type="button" id="lang-pl" data-lang="pl" aria-pressed="true">PL</button>
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="false">EN</button>
+    </div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <div class="strip-top">
+            <div class="scenes" role="group" id="scenes">
+              <button type="button" class="scene" id="sc-magnet" data-scene="magnet" aria-pressed="true">
+                <svg viewBox="0 0 26 20" aria-hidden="true"><rect x="1" y="7" width="7" height="6" rx="1" fill="var(--neg)"/><rect x="8" y="7" width="7" height="6" rx="1" fill="var(--pos)"/><path d="M18 3c2 0 2 14 0 14M21 3c2 0 2 14 0 14M24 3c2 0 2 14 0 14" fill="none" stroke="var(--cu)" stroke-width="1.8"/></svg>
+                <span data-i18n="scMagnet">Magnes i cewka</span></button>
+              <button type="button" class="scene" id="sc-rod" data-scene="rod" aria-pressed="false">
+                <svg viewBox="0 0 26 20" aria-hidden="true"><path d="M1 4h24M1 16h24" stroke="var(--cu)" stroke-width="2"/><path d="M2 4v12" stroke="var(--ink-3)" stroke-width="1.6" stroke-dasharray="2 2"/><rect x="15" y="2" width="3.5" height="16" rx="1.2" fill="var(--ink-2)"/></svg>
+                <span data-i18n="scRod">Pręt na szynach</span></button>
+              <button type="button" class="scene" id="sc-gen" data-scene="gen" aria-pressed="false">
+                <svg viewBox="0 0 26 20" aria-hidden="true"><rect x="1" y="4" width="5" height="12" rx="1" fill="var(--pos)"/><rect x="20" y="4" width="5" height="12" rx="1" fill="var(--neg)"/><path d="M9 5l8 2v6l-8 2z" fill="none" stroke="var(--cu)" stroke-width="1.8" stroke-linejoin="round"/></svg>
+                <span data-i18n="scGen">Prądnica</span></button>
+            </div>
+            <span class="state" id="state" data-s="run"></span>
+          </div>
+          <dl class="hud" id="hud"></dl>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="scene" aria-label="Animacja"></canvas>
+          <div class="callout" id="callout"><b data-i18n="lenzRule">Reguła Lenza</b><span id="co-1"></span><div class="l2" id="co-2"></div></div>
+        </div>
+        <div class="scrub">
+          <button type="button" class="icon-btn main" id="pause" aria-label="Pauza"></button>
+          <button type="button" class="icon-btn" id="step-back" aria-label="−Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10.5 3 5 8l5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <input type="range" id="scrub" min="0" max="1000" step="1" value="0" aria-label="Oś czasu">
+          <button type="button" class="icon-btn" id="step-fwd" aria-label="+Δt"><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5.5 3 11 8l-5.5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+          <span class="time" id="scrub-time">0,00 / 0,00 s</span>
+        </div>
+        <div class="bar">
+          <button type="button" class="btn accent" id="restart">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="restart">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" id="sp-01" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" id="sp-025" data-sp="0.25" aria-pressed="false">¼×</button>
+            <button type="button" id="sp-05" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" id="sp-1" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-lines" aria-pressed="true" data-i18n="tLines">Linie pola</button>
+            <button type="button" class="tg" id="tg-vec" aria-pressed="true" data-i18n="tVec">Wektory</button>
+            <button type="button" class="tg" id="tg-dots" aria-pressed="true" data-i18n="tDots">Ładunki</button>
+            <button type="button" class="tg" id="tg-lenz" aria-pressed="true" data-i18n="tLenz">Reguła Lenza</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+        <p class="keys" id="keys"></p>
+      </section>
+
+      <section class="card results">
+        <div class="sec-h"><h2 data-i18n="results">Wyniki</h2><p id="res-sub"></p></div>
+        <div class="tbl-wrap">
+          <table class="res">
+            <thead><tr><th></th><th data-i18n="cNow">Teraz</th><th data-i18n="cMax">Maks. |·|</th><th data-i18n="cRms">Średnia / RMS</th></tr></thead>
+            <tbody id="res-body"></tbody>
+          </table>
+        </div>
+        <div class="opt" id="res-sum"></div>
+      </section>
+    </div>
+
+    <aside class="card panel" id="panel" aria-label="Ustawienia"></aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącej chwili animacji.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" id="tab-fe" data-tab="fe" aria-selected="true" data-i18n="tabFE">Φ i ε</button>
+        <button type="button" role="tab" id="tab-i" data-tab="i" aria-selected="false" data-i18n="tabI">Prąd i siła</button>
+        <button type="button" role="tab" id="tab-e" data-tab="e" aria-selected="false" data-i18n="tabE">Energia i moc</button>
+        <button type="button" role="tab" id="tab-v" data-tab="v" aria-selected="false" data-i18n="tabV">Prędkość</button>
+      </div>
+      <div class="clegend" id="clegend"></div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas><div class="tip" id="tip" hidden></div></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const TAU = Math.PI * 2, D2R = Math.PI / 180;
+const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* PHYSICS-BEGIN */
+const MU0 = 4e-7 * Math.PI, GRAV = 9.81;
+const MAG = { rm: 0.010, Lm: 0.080, rho: 7500 };   // NdFeB bar magnet: radius, length [m], density [kg/m3]
+const COIL_L = 0.050;                               // coil winding length [m]
+const magnetMass = () => MAG.rho * Math.PI * MAG.rm * MAG.rm * MAG.Lm;
+
+// Complete elliptic integrals K(m), E(m) (parameter m = k^2) by the arithmetic-geometric mean.
+function ellipKE(m) {
+  if (m > 1 - 1e-15) m = 1 - 1e-15;
+  let a = 1, g = Math.sqrt(1 - m), sum = 0.5 * m, pw = 0.5;
+  for (let i = 0; i < 40; i++) {
+    const c = 0.5 * (a - g);
+    if (Math.abs(c) < 1e-16) break;
+    const an = 0.5 * (a + g); g = Math.sqrt(a * g); a = an; pw *= 2; sum += pw * c * c;
+  }
+  const K = Math.PI / (2 * a);
+  return [K, K * (1 - sum)];
+}
+// Mutual inductance of two coaxial circular loops divided by mu0 (= flux through loop 2 per ampere in loop 1, / mu0).
+// This is the surface integral of B.dA over loop 2 done in closed form (Maxwell's formula).
+function mutualRing(r1, r2, d) {
+  const m = 4 * r1 * r2 / ((r1 + r2) * (r1 + r2) + d * d), k = Math.sqrt(m);
+  if (m < 2e-5) return Math.PI * k * k * k * Math.sqrt(r1 * r2) / 16 * (1 + 0.75 * m);
+  const [K, E] = ellipKE(m);
+  return Math.sqrt(r1 * r2) * ((2 / k - k) * K - 2 / k * E);
+}
+// Field of a circular current loop (radius R, current 1 A) at (rho, z), divided by mu0. Returns [B_rho, B_z].
+function ringB(R, rho, z) {
+  const rho2 = rho * rho, z2 = z * z, R2 = R * R;
+  const a2 = R2 + rho2 + z2 - 2 * R * rho, b2 = R2 + rho2 + z2 + 2 * R * rho;
+  const b = Math.sqrt(b2), m = 1 - a2 / b2;
+  const [K, E] = ellipKE(m);
+  const C = 1 / (2 * Math.PI * a2 * b);
+  const bz = C * ((R2 - rho2 - z2) * E + a2 * K);
+  const br = rho < 1e-12 ? 0 : C * z / rho * ((R2 + rho2 + z2) * E - a2 * K);
+  return [br, bz];
+}
+function glNodes(n) {
+  const x = new Float64Array(n), w = new Float64Array(n);
+  for (let i = 0; i < n; i++) {
+    let z = Math.cos(Math.PI * (i + 0.75) / (n + 0.5)), dp = 0;
+    for (let it = 0; it < 100; it++) {
+      let p1 = 1, p2 = 0;
+      for (let j = 1; j <= n; j++) { const p3 = p2; p2 = p1; p1 = ((2 * j - 1) * z * p2 - (j - 1) * p3) / j; }
+      dp = n * (z * p1 - p2) / (z * z - 1);
+      const dz = p1 / dp; z -= dz;
+      if (Math.abs(dz) < 1e-15) break;
+    }
+    x[i] = z; w[i] = 2 / ((1 - z * z) * dp * dp);
+  }
+  return { x, w };
+}
+const GLM = glNodes(64);
+// B / B_r of the uniformly magnetised cylinder (Amperian model: surface current K = B_r / mu0),
+// magnet frame: z along the magnetisation, origin at the magnet centre.
+function magnetB(rho, z) {
+  const h = MAG.Lm / 2;
+  let br = 0, bz = 0;
+  for (let i = 0; i < GLM.x.length; i++) {
+    const b = ringB(MAG.rm, rho, z - h * GLM.x[i]);
+    br += h * GLM.w[i] * b[0]; bz += h * GLM.w[i] * b[1];
+  }
+  return [br, bz];
+}
+// Mean flux per turn (for B_r = 1 T) through a coil of radius a and length COIL_L, versus the
+// axial offset d of the magnet centre from the coil centre. Phi = integral over every turn of B.dA,
+// averaged over all turn positions along the coil: a double integral over magnet length and coil length,
+// reduced to a 1-D convolution of the ring-ring kernel with the trapezoidal overlap weight.
+function buildFluxTable(a, dmax = 0.7, step = 0.0005) {
+  const h = 0.00025, Lm = MAG.Lm, Lc = COIL_L;
+  const nk = Math.round((Lm + Lc) / 2 / h), nd = Math.round(dmax / step), ratio = Math.round(step / h);
+  const span = nd * ratio + nk;
+  const ker = new Float64Array(2 * span + 1);
+  for (let j = -span; j <= span; j++) ker[j + span] = mutualRing(MAG.rm, a, j * h);
+  const w = new Float64Array(2 * nk + 1);
+  for (let k = -nk; k <= nk; k++) { const s = k * h; w[k + nk] = Math.max(0, Math.min(Lm / 2, s + Lc / 2) - Math.max(-Lm / 2, s - Lc / 2)); }
+  const phi = new Float64Array(2 * nd + 1);
+  for (let i = -nd; i <= nd; i++) {
+    let sum = 0; const base = i * ratio + span;
+    for (let k = -nk; k <= nk; k++) sum += w[k + nk] * ker[base + k];
+    phi[i + nd] = sum * h / Lc;
+  }
+  const dphi = new Float64Array(2 * nd + 1);
+  for (let i = 0; i < phi.length; i++) {
+    const i0 = Math.max(0, i - 1), i1 = Math.min(phi.length - 1, i + 1);
+    dphi[i] = (phi[i1] - phi[i0]) / ((i1 - i0) * step);
+  }
+  let pmax = 0, dmaxv = 0;
+  for (let i = 0; i < phi.length; i++) { pmax = Math.max(pmax, Math.abs(phi[i])); dmaxv = Math.max(dmaxv, Math.abs(dphi[i])); }
+  return { a, dmax, step, phi, dphi, pmax, dpmax: dmaxv };
+}
+function tabAt(arr, T, d) {
+  const x = (d + T.dmax) / T.step;
+  if (x <= 0) return arr[0];
+  if (x >= arr.length - 1) return arr[arr.length - 1];
+  const i = Math.floor(x), f = x - i;
+  return arr[i] + f * (arr[i + 1] - arr[i]);
+}
+
+function newRun(keys, n) {
+  const c = {}; for (const k of keys) c[k] = new Float64Array(n);
+  return { live: false, keys, n, t: new Float64Array(n), c, dt: 0, T: 0, loop: false };
+}
+function cumTrap(run, src, dst) {
+  const a = run.c[src], q = run.c[dst]; q[0] = 0;
+  for (let i = 1; i < run.n; i++) q[i] = q[i - 1] + 0.5 * (a[i] + a[i - 1]) * (run.t[i] - run.t[i - 1]);
+}
+// Magnet driven harmonically along the coil axis: x(t) = A sin(2 pi f t).
+function runMagnetOsc(p, FT) {
+  const n = 1201, T = 2 / p.f, dt = T / (n - 1), w = 2 * Math.PI * p.f;
+  const run = newRun(['x', 'v', 'phi', 'lam', 'emf', 'I', 'F', 'P', 'Q'], n);
+  run.dt = dt; run.T = T; run.loop = true; run.kind = 'osc';
+  for (let i = 0; i < n; i++) {
+    const t = i * dt, x = p.A * Math.sin(w * t), v = p.A * w * Math.cos(w * t);
+    const phi = p.sg * p.Br * tabAt(FT.phi, FT, x), dphi = p.sg * p.Br * tabAt(FT.dphi, FT, x);
+    const emf = -p.N * dphi * v, I = p.closed ? emf / p.R : 0;
+    run.t[i] = t; run.c.x[i] = x; run.c.v[i] = v; run.c.phi[i] = phi; run.c.lam[i] = p.N * phi;
+    run.c.emf[i] = emf; run.c.I[i] = I; run.c.F[i] = p.N * dphi * I; run.c.P[i] = I * I * p.R;
+  }
+  cumTrap(run, 'P', 'Q');
+  return run;
+}
+// Magnet released from rest h0 above the coil centre, falling along the vertical axis (u points down).
+// m du'/dt' = m g + F,  F = (N dPhi/du) I,  I = -(N dPhi/du) u' / R  (closed circuit)  -> magnetic braking.
+function runMagnetDrop(p, FT, uEnd = 0.16) {
+  const m = magnetMass(), dt = 0.0005, nMax = 8001;
+  const lamP = (u) => p.N * p.sg * p.Br * tabAt(FT.dphi, FT, u);
+  const acc = (u, v) => { const L = lamP(u); return GRAV + (p.closed ? -L * L * v / (p.R * m) : 0); };
+  const keys = ['x', 'v', 'phi', 'lam', 'emf', 'I', 'F', 'P', 'Q', 'Ek', 'W', 'xff', 'vff'];
+  const tmp = { t: [] }; for (const k of keys) tmp[k] = [];
+  let u = -p.h0, v = 0, t = 0;
+  for (let i = 0; i < nMax; i++) {
+    const L = lamP(u), emf = -L * v, I = p.closed ? emf / p.R : 0;
+    tmp.t.push(t); tmp.x.push(u); tmp.v.push(v);
+    const phi = p.sg * p.Br * tabAt(FT.phi, FT, u);
+    tmp.phi.push(phi); tmp.lam.push(p.N * phi); tmp.emf.push(emf); tmp.I.push(I); tmp.F.push(L * I);
+    tmp.P.push(I * I * p.R); tmp.Ek.push(0.5 * m * v * v); tmp.W.push(m * GRAV * (u + p.h0));
+    tmp.xff.push(-p.h0 + 0.5 * GRAV * t * t); tmp.vff.push(GRAV * t);
+    if (u >= uEnd) break;
+    // RK4 step
+    const k1x = v, k1v = acc(u, v);
+    const k2x = v + 0.5 * dt * k1v, k2v = acc(u + 0.5 * dt * k1x, v + 0.5 * dt * k1v);
+    const k3x = v + 0.5 * dt * k2v, k3v = acc(u + 0.5 * dt * k2x, v + 0.5 * dt * k2v);
+    const k4x = v + dt * k3v, k4v = acc(u + dt * k3x, v + dt * k3v);
+    u += dt / 6 * (k1x + 2 * k2x + 2 * k3x + k4x); v += dt / 6 * (k1v + 2 * k2v + 2 * k3v + k4v); t += dt;
+  }
+  const n = tmp.t.length, run = newRun(keys, n);
+  run.t.set(tmp.t); for (const k of keys) if (k !== 'Q') run.c[k].set(tmp[k]);
+  cumTrap(run, 'P', 'Q');
+  run.dt = dt; run.T = run.t[n - 1]; run.kind = 'drop'; run.m = m; run.h0 = p.h0;
+  return run;
+}
+// Rod of mass m on rails, released with v0 at x0:  m dv/dt = -B^2 l^2 v / R.  RK4, compared with v0 exp(-t/tau).
+function runRod(p, x0, v0, xEnd, xMin = 0.04) {
+  const tau = p.m * p.R / (p.B * p.B * p.l * p.l);
+  const Tmax = Math.min(6 * tau, 40), dt = Tmax / 1500;
+  const Bz = p.out ? p.B : -p.B, k = p.B * p.B * p.l * p.l / p.R;
+  const keys = ['x', 'v', 'vfit', 'phi', 'lam', 'emf', 'I', 'F', 'P', 'Q', 'Ek', 'Etot'];
+  const tmp = { t: [] }; for (const kk of keys) tmp[kk] = [];
+  let x = x0, v = v0, t = 0, stop = '';
+  for (let i = 0; i <= 1500; i++) {
+    const emf = -Bz * p.l * v, I = emf / p.R;
+    tmp.t.push(t); tmp.x.push(x); tmp.v.push(v); tmp.vfit.push(v0 * Math.exp(-t / tau));
+    tmp.phi.push(Bz * p.l * x); tmp.lam.push(Bz * p.l * x); tmp.emf.push(emf); tmp.I.push(I);
+    tmp.F.push(-k * v); tmp.P.push(I * I * p.R); tmp.Ek.push(0.5 * p.m * v * v);
+    if (x >= xEnd) { stop = 'end'; break; }
+    if (x <= xMin && v < 0) { stop = 'wall'; break; }
+    const a = (vv) => -k * vv / p.m;
+    const k1x = v, k1v = a(v), k2x = v + 0.5 * dt * k1v, k2v = a(v + 0.5 * dt * k1v);
+    const k3x = v + 0.5 * dt * k2v, k3v = a(v + 0.5 * dt * k2v), k4x = v + dt * k3v, k4v = a(v + dt * k3v);
+    x += dt / 6 * (k1x + 2 * k2x + 2 * k3x + k4x); v += dt / 6 * (k1v + 2 * k2v + 2 * k3v + k4v); t += dt;
+  }
+  const n = tmp.t.length, run = newRun(keys, n);
+  run.t.set(tmp.t); for (const kk of keys) if (kk !== 'Q' && kk !== 'Etot') run.c[kk].set(tmp[kk]);
+  cumTrap(run, 'P', 'Q');
+  for (let i = 0; i < n; i++) run.c.Etot[i] = run.c.Ek[i] + run.c.Q[i];
+  run.dt = dt; run.T = run.t[n - 1]; run.kind = 'rod'; run.tau = tau; run.x0 = x0; run.v0 = v0; run.stop = stop;
+  run.E0 = 0.5 * p.m * v0 * v0;
+  return run;
+}
+// AC generator: N-turn loop of area A rotating at omega in uniform B. Phi = B A cos(wt), emf = N B A w sin(wt).
+function runGen(p) {
+  const n = 1201, T = 2 * 2 * Math.PI / p.w, dt = T / (n - 1);
+  const run = newRun(['th', 'phi', 'lam', 'emf', 'out', 'I', 'P', 'Pavg', 'Q', 'M', 'F'], n);
+  run.dt = dt; run.T = T; run.loop = true; run.kind = 'gen';
+  const em = p.N * p.B * p.A * p.w;
+  for (let i = 0; i < n; i++) {
+    const t = i * dt, th = p.w * t, emf = em * Math.sin(th), out = p.comm ? Math.abs(emf) : emf, I = out / p.R;
+    run.t[i] = t; run.c.th[i] = th; run.c.phi[i] = p.B * p.A * Math.cos(th); run.c.lam[i] = p.N * run.c.phi[i];
+    run.c.emf[i] = emf; run.c.out[i] = out; run.c.I[i] = I; run.c.P[i] = out * out / p.R;
+    run.c.Pavg[i] = em * em / (2 * p.R); run.c.M[i] = emf * emf / p.R / p.w;
+    run.c.F[i] = p.N * p.B * Math.abs(emf / p.R) * p.side;   // force on one active side (|I| N B L)
+  }
+  cumTrap(run, 'P', 'Q');
+  run.emax = em;
+  return run;
+}
+/* PHYSICS-END */
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Elektromagnetyzm · pracownia indukcji', title:'Indukcja elektromagnetyczna',
+    lede:'Przesuń magnes przez cewkę, pchnij pręt po szynach albo zakręć ramką prądnicy. Zmiana strumienia Φ wytwarza siłę elektromotoryczną, a prąd indukowany zawsze przeciwdziała tej zmianie.',
+    scMagnet:'Magnes i cewka', scRod:'Pręt na szynach', scGen:'Prądnica',
+    restart:'Od nowa', speed:'Tempo', tLines:'Linie pola', tVec:'Wektory', tDots:'Ładunki', tLenz:'Reguła Lenza', fullscreen:'Pełny ekran',
+    pause:'Pauza', play:'Odtwórz', sRun:'w ruchu', sPause:'pauza', sLive:'na żywo', sEnd:'koniec', sHold:'trzymasz magnes', live:'na żywo',
+    keys:'Skróty: <kbd>spacja</kbd> pauza · <kbd>←</kbd> <kbd>→</kbd> krok · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> sceny · <kbd>R</kbd> od nowa · <kbd>F</kbd> pełny ekran. Magnes i pręt można chwycić myszą lub palcem.',
+    results:'Wyniki', cNow:'Teraz', cMax:'Maks. |·|', cRms:'Średnia / RMS',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącej chwili animacji (jednostki SI).',
+    charts:'Wykresy', tabFE:'Φ i ε', tabI:'Prąd i siła', tabE:'Energia i moc', tabV:'Prędkość',
+    lenzRule:'Reguła Lenza',
+    // panel
+    gMotion:'Ruch magnesu', mOsc:'Oscyluje', mDrag:'Ręcznie', mDrop:'Spadek', lA:'Amplituda <i>A</i>', lF:'Częstotliwość <i>f</i>', lH:'Wysokość startu <i>h</i>',
+    closed:'Obwód zamknięty', flip:'Odwróć magnes N ↔ S', hDrag:'Chwyć magnes i przesuwaj go wzdłuż osi cewki.', hDrop:'Przeciągnij magnes w górę lub w dół, żeby ustawić wysokość, i puść.', hOsc:'Magnes porusza się ruchem harmonicznym przez cewkę. Chwyć go, żeby przejąć sterowanie.',
+    gMagnet:'Magnes', lBr:'Pozostałość magnetyczna <i>B</i><sub>r</sub>', matWeak:'Słaby', matFerrite:'Ferryt', matNeo:'Neodym',
+    gCoil:'Cewka i obwód', lN:'Liczba zwojów <i>N</i>', la:'Promień cewki <i>a</i>', lR:'Opór obwodu <i>R</i>', cWeak:'Mała', cSchool:'Szkolna', cBrake:'Hamulec',
+    pMass:'masa magnesu', pPhiMax:'Φ maks. (1 zwój)', pGrad:'<i>N</i>·dΦ/d<i>x</i> maks.',
+    gRodMode:'Ruch pręta', rRelease:'Puść z v₀', rDrag:'Ciągnij ręcznie', lV0:'Prędkość początkowa <i>v</i><sub>0</sub>', hRod:'Pręt startuje z prędkością v₀ i hamuje sam. Chwyć pręt, żeby go ciągnąć; po puszczeniu jedzie dalej z prędkością, jaką mu nadasz.',
+    gField:'Pole magnetyczne', dirIn:'za kartkę ⊗', dirOut:'z kartki ⊙', lB:'Indukcja <i>B</i>',
+    gRod:'Pręt i obwód', lL:'Długość pręta <i>ℓ</i>', lM:'Masa pręta <i>m</i>', lRr:'Opór <i>R</i>', preDef:'Domyślne', preStrong:'Silne pole', preHeavy:'Ciężki pręt', preRes:'Duży opór',
+    pTau:'stała czasowa τ', pStop:'droga hamowania v₀τ', pEk0:'E<sub>k</sub> na starcie',
+    gRot:'Obroty', lW:'Prędkość kątowa <i>ω</i>', rps:'obr./s',
+    gLoop:'Ramka i pole', lNg:'Liczba zwojów <i>N</i>', lAg:'Pole ramki <i>A</i>', lBg:'Indukcja <i>B</i>', lRg:'Opór obciążenia <i>R</i>',
+    gOut:'Wyjście', comm:'Komutator (prąd wyprostowany)', hComm:'Pierścienie ślizgowe dają prąd przemienny. Komutator (dzielony pierścień) zamienia końce ramki co pół obrotu.',
+    pEmax:'ε<sub>max</sub> = NBAω', pErms:'ε<sub>sk</sub> = ε<sub>max</sub>/√2', pFreq:'częstotliwość <i>f</i>',
+    // hud / table
+    hT:'t', hX:'x', hV:'v', hPhi:'Φ', hE:'ε', hI:'I', hF:'F', hAl:'α', hP:'P', hU:'U',
+    rPhi:'Strumień <i>Φ</i> (1 zwój)', rLam:'Strumień skojarzony <i>NΦ</i>', rEmf:'SEM <i>ε</i>', rOut:'Napięcie na wyjściu <i>U</i>', rI:'Natężenie <i>I</i>', rF:'Siła hamująca <i>F</i>', rP:'Moc <i>P</i>', rQ:'Ciepło <i>Q</i>', rV:'Prędkość <i>v</i>', rM:'Moment hamujący <i>M</i>', rFside:'Siła na bok ramki <i>F</i>',
+    sumEmax:'SEM szczytowa', sumErms:'SEM skuteczna', sumPavg:'moc średnia', sumBal:'bilans energii',
+    resMagOsc:'Wartości maks. i RMS z jednego cyklu animacji (2 okresy).', resMagDrag:'Wartości z ostatnich sekund ruchu ręcznego.', resDrop:'Cały spadek: od puszczenia do wylotu z cewki.', resRod:'Cały przejazd pręta.', resGen:'Dwa pełne obroty ramki.',
+    // charts
+    sPhi:'Φ (1 zwój)', sEmf:'ε', sEmfLoop:'ε w ramce', sOut:'U na wyjściu', sI:'I', sF:'F', sM:'M', sP:'P', sQ:'Q (ciepło)', sEk:'E kinetyczna', sW:'mgΔh', sEtot:'Eₖ + Q', sPavg:'P średnia', sV:'v (numerycznie)', sVfit:'v₀e^(−t/τ)', sVff:'spadek swobodny',
+    cnFE:'Górny panel: strumień przez jeden zwój. Dolny: SEM, czyli −N razy nachylenie górnej krzywej.', cnI:'Prąd I = ε/R i siła, z jaką prąd indukowany hamuje ruch.',
+    cnEosc:'Moc wydzielana w obwodzie i ciepło narastające w czasie. Tę energię dostarcza ręka poruszająca magnesem.',
+    cnEdrop:'Utracona energia potencjalna mgΔh dzieli się na kinetyczną i ciepło: mgΔh = Eₖ + Q.',
+    cnErod:'Energia kinetyczna pręta zamienia się w ciepło na oporniku; suma Eₖ + Q jest stała.',
+    cnEgen:'Moc chwilowa P = ε²/R pulsuje z częstotliwością 2f; średnia wynosi ε²ₘₐₓ/(2R).',
+    cnVrod:'Kropki: wynik całkowania numerycznego. Linia przerywana: v₀e<sup>−t/τ</sup>. Dopasowane τ:', cnVdrop:'Prędkość magnesu z hamowaniem i bez (spadek swobodny, linia przerywana).',
+    // lenz callouts
+    lzOpen:'Obwód otwarty: SEM się indukuje, ale prąd nie płynie, więc nie ma siły hamującej.',
+    lzStill:'Strumień się nie zmienia, więc ε = 0 i prąd nie płynie.',
+    lzUp:'Strumień przez cewkę rośnie, więc prąd indukowany wytwarza pole B<sub>ind</sub> przeciwne do pola magnesu.',
+    lzDown:'Strumień przez cewkę maleje, więc prąd indukowany wytwarza pole B<sub>ind</sub> zgodne z polem magnesu.',
+    lzApproach:'Zbliża się biegun {p}: od tej strony cewka staje się biegunem {p} i odpycha magnes.',
+    lzRecede:'Oddala się biegun {p}: od tej strony cewka staje się biegunem {q} i przyciąga magnes.',
+    lzInside:'Siła od cewki hamuje magnes: F przeciwnie do v.',
+    lzRodUp:'Pręt zwiększa pole obwodu, więc strumień rośnie. Prąd indukowany wytwarza pole przeciwne do B.',
+    lzRodDown:'Pręt zmniejsza pole obwodu, więc strumień maleje. Prąd indukowany wytwarza pole zgodne z B.',
+    lzRod2:'Siła F = BIℓ działa przeciwnie do prędkości i hamuje pręt.',
+    lzGen:'Prąd w ramce wytwarza moment siły przeciwny do obrotu. Żeby kręcić ramką, trzeba wykonywać pracę: to ona zasila żarówkę.',
+    lzGen2:'Moment hamujący teraz: {m}.',
+    // canvas labels
+    cvGalv:'galwanometr', cvLed:'diody LED', cvCoil:'cewka', cvField:'linie pola B', cvBind:'B ind', cvGhost:'bez hamowania', cvRes:'opornik R', cvBulb:'żarówka', cvScope:'oscyloskop', cvDiv:'dz', cvHeat:'ciepło Q', cvEk:'Eₖ', cvStop:'zatrzyma się tu', cvRails:'koniec szyn',
+    cvOpen:'obwód otwarty', cvSlip:'pierścienie ślizgowe', cvComm:'komutator',
+    // formulas
+    fFlux:'Strumień przez zwój', fFaraday:'Prawo Faradaya', fOhm:'Prąd w obwodzie', fPower:'Moc i ciepło', fBrake:'Siła hamująca', fLenz:'Reguła Lenza', fEnergy:'Bilans energii',
+    fFluxRod:'Strumień przez obwód', fEmfRod:'SEM ruchu', fForce:'Siła elektrodynamiczna', fDecay:'Hamowanie wykładnicze',
+    fFluxGen:'Strumień przez ramkę', fEmfGen:'SEM prądnicy', fPeak:'Wartość szczytowa i skuteczna', fTorque:'Siła i moment hamujący',
+    nFlux:'Magnes to walec jednorodnie namagnesowany (prąd powierzchniowy <i>K</i> = <i>B</i><sub>r</sub>/μ<sub>0</sub>). Całkę ∫<b>B</b>·d<b>A</b> liczymy numerycznie dla każdego zwoju i uśredniamy po długości cewki. <i>B̄</i> to średnie pole na powierzchni zwoju.',
+    nFaraday:'Strumień zależy od położenia magnesu, więc dΦ/dt = (dΦ/dx)·v.',
+    nOpen:'Obwód jest otwarty: <i>R</i> → ∞, więc <i>I</i> = 0, choć SEM istnieje.',
+    nBrake:'Siła działa na magnes i zawsze jest przeciwna do prędkości. Moc tej siły to dokładnie moc wydzielana w obwodzie.',
+    nDecay:'Z równania <i>m</i> d<i>v</i>/d<i>t</i> = −<i>B</i>²<i>ℓ</i>²<i>v</i>/<i>R</i>. Wynik numeryczny w tej chwili:',
+    nEnergyRod:'Ciepło liczone numerycznie jako całka ∫<i>I</i>²<i>R</i> d<i>t</i>; równa się utraconej energii kinetycznej.',
+    nEnergyDrop:'Utracona energia potencjalna = energia kinetyczna + ciepło w cewce.',
+    nPeak:'Wartość skuteczna (RMS) to taka stała SEM, która dawałaby tę samą średnią moc.',
+    nComm:'Z komutatorem prąd na wyjściu ma stały kierunek: <i>U</i> = |<i>ε</i>|. Wartość skuteczna się nie zmienia.',
+    nTorque:'Na każdy bok ramki o długości <i>L</i> działa siła <i>F</i> = <i>NBIL</i>. Moment siły hamuje obrót; jego moc <i>Mω</i> to moc prądu.',
+    lzText1:'Prąd indukowany ma taki kierunek, że jego pole magnetyczne <b>przeciwdziała zmianie strumienia</b>, która ten prąd wywołała.',
+    lzText2:'Dlatego ruch magnesu, pręta czy ramki zawsze napotyka opór: energia elektryczna pochodzi z pracy wykonanej przeciwko sile hamującej.',
+    alpha:'kąt między <b>B</b> a normalną', mean:'śr.', rms:'RMS',
+    none:'—'
+  },
+  en: {
+    eyebrow:'Electromagnetism · induction lab', title:'Electromagnetic induction',
+    lede:'Move a magnet through a coil, push a rod along rails or spin a generator loop. A changing flux Φ produces an electromotive force, and the induced current always opposes that change.',
+    scMagnet:'Magnet and coil', scRod:'Rod on rails', scGen:'Generator',
+    restart:'Restart', speed:'Speed', tLines:'Field lines', tVec:'Vectors', tDots:'Charges', tLenz:'Lenz’s law', fullscreen:'Full screen',
+    pause:'Pause', play:'Play', sRun:'running', sPause:'paused', sLive:'live', sEnd:'finished', sHold:'holding magnet', live:'live',
+    keys:'Keys: <kbd>space</kbd> pause · <kbd>←</kbd> <kbd>→</kbd> step · <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> scenes · <kbd>R</kbd> restart · <kbd>F</kbd> full screen. Grab the magnet or the rod with a mouse or a finger.',
+    results:'Results', cNow:'Now', cMax:'Max |·|', cRms:'Mean / RMS',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current moment of the animation (SI units).',
+    charts:'Charts', tabFE:'Φ and ε', tabI:'Current and force', tabE:'Energy and power', tabV:'Speed',
+    lenzRule:'Lenz’s law',
+    gMotion:'Magnet motion', mOsc:'Oscillating', mDrag:'By hand', mDrop:'Drop', lA:'Amplitude <i>A</i>', lF:'Frequency <i>f</i>', lH:'Release height <i>h</i>',
+    closed:'Circuit closed', flip:'Flip magnet N ↔ S', hDrag:'Grab the magnet and move it along the coil axis.', hDrop:'Drag the magnet up or down to set the height, then let go.', hOsc:'The magnet moves harmonically through the coil. Grab it to take over.',
+    gMagnet:'Magnet', lBr:'Remanence <i>B</i><sub>r</sub>', matWeak:'Weak', matFerrite:'Ferrite', matNeo:'Neodymium',
+    gCoil:'Coil and circuit', lN:'Number of turns <i>N</i>', la:'Coil radius <i>a</i>', lR:'Circuit resistance <i>R</i>', cWeak:'Small', cSchool:'School', cBrake:'Brake',
+    pMass:'magnet mass', pPhiMax:'max Φ (1 turn)', pGrad:'max <i>N</i> dΦ/d<i>x</i>',
+    gRodMode:'Rod motion', rRelease:'Release at v₀', rDrag:'Pull by hand', lV0:'Initial speed <i>v</i><sub>0</sub>', hRod:'The rod starts at v₀ and brakes by itself. Grab the rod to pull it; when you let go it keeps the speed you gave it.',
+    gField:'Magnetic field', dirIn:'into page ⊗', dirOut:'out of page ⊙', lB:'Field <i>B</i>',
+    gRod:'Rod and circuit', lL:'Rod length <i>ℓ</i>', lM:'Rod mass <i>m</i>', lRr:'Resistance <i>R</i>', preDef:'Default', preStrong:'Strong field', preHeavy:'Heavy rod', preRes:'High resistance',
+    pTau:'time constant τ', pStop:'stopping distance v₀τ', pEk0:'initial E<sub>k</sub>',
+    gRot:'Rotation', lW:'Angular speed <i>ω</i>', rps:'rev/s',
+    gLoop:'Loop and field', lNg:'Number of turns <i>N</i>', lAg:'Loop area <i>A</i>', lBg:'Field <i>B</i>', lRg:'Load resistance <i>R</i>',
+    gOut:'Output', comm:'Commutator (rectified output)', hComm:'Slip rings give alternating current. A commutator (split ring) swaps the loop ends every half turn.',
+    pEmax:'ε<sub>max</sub> = NBAω', pErms:'ε<sub>rms</sub> = ε<sub>max</sub>/√2', pFreq:'frequency <i>f</i>',
+    hT:'t', hX:'x', hV:'v', hPhi:'Φ', hE:'ε', hI:'I', hF:'F', hAl:'α', hP:'P', hU:'U',
+    rPhi:'Flux <i>Φ</i> (1 turn)', rLam:'Flux linkage <i>NΦ</i>', rEmf:'EMF <i>ε</i>', rOut:'Output voltage <i>U</i>', rI:'Current <i>I</i>', rF:'Braking force <i>F</i>', rP:'Power <i>P</i>', rQ:'Heat <i>Q</i>', rV:'Speed <i>v</i>', rM:'Braking torque <i>M</i>', rFside:'Force on a loop side <i>F</i>',
+    sumEmax:'peak EMF', sumErms:'RMS EMF', sumPavg:'mean power', sumBal:'energy balance',
+    resMagOsc:'Max and RMS over one animation cycle (2 periods).', resMagDrag:'Values from the last seconds of hand motion.', resDrop:'The whole fall: from release until the magnet leaves the coil.', resRod:'The whole run of the rod.', resGen:'Two full turns of the loop.',
+    sPhi:'Φ (1 turn)', sEmf:'ε', sEmfLoop:'ε in the loop', sOut:'U at output', sI:'I', sF:'F', sM:'M', sP:'P', sQ:'Q (heat)', sEk:'kinetic E', sW:'mgΔh', sEtot:'Eₖ + Q', sPavg:'mean P', sV:'v (numerical)', sVfit:'v₀e^(−t/τ)', sVff:'free fall',
+    cnFE:'Top panel: flux through one turn. Bottom: EMF, which is −N times the slope of the top curve.', cnI:'Current I = ε/R and the force with which the induced current brakes the motion.',
+    cnEosc:'Power dissipated in the circuit and the heat building up over time. The hand moving the magnet supplies this energy.',
+    cnEdrop:'The lost potential energy mgΔh splits into kinetic energy and heat: mgΔh = Eₖ + Q.',
+    cnErod:'The rod’s kinetic energy turns into heat in the resistor; the sum Eₖ + Q stays constant.',
+    cnEgen:'Instantaneous power P = ε²/R pulses at 2f; its mean is ε²ₘₐₓ/(2R).',
+    cnVrod:'Dots: numerical integration. Dashed line: v₀e<sup>−t/τ</sup>. Fitted τ:', cnVdrop:'Magnet speed with braking and without (free fall, dashed line).',
+    lzOpen:'Open circuit: an EMF is induced, but no current flows, so there is no braking force.',
+    lzStill:'The flux is not changing, so ε = 0 and no current flows.',
+    lzUp:'The flux through the coil is increasing, so the induced current makes a field B<sub>ind</sub> opposite to the magnet’s field.',
+    lzDown:'The flux through the coil is decreasing, so the induced current makes a field B<sub>ind</sub> along the magnet’s field.',
+    lzApproach:'A {p} pole is approaching: that end of the coil becomes a {p} pole and repels the magnet.',
+    lzRecede:'A {p} pole is moving away: that end of the coil becomes a {q} pole and attracts the magnet.',
+    lzInside:'The coil’s force brakes the magnet: F points against v.',
+    lzRodUp:'The rod enlarges the circuit, so the flux grows. The induced current makes a field opposite to B.',
+    lzRodDown:'The rod shrinks the circuit, so the flux falls. The induced current makes a field along B.',
+    lzRod2:'The force F = BIℓ points against the velocity and brakes the rod.',
+    lzGen:'The current in the loop produces a torque against the rotation. Turning the loop takes work, and that work lights the bulb.',
+    lzGen2:'Braking torque now: {m}.',
+    cvGalv:'galvanometer', cvLed:'LEDs', cvCoil:'coil', cvField:'B field lines', cvBind:'B ind', cvGhost:'no braking', cvRes:'resistor R', cvBulb:'bulb', cvScope:'oscilloscope', cvDiv:'div', cvHeat:'heat Q', cvEk:'Eₖ', cvStop:'stops here', cvRails:'end of rails',
+    cvOpen:'open circuit', cvSlip:'slip rings', cvComm:'commutator',
+    fFlux:'Flux through a turn', fFaraday:'Faraday’s law', fOhm:'Current in the circuit', fPower:'Power and heat', fBrake:'Braking force', fLenz:'Lenz’s law', fEnergy:'Energy balance',
+    fFluxRod:'Flux through the circuit', fEmfRod:'Motional EMF', fForce:'Magnetic force', fDecay:'Exponential braking',
+    fFluxGen:'Flux through the loop', fEmfGen:'Generator EMF', fPeak:'Peak and RMS value', fTorque:'Force and braking torque',
+    nFlux:'The magnet is a uniformly magnetised cylinder (surface current <i>K</i> = <i>B</i><sub>r</sub>/μ<sub>0</sub>). The integral ∫<b>B</b>·d<b>A</b> is computed numerically for every turn and averaged along the coil. <i>B̄</i> is the mean field over a turn.',
+    nFaraday:'The flux depends on the magnet position, so dΦ/dt = (dΦ/dx)·v.',
+    nOpen:'The circuit is open: <i>R</i> → ∞, so <i>I</i> = 0 even though the EMF exists.',
+    nBrake:'The force acts on the magnet and always points against its velocity. Its power is exactly the power dissipated in the circuit.',
+    nDecay:'From <i>m</i> d<i>v</i>/d<i>t</i> = −<i>B</i>²<i>ℓ</i>²<i>v</i>/<i>R</i>. Numerical result at this moment:',
+    nEnergyRod:'Heat computed numerically as ∫<i>I</i>²<i>R</i> d<i>t</i>; it equals the kinetic energy lost.',
+    nEnergyDrop:'Lost potential energy = kinetic energy + heat in the coil.',
+    nPeak:'The RMS value is the steady EMF that would give the same mean power.',
+    nComm:'With a commutator the output current keeps one direction: <i>U</i> = |<i>ε</i>|. The RMS value is unchanged.',
+    nTorque:'Each loop side of length <i>L</i> feels a force <i>F</i> = <i>NBIL</i>. The torque brakes the rotation; its power <i>Mω</i> is the electrical power.',
+    lzText1:'The induced current flows in the direction whose magnetic field <b>opposes the change in flux</b> that produced it.',
+    lzText2:'That is why moving the magnet, the rod or the loop always meets resistance: the electrical energy comes from the work done against the braking force.',
+    alpha:'angle between <b>B</b> and the normal', mean:'mean', rms:'RMS',
+    none:'—'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('indukcja-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+/* ---------- number formatting ---------- */
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const autoDec = (x) => { const a = Math.abs(x); return a >= 100 ? 0 : a >= 10 ? 1 : 2; };
+const fa = (x) => fmt(x, autoDec(x));
+const PFX = [[1e9, 'G'], [1e6, 'M'], [1e3, 'k'], [1, ''], [1e-3, 'm'], [1e-6, 'µ'], [1e-9, 'n']];
+function pickPfx(ax) { for (const p of PFX) if (ax >= p[0] * 0.9995) return p; return PFX[PFX.length - 1]; }
+// SI value with an automatic prefix (3 significant digits)
+function fsi(x, unit, ref) {
+  if (!isFinite(x)) return '—';
+  const ax = Math.abs(ref != null ? ref : x);
+  if (ax < 1e-12) return `${fmt(0, 0)} ${unit}`;
+  const [f, p] = pickPfx(ax), v = x / f;
+  const av = Math.abs(ref != null ? ref / f : v);
+  return `${fmt(v, av >= 100 ? 0 : av >= 10 ? 1 : 2)} ${p}${unit}`;
+}
+function niceUp(x) {
+  if (!(x > 0)) return 1;
+  const p = Math.pow(10, Math.floor(Math.log10(x))), f = x / p;
+  return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 5 ? 5 : 10) * p;
+}
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+const roundSig = (v, n = 2) => { if (v === 0) return 0; const p = Math.pow(10, n - 1 - Math.floor(Math.log10(Math.abs(v)))); return Math.round(v * p) / p; };
+
+/* ---------- controls ---------- */
+const cm = (v) => `${fmt(v * 100, 1)} cm`;
+const SL = {
+  mA:  { min: 0.06, max: 0.22, step: 0.005, v: 0.14, f: cm, lab: 'lA' },
+  mF:  { min: 0.1, max: 2, step: 0.05, v: 0.5, f: (v) => `${fmt(v, 2)} Hz`, lab: 'lF' },
+  mH:  { min: 0.06, max: 0.20, step: 0.005, v: 0.12, f: cm, lab: 'lH' },
+  mBr: { min: 0.05, max: 1.5, step: 0.01, v: 1.2, f: (v) => `${fmt(v, 2)} T`, lab: 'lBr' },
+  mN:  { min: 10, max: 2000, log: true, v: 800, f: (v) => fmt(v, 0), lab: 'lN', int: true },
+  mAc: { min: 0.015, max: 0.05, step: 0.001, v: 0.020, f: cm, lab: 'la' },
+  mR:  { min: 0.5, max: 500, log: true, v: 4, f: (v) => `${fa(v)} Ω`, lab: 'lR' },
+  rV:  { min: 0.2, max: 8, step: 0.1, v: 2, f: (v) => `${fmt(v, 1)} m/s`, lab: 'lV0' },
+  rB:  { min: 0.05, max: 2, step: 0.01, v: 0.8, f: (v) => `${fmt(v, 2)} T`, lab: 'lB' },
+  rL:  { min: 0.1, max: 1, step: 0.01, v: 0.5, f: (v) => `${fmt(v, 2)} m`, lab: 'lL' },
+  rM:  { min: 0.02, max: 2, log: true, v: 0.2, f: (v) => (v < 1 ? `${fmt(v * 1000, 0)} g` : `${fmt(v, 2)} kg`), lab: 'lM' },
+  rR:  { min: 0.05, max: 10, log: true, v: 0.5, f: (v) => `${fa(v)} Ω`, lab: 'lRr' },
+  gW:  { min: 0.5, max: 40, step: 0.05, v: Math.PI, f: (v) => `${fmt(v, 2)} rad/s`, lab: 'lW' },
+  gN:  { min: 1, max: 500, log: true, v: 200, f: (v) => fmt(v, 0), lab: 'lNg', int: true },
+  gA:  { min: 20, max: 400, step: 5, v: 200, f: (v) => `${fmt(v, 0)} cm²`, lab: 'lAg' },
+  gB:  { min: 0.01, max: 1, step: 0.01, v: 0.3, f: (v) => `${fmt(v, 2)} T`, lab: 'lBg' },
+  gR:  { min: 1, max: 200, log: true, v: 10, f: (v) => `${fa(v)} Ω`, lab: 'lRg' }
+};
+const CHIPS = {
+  mmode: [['osc', 'mOsc'], ['drag', 'mDrag'], ['drop', 'mDrop']],
+  mmat:  [['weak', 'matWeak', '0,1 T', { mBr: 0.1 }], ['ferrite', 'matFerrite', '0,4 T', { mBr: 0.4 }], ['neo', 'matNeo', '1,2 T', { mBr: 1.2 }]],
+  mcoil: [['weak', 'cWeak', 'N 100 · 20 Ω', { mN: 100, mR: 20 }], ['school', 'cSchool', 'N 800 · 4 Ω', { mN: 800, mR: 4 }], ['brake', 'cBrake', 'N 2000 · 2 Ω', { mN: 2000, mR: 2 }]],
+  rmode: [['release', 'rRelease'], ['drag', 'rDrag']],
+  rdir:  [['in', 'dirIn'], ['out', 'dirOut']],
+  rpre:  [['def', 'preDef', '', { rB: 0.8, rL: 0.5, rM: 0.2, rR: 0.5, rV: 2 }], ['strong', 'preStrong', '1,6 T', { rB: 1.6 }], ['heavy', 'preHeavy', '1 kg', { rM: 1 }], ['res', 'preRes', '4 Ω', { rR: 4 }]],
+  gspd:  [['0.25', '', '¼', { gW: 0.5 * Math.PI }], ['0.5', '', '½', { gW: Math.PI }], ['1', '', '1', { gW: 2 * Math.PI }], ['2', '', '2', { gW: 4 * Math.PI }]]
+};
+const PANEL = {
+  magnet: [
+    { h: 'gMotion', items: [{ chips: 'mmode', mode: true }, { sl: 'mA', when: () => S.mmode === 'osc' }, { sl: 'mF', when: () => S.mmode === 'osc' }, { sl: 'mH', when: () => S.mmode === 'drop' }, { hint: 'mhint' }, { sw: 'mClosed', lab: 'closed', on: true }, { btn: 'flip', lab: 'flip' }] },
+    { h: 'gMagnet', items: [{ chips: 'mmat' }, { sl: 'mBr' }] },
+    { h: 'gCoil', items: [{ chips: 'mcoil' }, { sl: 'mN' }, { sl: 'mAc' }, { sl: 'mR' }, { pills: [['pMass', 'pl-mass'], ['pPhiMax', 'pl-phimax'], ['pGrad', 'pl-grad']] }] }
+  ],
+  rod: [
+    { h: 'gRodMode', items: [{ chips: 'rmode', mode: true }, { sl: 'rV' }, { hint: 'rhint' }] },
+    { h: 'gField', items: [{ chips: 'rdir', mode: true }, { sl: 'rB' }] },
+    { h: 'gRod', items: [{ chips: 'rpre' }, { sl: 'rL' }, { sl: 'rM' }, { sl: 'rR' }, { pills: [['pTau', 'pl-tau'], ['pStop', 'pl-stop'], ['pEk0', 'pl-ek0']] }] }
+  ],
+  gen: [
+    { h: 'gRot', items: [{ chips: 'gspd', unit: 'rps' }, { sl: 'gW' }] },
+    { h: 'gLoop', items: [{ sl: 'gN' }, { sl: 'gA' }, { sl: 'gB' }, { sl: 'gR' }] },
+    { h: 'gOut', items: [{ sw: 'gComm', lab: 'comm', on: false }, { hint: 'ghint' }, { pills: [['pEmax', 'pl-emax'], ['pErms', 'pl-erms'], ['pFreq', 'pl-freq']] }] }
+  ]
+};
+const exact = {};
+const toPos = (d, v) => (d.log ? Math.round(Math.log(v / d.min) / Math.log(d.max / d.min) * 1000) : v);
+function slVal(id) {
+  if (exact[id] != null) return exact[id];
+  const d = SL[id], el = $('#' + id);
+  let v = +el.value;
+  if (d.log) { v = d.min * Math.pow(d.max / d.min, v / 1000); v = d.int ? (v < 100 ? Math.round(v) : v < 1000 ? Math.round(v / 5) * 5 : Math.round(v / 10) * 10) : roundSig(v, 2); }
+  return v;
+}
+function setSl(id, v) { exact[id] = v; const el = $('#' + id); if (el) el.value = toPos(SL[id], v); }
+
+function buildPanel() {
+  let h = '';
+  for (const sc of Object.keys(PANEL)) {
+    PANEL[sc].forEach((g, gi) => {
+      h += `<fieldset class="grp${gi === 0 ? ' first' : ''}" data-sc="${sc}"><h3 data-i18n="${g.h}"></h3>`;
+      for (const it of g.items) {
+        if (it.sl) {
+          const d = SL[it.sl];
+          const attrs = d.log ? `min="0" max="1000" step="1" value="${toPos(d, d.v)}"` : `min="${d.min}" max="${d.max}" step="${d.step}" value="${d.v}"`;
+          h += `<div class="ctl" data-ctl="${it.sl}"><div class="ctl-head"><label for="${it.sl}" data-i18n-html="${d.lab}"></label><output id="${it.sl}-out" for="${it.sl}"></output></div><input type="range" id="${it.sl}" ${attrs}></div>`;
+        } else if (it.chips) {
+          h += `<div class="chips" id="ch-${it.chips}">` + CHIPS[it.chips].map(([k, lab, sub]) =>
+            `<button type="button" class="chip" data-set="${it.chips}" data-key="${k}" aria-pressed="false"><span ${lab ? `data-i18n="${lab}"` : ''}>${lab ? '' : sub}</span>${lab && sub ? `<small>${sub}</small>` : ''}${!lab ? `<small data-i18n="${it.unit}"></small>` : ''}</button>`).join('') + `</div>`;
+        } else if (it.sw) {
+          h += `<label class="switch"><input type="checkbox" id="${it.sw}"${it.on ? ' checked' : ''}><span class="sw"></span><span data-i18n="${it.lab}"></span></label>`;
+        } else if (it.btn) {
+          h += `<button type="button" class="btn" id="${it.btn}" style="align-self:flex-start"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 7h11l-3-3M16 13H5l3 3" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="${it.lab}"></span></button>`;
+        } else if (it.hint) {
+          h += `<p class="hint" id="${it.hint}"></p>`;
+        } else if (it.pills) {
+          h += `<div class="pills">` + it.pills.map(([lab, id]) => `<div class="pill"><small data-i18n-html="${lab}"></small><span id="${id}">—</span></div>`).join('') + `</div>`;
+        }
+      }
+      h += `</fieldset>`;
+    });
+  }
+  $('#panel').innerHTML = h;
+}
+
+/* ---------- state ---------- */
+const S = {
+  scene: 'magnet', mmode: 'osc', rmode: 'release', rdir: 'in', flip: false,
+  t: 0, paused: false, speed: 1, tab: 'fe', hoverT: null,
+  lines: true, vec: true, dots: true, lenz: true,
+  needle: 0, needleV: 0, qoff: 0, qoff2: 0, Ifs: 1,
+  drag: null, hold: null, rodStart: null, rodLr: 1.6, rodLrView: 1.6
+};
+const P = { m: {}, r: {}, g: {} };
+let FT = null, RUN = null, REF = null, LINES = null;
+function readParams() {
+  P.m = { mode: S.mmode, A: slVal('mA'), f: slVal('mF'), h0: slVal('mH'), Br: slVal('mBr'), N: slVal('mN'), a: slVal('mAc'), R: slVal('mR'), closed: $('#mClosed').checked, sg: S.flip ? -1 : 1 };
+  P.r = { B: slVal('rB'), l: slVal('rL'), R: slVal('rR'), m: slVal('rM'), v0: slVal('rV'), out: S.rdir === 'out' };
+  const A = slVal('gA') * 1e-4, side = Math.sqrt(A * 1.3);
+  P.g = { w: slVal('gW'), N: slVal('gN'), B: slVal('gB'), A, side, width: A / side, R: slVal('gR'), comm: $('#gComm').checked };
+}
+
+/* live runs (hand-driven): growing buffers of the last seconds */
+const LIVE_KEYS = { magnet: ['x', 'v', 'phi', 'lam', 'emf', 'I', 'F', 'P', 'Q'], rod: ['x', 'v', 'vfit', 'phi', 'lam', 'emf', 'I', 'F', 'P', 'Q', 'Ek', 'Etot'] };
+function newLive(keys) { const c = {}; for (const k of keys) c[k] = []; return { live: true, keys, t: [], c, T: 0, n: 0 }; }
+function livePush(run, t, smp) {
+  run.t.push(t); for (const k of run.keys) run.c[k].push(smp[k] ?? 0);
+  while (run.t.length > 2 && run.t[0] < t - 12) { run.t.shift(); for (const k of run.keys) run.c[k].shift(); }
+  run.T = t; run.n = run.t.length;
+}
+function sampleAt(run, t) {
+  const n = run.t.length, o = { t };
+  if (!n) return null;
+  let i = 0, f = 0;
+  if (n > 1) {
+    if (!run.live) { const x = clamp(t / run.dt, 0, n - 1); i = Math.min(Math.floor(x), n - 2); f = x - i; }
+    else {
+      if (t <= run.t[0]) { i = 0; f = 0; } else if (t >= run.t[n - 1]) { i = n - 2; f = 1; }
+      else { let lo = 0, hi = n - 1; while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (run.t[mid] <= t) lo = mid; else hi = mid; } i = lo; f = (t - run.t[i]) / ((run.t[i + 1] - run.t[i]) || 1); }
+    }
+  }
+  for (const k of run.keys) { const a = run.c[k]; o[k] = n > 1 ? a[i] + f * (a[i + 1] - a[i]) : a[0]; }
+  return o;
+}
+function runStats(run, keys) {
+  const st = {};
+  for (const k of keys) {
+    const a = run.c[k]; let mx = 0, s1 = 0, s2 = 0, wsum = 0;
+    for (let i = 0; i < a.length; i++) {
+      mx = Math.max(mx, Math.abs(a[i]));
+      const w = i === 0 || i === a.length - 1 ? 0.5 : 1;
+      s1 += w * a[i]; s2 += w * a[i] * a[i]; wsum += w;
+    }
+    st[k] = { max: mx, mean: wsum ? s1 / wsum : 0, rms: wsum ? Math.sqrt(s2 / wsum) : 0 };
+  }
+  return st;
+}
+
+/* ---------- rebuild ---------- */
+function ensureFT() { if (!FT || FT.a !== P.m.a) FT = buildFluxTable(P.m.a); }
+const curLive = () => (S.scene === 'magnet' && S.mmode === 'drag') || (S.scene === 'rod' && S.rmode === 'drag');
+function rebuild(opts = {}) {
+  readParams();
+  const old = RUN, frac = old && old.loop && old.T > 0 ? (S.t % old.T) / old.T : 0;
+  const sc = S.scene;
+  if (sc === 'magnet') {
+    ensureFT();
+    REF = runMagnetOsc({ ...P.m, closed: true, A: 0.14, f: 0.5 }, FT);
+    REF.stats = runStats(REF, ['emf', 'F', 'v', 'I']);
+    if (S.mmode === 'osc') RUN = runMagnetOsc(P.m, FT);
+    else if (S.mmode === 'drop') RUN = runMagnetDrop(P.m, FT);
+    else if (!old || !old.live || old.scene !== 'magnet' || opts.fresh) { RUN = newLive(LIVE_KEYS.magnet); RUN.scene = 'magnet'; S.liveX = opts.x ?? (old && !old.live ? sampleAt(old, S.t).x : 0.12); }
+    let im = 0; const src = RUN.live ? REF : RUN;
+    for (let i = 0; i < src.n; i++) im = Math.max(im, Math.abs(src.c.emf[i]) / P.m.R);
+    S.Ifs = niceUp(im * 1.05);
+  } else if (sc === 'rod') {
+    const tau = P.r.m * P.r.R / (P.r.B * P.r.B * P.r.l * P.r.l);
+    if (S.rmode === 'release') {
+      const st = S.rodStart || { x0: 0.2, v0: P.r.v0 };
+      if (!S.rodStart) S.rodLr = clamp(st.x0 + Math.abs(st.v0) * tau * 1.12 + 0.12, 1.0, 6.0);
+      RUN = runRod(P.r, st.x0, st.v0, S.rodLr - 0.03);
+    } else if (!old || !old.live || old.scene !== 'rod' || opts.fresh) { RUN = newLive(LIVE_KEYS.rod); RUN.scene = 'rod'; S.liveX = opts.x ?? 0.3; }
+    const ref = RUN.live ? null : runStats(RUN, ['I']).I.max;
+    S.Ifs = niceUp((ref || P.r.B * P.r.l * 3 / P.r.R) * 1.05);
+  } else {
+    RUN = runGen(P.g);
+    S.Ifs = niceUp(RUN.emax / P.g.R * 1.05);
+  }
+  RUN.stats = RUN.live ? null : runStats(RUN, RUN.keys);
+  if (opts.keepT && RUN.loop) S.t = frac * RUN.T;
+  else if (!RUN.live) { S.t = 0; S.paused = false; }    // one-shot runs (drop, rod) restart on any change
+  if (RUN.live && opts.fresh) S.t = 0;
+  S.ended = false;
+  updateOutputs(); updatePanelVis(); updateChartTabs();
+  refreshText(true);
+  dirty = true; chartDirty = true;
+  if (started) { drawAll(); dirty = false; chartDirty = false; }
+}
+
+/* ---------- panel outputs ---------- */
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+function updateOutputs() {
+  for (const id of Object.keys(SL)) { const o = $('#' + id + '-out'); if (o) o.textContent = SL[id].f(slVal(id)); }
+  $$('#panel input[type=range]').forEach(setFill);
+  const near = (a, b) => Math.abs(a - b) <= Math.abs(b) * 0.004 + 1e-9;
+  $$('#panel .chip').forEach((b) => {
+    const set = b.dataset.set, key = b.dataset.key, def = CHIPS[set].find((c) => c[0] === key);
+    let on;
+    if (set === 'mmode') on = S.mmode === key; else if (set === 'rmode') on = S.rmode === key; else if (set === 'rdir') on = S.rdir === key;
+    else on = Object.entries(def[3]).every(([k, v]) => near(slVal(k), v));
+    b.setAttribute('aria-pressed', String(on));
+  });
+  if (FT) {
+    $('#pl-mass').textContent = `${fmt(magnetMass() * 1000, 0)} g`;
+    $('#pl-phimax').textContent = fsi(FT.pmax * P.m.Br, 'Wb');
+    $('#pl-grad').textContent = fsi(FT.dpmax * P.m.Br * P.m.N, 'Wb/m');
+  }
+  const tau = P.r.m * P.r.R / (P.r.B * P.r.B * P.r.l * P.r.l);
+  $('#pl-tau').textContent = `${fa(tau)} s`;
+  $('#pl-stop').textContent = `${fa(P.r.v0 * tau)} m`;
+  $('#pl-ek0').textContent = fsi(0.5 * P.r.m * P.r.v0 * P.r.v0, 'J');
+  const em = P.g.N * P.g.B * P.g.A * P.g.w;
+  $('#pl-emax').textContent = fsi(em, 'V');
+  $('#pl-erms').textContent = fsi(em / Math.SQRT2, 'V');
+  $('#pl-freq').textContent = `${fmt(P.g.w / TAU, 2)} Hz`;
+}
+function updatePanelVis() {
+  $$('#panel .grp').forEach((g) => { g.hidden = g.dataset.sc !== S.scene; });
+  for (const g of PANEL.magnet) for (const it of g.items) if (it.sl && it.when) $(`[data-ctl="${it.sl}"]`).hidden = !it.when();
+  $('#mhint').textContent = tr(S.mmode === 'osc' ? 'hOsc' : S.mmode === 'drop' ? 'hDrop' : 'hDrag');
+  $('#rhint').textContent = tr('hRod');
+  $('#ghint').textContent = tr('hComm');
+  $('#rV').disabled = S.rmode === 'drag';
+}
+
+/* ---------- colours ---------- */
+let col = {};
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'pos', 'neg', 'cu', 'violet', 'scope'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim() || '#808080';
+  dark = luminance(col.paper) < 0.4;
+  dirty = true; chartDirty = true;
+}
+let dark = false;
+function hexRgb(hex) {
+  const h = String(hex).replace('#', '').trim();
+  if (h.length < 3 || /[^0-9a-f]/i.test(h)) return [128, 128, 128];
+  const n = parseInt(h.length === 3 ? h.split('').map((x) => x + x).join('') : h.slice(0, 6), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+const luminance = (hex) => { const [r, g, b] = hexRgb(hex); return (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255; };
+const withAlpha = (hex, a) => { const [r, g, b] = hexRgb(hex); return `rgba(${r},${g},${b},${a})`; };
+const mix = (h1, h2, t, a = 1) => { const p = hexRgb(h1), q = hexRgb(h2); return `rgba(${Math.round(p[0] + (q[0] - p[0]) * t)},${Math.round(p[1] + (q[1] - p[1]) * t)},${Math.round(p[2] + (q[2] - p[2]) * t)},${a})`; };
+
+/* ---------- canvas ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 900, ch = 520, dpr = 1, dirty = true, chartDirty = true;
+let lastT = 0, started = false, textTimer = 0;
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = cv.clientWidth || box.clientWidth || 900; ch = cv.clientHeight || box.clientHeight || 520;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+{ const ro = new ResizeObserver(() => { resize(); if (started) drawAll(); }); ro.observe(box); ro.observe(cv); }
+
+function halo(text, x, y, color, font, align = 'left', base = 'middle', hw = 4) {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = hw; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(x1, y1, x2, y2, color, w = 2, head = 9, dash = null) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.42) * head, y2 - Math.sin(a - 0.42) * head);
+  c.lineTo(x2 - Math.cos(a + 0.42) * head, y2 - Math.sin(a + 0.42) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function label(b, sub, x, y, color, align = 'left', size = 17) {
+  const c = ctx, fb = `italic ${size}px ${FONT_MATH}`, fs = `italic ${Math.round(size * 0.7)}px ${FONT_MATH}`;
+  c.font = fb; const wb = c.measureText(b).width; c.font = fs; const ws = sub ? c.measureText(sub).width : 0;
+  const x0 = align === 'center' ? x - (wb + ws) / 2 : align === 'right' ? x - wb - ws : x;
+  halo(b, x0, y, color, fb, 'left'); if (sub) halo(sub, x0 + wb + 1, y + size * 0.3, color, fs, 'left');
+}
+function roundRect(x, y, w, h, r) { const c = ctx; c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+function background() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  c.fillStyle = withAlpha(col.ink3, dark ? 0.16 : 0.2);
+  const g = 22;
+  for (let y = g / 2; y < ch; y += g) for (let x = g / 2; x < cw; x += g) c.fillRect(x - 0.6, y - 0.6, 1.2, 1.2);
+}
+// polyline with arc length; charges travel along it
+function mkPath(pts) {
+  const L = [0];
+  for (let i = 1; i < pts.length; i++) L.push(L[i - 1] + Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]));
+  return { pts, L, len: L[L.length - 1] };
+}
+function pathAt(P_, s) {
+  const L = P_.L; let lo = 0, hi = L.length - 1;
+  while (hi - lo > 1) { const m = (lo + hi) >> 1; if (L[m] <= s) lo = m; else hi = m; }
+  const a = P_.pts[lo], b = P_.pts[hi], f = (s - L[lo]) / ((L[hi] - L[lo]) || 1);
+  return [a[0] + f * (b[0] - a[0]), a[1] + f * (b[1] - a[1]), a[2], lo];
+}
+function drawCharges(path, off, color, filter, spacing = 17, r = 2.6) {
+  if (!S.dots || !path || path.len < 1) return;
+  const c = ctx;
+  const n = Math.floor(path.len / spacing);
+  if (n < 1) return;
+  const sp = path.len / n;
+  c.save(); c.fillStyle = color; c.shadowColor = color; c.shadowBlur = 6;
+  for (let k = 0; k < n; k++) {
+    let s = (k * sp + off) % path.len; if (s < 0) s += path.len;
+    const p = pathAt(path, s);
+    if (filter && !filter(p)) continue;
+    c.beginPath(); c.arc(p[0], p[1], r, 0, TAU); c.fill();
+  }
+  c.restore();
+}
+function strokePath(pts, color, w, alpha = 1) {
+  const c = ctx; c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineJoin = 'round'; c.lineCap = 'round';
+  c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.stroke(); c.restore();
+}
+function wire(pts, w = 3) { strokePath(pts, mix(col.cu, col.ink, 0.35), w + 1.6); strokePath(pts, col.cu, w); }
+
+/* ---------- instruments ---------- */
+function drawGalvo(G, I, Ifs, open) {
+  const c = ctx, r = G.r;
+  c.save();
+  c.fillStyle = col.surface; c.strokeStyle = col.ink2; c.lineWidth = 2;
+  c.shadowColor = 'rgba(0,0,0,.18)'; c.shadowBlur = 10; c.shadowOffsetY = 3;
+  roundRect(G.x - r, G.y - r * 0.92, 2 * r, r * 1.62, r * 0.22); c.fill(); c.shadowBlur = 0; c.shadowOffsetY = 0; c.stroke();
+  const px = G.x, py = G.y + r * 0.42, R = r * 1.08, a0 = -Math.PI / 2 - 0.9, a1 = -Math.PI / 2 + 0.9;
+  c.lineWidth = 5; c.lineCap = 'butt';
+  c.strokeStyle = withAlpha(col.neg, 0.55); c.beginPath(); c.arc(px, py, R * 0.86, a0, -Math.PI / 2 - 0.02); c.stroke();
+  c.strokeStyle = withAlpha(col.pos, 0.55); c.beginPath(); c.arc(px, py, R * 0.86, -Math.PI / 2 + 0.02, a1); c.stroke();
+  c.strokeStyle = col.ink2; c.lineWidth = 1.2;
+  for (let k = -10; k <= 10; k++) {
+    const a = -Math.PI / 2 + k * 0.09, l = k % 5 === 0 ? 9 : 5;
+    c.beginPath(); c.moveTo(px + Math.cos(a) * (R * 0.78 - l), py + Math.sin(a) * (R * 0.78 - l)); c.lineTo(px + Math.cos(a) * R * 0.78, py + Math.sin(a) * R * 0.78); c.stroke();
+  }
+  const fs = Math.max(9, Math.round(r * 0.17));
+  halo('0', px, py - R * 0.98, col.ink2, `500 ${fs}px ${FONT_MONO}`, 'center');
+  halo('−' + fsi(Ifs, 'A').replace(/^[^0-9]*/, ''), px + Math.cos(a0) * R * 1.02 - 10, py + Math.sin(a0) * R * 1.02 - 6, col.neg, `500 ${fs}px ${FONT_MONO}`, 'center');
+  halo('+' + fsi(Ifs, 'A'), px + Math.cos(a1) * R * 1.02 + 10, py + Math.sin(a1) * R * 1.02 - 6, col.pos, `500 ${fs}px ${FONT_MONO}`, 'center');
+  const ang = -Math.PI / 2 + clamp(S.needle, -1.12, 1.12) * 0.9;
+  c.strokeStyle = col.ink; c.lineWidth = 2.2; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(px, py); c.lineTo(px + Math.cos(ang) * R * 0.84, py + Math.sin(ang) * R * 0.84); c.stroke();
+  c.fillStyle = col.ink; c.beginPath(); c.arc(px, py, 4, 0, TAU); c.fill();
+  halo('G', px, py + r * 0.22, col.ink3, `700 ${Math.round(r * 0.24)}px ${FONT_BODY}`, 'center');
+  c.restore();
+  halo(tr('cvGalv'), G.x, G.y + r * 0.86, col.ink3, `500 11px ${FONT_BODY}`, 'center', 'top');
+  if (open) halo(tr('cvOpen'), G.x, G.y - r * 1.05, col.cu, `600 11px ${FONT_MONO}`, 'center', 'bottom');
+}
+function drawLeds(Lp, I, Ifs, vertical) {
+  const c = ctx, b = clamp((Math.abs(I) / Ifs - 0.04) / 0.55, 0, 1);
+  const w = 46, h = 30;
+  c.save();
+  c.fillStyle = col.surface; c.strokeStyle = col.ink3; c.lineWidth = 1.4;
+  roundRect(Lp.x - w / 2, Lp.y - h / 2, w, h, 7); c.fill(); c.stroke();
+  const leds = [[-11, col.pos, I > 0], [11, col.neg, I < 0]];
+  for (const [dx, color, on] of leds) {
+    const x = Lp.x + dx, y = Lp.y;
+    const br = on ? b : 0;
+    if (br > 0.02) {
+      const g = c.createRadialGradient(x, y, 2, x, y, 30);
+      g.addColorStop(0, withAlpha(color, 0.75 * br)); g.addColorStop(1, withAlpha(color, 0));
+      c.fillStyle = g; c.beginPath(); c.arc(x, y, 30, 0, TAU); c.fill();
+    }
+    c.fillStyle = br > 0.02 ? mix(color, '#FFFFFF', 0.35 * br) : withAlpha(color, 0.25);
+    c.strokeStyle = color; c.lineWidth = 1.5;
+    c.beginPath(); c.arc(x, y - 1, 7.5, Math.PI, 0); c.lineTo(x + 7.5, y + 7); c.lineTo(x - 7.5, y + 7); c.closePath(); c.fill(); c.stroke();
+  }
+  c.restore();
+  halo(tr('cvLed'), Lp.x, Lp.y + h / 2 + 5, col.ink3, `500 11px ${FONT_BODY}`, 'center', 'top');
+}
+
+/* ---------- scene 1: magnet and coil ---------- */
+const K_OB = 0.32;   // oblique depth factor of the 2.5-D projection
+function magLayout() {
+  const vert = S.mmode === 'drop', L = { vert };
+  if (!vert) {
+    const halfW = S.mmode === 'osc' ? Math.max(0.15, P.m.A + MAG.Lm / 2 + 0.03) : 0.22;
+    const halfH = Math.max(0.05, P.m.a + 0.022);
+    L.s = Math.min(cw / (2 * halfW), ch * 0.52 / (2 * halfH));
+    L.cx = cw * 0.5; L.cy = ch * 0.34; L.uMin = -halfW + MAG.Lm / 2; L.uMax = halfW - MAG.Lm / 2;
+    const r = clamp(Math.min(ch * 0.12, cw * 0.1), 32, 66);
+    L.gal = { x: cw * 0.38, y: ch * 0.86 - r * 0.3, r }; L.led = { x: cw * 0.64, y: ch * 0.86 }; L.bus = ch * 0.86;
+  } else {
+    const top = SL.mH.max + MAG.Lm / 2, bot = 0.16 + MAG.Lm / 2 - 0.02;
+    L.s = Math.min((ch - 24) / (top + bot), cw * 0.36 / (2 * (P.m.a + 0.03)));
+    L.cx = cw * (cw < 560 ? 0.36 : 0.46); L.cy = 12 + top * L.s; L.uMin = -SL.mH.max; L.uMax = -SL.mH.min;
+    const r = clamp(Math.min(ch * 0.12, cw * 0.11), 30, 64);
+    L.xI = cw * (cw < 560 ? 0.78 : 0.80); L.gal = { x: L.xI, y: ch * 0.30, r }; L.led = { x: L.xI, y: ch * 0.74 };
+  }
+  // world -> screen (axis frame: u along the coil axis, y transverse, w towards the viewer)
+  L.p = (u, y, w = 0) => { const U = u + K_OB * w; return L.vert ? [L.cx + y * L.s, L.cy + U * L.s] : [L.cx + U * L.s, L.cy - y * L.s]; };
+  L.set = () => { const s = L.s * dpr; if (L.vert) ctx.setTransform(0, s, s, 0, L.cx * dpr, L.cy * dpr); else ctx.setTransform(s, 0, 0, -s, L.cx * dpr, L.cy * dpr); };
+  return L;
+}
+const displayTurns = (N) => clamp(Math.round(5 + 9 * Math.log10(N / 10) / Math.log10(200)), 5, 14);
+// Field lines of the bar magnet, traced once in the magnet frame (zeta along m, rho >= 0).
+function traceLines() {
+  const out = [], n = 6;
+  for (let i = 0; i < n; i++) {
+    const r0 = MAG.rm * 0.86 * Math.sqrt((i + 0.5) / n);
+    let z = 0, r = r0; const pts = [[z, r]];
+    for (let k = 0; k < 2400; k++) {
+      const dist = Math.hypot(Math.max(0, Math.abs(z) - MAG.Lm / 2), Math.max(0, r - MAG.rm));
+      const h = Math.min(0.006, 0.0008 + dist * 0.06);
+      const b1 = magnetB(r, z), n1 = Math.hypot(b1[0], b1[1]) || 1;
+      const zm = z + 0.5 * h * b1[1] / n1, rm = Math.abs(r + 0.5 * h * b1[0] / n1);
+      const b2 = magnetB(rm, zm), n2 = Math.hypot(b2[0], b2[1]) || 1;
+      const zn = z + h * b2[1] / n2, rn = Math.abs(r + h * b2[0] / n2);
+      if (k > 20 && z < 0 && zn >= 0 && rn < MAG.rm) { pts.push([0, rn]); break; }
+      z = zn; r = rn; pts.push([z, r]);
+      if (Math.abs(z) > 0.5 || r > 0.4) break;
+    }
+    out.push(pts);
+  }
+  return out;
+}
+function drawMagnet(q) {
+  const c = ctx, L = magLayout(); S.L = L;
+  background();
+  const sg = P.m.sg, a = P.m.a, Lc = COIL_L, rm = MAG.rm, h = MAG.Lm / 2;
+  const um = S.hold != null ? S.hold : q.x;
+  const I = q.I, Ifs = S.Ifs, In = clamp(I / Ifs, -1.2, 1.2), px = 1 / L.s;
+  // soft field glow around the magnet
+  {
+    const [gx, gy] = L.p(um, 0); const g = c.createRadialGradient(gx, gy, 4, gx, gy, L.s * 0.11);
+    g.addColorStop(0, withAlpha(col.violet, dark ? 0.22 : 0.13)); g.addColorStop(1, withAlpha(col.violet, 0));
+    c.fillStyle = g; c.fillRect(0, 0, cw, ch);
+  }
+  // helix (coil winding) in world coordinates
+  const nd = displayTurns(P.m.N), ra = a + 0.0025, phi0 = L.vert ? 0 : Math.PI, npt = nd * 40;
+  const hel = [];
+  for (let i = 0; i <= npt; i++) {
+    const ph = phi0 + TAU * nd * i / npt, u = -Lc / 2 + Lc * i / npt;
+    const y = ra * Math.cos(ph), w = ra * Math.sin(ph);
+    const s = L.p(u, y, w); hel.push([s[0], s[1], w < 0 ? 1 : 0]);
+  }
+  const helSeg = (back) => {
+    const segs = []; let cur = null;
+    for (let i = 0; i < hel.length; i++) {
+      const b = hel[i][2] === 1;
+      if (b === back) { if (!cur) { cur = []; if (i > 0) cur.push(hel[i - 1]); } cur.push(hel[i]); }
+      else if (cur) { cur.push(hel[i]); segs.push(cur); cur = null; }
+    }
+    if (cur) segs.push(cur);
+    return segs;
+  };
+  // circuit path (screen): helix start -> helix end -> external loop back to the start
+  const S0 = hel[0], E0 = hel[hel.length - 1];
+  let ext;
+  if (!L.vert) {
+    const y1 = E0[1] + 16, xR = Math.min(cw - 18, L.led.x + 70), xL = Math.max(18, L.gal.x - L.gal.r - 40);
+    ext = [[E0[0], E0[1]], [E0[0], y1], [xR, y1], [xR, L.bus], [L.led.x, L.bus], [L.gal.x, L.bus], [xL, L.bus], [xL, y1 + 8], [S0[0], y1 + 8], [S0[0], S0[1]]];
+  } else {
+    const x1 = Math.max(S0[0], E0[0]) + 22, yLow = Math.min(ch - 14, L.led.y + 50), yHigh = Math.max(14, L.gal.y - L.gal.r - 26);
+    ext = [[E0[0], E0[1]], [x1, E0[1]], [x1, yLow], [L.xI, yLow], [L.xI, L.led.y], [L.xI, L.gal.y], [L.xI, yHigh], [x1 + 10, yHigh], [x1 + 10, S0[1]], [S0[0], S0[1]]];
+  }
+  const circ = mkPath(hel.map((p) => [p[0], p[1], p[2]]).concat(ext.map((p) => [p[0], p[1], 0])));
+  S.circ = circ;
+  // 1) coil former back half and back windings
+  L.set();
+  c.fillStyle = withAlpha(col.ink3, 0.10);
+  c.beginPath(); c.ellipse(Lc / 2, 0, K_OB * a, a, 0, 0, TAU); c.fill();
+  c.lineCap = 'round';
+  for (const seg of helSeg(true)) { c.setTransform(dpr, 0, 0, dpr, 0, 0); strokePath(seg, mix(col.cu, col.ink, 0.45), 2.4, 0.75); }
+  drawCharges(circ, S.qoff, In >= 0 ? col.pos : col.neg, (p) => circ.pts[p[3]][2] === 1, 17, 2.2);
+  // 2) field lines (plane w = 0)
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (S.lines && LINES) {
+    c.save(); c.lineWidth = 1.4; c.strokeStyle = withAlpha(col.violet, dark ? 0.7 : 0.6);
+    for (const ln of LINES) for (const sy of [1, -1]) {
+      c.beginPath();
+      ln.forEach(([z, r], i) => { const p = L.p(um + sg * z, sy * r); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); });
+      c.stroke();
+      // arrowhead at the outermost point (direction of B along the line)
+      let im = 0; ln.forEach(([z, r], i) => { if (r > ln[im][1] && Math.abs(z) < 0.45) im = i; });
+      if (im > 0 && im < ln.length - 1) {
+        const p0 = L.p(um + sg * ln[im - 1][0], sy * ln[im - 1][1]), p1 = L.p(um + sg * ln[im + 1][0], sy * ln[im + 1][1]), pm = L.p(um + sg * ln[im][0], sy * ln[im][1]);
+        const ang = Math.atan2(p1[1] - p0[1], p1[0] - p0[0]);
+        c.save(); c.fillStyle = withAlpha(col.violet, 0.9); c.translate(pm[0], pm[1]); c.rotate(ang);
+        c.beginPath(); c.moveTo(6, 0); c.lineTo(-4, -4.5); c.lineTo(-4, 4.5); c.closePath(); c.fill(); c.restore();
+      }
+    }
+    c.restore();
+  }
+  // 3) magnet (cylinder in oblique view), ghost for free fall
+  const drawBar = (uc, alpha, ghost) => {
+    L.set();
+    c.save(); c.globalAlpha = alpha;
+    const u1 = uc - h, u2 = uc + h, nEnd = sg > 0 ? u2 : u1;   // end that carries the N pole
+    const halfN = sg > 0 ? [uc, u2] : [u1, uc], halfS = sg > 0 ? [u1, uc] : [uc, u2];
+    const body = (lo, hi, color) => {
+      c.fillStyle = color; c.beginPath(); c.rect(lo, -rm, hi - lo, 2 * rm); c.fill();
+      if (hi === u2) { c.beginPath(); c.ellipse(u2, 0, K_OB * rm, rm, 0, -Math.PI / 2, Math.PI / 2); c.fill(); }
+    };
+    if (ghost) { c.strokeStyle = col.ink3; c.lineWidth = 1.4 * px; c.setLineDash([4 * px, 3 * px]); c.strokeRect(u1, -rm, 2 * h, 2 * rm); c.setLineDash([]); c.restore(); return; }
+    body(halfS[0], halfS[1], col.neg); body(halfN[0], halfN[1], col.pos);
+    // cylinder shading
+    const g = c.createLinearGradient(0, rm, 0, -rm);
+    g.addColorStop(0, 'rgba(255,255,255,.38)'); g.addColorStop(0.35, 'rgba(255,255,255,.05)'); g.addColorStop(1, 'rgba(0,0,0,.22)');
+    c.fillStyle = g; c.beginPath(); c.rect(u1, -rm, 2 * h, 2 * rm); c.fill();
+    // visible end face at u1
+    c.fillStyle = mix(nEnd === u1 ? col.pos : col.neg, '#FFFFFF', 0.25);
+    c.beginPath(); c.ellipse(u1, 0, K_OB * rm, rm, 0, 0, TAU); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,.25)'; c.lineWidth = 1 * px; c.stroke();
+    c.restore();
+    // interior field (S -> N) as light dashes
+    if (S.lines) {
+      c.setTransform(dpr, 0, 0, dpr, 0, 0);
+      c.save(); c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 1; c.setLineDash([3, 4]);
+      for (const f of [-0.5, 0, 0.5]) { const p0 = L.p(uc - sg * h * 0.82, f * rm), p1 = L.p(uc + sg * h * 0.82, f * rm); c.beginPath(); c.moveTo(p0[0], p0[1]); c.lineTo(p1[0], p1[1]); c.stroke(); }
+      c.restore();
+    }
+    c.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const fsz = clamp(rm * L.s * 1.1, 10, 22);
+    const pN = L.p(uc + sg * h * 0.5, 0), pS = L.p(uc - sg * h * 0.5, 0);
+    c.font = `800 ${fsz}px ${FONT_BODY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = '#FFFFFF';
+    c.fillText('N', pN[0], pN[1]); c.fillText('S', pS[0], pS[1]);
+  };
+  if (S.mmode === 'drop' && P.m.closed && S.hold == null && q.xff != null && q.xff < 0.2) drawBar(q.xff, 1, true);
+  drawBar(um, 1, false);
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  if (S.mmode === 'drop' && P.m.closed && S.hold == null && q.xff != null && q.xff < 0.2) { const g = L.p(q.xff, -rm); halo(tr('cvGhost'), g[0] - 8, g[1], col.ink3, `500 11px ${FONT_BODY}`, 'right'); }
+  S.magHit = (() => { const p0 = L.p(um - h, -rm), p1 = L.p(um + h, rm); return { x0: Math.min(p0[0], p1[0]) - 14, x1: Math.max(p0[0], p1[0]) + 14, y0: Math.min(p0[1], p1[1]) - 14, y1: Math.max(p0[1], p1[1]) + 14 }; })();
+  // 4) glass former (front) and front windings
+  L.set();
+  c.save();
+  c.fillStyle = withAlpha(dark ? '#9FB4D8' : '#C9D3E6', dark ? 0.10 : 0.22);
+  c.beginPath(); c.moveTo(-Lc / 2, a); c.lineTo(Lc / 2, a); c.ellipse(Lc / 2, 0, K_OB * a, a, 0, Math.PI / 2, -Math.PI / 2, true); c.lineTo(-Lc / 2, -a); c.ellipse(-Lc / 2, 0, K_OB * a, a, 0, -Math.PI / 2, Math.PI / 2, true); c.closePath(); c.fill();
+  c.strokeStyle = withAlpha(col.ink3, 0.5); c.lineWidth = 1 * px;
+  c.beginPath(); c.ellipse(-Lc / 2, 0, K_OB * a, a, 0, 0, TAU); c.stroke();
+  c.restore();
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  for (const seg of helSeg(false)) { strokePath(seg, mix(col.cu, col.ink, 0.4), 4.4); strokePath(seg, col.cu, 3); strokePath(seg, mix(col.cu, '#FFFFFF', 0.45), 1, 0.7); }
+  // 5) external circuit
+  wire(ext, 2.6);
+  drawCharges(circ, S.qoff, In >= 0 ? col.pos : col.neg, (p) => circ.pts[p[3]][2] === 0, 17, 2.6);
+  drawLeds(L.led, P.m.closed ? I : 0, Ifs, L.vert);
+  drawGalvo(L.gal, I, Ifs, !P.m.closed);
+  // 6) induced poles of the coil and B_ind
+  const strength = clamp(Math.abs(In) * 1.6, 0, 1);
+  if (P.m.closed && strength > 0.04) {
+    const plusN = I > 0;   // positive current: B_ind along +u, N pole at the +u end
+    for (const [uE, isN] of [[Lc / 2, plusN], [-Lc / 2, !plusN]]) {
+      const pp = L.p(uE + Math.sign(uE) * 0.004, L.vert ? -(a + 0.016) : a + 0.016);
+      const color = isN ? col.pos : col.neg;
+      c.save(); c.globalAlpha = 0.35 + 0.65 * strength;
+      c.fillStyle = color; c.beginPath(); c.arc(pp[0], pp[1], 11, 0, TAU); c.fill();
+      c.fillStyle = '#FFFFFF'; c.font = `800 12px ${FONT_BODY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(isN ? 'N' : 'S', pp[0], pp[1] + 0.5);
+      c.restore();
+    }
+    if (S.vec) {
+      const d = Math.sign(I), p0 = L.p(-d * Lc * 0.42, -a - 0.012), p1 = L.p(d * Lc * 0.42, -a - 0.012);
+      arrow(p0[0], p0[1], p1[0], p1[1], col.violet, 2.6, 10, [5, 3]);
+      const pm = L.p(0, -a - 0.012);
+      halo(tr('cvBind'), pm[0] + (L.vert ? -10 : 0), pm[1] + (L.vert ? 0 : 14), col.violet, `italic 600 13px ${FONT_MATH}`, L.vert ? 'right' : 'center', L.vert ? 'middle' : 'top');
+    }
+  }
+  // 7) velocity and braking force on the magnet
+  if (S.vec && S.hold == null) {
+    const vmax = Math.max(0.05, RUN.live ? 1 : RUN.stats.v.max), v = q.v;
+    if (Math.abs(v) > 0.004) {
+      const p0 = L.p(um, rm + 0.014), k = 70 / vmax, p1 = L.p(um + v * k / L.s, rm + 0.014);
+      arrow(p0[0], p0[1], p1[0], p1[1], col.ink, 2.2, 9);
+      label('v', '', p1[0] + (L.vert ? 8 : (v > 0 ? 6 : -14)), p1[1] + (L.vert ? 0 : -10), col.ink);
+    }
+    const Fm = Math.max(1e-9, RUN.live ? (REF.stats ? REF.stats.F.max : 0.1) : RUN.stats.F.max);
+    if (Math.abs(q.F) > Fm * 0.02 && P.m.closed) {
+      const p0 = L.p(um, -rm - 0.012), p1 = L.p(um + Math.sign(q.F) * (14 + 56 * Math.min(1, Math.abs(q.F) / Fm)) / L.s, -rm - 0.012);
+      arrow(p0[0], p0[1], p1[0], p1[1], col.pos, 2.6, 10);
+      label('F', '', p1[0] + (L.vert ? 8 : (q.F > 0 ? 6 : -14)), p1[1] + (L.vert ? 0 : 12), col.pos);
+    }
+  }
+  // coil label
+  { const pc = L.p(0, a + 0.034); if (!L.vert) halo(`${tr('cvCoil')} · N = ${fmt(P.m.N, 0)}`, pc[0], pc[1] - 4, col.ink3, `500 11px ${FONT_BODY}`, 'center', 'bottom'); else halo(`${tr('cvCoil')} · N = ${fmt(P.m.N, 0)}`, pc[0] + 8, pc[1], col.ink3, `500 11px ${FONT_BODY}`, 'left'); }
+  if (S.lines && !L.vert) halo(tr('cvField'), cw - 12, 14, col.violet, `500 11.5px ${FONT_BODY}`, 'right', 'top');
+}
+
+/* ---------- scene 2: rod on rails ---------- */
+function rodLayout() {
+  const Lr = S.rodLrView, l = P.r.l;
+  const left = 86, right = 26, top = S.lenz && cw >= 560 ? 124 : 70, bottom = 92;
+  const s = Math.min((cw - left - right) / (Lr + 0.04), (ch - top - bottom) / (l * 1.45));
+  return { s, X: (x) => left + x * s, Y: (y) => top + (ch - top - bottom) / 2 - y * s, left, top, bottom, Lr, cy: top + (ch - top - bottom) / 2 };
+}
+function drawRod(q) {
+  const c = ctx, L = rodLayout(); S.L = L;
+  background();
+  const l = P.r.l, x = q.x, yT = L.Y(l / 2), yB = L.Y(-l / 2), xr = L.X(x), x0 = L.X(0);
+  const Bout = P.r.out;
+  // B symbols
+  const step = clamp(L.s * 0.12, 26, 46);
+  c.save(); c.strokeStyle = withAlpha(col.violet, 0.5); c.fillStyle = withAlpha(col.violet, 0.5); c.lineWidth = 1.3;
+  for (let yy = L.cy - Math.floor((L.cy - 20) / step) * step; yy < ch - L.bottom + 10; yy += step)
+    for (let xx = L.left + step * 0.5; xx < cw - 10; xx += step) {
+      c.beginPath(); c.arc(xx, yy, 6, 0, TAU); c.stroke();
+      if (Bout) { c.beginPath(); c.arc(xx, yy, 1.8, 0, TAU); c.fill(); }
+      else { c.beginPath(); c.moveTo(xx - 3.6, yy - 3.6); c.lineTo(xx + 3.6, yy + 3.6); c.moveTo(xx + 3.6, yy - 3.6); c.lineTo(xx - 3.6, yy + 3.6); c.stroke(); }
+    }
+  c.restore();
+  halo(`B = ${fmt(P.r.B, 2)} T ${Bout ? '⊙' : '⊗'}`, cw - 12, 16, col.violet, `600 12px ${FONT_MONO}`, 'right', 'top');
+  // flux area
+  c.save(); c.fillStyle = withAlpha(col.violet, dark ? 0.2 : 0.13); c.fillRect(x0, yT, xr - x0, yB - yT); c.restore();
+  if (xr - x0 > 70) halo(`|Φ| = ${fsi(Math.abs(q.phi), 'Wb')}`, (x0 + xr) / 2, (yT + yB) / 2 + (yB - yT) * 0.26, col.violet, `600 12.5px ${FONT_MONO}`, 'center');
+  // stop marker (x_inf) for the release run
+  if (!RUN.live && RUN.v0 > 0) {
+    const xs = RUN.x0 + RUN.v0 * RUN.tau;
+    if (xs < S.rodLr) { const X = L.X(xs); c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 4]); c.beginPath(); c.moveTo(X, yT - 26); c.lineTo(X, yB + 26); c.stroke(); c.restore(); halo(`${tr('cvStop')}: x∞ = ${fa(xs)} m`, X, yB + 30, col.ink3, `500 11px ${FONT_MONO}`, 'center', 'top'); }
+  }
+  // rails
+  const xEnd = L.X(S.rodLr);
+  for (const y of [yT, yB]) { c.save(); c.strokeStyle = mix(col.cu, col.ink, 0.35); c.lineWidth = 8; c.lineCap = 'round'; c.beginPath(); c.moveTo(x0, y); c.lineTo(xEnd, y); c.stroke(); c.strokeStyle = col.cu; c.lineWidth = 5.5; c.stroke(); c.strokeStyle = mix(col.cu, '#FFFFFF', 0.45); c.lineWidth = 1.2; c.beginPath(); c.moveTo(x0, y - 1.5); c.lineTo(xEnd, y - 1.5); c.stroke(); c.restore(); }
+  // resistor (zigzag) glowing with power
+  const Pm = Math.max(1e-9, RUN.live ? Math.pow(P.r.B * P.r.l * 3, 2) / P.r.R : RUN.stats.P.max), heat = clamp(q.P / Pm, 0, 1);
+  const zig = [[x0, yT]]; const nz = 8, zh = (yB - yT) * 0.6, z0 = yT + (yB - yT) * 0.2;
+  zig.push([x0, z0]);
+  for (let i = 0; i < nz; i++) zig.push([x0 + (i % 2 ? -9 : 9), z0 + zh * (i + 0.5) / nz]);
+  zig.push([x0, z0 + zh]); zig.push([x0, yB]);
+  if (heat > 0.02) { c.save(); c.shadowColor = col.pos; c.shadowBlur = 24 * heat; strokePath(zig.slice(1, -1), withAlpha(col.pos, 0.6 * heat), 7); c.restore(); }
+  strokePath(zig, mix(col.ink2, col.pos, heat), 2.6);
+  halo(tr('cvRes'), x0 - 14, (yT + yB) / 2, col.ink3, `500 11px ${FONT_BODY}`, 'right');
+  halo(`${fa(P.r.R)} Ω`, x0 - 14, (yT + yB) / 2 + 15, col.ink2, `500 11px ${FONT_MONO}`, 'right');
+  // current path (positive = counter-clockwise on screen): rod bottom -> rod top -> top rail -> resistor -> bottom rail
+  const loop = mkPath([[xr, yB], [xr, yT], [x0, yT], ...zig.slice(1, -1), [x0, yB], [xr, yB]]);
+  const In = clamp(q.I / S.Ifs, -1.2, 1.2);
+  drawCharges(loop, S.qoff, In >= 0 ? col.pos : col.neg, null, 20, 2.8);
+  // induced field symbol in the loop
+  if (S.vec && Math.abs(In) > 0.04 && xr - x0 > 50) {
+    const cx = (x0 + xr) / 2, cy = (yT + yB) / 2 - (yB - yT) * 0.08, out = q.I > 0;   // ccw current -> field out of page
+    c.save(); c.strokeStyle = col.violet; c.lineWidth = 2; c.setLineDash([4, 3]); c.beginPath(); c.arc(cx, cy, 15, 0, TAU); c.stroke(); c.setLineDash([]);
+    c.fillStyle = col.violet;
+    if (out) { c.beginPath(); c.arc(cx, cy, 4, 0, TAU); c.fill(); } else { c.lineWidth = 2.4; c.beginPath(); c.moveTo(cx - 7, cy - 7); c.lineTo(cx + 7, cy + 7); c.moveTo(cx + 7, cy - 7); c.lineTo(cx - 7, cy + 7); c.stroke(); }
+    c.restore();
+    halo(tr('cvBind'), cx - 20, cy, col.violet, `italic 600 13px ${FONT_MATH}`, 'right');
+  }
+  // rod
+  c.save();
+  const g = c.createLinearGradient(xr - 6, 0, xr + 6, 0);
+  g.addColorStop(0, mix(col.ink2, '#000000', 0.2)); g.addColorStop(0.45, mix(col.ink3, '#FFFFFF', 0.45)); g.addColorStop(1, col.ink2);
+  c.fillStyle = g; c.shadowColor = 'rgba(0,0,0,.25)'; c.shadowBlur = 8; c.shadowOffsetY = 2;
+  roundRect(xr - 6, yT - 16, 12, yB - yT + 32, 5); c.fill(); c.restore();
+  c.save(); c.fillStyle = col.surface; c.strokeStyle = col.ink2; c.lineWidth = 1.6; c.beginPath(); c.arc(xr, yT - 26, 9, 0, TAU); c.fill(); c.stroke();
+  c.fillStyle = col.ink2; c.beginPath(); c.arc(xr, yT - 26, 3, 0, TAU); c.fill(); c.restore();
+  S.rodHit = { x: xr, y0: yT - 40, y1: yB + 18 };
+  halo(`ℓ = ${fmt(l, 2)} m`, xr + 12, yB + 12, col.ink3, `500 11px ${FONT_MONO}`, 'left', 'top');
+  // vectors
+  if (S.vec) {
+    const vm = Math.max(0.2, RUN.live ? 3 : Math.abs(RUN.v0) || 1);
+    if (Math.abs(q.v) > 0.01) { const len = 80 * q.v / vm; arrow(xr, yT - 46, xr + len, yT - 46, col.ink, 2.4, 10); label('v', '', xr + len + (len > 0 ? 6 : -14), yT - 50, col.ink); }
+    const Fm = Math.max(1e-9, RUN.live ? P.r.B * P.r.B * P.r.l * P.r.l * 3 / P.r.R : RUN.stats.F.max);
+    if (Math.abs(q.F) > Fm * 0.02) { const len = 70 * q.F / Fm; const ym = (yT + yB) / 2; arrow(xr, ym, xr + len, ym, col.pos, 2.8, 11); label('F', '', xr + len + (len > 0 ? 6 : -16), ym - 12, col.pos); }
+  }
+  // energy bar
+  const bw = Math.min(cw - 40, 520), bx = (cw - bw) / 2, by = ch - 46, bh = 14;
+  const Etot = Math.max(1e-12, RUN.live ? Math.max(q.Ek + q.Q, S.rodEmax || 0) : RUN.E0 || (q.Ek + q.Q));
+  if (RUN.live) S.rodEmax = Etot;
+  const fk = clamp(q.Ek / Etot, 0, 1), fq = clamp(q.Q / Etot, 0, 1 - fk);
+  c.save();
+  c.fillStyle = col.sunk; roundRect(bx, by, bw, bh, 7); c.fill();
+  c.save(); roundRect(bx, by, bw, bh, 7); c.clip();
+  c.fillStyle = col.neg; c.fillRect(bx, by, bw * fk, bh);
+  c.fillStyle = col.pos; c.fillRect(bx + bw * fk, by, bw * fq, bh);
+  c.restore();
+  c.strokeStyle = col.ink3; c.lineWidth = 1; roundRect(bx, by, bw, bh, 7); c.stroke();
+  c.restore();
+  halo(`${tr('cvEk')} = ${fsi(q.Ek, 'J')}`, bx, by - 6, col.neg, `600 11.5px ${FONT_MONO}`, 'left', 'bottom');
+  halo(`${tr('cvHeat')} = ${fsi(q.Q, 'J')}`, bx + bw, by - 6, col.pos, `600 11.5px ${FONT_MONO}`, 'right', 'bottom');
+  if (!RUN.live) halo(`Eₖ + Q = ${fsi(q.Ek + q.Q, 'J')} = ½mv₀²`, cw / 2, by + bh + 6, col.ink3, `500 11px ${FONT_MONO}`, 'center', 'top');
+  if (!RUN.live && RUN.stop === 'end' && S.t >= RUN.T - 1e-9) halo(tr('cvRails'), xEnd, yT - 12, col.cu, `600 11px ${FONT_MONO}`, 'right', 'bottom');
+}
+
+/* ---------- scene 3: AC generator ---------- */
+function genCam() {
+  const yaw = -22 * D2R, pitch = 24 * D2R, D = 1.3;
+  const narrow = cw < 560;
+  const f = Math.min((narrow ? 0.84 : 0.68) * cw * D / 0.52, 0.50 * ch * D / 0.36);
+  return { cyw: Math.cos(yaw), syw: Math.sin(yaw), cp: Math.cos(pitch), sp: Math.sin(pitch), D, f, ox: cw * (narrow ? 0.52 : 0.6), oy: ch * (narrow ? 0.34 : 0.34) };
+}
+function gp(C, X, Y, Z) {
+  const x1 = X * C.cyw + Z * C.syw, z1 = -X * C.syw + Z * C.cyw;
+  const y2 = Y * C.cp - z1 * C.sp, z2 = Y * C.sp + z1 * C.cp;
+  const k = C.f / (C.D - z2);
+  return [C.ox + x1 * k, C.oy - y2 * k, z2, k];
+}
+function gdir(C, X, Y, Z) {   // rotate a direction into camera space
+  const x1 = X * C.cyw + Z * C.syw, z1 = -X * C.syw + Z * C.cyw;
+  return [x1, Y * C.cp - z1 * C.sp, Y * C.sp + z1 * C.cp];
+}
+function drawBox(C, x0, x1, y0, y1, z0, z1, base, alpha = 1, letter = null) {
+  const c = ctx;
+  const faces = [
+    [[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1], [1, 0, 0]],
+    [[x0, y0, z0], [x0, y0, z1], [x0, y1, z1], [x0, y1, z0], [-1, 0, 0]],
+    [[x0, y1, z0], [x0, y1, z1], [x1, y1, z1], [x1, y1, z0], [0, 1, 0]],
+    [[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1], [0, -1, 0]],
+    [[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1], [0, 0, 1]],
+    [[x0, y0, z0], [x0, y1, z0], [x1, y1, z0], [x1, y0, z0], [0, 0, -1]]
+  ];
+  const light = [-0.35, 0.8, 0.5];
+  c.save(); c.globalAlpha = alpha;
+  for (const f of faces) {
+    const n = f[4], ctr = [(f[0][0] + f[2][0]) / 2, (f[0][1] + f[2][1]) / 2, (f[0][2] + f[2][2]) / 2];
+    const pc = gp(C, ...ctr), nc = gdir(C, ...n);
+    // camera at (0, 0, D) in camera space; point in camera space approx (x1, y2, z2)
+    const pcam = gdir(C, ...ctr), view = [-pcam[0], -pcam[1], C.D - pcam[2]];
+    if (nc[0] * view[0] + nc[1] * view[1] + nc[2] * view[2] <= 0) continue;
+    const sh = 0.72 + 0.28 * (n[0] * light[0] + n[1] * light[1] + n[2] * light[2]);
+    c.fillStyle = mix(base, sh >= 0.72 ? '#FFFFFF' : '#000000', Math.abs(sh - 0.72) * 1.1);
+    c.beginPath(); f.slice(0, 4).forEach((v, i) => { const p = gp(C, ...v); i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }); c.closePath(); c.fill();
+    c.strokeStyle = 'rgba(0,0,0,.18)'; c.lineWidth = 1; c.stroke();
+    if (letter && n[1] === 1) { c.fillStyle = 'rgba(255,255,255,.9)'; c.font = `800 ${Math.round(pc[3] * 0.06)}px ${FONT_BODY}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(letter, pc[0], pc[1]); }
+  }
+  c.restore();
+}
+function tube(C, a, b, color, wpx) {
+  const p = gp(C, ...a), q = gp(C, ...b), k = (p[3] + q[3]) / 2 / C.f * 1.3;
+  const c = ctx; c.save(); c.lineCap = 'round';
+  c.strokeStyle = mix(color, '#000000', 0.35); c.lineWidth = wpx * k + 2; c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(q[0], q[1]); c.stroke();
+  c.strokeStyle = color; c.lineWidth = wpx * k; c.stroke();
+  c.strokeStyle = mix(color, '#FFFFFF', 0.5); c.lineWidth = Math.max(1, wpx * k * 0.3); c.globalAlpha = 0.8; c.stroke();
+  c.restore();
+}
+function ringAt(C, Z, r, th, color, split, width) {
+  const c = ctx, n = 40;
+  const pts = [];
+  for (let i = 0; i <= n; i++) { const a = th + TAU * i / n; pts.push(gp(C, r * Math.cos(a), r * Math.sin(a), Z)); }
+  c.save(); c.lineCap = 'butt';
+  const k = pts[0][3] / C.f * 1.3;
+  if (!split) {
+    c.strokeStyle = mix(color, '#000000', 0.3); c.lineWidth = width * k + 2; c.beginPath(); pts.forEach((p, i) => (i ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]))); c.stroke();
+    c.strokeStyle = color; c.lineWidth = width * k; c.stroke();
+  } else {
+    // split ring: two halves with gaps along the loop normal (angles th and th + pi)
+    for (let h = 0; h < 2; h++) {
+      c.strokeStyle = h ? mix(color, '#000000', 0.25) : color; c.lineWidth = width * k;
+      c.beginPath();
+      for (let i = 1; i < n / 2; i++) { const p = pts[h * n / 2 + i]; i > 1 ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1]); }
+      c.stroke();
+    }
+  }
+  c.restore();
+}
+function drawGen(q) {
+  const c = ctx, C = genCam();
+  background();
+  const th = q.th, nx = Math.cos(th), ny = Math.sin(th), tx = -Math.sin(th), ty = Math.cos(th);
+  const Ls = P.g.side, bw = P.g.width, gap = 0.135, W = 0.085, H = 0.2, Dz = 0.27;
+  const In = clamp(q.emf / P.g.R / S.Ifs, -1.2, 1.2), Iout = clamp(q.out / P.g.R / S.Ifs, -1.2, 1.2);
+  // far pole (N, left) and field lines
+  drawBox(C, -gap - W, -gap, -H / 2, H / 2, -Dz / 2, Dz / 2, col.pos, 1, 'N');
+  if (S.lines) {
+    c.save(); c.strokeStyle = withAlpha(col.violet, 0.5); c.lineWidth = 1.3;
+    for (const Y of [-0.065, 0, 0.065]) for (const Z of [-0.09, 0, 0.09]) {
+      const a = gp(C, -gap, Y, Z), b = gp(C, gap, Y, Z), m = gp(C, gap * 0.55, Y, Z), m0 = gp(C, gap * 0.45, Y, Z);
+      c.beginPath(); c.moveTo(a[0], a[1]); c.lineTo(b[0], b[1]); c.stroke();
+      const ang = Math.atan2(m[1] - m0[1], m[0] - m0[0]);
+      c.save(); c.fillStyle = withAlpha(col.violet, 0.75); c.translate(m[0], m[1]); c.rotate(ang); c.beginPath(); c.moveTo(5, 0); c.lineTo(-4, -3.5); c.lineTo(-4, 3.5); c.closePath(); c.fill(); c.restore();
+    }
+    c.restore();
+  }
+  // loop geometry
+  const A = (z) => [bw / 2 * tx, bw / 2 * ty, z], B = (z) => [-bw / 2 * tx, -bw / 2 * ty, z];
+  const zb = -Ls / 2, zf = Ls / 2, Z1 = zf + 0.065, Z2 = zf + 0.115, rr = 0.024, zEnd = zf + 0.16;
+  const hub1 = [0.006 * tx, 0.006 * ty, zf + 0.025], hub2 = [-0.006 * tx, -0.006 * ty, zf + 0.025];
+  const items = [];
+  const depth = (p) => gdir(C, ...p)[2];
+  const mid = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2, (a[2] + b[2]) / 2];
+  items.push({ d: depth(mid(A(zb), A(zf))), f: () => tube(C, A(zb), A(zf), col.cu, 7) });
+  items.push({ d: depth(mid(B(zb), B(zf))), f: () => tube(C, B(zb), B(zf), col.cu, 7) });
+  items.push({ d: depth([0, 0, zb]) - 0.001, f: () => tube(C, A(zb), B(zb), col.cu, 7) });
+  items.push({ d: depth(mid(A(zf), hub1)), f: () => tube(C, A(zf), hub1, col.cu, 5) });
+  items.push({ d: depth(mid(B(zf), hub2)), f: () => tube(C, B(zf), hub2, col.cu, 5) });
+  items.push({ d: depth([0, 0, 0]) - 0.0005, f: () => tube(C, [0, 0, zb - 0.06], [0, 0, zf + 0.02], col.ink3, 6) });
+  items.sort((p, q2) => p.d - q2.d);
+  for (const it of items) it.f();
+  // charges in the loop: positive emf drives current along side A towards the front
+  const lp = [hub2, B(zf), B(zb), A(zb), A(zf), hub1].map((p) => gp(C, ...p));
+  const loopPath = mkPath(lp.map((p) => [p[0], p[1], 0]));
+  drawCharges(loopPath, S.qoff, In >= 0 ? col.pos : col.neg, null, 18, 2.6);
+  // near pole (S, right), slightly translucent so the loop stays visible
+  drawBox(C, gap, gap + W, -H / 2, H / 2, -Dz / 2, Dz / 2, col.neg, 0.82, 'S');
+  // shaft front part, rings, brushes
+  tube(C, [0, 0, zf + 0.02], [0, 0, zEnd], col.ink3, 6);
+  let b1, b2;
+  if (!P.g.comm) {
+    ringAt(C, Z2, rr, th, mix(col.cu, '#E0C080', 0.35), false, 10);
+    ringAt(C, Z1, rr, th, mix(col.cu, '#E0C080', 0.35), false, 10);
+    b1 = [0, -rr - 0.012, Z1]; b2 = [0, -rr - 0.012, Z2];
+    for (const b of [b1, b2]) drawBox(C, -0.007, 0.007, b[1] - 0.012, b[1] + 0.012, b[2] - 0.006, b[2] + 0.006, col.ink2, 1);
+  } else {
+    ringAt(C, Z1 + 0.02, rr, th, mix(col.cu, '#E0C080', 0.35), true, 22);
+    b1 = [-rr - 0.012, 0, Z1 + 0.02]; b2 = [rr + 0.012, 0, Z1 + 0.02];
+    for (const b of [b1, b2]) drawBox(C, b[0] - 0.012, b[0] + 0.012, -0.007, 0.007, b[2] - 0.006, b[2] + 0.006, col.ink2, 1);
+  }
+  const sb1 = gp(C, ...b1), sb2 = gp(C, ...b2);
+  halo(tr(P.g.comm ? 'cvComm' : 'cvSlip'), Math.min(sb1[0], sb2[0]) - 12, Math.max(sb1[1], sb2[1]) + 2, col.ink3, `500 11px ${FONT_BODY}`, 'right');
+  // velocity vectors of the active sides (v = omega x r)
+  if (S.vec) {
+    for (const [P0, sgn] of [[A(0), -1], [B(0), 1]]) {
+      const p0 = gp(C, ...P0), d = 0.05, p1 = gp(C, P0[0] + sgn * nx * d, P0[1] + sgn * ny * d, 0);
+      arrow(p0[0], p0[1], p1[0], p1[1], col.ink, 2, 8);
+    }
+    const pv = gp(C, A(0)[0] - nx * 0.05, A(0)[1] - ny * 0.05, 0); label('v', '', pv[0] + 6, pv[1] - 6, col.ink, 'left', 15);
+    const bl = gp(C, -gap * 0.55, 0.085, -0.09); label('B', '', bl[0], bl[1], col.violet, 'center', 16);
+  }
+  // bottom row: phasor disc, bulb, oscilloscope
+  const narrow = cw < 560, rowY = ch * (narrow ? 0.60 : 0.66);
+  const rP = clamp(Math.min((ch - rowY) * 0.36, cw * 0.1), 26, 70);
+  const ph = { x: 16 + rP, y: rowY + (ch - rowY) * 0.48 };
+  const bulb = { x: ph.x + rP + 20 + Math.max(28, cw * 0.06), y: rowY + (ch - rowY) * 0.55 };
+  const sc = { x: bulb.x + Math.max(40, cw * 0.07), y: rowY + 6, w: 0, h: ch - rowY - 18 }; sc.w = cw - 14 - sc.x;
+  // external wires: brush1 -> bulb -> brush2
+  const yA = rowY - 14, yB2 = rowY - 6;
+  const w1 = [[sb1[0], sb1[1]], [sb1[0], yA], [bulb.x - 9, yA], [bulb.x - 9, bulb.y + 14]];
+  const w2 = [[bulb.x + 9, bulb.y + 14], [bulb.x + 9, yB2], [sb2[0], yB2], [sb2[0], sb2[1]]];
+  wire(w1, 2.4); wire(w2, 2.4);
+  // scope probes
+  c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.2; c.setLineDash([2, 3]);
+  c.beginPath(); c.moveTo(bulb.x - 9, yA); c.lineTo(sc.x + 18, yA); c.lineTo(sc.x + 18, sc.y); c.moveTo(bulb.x + 9, yB2); c.lineTo(sc.x + 34, yB2); c.lineTo(sc.x + 34, sc.y); c.stroke(); c.restore();
+  const extPath = mkPath(w1.concat([[bulb.x, bulb.y - 6]], w2).map((p) => [p[0], p[1], 0]));
+  drawCharges(extPath, S.qoff2, Iout >= 0 ? col.pos : col.neg, null, 17, 2.4);
+  // bulb
+  {
+    const Pm = Math.max(1e-12, RUN.stats.P.max), br = clamp(q.P / Pm, 0, 1);
+    if (br > 0.02) { const g = c.createRadialGradient(bulb.x, bulb.y - 6, 3, bulb.x, bulb.y - 6, 46); g.addColorStop(0, `rgba(255,214,120,${0.85 * br})`); g.addColorStop(1, 'rgba(255,214,120,0)'); c.fillStyle = g; c.beginPath(); c.arc(bulb.x, bulb.y - 6, 46, 0, TAU); c.fill(); }
+    c.save(); c.fillStyle = br > 0.02 ? `rgba(255,236,190,${0.35 + 0.55 * br})` : withAlpha(col.ink3, 0.12); c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+    c.beginPath(); c.arc(bulb.x, bulb.y - 6, 14, Math.PI * 0.8, Math.PI * 0.2); c.lineTo(bulb.x + 7, bulb.y + 10); c.lineTo(bulb.x - 7, bulb.y + 10); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = col.ink3; c.fillRect(bulb.x - 7, bulb.y + 10, 14, 6);
+    c.strokeStyle = br > 0.02 ? mix(col.cu, '#FFE08A', br) : col.ink3; c.lineWidth = 1.4; c.beginPath(); c.moveTo(bulb.x - 4, bulb.y + 8); c.lineTo(bulb.x - 4, bulb.y - 6); c.lineTo(bulb.x + 4, bulb.y - 6); c.lineTo(bulb.x + 4, bulb.y + 8); c.stroke();
+    c.restore();
+    halo(tr('cvBulb'), bulb.x, bulb.y + 20, col.ink3, `500 11px ${FONT_BODY}`, 'center', 'top');
+  }
+  // phasor disc: loop seen end-on, normal n, field B, alpha = omega t
+  {
+    c.save();
+    c.fillStyle = col.surface; c.strokeStyle = col.line; c.lineWidth = 1.2; c.beginPath(); c.arc(ph.x, ph.y, rP, 0, TAU); c.fill(); c.stroke();
+    c.strokeStyle = col.grid; c.beginPath(); c.moveTo(ph.x - rP, ph.y); c.lineTo(ph.x + rP, ph.y); c.moveTo(ph.x, ph.y - rP); c.lineTo(ph.x, ph.y + rP); c.stroke();
+    c.restore();
+    arrow(ph.x - rP * 0.95, ph.y + rP * 0.78, ph.x + rP * 0.95, ph.y + rP * 0.78, withAlpha(col.violet, 0.8), 1.6, 7);
+    halo('B', ph.x + rP * 0.95, ph.y + rP * 0.78 - 9, col.violet, `italic 13px ${FONT_MATH}`, 'right');
+    const ex = ph.x + Math.cos(th) * rP * 0.82, ey = ph.y - Math.sin(th) * rP * 0.82;
+    c.save(); c.strokeStyle = col.cu; c.lineWidth = 5; c.lineCap = 'round';
+    c.beginPath(); c.moveTo(ph.x + tx * rP * 0.55, ph.y - ty * rP * 0.55); c.lineTo(ph.x - tx * rP * 0.55, ph.y + ty * rP * 0.55); c.stroke(); c.restore();
+    c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.2; c.beginPath(); c.arc(ph.x, ph.y, rP * 0.32, 0, -(((th % TAU) + TAU) % TAU), true); c.stroke(); c.restore();
+    // projections: cos(alpha) -> flux (horizontal), sin(alpha) -> emf (vertical)
+    c.save(); c.setLineDash([2, 3]); c.strokeStyle = col.ink3; c.lineWidth = 1;
+    c.beginPath(); c.moveTo(ex, ey); c.lineTo(ex, ph.y); c.moveTo(ex, ey); c.lineTo(ph.x, ey); c.stroke(); c.restore();
+    c.save(); c.lineWidth = 3.4; c.lineCap = 'round';
+    c.strokeStyle = col.violet; c.beginPath(); c.moveTo(ph.x, ph.y); c.lineTo(ex, ph.y); c.stroke();
+    c.strokeStyle = col.pos; c.beginPath(); c.moveTo(ph.x, ph.y); c.lineTo(ph.x, ey); c.stroke(); c.restore();
+    arrow(ph.x, ph.y, ex, ey, col.ink, 2.2, 8);
+    label('n', '', ex + (Math.cos(th) >= 0 ? 5 : -12), ey - 6, col.ink, 'left', 14);
+    const deg = ((th / D2R) % 360 + 360) % 360;
+    halo(`α = ωt = ${fmt(deg, 0)}°`, ph.x, ph.y - rP - 6, col.ink, `600 11.5px ${FONT_MONO}`, 'center', 'bottom');
+    halo('Φ ∝ cos α', ph.x - rP, ph.y + rP + 4, col.violet, `500 10.5px ${FONT_MONO}`, 'left', 'top');
+    if (rP >= 45) halo('ε ∝ sin α', ph.x + rP, ph.y + rP + 4, col.pos, `500 10.5px ${FONT_MONO}`, 'right', 'top');
+    else halo('ε ∝ sin α', ph.x - rP, ph.y + rP + 17, col.pos, `500 10.5px ${FONT_MONO}`, 'left', 'top');
+  }
+  // oscilloscope
+  if (sc.w > 90) {
+    c.save();
+    c.fillStyle = col.ink2; roundRect(sc.x - 4, sc.y - 4, sc.w + 8, sc.h + 8, 9); c.fill();
+    c.fillStyle = col.scope; roundRect(sc.x, sc.y, sc.w, sc.h, 6); c.fill();
+    c.strokeStyle = 'rgba(255,255,255,.07)'; c.lineWidth = 1;
+    for (let i = 1; i < 10; i++) { const x = sc.x + sc.w * i / 10; c.beginPath(); c.moveTo(x, sc.y); c.lineTo(x, sc.y + sc.h); c.stroke(); }
+    for (let i = 1; i < 6; i++) { const y = sc.y + sc.h * i / 6; c.beginPath(); c.moveTo(sc.x, y); c.lineTo(sc.x + sc.w, y); c.stroke(); }
+    c.strokeStyle = 'rgba(255,255,255,.18)'; c.beginPath(); c.moveTo(sc.x, sc.y + sc.h / 2); c.lineTo(sc.x + sc.w, sc.y + sc.h / 2); c.stroke();
+    const vdiv = niceUp(RUN.emax / 2.6), pdiv = niceUp(P.g.N * P.g.B * P.g.A / 2.6);   // pdiv: flux linkage per division
+    const X = (t) => sc.x + t / RUN.T * sc.w, Yv = (v, div) => sc.y + sc.h / 2 - v / div * sc.h / 6;
+    const tn = S.t % RUN.T;
+    const trace = (key, div, color, lw, mult = 1) => {
+      for (const [t0, t1, a] of [[0, tn, 1], [tn, RUN.T, 0.28]]) {
+        if (t1 <= t0) continue;
+        c.save(); c.globalAlpha = a; c.strokeStyle = color; c.lineWidth = lw; c.shadowColor = color; c.shadowBlur = a > 0.5 ? 6 : 0;
+        c.beginPath(); const i0 = Math.floor(t0 / RUN.dt), i1 = Math.min(RUN.n - 1, Math.ceil(t1 / RUN.dt));
+        for (let i = i0; i <= i1; i += 2) { const xx = X(RUN.t[i]), yy = Yv(RUN.c[key][i] * mult, div); i === i0 ? c.moveTo(xx, yy) : c.lineTo(xx, yy); }
+        c.stroke(); c.restore();
+      }
+    };
+    c.save(); c.beginPath(); c.rect(sc.x, sc.y, sc.w, sc.h); c.clip();
+    trace('lam', pdiv, '#9D93FF', 1.4);
+    trace('out', vdiv, '#FF5A86', 2);
+    const bx = X(tn), byy = Yv(q.out, vdiv);
+    c.fillStyle = '#FFFFFF'; c.shadowColor = '#FF5A86'; c.shadowBlur = 10; c.beginPath(); c.arc(bx, byy, 3.2, 0, TAU); c.fill();
+    c.restore();
+    c.font = `500 10.5px ${FONT_MONO}`; c.textBaseline = 'top'; c.textAlign = 'left';
+    c.fillStyle = '#FF5A86'; c.fillText(`CH1 ${P.g.comm ? 'U' : 'ε'}  ${fsi(vdiv, 'V')}/${tr('cvDiv')}`, sc.x + 6, sc.y + 5);
+    c.fillStyle = '#9D93FF'; c.fillText(`CH2 NΦ  ${fsi(pdiv, 'Wb')}/${tr('cvDiv')}`, sc.x + 6, sc.y + 19);
+    c.fillStyle = 'rgba(255,255,255,.55)'; c.textAlign = 'right'; c.textBaseline = 'bottom'; c.fillText(`${fsi(RUN.T / 10, 's')}/${tr('cvDiv')}`, sc.x + sc.w - 6, sc.y + sc.h - 4);
+    c.restore();
+    halo(tr('cvScope'), sc.x + sc.w, sc.y - 8, col.ink3, `500 11px ${FONT_BODY}`, 'right', 'bottom');
+  }
+}
+
+/* ---------- current sample ---------- */
+function curSample() {
+  if (RUN.live) {
+    if (RUN.t.length) { const o = {}; const n = RUN.t.length - 1; for (const k of RUN.keys) o[k] = RUN.c[k][n]; o.t = RUN.t[n]; return o; }
+    return liveSample(S.liveX ?? 0, 0, 0);
+  }
+  return sampleAt(RUN, Math.min(S.t, RUN.T));
+}
+function liveSample(x, v, Q) {
+  if (S.scene === 'magnet') {
+    const phi = P.m.sg * P.m.Br * tabAt(FT.phi, FT, x), dphi = P.m.sg * P.m.Br * tabAt(FT.dphi, FT, x);
+    const emf = -P.m.N * dphi * v, I = P.m.closed ? emf / P.m.R : 0;
+    return { x, v, phi, lam: P.m.N * phi, emf, I, F: P.m.N * dphi * I, P: I * I * P.m.R, Q };
+  }
+  const p = P.r, Bz = p.out ? p.B : -p.B, emf = -Bz * p.l * v, I = emf / p.R;
+  const Ek = 0.5 * p.m * v * v;
+  return { x, v, vfit: v, phi: Bz * p.l * x, lam: Bz * p.l * x, emf, I, F: -p.B * p.B * p.l * p.l * v / p.R, P: I * I * p.R, Q, Ek, Etot: Ek + Q };
+}
+
+/* ---------- HUD, state, callout ---------- */
+const HUD = {
+  magnet: [['hT', 't', (q) => `${fmt(q.t ?? S.t, 2)} s`], ['hX', 'x', (q) => cm(S.hold != null ? S.hold : q.x)], ['hV', 'v', (q) => `${fmt(q.v, 2)} m/s`], ['hPhi', 'phi', (q) => fsi(q.phi, 'Wb', RUN.live ? FT.pmax * P.m.Br : RUN.stats.phi.max)], ['hE', 'emf', (q) => fsi(q.emf, 'V', RUN.live ? REF.stats?.emf.max : RUN.stats.emf.max)], ['hI', 'I', (q) => fsi(q.I, 'A', S.Ifs)]],
+  rod: [['hT', 't', (q) => `${fmt(q.t ?? S.t, 2)} s`], ['hX', 'x', (q) => `${fmt(q.x, 3)} m`], ['hV', 'v', (q) => `${fmt(q.v, 2)} m/s`], ['hE', 'emf', (q) => fsi(q.emf, 'V', S.Ifs * P.r.R)], ['hI', 'I', (q) => fsi(q.I, 'A', S.Ifs)], ['hF', 'F', (q) => fsi(q.F, 'N', S.Ifs * P.r.B * P.r.l)]],
+  gen: [['hT', 't', (q) => `${fmt(S.t, 2)} s`], ['hAl', 'th', (q) => `${fmt(((q.th / D2R) % 360 + 360) % 360, 0)}°`], ['hPhi', 'phi', (q) => fsi(q.phi, 'Wb', P.g.B * P.g.A)], ['hE', 'emf', (q) => fsi(q.emf, 'V', RUN.emax)], ['hI', 'I', (q) => fsi(q.out / P.g.R, 'A', S.Ifs)], ['hP', 'P', (q) => fsi(q.P, 'W', RUN.stats.P.max)]]
+};
+let hudScene = '';
+function updateHud(q) {
+  const def = HUD[S.scene];
+  if (hudScene !== S.scene + lang) {
+    hudScene = S.scene + lang;
+    $('#hud').innerHTML = def.map(([lab, k], i) => `<div><dt>${tr(lab)}</dt><dd id="hud-${i}"></dd></div>`).join('');
+  }
+  def.forEach(([, , f], i) => { const s = f(q), el = $('#hud-' + i); if (el.textContent !== s) el.textContent = s; });
+}
+function stateKey() {
+  if (S.hold != null) return 'hold';
+  if (RUN.live) return S.paused ? 'pause' : 'live';
+  if (S.ended) return 'end';
+  return S.paused ? 'pause' : 'run';
+}
+const STATE_LAB = { run: 'sRun', pause: 'sPause', live: 'sLive', end: 'sEnd', hold: 'sHold' };
+function setState() {
+  const k = stateKey(), el = $('#state'), d = k === 'hold' ? 'live' : k;
+  if (el.dataset.s !== d || el.dataset.l !== lang + k) { el.dataset.s = d; el.dataset.l = lang + k; el.textContent = tr(STATE_LAB[k]); }
+}
+function lenzLines(q) {
+  if (S.scene === 'magnet') {
+    if (Math.abs(q.emf) < 1e-4 * Math.max(1e-9, S.Ifs * P.m.R) || Math.abs(q.v) < 0.003) return [tr('lzStill'), ''];
+    if (!P.m.closed) return [tr('lzOpen'), ''];
+    const dAbs = Math.sign(q.phi) * (-q.emf / P.m.N);   // d|Phi|/dt sign
+    const l1 = tr(dAbs > 0 ? 'lzUp' : 'lzDown');
+    const d = q.x, outside = Math.abs(d) > (MAG.Lm + COIL_L) / 2 - 0.004;
+    if (!outside) return [l1, tr('lzInside')];
+    const sg = P.m.sg, facing = d < 0 ? (sg > 0 ? 'N' : 'S') : (sg > 0 ? 'S' : 'N');
+    const approach = q.v * (-d) > 0, other = facing === 'N' ? 'S' : 'N';
+    return [l1, tr(approach ? 'lzApproach' : 'lzRecede').replace(/\{p\}/g, facing).replace('{q}', other)];
+  }
+  if (S.scene === 'rod') {
+    if (Math.abs(q.v) < 0.005) return [tr('lzStill'), ''];
+    return [tr(q.v > 0 ? 'lzRodUp' : 'lzRodDown'), tr('lzRod2')];
+  }
+  return [tr('lzGen'), tr('lzGen2').replace('{m}', fsi(q.M, 'N·m', RUN.stats.M.max))];
+}
+let lastCo = '';
+function updateCallout(q) {
+  const co = $('#callout'); co.hidden = !S.lenz;
+  if (!S.lenz) return;
+  const [a, b] = lenzLines(q), key = a + '|' + b;
+  if (key !== lastCo) { lastCo = key; $('#co-1').innerHTML = a; $('#co-2').innerHTML = b; $('#co-2').hidden = !b; }
+}
+
+/* ---------- results ---------- */
+const ROWS = {
+  magnet: [['rPhi', 'phi', 'Wb'], ['rLam', 'lam', 'Wb'], ['rEmf', 'emf', 'V', 'rms'], ['rI', 'I', 'A', 'rms'], ['rF', 'F', 'N'], ['rP', 'P', 'W', 'mean'], ['rQ', 'Q', 'J', 'last']],
+  rod: [['rV', 'v', 'm/s'], ['rPhi', 'phi', 'Wb'], ['rEmf', 'emf', 'V', 'rms'], ['rI', 'I', 'A', 'rms'], ['rF', 'F', 'N'], ['rP', 'P', 'W', 'mean'], ['rQ', 'Q', 'J', 'last']],
+  gen: [['rPhi', 'phi', 'Wb'], ['rEmf', 'emf', 'V', 'rms'], ['rOut', 'out', 'V', 'rms'], ['rI', 'I', 'A', 'rms'], ['rP', 'P', 'W', 'mean'], ['rM', 'M', 'N·m', 'mean'], ['rQ', 'Q', 'J', 'last']]
+};
+function liveStats() {
+  const st = {}; const n = RUN.t.length;
+  for (const k of RUN.keys) {
+    let mx = 0, s1 = 0, s2 = 0, ws = 0;
+    for (let i = 0; i < n; i++) { const v = RUN.c[k][i]; mx = Math.max(mx, Math.abs(v)); if (RUN.t[i] >= RUN.T - 6) { s1 += v; s2 += v * v; ws++; } }
+    st[k] = { max: mx, mean: ws ? s1 / ws : 0, rms: ws ? Math.sqrt(s2 / ws) : 0 };
+  }
+  return st;
+}
+function updateResults(q) {
+  const st = RUN.live ? liveStats() : RUN.stats;
+  const rows = ROWS[S.scene].filter((r) => !(r[1] === 'out' && !P.g.comm));
+  $('#res-body').innerHTML = rows.map(([lab, k, u, agg]) => {
+    const s = st[k];
+    let third = tr('none');
+    if (agg === 'rms') third = `${fsi(s.rms, u)} <span class="muted">${tr('rms')}</span>`;
+    else if (agg === 'mean') third = `${fsi(s.mean, u)} <span class="muted">${tr('mean')}</span>`;
+    else if (agg === 'last') third = `${fsi(RUN.c[k][RUN.c[k].length - 1] ?? 0, u)} <span class="muted">Σ</span>`;
+    const maxCell = agg === 'last' ? tr('none') : fsi(s.max, u);
+    return `<tr><th>${tr(lab)}</th><td>${fsi(q[k], u, s.max || undefined)}</td><td>${maxCell}</td><td>${third}</td></tr>`;
+  }).join('');
+  const sub = S.scene === 'magnet' ? (S.mmode === 'osc' ? 'resMagOsc' : S.mmode === 'drop' ? 'resDrop' : 'resMagDrag') : S.scene === 'rod' ? (RUN.live ? 'resMagDrag' : 'resRod') : 'resGen';
+  $('#res-sub').textContent = tr(sub);
+  const e = st.emf;
+  let sum = `<span class="val"><small>${tr('sumEmax')}</small><i>ε</i><sub>max</sub> = ${fsi(e.max, 'V')}</span><span class="val"><small>${tr('sumErms')}</small><i>ε</i><sub>RMS</sub> = ${fsi(e.rms, 'V')}</span><span class="val"><small>${tr('sumPavg')}</small><i>P̄</i> = ${fsi(st.P.mean, 'W')}</span>`;
+  if (S.scene === 'rod' && !RUN.live) { const n = RUN.n - 1; sum += `<span class="val"><small>${tr('sumBal')}</small>Q = ${fsi(RUN.c.Q[n], 'J')} · ΔEₖ = ${fsi(RUN.E0 - RUN.c.Ek[n], 'J')}</span>`; }
+  if (S.scene === 'magnet' && S.mmode === 'drop') { const n = RUN.n - 1; sum += `<span class="val"><small>${tr('sumBal')}</small>mgΔh = ${fsi(RUN.c.W[n], 'J')} · Eₖ + Q = ${fsi(RUN.c.Ek[n] + RUN.c.Q[n], 'J')}</span>`; }
+  $('#res-sum').innerHTML = sum;
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+const RS = (x, u, ref) => `<span class="r">${fsi(x, u, ref)}</span>`;
+const sci = (x) => `${fmt(x * 1e4, x * 1e4 >= 100 ? 0 : 2)}·10⁻⁴ m²`;   // areas
+const card = (title, body, cls = '') => `<div class="fcard ${cls}"><h4>${tr(title)}</h4>${body}</div>`;
+const eq = (s, num) => `<div class="eq${num ? ' num' : ''}">${s}</div>`;
+const note = (k, extra = '') => `<p class="fnote">${tr(k)}${extra}</p>`;
+function lenzCard() { return card('fLenz', `<p class="ltext">${tr('lzText1')}</p><p class="fnote">${tr('lzText2')}</p><div class="eq num"><i>ε</i> = −<i>N</i> ${FR('d<i>Φ</i>', 'd<i>t</i>')} &nbsp;←&nbsp; ${lang === 'pl' ? 'minus to reguła Lenza' : 'the minus sign is Lenz’s law'}</div>`, 'wide lenz'); }
+function updateFormulas(q) {
+  const cards = [];
+  if (S.scene === 'magnet') {
+    const p = P.m, A = Math.PI * p.a * p.a, Bm = q.phi / A, dphidx = Math.abs(q.v) > 1e-6 ? -q.emf / (p.N * q.v) : p.sg * p.Br * tabAt(FT.dphi, FT, q.x);
+    const dphidt = dphidx * q.v;
+    cards.push(card('fFlux', eq(`${V('Φ')}${EQ}<span class="int">∫</span><b>B</b> · d<b>A</b>${EQ}${V('B̄')} ${V('A')} cos ${V('α')}`) +
+      eq(`${V('A')}${EQ}π${V('a')}<sup>2</sup>${EQ}π · (${fmt(p.a, 3)} m)<sup>2</sup>${EQ}${sci(A)}`, true) +
+      eq(`${V('Φ')}${EQ}${fsi(Bm, 'T')} · ${sci(A)} · cos 0°${EQ}${RS(q.phi, 'Wb')}`, true) + note('nFlux'), 'wide'));
+    cards.push(card('fFaraday', eq(`${V('ε')}${EQ}−${V('N')} ${FR('d' + V('Φ'), 'd' + V('t'))}${EQ}−${V('N')} ${FR('d' + V('Φ'), 'd' + V('x'))} ${V('v')}`) +
+      eq(`${V('ε')}${EQ}−${fmt(p.N, 0)} · ${fsi(dphidx, 'Wb/m')} · ${fmt(q.v, 3)} m/s${EQ}${RS(q.emf, 'V')}`, true) +
+      eq(`${FR('d' + V('Φ'), 'd' + V('t'))}${EQ}${fsi(dphidt, 'Wb/s')}`, true) + note('nFaraday'), 'wide'));
+    cards.push(card('fOhm', eq(`${V('I')}${EQ}${FR(V('ε'), V('R'))}`) + (p.closed ? eq(`${V('I')}${EQ}${FR(fsi(q.emf, 'V'), `${fa(p.R)} Ω`)}${EQ}${RS(q.I, 'A')}`, true) : note('nOpen'))));
+    cards.push(card('fPower', eq(`${V('P')}${EQ}${FR(V('ε') + '<sup>2</sup>', V('R'))}${EQ}${V('I')}<sup>2</sup>${V('R')}`) + eq(`${V('P')}${EQ}${p.closed ? `${FR(`(${fsi(q.emf, 'V')})<sup>2</sup>`, `${fa(p.R)} Ω`)}${EQ}` : ''}${RS(q.P, 'W')}`, true) +
+      eq(`${V('Q')}${EQ}<span class="int">∫</span>${V('I')}<sup>2</sup>${V('R')} d${V('t')}${EQ}${RS(q.Q, 'J')}`, true)));
+    cards.push(card('fBrake', eq(`${V('F')}${EQ}${V('N')} ${FR('d' + V('Φ'), 'd' + V('x'))} ${V('I')}${EQ}−${FR(`(${V('N')} d${V('Φ')}/d${V('x')})<sup>2</sup>`, V('R'))} ${V('v')}`) +
+      eq(`${V('F')}${EQ}${fmt(p.N, 0)} · ${fsi(dphidx, 'Wb/m')} · ${fsi(q.I, 'A')}${EQ}${RS(q.F, 'N')}`, true) + note('nBrake')));
+    if (S.mmode === 'drop') cards.push(card('fEnergy', eq(`${V('m')}${V('g')}Δ${V('h')}${EQ}${V('E')}<sub>k</sub> + ${V('Q')}`) +
+      eq(`${fsi(q.W, 'J')}${EQ}${fsi(q.Ek, 'J')} + ${fsi(q.Q, 'J')}${EQ}${RS(q.Ek + q.Q, 'J')}`, true) + note('nEnergyDrop', ` m = ${fmt(magnetMass() * 1000, 0)} g.`)));
+  } else if (S.scene === 'rod') {
+    const p = P.r, tau = RUN.live ? p.m * p.R / (p.B * p.B * p.l * p.l) : RUN.tau;
+    cards.push(card('fFluxRod', eq(`${V('Φ')}${EQ}${V('B')} ${V('A')} cos ${V('α')}${EQ}${V('B')} ${V('ℓ')} ${V('x')}`) +
+      eq(`${V('Φ')}${EQ}${fmt(p.B, 2)} T · ${fmt(p.l, 2)} m · ${fmt(q.x, 3)} m${EQ}${RS(Math.abs(q.phi), 'Wb')}`, true)));
+    cards.push(card('fEmfRod', eq(`${V('ε')}${EQ}−${FR('d' + V('Φ'), 'd' + V('t'))}${EQ}${V('B')} ${V('ℓ')} ${V('v')}`) +
+      eq(`${V('ε')}${EQ}${fmt(p.B, 2)} T · ${fmt(p.l, 2)} m · ${fmt(q.v, 3)} m/s${EQ}${RS(Math.abs(q.emf), 'V')}`, true)));
+    cards.push(card('fOhm', eq(`${V('I')}${EQ}${FR(V('ε'), V('R'))}${EQ}${FR(V('B') + V('ℓ') + V('v'), V('R'))}`) + eq(`${V('I')}${EQ}${FR(fsi(Math.abs(q.emf), 'V'), `${fa(p.R)} Ω`)}${EQ}${RS(Math.abs(q.I), 'A')}`, true)));
+    cards.push(card('fForce', eq(`${V('F')}${EQ}${V('B')} ${V('I')} ${V('ℓ')}${EQ}${FR(V('B') + '<sup>2</sup>' + V('ℓ') + '<sup>2</sup>' + V('v'), V('R'))}`) +
+      eq(`${V('F')}${EQ}${fmt(p.B, 2)} T · ${fsi(Math.abs(q.I), 'A')} · ${fmt(p.l, 2)} m${EQ}${RS(Math.abs(q.F), 'N')}`, true)));
+    if (!RUN.live) {
+      const vf = RUN.v0 * Math.exp(-S.t / tau);
+      cards.push(card('fDecay', eq(`${V('τ')}${EQ}${FR(V('m') + V('R'), V('B') + '<sup>2</sup>' + V('ℓ') + '<sup>2</sup>')}${EQ}${FR(`${fmt(p.m, 3)} kg · ${fa(p.R)} Ω`, `(${fmt(p.B, 2)} T)<sup>2</sup> · (${fmt(p.l, 2)} m)<sup>2</sup>`)}${EQ}${RS(tau, 's')}`) +
+        eq(`${V('v')}(${V('t')})${EQ}${V('v')}<sub>0</sub> e<sup>−<i>t</i>/<i>τ</i></sup>${EQ}${fmt(RUN.v0, 2)} · e<sup>−${fmt(S.t, 2)}/${fmt(tau, 3)}</sup>${EQ}${RS(vf, 'm/s')}`, true) +
+        note('nDecay', ` <i>v</i> = ${fmt(q.v, 4)} m/s.`), 'wide'));
+      cards.push(card('fEnergy', eq(`${V('Q')}${EQ}<span class="int">∫</span>${V('I')}<sup>2</sup>${V('R')} d${V('t')}${EQ}½${V('m')}${V('v')}<sub>0</sub><sup>2</sup> − ½${V('m')}${V('v')}<sup>2</sup>`) +
+        eq(`${fsi(q.Q, 'J')}${EQ}${fsi(RUN.E0, 'J')} − ${fsi(q.Ek, 'J')}${EQ}${RS(RUN.E0 - q.Ek, 'J')}`, true) + note('nEnergyRod')));
+    }
+    cards.push(card('fPower', eq(`${V('P')}${EQ}${FR(V('ε') + '<sup>2</sup>', V('R'))}${EQ}${V('F')} ${V('v')}`) + eq(`${V('P')}${EQ}${FR(`(${fsi(Math.abs(q.emf), 'V')})<sup>2</sup>`, `${fa(p.R)} Ω`)}${EQ}${RS(q.P, 'W')}`, true)));
+  } else {
+    const p = P.g, deg = ((q.th / D2R) % 360 + 360) % 360, em = RUN.emax;
+    cards.push(card('fFluxGen', eq(`${V('Φ')}${EQ}${V('B')} ${V('A')} cos ${V('α')},&nbsp;&nbsp; ${V('α')}${EQ}${V('ω')}${V('t')}`) +
+      eq(`${V('Φ')}${EQ}${fmt(p.B, 2)} T · ${sci(p.A)} · cos ${fmt(deg, 0)}°${EQ}${RS(q.phi, 'Wb', p.B * p.A)}`, true), 'wide'));
+    cards.push(card('fEmfGen', eq(`${V('ε')}${EQ}−${V('N')} ${FR('d' + V('Φ'), 'd' + V('t'))}${EQ}${V('N')}${V('B')}${V('A')}${V('ω')} sin ${V('ω')}${V('t')}`) +
+      eq(`${V('ε')}${EQ}${fmt(p.N, 0)} · ${fmt(p.B, 2)} · ${sci(p.A)} · ${fmt(p.w, 2)} · sin ${fmt(deg, 0)}°${EQ}${RS(q.emf, 'V', em)}`, true) + (p.comm ? note('nComm') : ''), 'wide'));
+    cards.push(card('fPeak', eq(`${V('ε')}<sub>max</sub>${EQ}${V('N')}${V('B')}${V('A')}${V('ω')}${EQ}${fmt(p.N, 0)} · ${fmt(p.B, 2)} T · ${sci(p.A)} · ${fmt(p.w, 2)} s⁻¹${EQ}${RS(em, 'V')}`) +
+      eq(`${V('ε')}<sub>RMS</sub>${EQ}${FR(V('ε') + '<sub>max</sub>', '√2')}${EQ}${RS(em / Math.SQRT2, 'V')}`, true) + note('nPeak'), 'wide'));
+    cards.push(card('fOhm', eq(`${V('I')}${EQ}${FR(V(p.comm ? 'U' : 'ε'), V('R'))}${EQ}${FR(fsi(q.out, 'V', em), `${fa(p.R)} Ω`)}${EQ}${RS(q.I, 'A', em / p.R)}`)));
+    cards.push(card('fPower', eq(`${V('P')}${EQ}${FR(V('ε') + '<sup>2</sup>', V('R'))}${EQ}${RS(q.P, 'W', em * em / p.R)}`) +
+      eq(`${V('P̄')}${EQ}${FR(V('ε') + '<sub>max</sub><sup>2</sup>', '2' + V('R'))}${EQ}${FR(`(${fsi(em, 'V')})<sup>2</sup>`, `2 · ${fa(p.R)} Ω`)}${EQ}${RS(em * em / (2 * p.R), 'W')}`, true)));
+    cards.push(card('fTorque', eq(`${V('F')}${EQ}${V('N')}${V('B')}${V('I')}${V('L')}${EQ}${fmt(p.N, 0)} · ${fmt(p.B, 2)} T · ${fsi(Math.abs(q.emf / p.R), 'A', em / p.R)} · ${fmt(p.side, 3)} m${EQ}${RS(q.F, 'N', RUN.stats.F.max)}`) +
+      eq(`${V('M')}${EQ}${FR(V('P'), V('ω'))}${EQ}${V('N')}${V('B')}${V('I')}${V('A')} sin ${V('α')}${EQ}${RS(q.M, 'N·m', RUN.stats.M.max)}`, true) + note('nTorque'), 'wide'));
+  }
+  cards.push(lenzCard());
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- charts ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box'), tip = $('#tip');
+let ccw = 400, cch = 320;
+new ResizeObserver(() => { ccw = cbox.clientWidth || 400; cch = cbox.clientHeight || 320; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; if (started) drawChart(); }).observe(cbox);
+function tabsFor() {
+  const t = ['fe', 'i', 'e'];
+  if (S.scene === 'rod' && !RUN.live) t.push('v');
+  if (S.scene === 'magnet' && S.mmode === 'drop') t.push('v');
+  return t;
+}
+function updateChartTabs() {
+  const avail = tabsFor();
+  if (!avail.includes(S.tab)) S.tab = 'fe';
+  $$('#tabs button').forEach((b) => { b.hidden = !avail.includes(b.dataset.tab); b.setAttribute('aria-selected', String(b.dataset.tab === S.tab)); });
+}
+function chartSpec() {
+  const sc = S.scene, tab = S.tab;
+  if (tab === 'fe') return { note: 'cnFE', panels: [
+    { sym: 'Φ', unit: 'Wb', series: [{ k: 'phi', c: col.violet, n: tr('sPhi') }] },
+    { sym: sc === 'gen' && P.g.comm ? 'ε, U' : 'ε', unit: 'V', series: sc === 'gen' && P.g.comm ? [{ k: 'emf', c: col.ink3, n: tr('sEmfLoop'), dash: [5, 4], w: 1.4 }, { k: 'out', c: col.pos, n: tr('sOut') }] : [{ k: 'emf', c: col.pos, n: tr('sEmf') }] }] };
+  if (tab === 'i') return { note: 'cnI', panels: [
+    { sym: 'I', unit: 'A', series: [{ k: 'I', c: col.cu, n: tr('sI') }] },
+    sc === 'gen' ? { sym: 'M', unit: 'N·m', series: [{ k: 'M', c: col.ink, n: tr('sM') }] } : { sym: 'F', unit: 'N', series: [{ k: 'F', c: col.ink, n: tr('sF') }] }] };
+  if (tab === 'e') {
+    if (sc === 'magnet' && S.mmode === 'drop') return { note: 'cnEdrop', panels: [{ sym: 'E', unit: 'J', series: [{ k: 'W', c: col.ink, n: tr('sW'), w: 2.4 }, { k: 'Ek', c: col.neg, n: tr('sEk') }, { k: 'Q', c: col.pos, n: tr('sQ') }] }] };
+    if (sc === 'magnet') return { note: 'cnEosc', panels: [{ sym: 'P', unit: 'W', series: [{ k: 'P', c: col.pos, n: tr('sP') }] }, { sym: 'Q', unit: 'J', series: [{ k: 'Q', c: col.cu, n: tr('sQ') }] }] };
+    if (sc === 'rod') return { note: 'cnErod', panels: [{ sym: 'E', unit: 'J', series: [{ k: 'Etot', c: col.ink, n: tr('sEtot'), w: 2.4, dash: [6, 4] }, { k: 'Ek', c: col.neg, n: tr('sEk') }, { k: 'Q', c: col.pos, n: tr('sQ') }] }] };
+    return { note: 'cnEgen', panels: [{ sym: 'P', unit: 'W', series: [{ k: 'P', c: col.pos, n: tr('sP') }, { k: 'Pavg', c: col.ink, n: tr('sPavg'), dash: [6, 4], w: 1.6 }] }] };
+  }
+  if (sc === 'rod') return { note: 'cnVrod', panels: [{ sym: 'v', unit: 'm/s', nopfx: true, series: [{ k: 'vfit', c: col.pos, n: tr('sVfit'), dash: [6, 4], w: 1.8 }, { k: 'v', c: col.ink, n: tr('sV'), dots: true }] }] };
+  return { note: 'cnVdrop', panels: [{ sym: 'v', unit: 'm/s', nopfx: true, series: [{ k: 'vff', c: col.ink3, n: tr('sVff'), dash: [6, 4], w: 1.6 }, { k: 'v', c: col.neg, n: tr('sV') }] }] };
+}
+let chartGeom = null;
+function fitTau() {
+  // least squares fit of ln v vs t over the first 4 tau
+  let n = 0, sx = 0, sy = 0, sxx = 0, sxy = 0;
+  for (let i = 0; i < RUN.n; i++) { const v = RUN.c.v[i], t = RUN.t[i]; if (!(Math.abs(v) > 1e-9) || t > 4 * RUN.tau) continue; const y = Math.log(Math.abs(v)); n++; sx += t; sy += y; sxx += t * t; sxy += t * y; }
+  const sl = (n * sxy - sx * sy) / (n * sxx - sx * sx);
+  return -1 / sl;
+}
+function drawChart() {
+  const c = cctx, W = ccw, H = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const spec = chartSpec();
+  // legend + note
+  $('#clegend').innerHTML = spec.panels.flatMap((p) => p.series).map((s) => `<span><i class="sw-line" style="border-top:${s.w ? Math.max(2, s.w) : 2.5}px ${s.dash ? 'dashed' : 'solid'} ${s.c}"></i>${s.n}</span>`).join('');
+  let nt = tr(spec.note);
+  if (spec.note === 'cnVrod' && !RUN.live) nt += ` τ<sub>fit</sub> = ${fmt(fitTau(), 4)} s, τ = mR/(B²ℓ²) = ${fmt(RUN.tau, 4)} s.`;
+  if ($('#cnote').innerHTML !== nt) $('#cnote').innerHTML = nt;
+  const live = RUN.live, n = RUN.t.length;
+  if (!n) { chartGeom = null; return; }
+  const tNow = live ? RUN.T : S.t;
+  const t0 = live ? Math.max(RUN.t[0], tNow - 6) : 0, t1 = live ? Math.max(t0 + 6, tNow) : RUN.T;
+  const i0 = live ? Math.max(0, lowerIdx(t0) - 1) : 0, i1 = n - 1;
+  const L = 58, R = 12, T = 8, B = 24, gapP = 16, np = spec.panels.length;
+  const ph = (H - T - B - gapP * (np - 1)) / np, pw = W - L - R;
+  const X = (t) => L + (t - t0) / (t1 - t0 || 1) * pw;
+  const geo = { X, L, pw, t0, t1, panels: [] };
+  c.font = `500 11px ${FONT_MONO}`;
+  spec.panels.forEach((p, pi) => {
+    const top = T + pi * (ph + gapP);
+    let lo = 0, hi = 0;
+    const st = Math.max(1, Math.floor((i1 - i0) / 600));
+    for (const s of p.series) { const a = RUN.c[s.k]; for (let i = i0; i <= i1; i += st) { const v = a[i]; if (v > hi) hi = v; if (v < lo) lo = v; } const v = a[i1]; if (v > hi) hi = v; if (v < lo) lo = v; }
+    if (!(hi - lo > 1e-15)) { hi = Math.max(hi, lo + 1e-6); }
+    const [pf, pp] = p.nopfx ? [1, ''] : pickPfx(Math.max(Math.abs(hi), Math.abs(lo)));
+    const ys = niceStep((hi - lo) / pf, 3) * pf;
+    hi = Math.ceil(hi * 1.04 / ys) * ys; lo = Math.floor(lo * 1.04 / ys) * ys;
+    if (hi === lo) hi = lo + ys;
+    const Y = (v) => top + (1 - (v - lo) / (hi - lo)) * ph;
+    geo.panels.push({ p, Y, pf, pp, top });
+    // grid
+    c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+    c.save(); c.setLineDash([2, 3]);
+    const ydec = ys / pf < 1 ? (ys / pf < 0.1 ? 2 : 1) : 0;
+    for (let y = lo; y <= hi + ys * 1e-6; y += ys) { const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fmt(y / pf, ydec), L - 6, yy); }
+    c.restore();
+    c.strokeStyle = col.ink3; c.lineWidth = 1; c.beginPath(); c.rect(L + 0.5, top + 0.5, pw, ph); c.stroke();
+    if (lo < 0 && hi > 0) { c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Math.round(Y(0)) + 0.5); c.lineTo(W - R, Math.round(Y(0)) + 0.5); c.stroke(); }
+    c.save(); c.fillStyle = col.ink; c.textAlign = 'left'; c.textBaseline = 'top'; c.font = `italic 13px ${FONT_MATH}`;
+    const lab = `${p.sym} [${pp}${p.unit}]`; const tw = c.measureText(lab).width;
+    c.fillStyle = withAlpha(col.surface, 0.85); c.fillRect(L + 5, top + 4, tw + 8, 17);
+    c.fillStyle = col.ink; c.fillText(lab, L + 9, top + 6); c.restore();
+    // series
+    c.save(); c.beginPath(); c.rect(L, top, pw, ph); c.clip();
+    for (const s of p.series) {
+      const a = RUN.c[s.k];
+      if (s.dots) {
+        c.fillStyle = s.c; const sd = Math.max(1, Math.floor((i1 - i0) / 60));
+        for (let i = i0; i <= i1; i += sd) { c.beginPath(); c.arc(X(RUN.t[i]), Y(a[i]), 2.3, 0, TAU); c.fill(); }
+        continue;
+      }
+      c.strokeStyle = s.c; c.lineWidth = s.w || 2; c.lineJoin = 'round'; if (s.dash) c.setLineDash(s.dash); else c.setLineDash([]);
+      c.beginPath();
+      for (let i = i0; i <= i1; i += st) { const xx = X(RUN.t[i]), yy = Y(a[i]); i === i0 ? c.moveTo(xx, yy) : c.lineTo(xx, yy); }
+      c.lineTo(X(RUN.t[i1]), Y(a[i1])); c.stroke();
+    }
+    c.restore();
+  });
+  // x labels
+  const xs = niceStep(t1 - t0, 5), xdec = xs < 1 ? (xs < 0.1 ? 2 : 1) : 0;
+  c.fillStyle = col.ink2; c.textAlign = 'center'; c.textBaseline = 'top'; c.font = `500 11px ${FONT_MONO}`;
+  for (let t = Math.ceil(t0 / xs) * xs; t <= t1 + 1e-9; t += xs) if (X(t) < W - R - 34) c.fillText(fmt(t, xdec), X(t), H - B + 6);
+  c.textAlign = 'right'; c.fillStyle = col.ink3; c.fillText('t [s]', W - R, H - B + 6);
+  // cursor
+  const cur = S.hoverT != null ? S.hoverT : tNow;
+  if (cur >= t0 - 1e-9 && cur <= t1 + 1e-9) {
+    const xx = Math.round(X(cur)) + 0.5;
+    c.save(); c.strokeStyle = col.ink3; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, H - B); c.stroke(); c.restore();
+    const qq = sampleAt(RUN, cur);
+    for (const g of geo.panels) for (const s of g.p.series) {
+      const yy = g.Y(qq[s.k]);
+      c.save(); c.fillStyle = s.c; c.strokeStyle = col.surface; c.lineWidth = 2; c.beginPath(); c.arc(xx, yy, 4.5, 0, TAU); c.fill(); c.stroke(); c.restore();
+    }
+  }
+  chartGeom = geo;
+}
+function lowerIdx(t) { const a = RUN.t; let lo = 0, hi = a.length - 1; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (a[m] <= t) lo = m; else hi = m; } return lo; }
+cbox.addEventListener('pointermove', (e) => {
+  if (!chartGeom) return;
+  const r = cbox.getBoundingClientRect(), x = e.clientX - r.left, g = chartGeom;
+  if (x < g.L || x > g.L + g.pw) { S.hoverT = null; tip.hidden = true; chartDirty = true; return; }
+  const t = g.t0 + (x - g.L) / g.pw * (g.t1 - g.t0); S.hoverT = t;
+  const qq = sampleAt(RUN, t);
+  const rows = g.panels.flatMap((pp) => pp.p.series.map((s) => `<div class="row"><i class="k" style="background:${s.c}"></i>${s.n}: ${pp.p.nopfx ? fmt(qq[s.k], 3) + ' ' + pp.p.unit : fsi(qq[s.k], pp.p.unit)}</div>`)).join('');
+  tip.innerHTML = `<div>t = ${fmt(t, 3)} s</div>${rows}`;
+  tip.hidden = false;
+  const tw = tip.offsetWidth;
+  tip.style.left = Math.max(tw / 2 + 4, Math.min(r.width - tw / 2 - 4, x)) + 'px';
+  tip.style.top = Math.max(tip.offsetHeight + 16, e.clientY - r.top) + 'px';
+  chartDirty = true;
+});
+cbox.addEventListener('pointerleave', () => { S.hoverT = null; tip.hidden = true; chartDirty = true; });
+
+/* ---------- timeline ---------- */
+const ICON_PAUSE = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 3v10M11 3v10" stroke="currentColor" stroke-width="2.6" stroke-linecap="round"/></svg>';
+const ICON_PLAY = '<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M5 2.5v11l9-5.5z" fill="currentColor"/></svg>';
+let pauseIcon = '';
+function updateScrub() {
+  const el = $('#scrub'), live = RUN.live;
+  el.disabled = live; $('#step-back').disabled = live; $('#step-fwd').disabled = live;
+  const T = RUN.T || 0, tt = live ? RUN.T : Math.min(S.t, T);
+  el.value = !live && T > 0 ? Math.round(tt / T * 1000) : 1000; setFill(el);
+  $('#scrub-time').textContent = live ? `${tr('live')} · ${fmt(tt, 1)} s` : `${fmt(tt, 2)} / ${fmt(T, 2)} s`;
+  const playing = !S.paused;
+  const k = playing + lang;
+  if (pauseIcon !== k) { pauseIcon = k; const pb = $('#pause'); pb.innerHTML = playing ? ICON_PAUSE : ICON_PLAY; pb.setAttribute('aria-label', tr(playing ? 'pause' : 'play')); }
+}
+function seek(t) {
+  if (RUN.live) return;
+  S.t = clamp(t, 0, RUN.T); S.paused = true; S.ended = !RUN.loop && S.t >= RUN.T;
+  snapNeedle(); refreshText(true); dirty = true; chartDirty = true;
+}
+function togglePause() {
+  if (!RUN.live && S.ended) { restart(); return; }
+  S.paused = !S.paused; refreshText(true);
+}
+function restart() {
+  S.hold = null;
+  if (S.scene === 'rod' && S.rmode === 'release' && S.rodStart) { S.rodStart = null; rebuild(); }
+  else if (RUN.live) rebuild({ fresh: true, x: S.scene === 'magnet' ? 0.12 : 0.3 });
+  else { S.t = 0; S.paused = false; S.ended = false; }
+  S.Qlive = 0; S.rodEmax = 0;
+  refreshText(true); dirty = true; chartDirty = true;
+}
+const stepSize = () => (RUN.T > 0 ? RUN.T / 100 : 0.01);
+
+/* ---------- pointer interaction ---------- */
+function canvasPt(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function screenToU(L, x, y) { return L.vert ? (y - L.cy) / L.s : (x - L.cx) / L.s; }
+function hitMagnet(p) { const h = S.magHit; return h && p[0] >= h.x0 && p[0] <= h.x1 && p[1] >= h.y0 && p[1] <= h.y1; }
+function hitRod(p) { const h = S.rodHit; return h && Math.abs(p[0] - h.x) < 22 && p[1] >= h.y0 && p[1] <= h.y1; }
+cv.addEventListener('pointerdown', (e) => {
+  const p = canvasPt(e);
+  if (S.scene === 'magnet' && hitMagnet(p)) {
+    const L = S.L, q = curSample(), u0 = S.hold != null ? S.hold : q.x;
+    S.drag = { kind: 'magnet', off: screenToU(L, p[0], p[1]) - u0, last: performance.now() };
+    if (S.mmode === 'drop') { S.hold = clamp(u0, L.uMin, L.uMax); S.paused = true; }
+    else if (S.mmode !== 'drag') { S.mmode = 'drag'; rebuild({ fresh: true, x: u0 }); }
+    S.liveX = u0; S.dragTarget = u0; S.paused = false;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    cv.style.cursor = 'grabbing'; e.preventDefault();
+  } else if (S.scene === 'rod' && hitRod(p)) {
+    const q = curSample(), L = S.L;
+    if (S.rmode !== 'drag') { S.rmode = 'drag'; S.rodStart = null; rebuild({ fresh: true, x: q.x }); }
+    S.drag = { kind: 'rod', off: (p[0] - L.left) / L.s - q.x };
+    S.liveX = q.x; S.dragTarget = q.x; S.paused = false;
+    try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+    cv.style.cursor = 'grabbing'; e.preventDefault();
+  }
+});
+cv.addEventListener('pointermove', (e) => {
+  const p = canvasPt(e);
+  if (!S.drag) { cv.style.cursor = (S.scene === 'magnet' && hitMagnet(p)) || (S.scene === 'rod' && hitRod(p)) ? 'grab' : 'default'; return; }
+  const L = S.L;
+  if (S.drag.kind === 'magnet') {
+    const u = clamp(screenToU(L, p[0], p[1]) - S.drag.off, L.uMin, L.uMax);
+    if (S.mmode === 'drop') { S.hold = u; setSl('mH', clamp(Math.round(-u * 200) / 200, SL.mH.min, SL.mH.max)); updateOutputs(); dirty = true; }
+    else S.dragTarget = u;
+  } else {
+    S.dragTarget = clamp((p[0] - L.left) / L.s - S.drag.off, 0.06, S.rodLr - 0.03);
+  }
+});
+function endDrag() {
+  if (!S.drag) return;
+  const k = S.drag.kind; S.drag = null; cv.style.cursor = 'default';
+  if (k === 'magnet' && S.mmode === 'drop') { S.hold = null; rebuild(); }
+  else if (k === 'rod') {
+    const v = S.liveV || 0;
+    if (Math.abs(v) > 0.08) { S.rmode = 'release'; S.rodStart = { x0: S.liveX, v0: clamp(v, -12, 12) }; rebuild(); }
+  }
+}
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+/* ---------- main loop ---------- */
+function advance(dt) {
+  if (RUN.live) {
+    if (S.paused) return;
+    // hand-driven: follow the pointer target, velocity from a short low-pass filter
+    const prev = S.liveX ?? 0;
+    let x = prev;
+    if (S.drag && S.dragTarget != null) x = S.dragTarget;
+    const vRaw = dt > 0 ? (x - prev) / dt : 0;
+    S.liveV = (S.liveV || 0) + (vRaw - (S.liveV || 0)) * (1 - Math.exp(-dt / 0.06));
+    if (!S.drag) S.liveV *= Math.exp(-dt / 0.03);
+    if (Math.abs(S.liveV) < 1e-4) S.liveV = 0;
+    S.liveX = x;
+    const smp = liveSample(x, S.liveV, S.Qlive || 0);
+    S.Qlive = (S.Qlive || 0) + smp.P * dt; smp.Q = S.Qlive; if (smp.Etot != null) smp.Etot = smp.Ek + smp.Q;
+    S.t += dt; livePush(RUN, S.t, smp);
+    if (S.scene === 'magnet') { const I = Math.abs(smp.I); if (I > S.Ifs) S.Ifs = niceUp(I); }
+    else { const I = Math.abs(smp.I); if (I > S.Ifs) S.Ifs = niceUp(I); }
+    return;
+  }
+  if (S.paused || S.hold != null) return;
+  S.t += dt * S.speed;
+  if (S.t >= RUN.T) {
+    if (RUN.loop) S.t %= RUN.T;
+    else { S.t = RUN.T; S.paused = true; S.ended = true; }
+  }
+}
+function stepNeedle(dt, I) {
+  const target = I / S.Ifs;
+  if (reduceMotion || dt <= 0) { S.needle = target; S.needleV = 0; return; }
+  const w0 = TAU * 2.4, z = 0.55;
+  const steps = Math.max(1, Math.ceil(dt / 0.004)), h = dt / steps;
+  for (let i = 0; i < steps; i++) { const a = -w0 * w0 * (S.needle - target) - 2 * z * w0 * S.needleV; S.needleV += a * h; S.needle += S.needleV * h; }
+}
+function snapNeedle() { const q = curSample(); S.needle = (S.scene === 'magnet' ? q.I : 0) / S.Ifs; S.needleV = 0; }
+function drawAll() {
+  const q = curSample();
+  if (S.scene === 'magnet') drawMagnet(q); else if (S.scene === 'rod') drawRod(q); else drawGen(q);
+  drawChart();
+  return q;
+}
+function refreshText(force) {
+  const q = curSample();
+  updateHud(q); setState(); updateScrub(); updateCallout(q);
+  if (force) { updateResults(q); updateFormulas(q); }
+}
+function frame(now) {
+  const dt = Math.min(0.05, Math.max(0, (now - lastT) / 1000)); lastT = now;
+  const playing = RUN.live ? !S.paused : !S.paused && S.hold == null;
+  advance(dt);
+  const q = curSample();
+  // smooth rails length change in the rod scene
+  if (S.scene === 'rod' && Math.abs(S.rodLrView - S.rodLr) > 1e-4) { S.rodLrView += (S.rodLr - S.rodLrView) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 6)); dirty = true; }
+  if (playing) {
+    const sp = RUN.live ? 1 : S.speed;
+    if (S.scene === 'magnet') { stepNeedle(dt * (RUN.live ? 1 : S.speed), q.I); S.qoff += 150 * clamp(q.I / S.Ifs, -1.2, 1.2) * dt * Math.min(1, sp * 1.5); }
+    else if (S.scene === 'rod') S.qoff += 130 * clamp(q.I / S.Ifs, -1.2, 1.2) * dt * Math.min(1, sp * 1.5);
+    else { S.qoff += 130 * clamp(q.emf / P.g.R / S.Ifs, -1.2, 1.2) * dt * Math.min(1, sp * 1.5); S.qoff2 += 130 * clamp(q.out / P.g.R / S.Ifs, -1.2, 1.2) * dt * Math.min(1, sp * 1.5); }
+    dirty = true; chartDirty = true;
+  } else if (S.scene === 'magnet' && Math.abs(S.needleV) > 1e-3) { stepNeedle(dt, q.I); dirty = true; }
+  if (dirty) {
+    if (S.scene === 'magnet') drawMagnet(q); else if (S.scene === 'rod') drawRod(q); else drawGen(q);
+    dirty = false;
+  }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  textTimer += dt;
+  updateHud(q); setState(); updateScrub(); updateCallout(q);
+  if (playing && textTimer > 0.15) { updateResults(q); updateFormulas(q); textTimer = 0; }
+  requestAnimationFrame(frame);
+}
+
+/* ---------- wiring ---------- */
+function bindPanel() {
+  for (const id of Object.keys(SL)) {
+    const el = $('#' + id); if (!el) continue;
+    el.addEventListener('input', () => {
+      delete exact[id];
+      if (id === 'rV') S.rodStart = null;
+      if (id === 'mH' && S.mmode !== 'drop') return;
+      rebuild({ keepT: true });
+    });
+  }
+  $$('#panel .chip').forEach((b) => b.addEventListener('click', () => {
+    const set = b.dataset.set, key = b.dataset.key, def = CHIPS[set].find((c) => c[0] === key);
+    if (set === 'mmode') { S.mmode = key; S.hold = null; rebuild({ fresh: true, x: 0.12 }); return; }
+    if (set === 'rmode') { S.rmode = key; S.rodStart = null; rebuild({ fresh: true, x: 0.3 }); return; }
+    if (set === 'rdir') { S.rdir = key; rebuild({ keepT: true }); return; }
+    for (const [k, v] of Object.entries(def[3])) setSl(k, v);
+    if (set === 'rpre') S.rodStart = null;
+    rebuild({ keepT: set === 'gspd' || set === 'mmat' || set === 'mcoil' });
+  }));
+  $('#mClosed').addEventListener('change', () => rebuild({ keepT: true }));
+  $('#gComm').addEventListener('change', () => rebuild({ keepT: true }));
+  $('#flip').addEventListener('click', () => { S.flip = !S.flip; rebuild({ keepT: true }); });
+}
+function setScene(sc) {
+  if (S.scene === sc) return;
+  S.scene = sc; S.hold = null; S.drag = null; S.hoverT = null; tip.hidden = true;
+  $$('#scenes .scene').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.scene === sc)));
+  if (sc === 'magnet' && S.mmode === 'drag') S.mmode = 'osc';
+  if (sc === 'rod' && S.rmode === 'drag') { S.rmode = 'release'; }
+  S.rodStart = null;
+  RUN = null; S.t = 0; S.paused = false; S.ended = false; S.Qlive = 0; S.qoff = 0; S.qoff2 = 0;
+  rebuild(); snapNeedle();
+  if (sc === 'rod') S.rodLrView = S.rodLr;
+}
+$$('#scenes .scene').forEach((b) => b.addEventListener('click', () => setScene(b.dataset.scene)));
+$('#pause').addEventListener('click', togglePause);
+$('#restart').addEventListener('click', restart);
+$('#step-back').addEventListener('click', () => seek(S.t - stepSize()));
+$('#step-fwd').addEventListener('click', () => seek(S.t + stepSize()));
+$('#scrub').addEventListener('input', (e) => seek(+e.target.value / 1000 * RUN.T));
+$$('#speed button').forEach((b) => b.addEventListener('click', () => { S.speed = +b.dataset.sp; $$('#speed button').forEach((x) => x.setAttribute('aria-pressed', String(x === b))); }));
+const TOG = { 'tg-lines': 'lines', 'tg-vec': 'vec', 'tg-dots': 'dots', 'tg-lenz': 'lenz' };
+Object.entries(TOG).forEach(([id, key]) => $('#' + id).addEventListener('click', (e) => { S[key] = !S[key]; e.currentTarget.setAttribute('aria-pressed', String(S[key])); dirty = true; refreshText(false); drawAll(); }));
+$$('#tabs button').forEach((b) => b.addEventListener('click', () => { S.tab = b.dataset.tab; updateChartTabs(); chartDirty = true; }));
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+function toggleFs() { const st = $('#stage'); if (document.fullscreenElement) document.exitFullscreen().catch(() => {}); else if (st.requestFullscreen) st.requestFullscreen().catch(() => {}); }
+fsBtn.addEventListener('click', toggleFs);
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePause(); return; }
+  if (tag === 'input') return;
+  if (e.key === '1') setScene('magnet'); else if (e.key === '2') setScene('rod'); else if (e.key === '3') setScene('gen');
+  else if (e.key === 'ArrowLeft' || e.key === ',') { e.preventDefault(); seek(S.t - stepSize()); }
+  else if (e.key === 'ArrowRight' || e.key === '.') { e.preventDefault(); seek(S.t + stepSize()); }
+  else if (e.key === 'r' || e.key === 'R') restart();
+  else if (e.key === 'f' || e.key === 'F') toggleFs();
+});
+function applyLang() {
+  document.documentElement.lang = lang;
+  $$('[data-i18n]').forEach((el) => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach((el) => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('.lang button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#keys').innerHTML = tr('keys');
+  $('#sp-01').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  $$('#panel .chip small').forEach((s) => { if (!s.dataset.i18n) s.textContent = lang === 'pl' ? s.textContent.replace(/(\d)\.(\d)/g, '$1,$2') : s.textContent.replace(/(\d),(\d)/g, '$1.$2'); });
+  hudScene = ''; lastCo = ''; pauseIcon = '';
+  updateOutputs(); updatePanelVis(); refreshText(true); dirty = true; chartDirty = true;
+}
+$$('.lang button').forEach((b) => b.addEventListener('click', () => { lang = b.dataset.lang; try { localStorage.setItem('indukcja-lang', lang); } catch (e) {} applyLang(); }));
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+/* ---------- boot: build everything and draw the first frame synchronously ---------- */
+buildPanel(); bindPanel();
+readTokens(); resize();
+LINES = traceLines();
+rebuild();
+{ let im = 0; for (let i = 0; i < RUN.n / 2; i++) if (Math.abs(RUN.c.I[i]) > Math.abs(RUN.c.I[im])) im = i; S.t = RUN.t[Math.max(0, im - 12)]; }   // open on a strong current pulse
+snapNeedle();
+applyLang();
+drawAll();
+started = true;
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+</body></html>
