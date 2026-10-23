@@ -303,8 +303,8 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           </div>
           <div class="toggles">
             <button type="button" class="tg" id="tg-vectors" aria-pressed="false" data-i18n="vectors">Wektory v</button>
-            <button type="button" class="tg" id="tg-tracer" aria-pressed="true" data-i18n="tracer">Śledź cząstkę</button>
-            <button type="button" class="tg" id="tg-hits" aria-pressed="true" data-i18n="hits">Uderzenia</button>
+            <button type="button" class="tg" id="tg-tracer" aria-pressed="false" data-i18n="tracer">Śledź cząstkę</button>
+            <button type="button" class="tg" id="tg-hits" aria-pressed="false" data-i18n="hits">Uderzenia</button>
           </div>
           <button type="button" class="btn" id="newstep"><span data-i18n="newStep">Nowy krok</span><kbd>N</kbd></button>
           <button type="button" class="btn" id="reset">
@@ -489,7 +489,7 @@ const sim = {
   Tset: 300, heater: true, mode: 'isoT', pSet: 0,
   t: 0, Wc: 0, Qc: 0,
   KE: 0, EIsum: 0, U: 0, kTk: 1, kTU: 1, Tk: 300, Tema: 300, vmax: 4, vrms: 1,
-  pInst: 1e5, pAvg: 1e5, recordHits: true, onSub: null, collHS: 0, collBG: 0
+  pInst: 1e5, pAvg: 1e5, recordHits: false, onSub: null, collHS: 0, collBG: 0
 };
 const acc = { J: 0, AT: 0, W: 0, Q: 0 };
 const HITS = 192;
@@ -908,7 +908,7 @@ const mFromSlider = (s) => 2 * Math.pow(100, s / 1000);         // 2 .. 200 g/mo
 const sliderFromM = (M) => Math.round(Math.log(M / 2) / Math.log(100) * 1000);
 
 /* ---------- UI state ---------- */
-const S = { paused: reduceMotion, speed: 1, vectors: false, tracer: true, hits: true, tab: 'pv', hover: null };
+const S = { paused: true, speed: 1, vectors: false, tracer: false, hits: false, tab: 'pv', hover: null };
 const KINDS = ['isoT', 'isoP', 'isoV', 'adiab'];
 const kcol = (k) => ({ isoT: col.blue, isoP: col.amber, isoV: col.violet, adiab: col.crim }[k] || col.ink3);
 const kvar = (k) => ({ isoT: 'var(--blue)', isoP: 'var(--amber)', isoV: 'var(--violet)', adiab: 'var(--crim)' }[k] || 'var(--ink-3)');
@@ -975,6 +975,7 @@ function startCycle() {
   sim.mode = 'isoT'; sim.heater = true; sim.Tset = cyc.geo.start.T; sim.lyT = lyFromL(cyc.geo.start.V); sim.kappa = 0.6;
   path.length = 0;
   syncControls();
+  if (S.paused) togglePause();
 }
 function stopCycle() {
   if (!cyc.running) return;

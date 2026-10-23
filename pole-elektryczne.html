@@ -349,10 +349,10 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           </div>
           <div class="toggles">
             <button type="button" class="tg" id="tg-lines" data-layer="lines" aria-pressed="true" style="--d:var(--pos)" data-i18n="lLines">Linie pola</button>
-            <button type="button" class="tg" id="tg-equi" data-layer="equi" aria-pressed="true" style="--d:var(--ink-2)" data-i18n="lEqui">Ekwipotencjalne</button>
-            <button type="button" class="tg" id="tg-heat" data-layer="heat" aria-pressed="true" style="--d:var(--neg)" data-i18n="lHeat">Mapa potencjału</button>
+            <button type="button" class="tg" id="tg-equi" data-layer="equi" aria-pressed="false" style="--d:var(--ink-2)" data-i18n="lEqui">Ekwipotencjalne</button>
+            <button type="button" class="tg" id="tg-heat" data-layer="heat" aria-pressed="false" style="--d:var(--neg)" data-i18n="lHeat">Mapa potencjału</button>
             <button type="button" class="tg" id="tg-vec" data-layer="vec" aria-pressed="false" style="--d:var(--ink-2)" data-i18n="lVec">Wektory E</button>
-            <button type="button" class="tg" id="tg-prev" data-layer="prev" aria-pressed="true" style="--d:var(--violet)" data-i18n="lPrev">Podgląd toru</button>
+            <button type="button" class="tg" id="tg-prev" data-layer="prev" aria-pressed="false" style="--d:var(--violet)" data-i18n="lPrev">Podgląd toru</button>
           </div>
           <span class="spacer"></span>
           <button type="button" class="btn" id="fs">
@@ -688,7 +688,7 @@ const PRESETS = {
 };
 const S = {
   charges: [], unit: 'nC', plane: false, sel: null, tool: 'move', preset: 'dipole', lastQ: 2,
-  layers: { lines: true, equi: true, heat: true, vec: false, prev: true },
+  layers: { lines: true, equi: false, heat: false, vec: false, prev: false },
   probe: { x: 0, y: 0.07 },
   part: { kind: 'proton', sign: 1, qmag: QE, m: 1.67262192e-27, x0: -0.25, y0: 0.1, v0: 1e5, ang: 0 },
   vScale: 1e-3,                       // px per (m/s) for the velocity arrow
@@ -783,7 +783,7 @@ function readTokens() {
 
 /* ---------- flags ---------- */
 let staticReq = true, pendingFull = false, lastFast = 0, dirty = true, chartDirty = true;
-let trajReq = true, lastSim = 0, uiReq = true, lastUi = 0, autoLaunch = !reduceMotion;
+let trajReq = true, lastSim = 0, uiReq = true, lastUi = 0, autoLaunch = false;
 let drag = null;
 
 /* ---------- field lines ---------- */

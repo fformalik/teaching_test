@@ -347,9 +347,9 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
             <button type="button" id="vm-field" data-vm="field" aria-pressed="false" data-i18n="field">Pole ciśnienia</button>
           </div>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-cone" aria-pressed="true" data-i18n="cone">Stożek</button>
+            <button type="button" class="tg" id="tg-cone" aria-pressed="false" data-i18n="cone">Stożek</button>
             <button type="button" class="tg" id="tg-centers" aria-pressed="false" data-i18n="centers">Środki fal</button>
-            <button type="button" class="tg" id="tg-labels" aria-pressed="true" data-i18n="labels">Opisy</button>
+            <button type="button" class="tg" id="tg-labels" aria-pressed="false" data-i18n="labels">Opisy</button>
             <button type="button" class="tg" id="tg-loop" aria-pressed="true" data-i18n="loop">Pętla</button>
           </div>
           <span class="spacer"></span>
@@ -429,7 +429,7 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           <input type="range" id="vo" min="-0.95" max="0.95" step="0.005" value="0">
           <span class="hint" data-i18n="voHint"></span>
         </div>
-        <label class="switch"><input type="checkbox" id="two" checked><span class="sw"></span><span data-i18n="two">Drugi mikrofon O₂</span></label>
+        <label class="switch"><input type="checkbox" id="two"><span class="sw"></span><span data-i18n="two">Drugi mikrofon O₂</span></label>
         <div class="ctl">
           <div class="ctl-head"><label for="scale" data-i18n-html="lscale">Szerokość sceny</label><output id="scale-out" for="scale"></output></div>
           <input type="range" id="scale" min="0" max="1000" step="1" value="500">
@@ -695,7 +695,7 @@ const P = {
   vo:0, w:0, W:600, ys:0, obs:[[48, 21], [-198, -102]], tMid:4, rRef:30
 };
 const S = {
-  t:0, T:8, playing:!reduceMotion, speed:1, loop:true, mode:'rings', cone:true, centers:false, labels:true, two:true,
+  t:0, T:8, playing:false, speed:1, loop:true, mode:'rings', cone:false, centers:false, labels:false, two:false,
   listen:0, chartTab:'f', hoverX:null, preset:'f1', dT:0.1, N:1, flash:0, booms:[], prev:[0, 0], recv:[[], []]
 };
 
@@ -784,7 +784,7 @@ function applyPreset(key) {
   S.booms = []; S.prev = [0, 0];
   recompute(false);
   S.t = S.T * (p.key === 'obs' ? 0.2 : p.key === 'conc' || p.key === 'bullet' || p.key === 'boat' ? 0.22 : 0.3);
-  S.playing = true; mediumChipText();
+  mediumChipText(); setStateChip();
   updateScrub(); updateHud(); dirty = true; chartDirty = true;
 }
 
@@ -1759,7 +1759,7 @@ readTokens();
 resize();
 applyLang();
 applyPreset('f1');
-if (reduceMotion) { S.playing = false; setStateChip(); updateScrub(); }
+S.playing = false; setStateChip(); updateScrub();
 // first still frame drawn synchronously, so the page is complete before the animation starts
 try { drawScene(performance.now(), 0); for (const i of activeObs()) drawScope(i); updateMics(); drawChart(); dirty = false; chartDirty = false; } catch (e) { console.error(e); }
 lastT = performance.now();

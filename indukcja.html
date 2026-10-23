@@ -303,10 +303,10 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
             <button type="button" id="sp-2" data-sp="2" aria-pressed="false">2×</button>
           </div>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-lines" aria-pressed="true" data-i18n="tLines">Linie pola</button>
-            <button type="button" class="tg" id="tg-vec" aria-pressed="true" data-i18n="tVec">Wektory</button>
-            <button type="button" class="tg" id="tg-dots" aria-pressed="true" data-i18n="tDots">Ładunki</button>
-            <button type="button" class="tg" id="tg-lenz" aria-pressed="true" data-i18n="tLenz">Reguła Lenza</button>
+            <button type="button" class="tg" id="tg-lines" aria-pressed="false" data-i18n="tLines">Linie pola</button>
+            <button type="button" class="tg" id="tg-vec" aria-pressed="false" data-i18n="tVec">Wektory</button>
+            <button type="button" class="tg" id="tg-dots" aria-pressed="false" data-i18n="tDots">Ładunki</button>
+            <button type="button" class="tg" id="tg-lenz" aria-pressed="false" data-i18n="tLenz">Reguła Lenza</button>
           </div>
           <span class="spacer"></span>
           <button type="button" class="btn" id="fs">
@@ -830,8 +830,8 @@ function buildPanel() {
 /* ---------- state ---------- */
 const S = {
   scene: 'magnet', mmode: 'osc', rmode: 'release', rdir: 'in', flip: false,
-  t: 0, paused: false, speed: 1, tab: 'fe', hoverT: null,
-  lines: true, vec: true, dots: true, lenz: true,
+  t: 0, paused: true, speed: 1, tab: 'fe', hoverT: null,
+  lines: false, vec: false, dots: false, lenz: false,
   needle: 0, needleV: 0, qoff: 0, qoff2: 0, Ifs: 1,
   drag: null, hold: null, rodStart: null, rodLr: 1.6, rodLrView: 1.6
 };
@@ -912,7 +912,7 @@ function rebuild(opts = {}) {
   }
   RUN.stats = RUN.live ? null : runStats(RUN, RUN.keys);
   if (opts.keepT && RUN.loop) S.t = frac * RUN.T;
-  else if (!RUN.live) { S.t = 0; S.paused = false; }    // one-shot runs (drop, rod) restart on any change
+  else if (!RUN.live) { S.t = 0; }    // one-shot runs (drop, rod) restart on any change (keeping the play/pause state)
   if (RUN.live && opts.fresh) S.t = 0;
   S.ended = false;
   updateOutputs(); updatePanelVis(); updateChartTabs();
@@ -2120,7 +2120,7 @@ function setScene(sc) {
   if (sc === 'magnet' && S.mmode === 'drag') S.mmode = 'osc';
   if (sc === 'rod' && S.rmode === 'drag') { S.rmode = 'release'; }
   S.rodStart = null;
-  RUN = null; S.t = 0; S.paused = false; S.ended = false; S.Qlive = 0; S.qoff = 0; S.qoff2 = 0;
+  RUN = null; S.t = 0; S.paused = true; S.ended = false; S.Qlive = 0; S.qoff = 0; S.qoff2 = 0;
   rebuild(); snapNeedle();
   if (sc === 'rod') S.rodLrView = S.rodLr;
 }
