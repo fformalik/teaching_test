@@ -346,7 +346,7 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
         </div>
         <button type="button" class="tg" id="tg-real" aria-pressed="false" data-i18n="realtime">Czas rzeczywisty</button>
         <span class="scale" id="scale"></span>
-        <button type="button" class="tg" id="tg-rays" aria-pressed="true" data-i18n="rays">Promieniowanie</button>
+        <button type="button" class="tg" id="tg-rays" aria-pressed="false" data-i18n="rays">Promieniowanie</button>
         <span class="spacer"></span>
         <button type="button" class="btn" id="fs">
           <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -721,7 +721,7 @@ function emHTML(k) {
 /* ---------- state ---------- */
 const S = {
   mode:'single', preset:'rn220', T:55.6, dm:'a', chain:'mo', TA:65.94 * HR, TB:6.01 * HR,
-  N:1000, seed:20261023, t:0, playing:true, ended:false, speed:1, realtime:false, rays:true,
+  N:1000, seed:20261023, t:0, playing:false, ended:false, speed:1, realtime:false, rays:false,
   tab:'n', log:false, hoverT:null, hoverK:null
 };
 
@@ -1295,12 +1295,12 @@ function updatePanel() {
 function loadPreset(k) {
   S.mode = 'single'; S.preset = k;
   if (k !== 'custom') { S.T = PRESETS[k].T; S.dm = PRESETS[k].em[0]; }
-  S.playing = true; rebuild(false);
+  S.playing = false; rebuild(false);
 }
 function loadChain(k) {
   S.mode = 'chain'; S.chain = k;
   if (k !== 'custom') { const c = CHAINS[k]; S.TA = c.TA; S.TB = c.TB; if (c.N) S.N = c.N; }
-  S.playing = true; rebuild(false);
+  S.playing = false; rebuild(false);
 }
 
 /* ---------- results ---------- */
@@ -1787,8 +1787,8 @@ $$('#dms button').forEach(b => b.addEventListener('click', () => { S.dm = b.data
 $('#ta').addEventListener('input', (e) => { S.TA = hlFromSlider(e.target.value); S.chain = 'custom'; rebuild(true); });
 $('#tb').addEventListener('input', (e) => { S.TB = hlFromSlider(e.target.value); S.chain = 'custom'; rebuild(true); });
 $('#n0').addEventListener('input', (e) => { S.N = Math.round(Math.pow(10, +e.target.value) / 10) * 10; rebuild(true); });
-$$('#nchips .chip').forEach(b => b.addEventListener('click', () => { S.N = +b.dataset.n; S.playing = true; rebuild(false); }));
-$('#reseed').addEventListener('click', () => { S.seed = (Math.random() * 4294967296) >>> 0; S.playing = true; rebuild(false); });
+$$('#nchips .chip').forEach(b => b.addEventListener('click', () => { S.N = +b.dataset.n; S.playing = false; rebuild(false); }));
+$('#reseed').addEventListener('click', () => { S.seed = (Math.random() * 4294967296) >>> 0; S.playing = false; rebuild(false); });
 $('#pause').addEventListener('click', togglePlay);
 $('#restart').addEventListener('click', restart);
 $('#step-back').addEventListener('click', () => seek(S.t - SIM.step));

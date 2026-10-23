@@ -297,9 +297,9 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
             <output id="rate-out" for="rate"></output>
           </div>
           <div class="toggles">
-            <button type="button" class="tg" id="tg-wave" aria-pressed="true" data-i18n="wave">Fala</button>
+            <button type="button" class="tg" id="tg-wave" aria-pressed="false" data-i18n="wave">Fala</button>
             <button type="button" class="tg" id="tg-particles" aria-pressed="true" data-i18n="particles">Kwanty</button>
-            <button type="button" class="tg" id="tg-theory" aria-pressed="true" data-i18n="theory">Teoria</button>
+            <button type="button" class="tg" id="tg-theory" aria-pressed="false" data-i18n="theory">Teoria</button>
           </div>
           <button type="button" class="btn" id="clear">
             <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -670,7 +670,7 @@ const CAP = 400000;
 const dotsU = new Float32Array(CAP), dotsZ = new Float32Array(CAP);
 const cnt = new Int32Array(NB);
 const S = {
-  paused: false, wave: true, particles: true, theory: true, detector: false, closed: false,
+  paused: true, wave: false, particles: true, theory: false, detector: false, closed: false,
   rate: 20, tab: 'I', wt: 0, acc: 0, N: 0, stored: 0, cmax: 0, hist: [], nextRec: 1, hScale: 1, preseed: false
 };
 const flights = [], flashes = [];

@@ -311,14 +311,14 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
           <div class="toggles" id="toggles">
             <button type="button" class="tg" id="tg-principal" data-key="principal" data-for="lens" aria-pressed="true" style="--dot:var(--ray-2)" data-i18n="tgPrincipal">Promienie główne</button>
             <button type="button" class="tg" id="tg-fan" data-key="fan" data-for="lens" aria-pressed="false" style="--dot:var(--ray-fan)" data-i18n="tgFan">Wiązka</button>
-            <button type="button" class="tg" id="tg-foci" data-key="foci" data-for="lens" aria-pressed="true" style="--dot:var(--bench-ink)" data-i18n="tgFoci">Ogniska</button>
-            <button type="button" class="tg" id="tg-virt" data-key="virt" data-for="lens" aria-pressed="true" style="--dot:var(--img)" data-i18n="tgVirt">Przedłużenia</button>
+            <button type="button" class="tg" id="tg-foci" data-key="foci" data-for="lens" aria-pressed="false" style="--dot:var(--bench-ink)" data-i18n="tgFoci">Ogniska</button>
+            <button type="button" class="tg" id="tg-virt" data-key="virt" data-for="lens" aria-pressed="false" style="--dot:var(--img)" data-i18n="tgVirt">Przedłużenia</button>
             <button type="button" class="tg" id="tg-screen" data-key="screen" data-for="lens" aria-pressed="false" style="--dot:var(--glass)" data-i18n="tgScreen">Ekran</button>
-            <button type="button" class="tg" id="tg-grid" data-key="grid" data-for="lens" aria-pressed="true" style="--dot:var(--bench-ink-2)" data-i18n="tgGrid">Siatka</button>
-            <button type="button" class="tg" id="tg-prot" data-key="prot" data-for="refr" aria-pressed="true" style="--dot:var(--bench-ink-2)" data-i18n="tgProt">Kątomierz</button>
-            <button type="button" class="tg" id="tg-wave" data-key="wave" data-for="iface" aria-pressed="true" style="--dot:var(--ray-3)" data-i18n="tgWave">Fronty falowe</button>
-            <button type="button" class="tg" id="tg-refl" data-key="refl" data-for="refr" aria-pressed="true" style="--dot:var(--ray-1)" data-i18n="tgRefl">Promień odbity</button>
-            <button type="button" class="tg" id="tg-labels" data-key="labels" aria-pressed="true" style="--dot:var(--bench-ink)" data-i18n="tgLabels">Opisy</button>
+            <button type="button" class="tg" id="tg-grid" data-key="grid" data-for="lens" aria-pressed="false" style="--dot:var(--bench-ink-2)" data-i18n="tgGrid">Siatka</button>
+            <button type="button" class="tg" id="tg-prot" data-key="prot" data-for="refr" aria-pressed="false" style="--dot:var(--bench-ink-2)" data-i18n="tgProt">Kątomierz</button>
+            <button type="button" class="tg" id="tg-wave" data-key="wave" data-for="iface" aria-pressed="false" style="--dot:var(--ray-3)" data-i18n="tgWave">Fronty falowe</button>
+            <button type="button" class="tg" id="tg-refl" data-key="refl" data-for="refr" aria-pressed="false" style="--dot:var(--ray-1)" data-i18n="tgRefl">Promień odbity</button>
+            <button type="button" class="tg" id="tg-labels" data-key="labels" aria-pressed="false" style="--dot:var(--bench-ink)" data-i18n="tgLabels">Opisy</button>
           </div>
           <span class="spacer"></span>
           <button type="button" class="bbtn" id="fs">
@@ -429,8 +429,8 @@ var g=document.querySelector('.lang');if(g&&window.MutationObserver)new Mutation
         </div>
         <div class="seg" role="group" id="ostyle">
           <span class="lbl" data-i18n="oStyle">Kształt</span>
-          <button type="button" id="os-candle" data-os="candle" aria-pressed="true" data-i18n="osCandle">Świeca</button>
-          <button type="button" id="os-arrow" data-os="arrow" aria-pressed="false" data-i18n="osArrow">Strzałka</button>
+          <button type="button" id="os-candle" data-os="candle" aria-pressed="false" data-i18n="osCandle">Świeca</button>
+          <button type="button" id="os-arrow" data-os="arrow" aria-pressed="true" data-i18n="osArrow">Strzałka</button>
         </div>
       </fieldset>
 
@@ -784,9 +784,9 @@ const nCauchy = (mat, nm) => { const q = MATS[mat], l = nm / 1000; return q.A + 
 
 /* ---------- state ---------- */
 const S = {
-  mode: 'lens', elem: 'conv', fAbs: 10, x: 15, h: 4, ostyle: 'candle',
+  mode: 'lens', elem: 'conv', fAbs: 10, x: 15, h: 4, ostyle: 'arrow',
   lensmaker: false, n: 1.5, R1: 10, R2: 10, nm: 1,
-  show: { principal: true, fan: false, foci: true, virt: true, screen: false, grid: true, prot: true, wave: true, refl: true, labels: true },
+  show: { principal: true, fan: false, foci: false, virt: false, screen: false, grid: false, prot: false, wave: false, refl: false, labels: false },
   rsub: 'iface', n1: 1.0, n2: 1.33, alpha: 40,
   mat: 'crown', phi: 60, a1: 50, white: true, lam: 589, boost: false,
   tab: { lens: 'y', iface: 'beta', prism: 'delta' }, hover: null
@@ -2355,11 +2355,11 @@ function frame(now) {
 /* ---------- wiring ---------- */
 function setElem(el) {
   if (S.elem === el) return;
-  S.elem = el; refresh(); schedulePulse();
+  S.elem = el; refresh();
 }
 $$('.etile').forEach(b => b.addEventListener('click', () => setElem(b.dataset.elem)));
-$$('.mode').forEach(b => b.addEventListener('click', () => { S.mode = b.dataset.mode; tabsKey = ''; refresh(); schedulePulse(300); }));
-$$('#rsub button').forEach(b => b.addEventListener('click', () => { S.rsub = b.dataset.rs; tabsKey = ''; refresh(); schedulePulse(300); }));
+$$('.mode').forEach(b => b.addEventListener('click', () => { S.mode = b.dataset.mode; tabsKey = ''; refresh(); }));
+$$('#rsub button').forEach(b => b.addEventListener('click', () => { S.rsub = b.dataset.rs; tabsKey = ''; refresh(); }));
 $$('#ostyle button').forEach(b => b.addEventListener('click', () => { S.ostyle = b.dataset.os; refresh(); }));
 $$('#toggles .tg').forEach(b => b.addEventListener('click', () => { const k = b.dataset.key; S.show[k] = !S.show[k]; refresh(); }));
 const sliders = {
@@ -2392,7 +2392,7 @@ $$('#presets .chip').forEach(b => b.addEventListener('click', () => {
   if (!isFinite(f) || f <= 0) { S.lensmaker = false; f = S.fAbs; }
   let x = PRESETS[b.dataset.pr] * f;
   if (x > 100) { S.fAbs = clamp(round1(100 / PRESETS[b.dataset.pr]), 2, 30); S.lensmaker = false; x = PRESETS[b.dataset.pr] * S.fAbs; }
-  S.x = x; refresh(); schedulePulse(200);
+  S.x = x; refresh();
 }));
 function bindMediaChips() {
   $$('#med1 .chip').forEach(b => b.addEventListener('click', () => { S.n1 = +b.dataset.n; refresh(); schedulePulse(); }));
@@ -2443,7 +2443,7 @@ document.addEventListener('keydown', (e) => {
   }
   if (!used) {
     if (e.key === 'f' || e.key === 'F') { toggleFs(); e.preventDefault(); }
-    else if (e.key === 'm' || e.key === 'M') { S.mode = S.mode === 'lens' ? 'refr' : 'lens'; tabsKey = ''; refresh(); schedulePulse(300); }
+    else if (e.key === 'm' || e.key === 'M') { S.mode = S.mode === 'lens' ? 'refr' : 'lens'; tabsKey = ''; refresh(); }
     return;
   }
   e.preventDefault(); refresh();
@@ -2471,7 +2471,6 @@ if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { di
 readTokens();
 resize();
 applyLang();
-setTimeout(firePulse, 650);
 requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>

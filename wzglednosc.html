@@ -744,9 +744,9 @@ function twinSignals(m) {
 
 /* ---------- state ---------- */
 const S = {
-  scene: 1, view: 'S', playing: !reduceMotion, speed: 1, hold: 0,
+  scene: 1, view: 'S', playing: false, speed: 1, hold: 0,
   t: { 1: 0, 2: 0, 3: 0 },
-  tg: { tri: true, trail: true, hyp: true, gridP: false, sim: true, now: true, sig: true, simT: true, loop: true },
+  tg: { tri: false, trail: false, hyp: false, gridP: false, sim: false, now: true, sig: false, simT: false, loop: false },
   chartTab: 'gamma', hoverX: null, drag: null
 };
 const B = { beta: 0.8, eps: 0.2 };
@@ -1882,7 +1882,7 @@ cbox.addEventListener('pointerleave', () => { S.hoverX = null; tip.hidden = true
 
 /* ---------- wiring ---------- */
 function setScene(n) {
-  S.scene = n; S.hold = 0;
+  S.scene = n; S.hold = 0; S.playing = false;
   $$('#scenes button').forEach(b => b.setAttribute('aria-selected', String(+b.dataset.scene === n)));
   if (n === 3 && S.chartTab !== 'twin') setTab('twin');
   else if (n !== 3 && S.chartTab === 'twin') setTab('gamma');
