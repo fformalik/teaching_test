@@ -1169,4 +1169,131 @@ window.__maxwell = { S, get N() { return N; }, energy, advance, measure: () => m
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Gaz, któremu nadamy dowolny rozkład prędkości, po wielu zderzeniach sam dochodzi do jednego, uniwersalnego stanu: rozkładu Maxwella. Zderzenia są odwracalne, a mimo to gaz „zapomina” stan początkowy, co Boltzmann opisał funkcją <i>H</i>, malejącą w czasie jak entropia ze znakiem minus.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Twarde krążki zderzają się sprężyście w dwuwymiarowej komorze. «Histogram prędkości» porównuje się z krzywą teoretyczną, a wykres «W czasie» pokazuje funkcję <i>H</i>, temperatury lub udział w lewej połowie.</p>
+      <ul>
+        <li>«Ta sama prędkość»: szpilka (rozkład delta) rozpływa się w krzywą <i>v</i>·e<sup>−<i>v</i>²</sup>, a <i>H</i> spada do plateau.</li>
+        <li>«Gorąca i zimna połowa» i «Dwa gatunki»: temperatury grup zbiegają się do wspólnej wartości, ciężkie krążki zostają wolniejsze.</li>
+        <li>«Rozprężanie swobodne»: po usunięciu przegrody udział w lewej połowie waha się wokół ½. Przełącznik «Prędkości charakterystyczne» zaznacza <i>v</i><sub>p</sub>, ⟨<i>v</i>⟩ i <i>v</i><sub>rms</sub>.</li>
+      </ul>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>W równowadze składowe prędkości <i>v</i><sub><i>x</i></sub> i <i>v</i><sub><i>y</i></sub> są niezależne, a rozkład nie zależy od kierunku. Jedyna funkcja o obu własnościach to iloczyn gaussowskich, czyli czynnik Boltzmanna e<sup>−<i>E</i>/<i>kT</i></sup>. Prędkość <i>v</i> ma wszystkie punkty pierścienia o polu 2π<i>v</i> d<i>v</i> w płaszczyźnie prędkości, stąd</p>
+      <div class="th-eq"><i>f</i>(<i>v</i>) = <span class="th-fr"><span><i>m</i><i>v</i></span><span><i>k</i><i>T</i></span></span> exp(−<span class="th-fr"><span><i>m</i><i>v</i><sup>2</sup></span><span>2<i>k</i><i>T</i></span></span>)</div>
+      <p>W 3D pierścień zastępuje powłoka 4π<i>v</i><sup>2</sup> d<i>v</i> i pojawia się czynnik <i>v</i><sup>2</sup>. W 2D cząstka ma dwa stopnie swobody, więc ⟨<i>E</i><sub>k</sub>⟩ = <i>kT</i>, a prędkości charakterystyczne to</p>
+      <div class="th-eq"><i>v</i><sub>p</sub> = √(<i>kT</i>/<i>m</i>), &nbsp; ⟨<i>v</i>⟩ = √(π<i>kT</i>/2<i>m</i>), &nbsp; <i>v</i><sub>rms</sub> = √(2<i>kT</i>/<i>m</i>)</div>
+      <p>Boltzmann zdefiniował <i>H</i> = ∫ <i>f</i> ln <i>f</i> d<sup>2</sup><i>v</i> i pokazał, przy założeniu braku korelacji między zderzającymi się cząstkami („chaos molekularny”), że d<i>H</i>/d<i>t</i> ≤ 0, z równością tylko dla rozkładu Maxwella. Entropia <i>S</i> = −<i>kNH</i> + const rośnie więc do maksimum. Twierdzenie ma charakter statystyczny: dla skończonego <i>N</i> widać szum, a fluktuacje względne maleją jak 1/√<i>N</i>:</p>
+      <div class="th-eq"><i>σ</i>(<i>N</i><sub>L</sub>/<i>N</i>) = <span class="th-fr"><span>1</span><span>2√<i>N</i></span></span></div>
+      <p>Model to gaz twardych krążków w 2D; wzory na drogę swobodną poprawia czynnik Enskoga, bo krążki zajmują zauważalną część pola.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Rozkład Maxwella wyznacza tempo reakcji chemicznych: reagują głównie cząsteczki z ogona rozkładu, stąd silna zależność od temperatury (prawo Arrheniusa).</li>
+        <li>Ucieczka atmosfer: lekkie gazy, jak wodór i hel, mają w ogonie rozkładu cząsteczki szybsze od prędkości ucieczki i powoli opuszczają Ziemię.</li>
+        <li>Separacja izotopów i efuzja: strumień przez mały otwór jest proporcjonalny do ⟨<i>v</i>⟩, czyli do 1/√<i>m</i> (prawo Grahama).</li>
+        <li>Strzałka czasu: twierdzenie <i>H</i> i spory z Loschmidtem i Zermelem ukształtowały statystyczne rozumienie drugiej zasady termodynamiki.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„Najbardziej prawdopodobna prędkość to zero, bo każda składowa ma maksimum w zerze.” Składowe tak, ale prędkości bliskich zera jest mało, bo pierścień 2π<i>v</i> d<i>v</i> ma znikome pole; stąd <i>f</i>(0) = 0.</li>
+        <li>„W równowadze wszystkie cząstki mają tę samą energię.” Równa jest średnia; pojedyncze cząstki ciągle zmieniają energię w zderzeniach.</li>
+        <li>„Ciężkie i lekkie cząstki w mieszaninie mają tę samą średnią prędkość.” Wspólna jest temperatura, czyli średnia energia; ciężkie są wolniejsze o czynnik √(<i>m</i><sub>2</sub>/<i>m</i><sub>1</sub>).</li>
+        <li>„Twierdzenie <i>H</i> zabrania wzrostu <i>H</i>.” Zabrania tylko systematycznego wzrostu; przy skończonym <i>N</i> krótkie fluktuacje w górę są zupełnie normalne.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Dla argonu w 300 K oblicz <i>v</i><sub>p</sub>, ⟨<i>v</i>⟩ i <i>v</i><sub>rms</sub> w tej dwuwymiarowej symulacji.</summary><p><i>kT</i>/<i>m</i> ≈ 6,24·10<sup>4</sup> m<sup>2</sup>/s<sup>2</sup>, więc <i>v</i><sub>p</sub> ≈ 250 m/s, ⟨<i>v</i>⟩ ≈ 313 m/s, <i>v</i><sub>rms</sub> ≈ 353 m/s, w stosunku 1 : 1,253 : 1,414.</p></details>
+    <details class="th-q"><summary>W «Dwa gatunki» ustaw stosunek mas 10. Ile razy wolniej poruszają się ciężkie krążki po wyrównaniu temperatur?</summary><p>Przy wspólnej <i>T</i> ½<i>m</i>⟨<i>v</i><sup>2</sup>⟩ jest takie samo, więc <i>v</i><sub>rms</sub> ciężkich jest √10 ≈ 3,2 razy mniejsze.</p></details>
+    <details class="th-q"><summary>Jak zmieni się szerokość wahań udziału w lewej połowie po przejściu od <i>N</i> = 150 do <i>N</i> = 600?</summary><p><i>σ</i> = 1/(2√<i>N</i>) spada z ok. 0,041 do 0,020, czyli o połowę: czterokrotnie więcej cząstek to dwukrotnie mniejsze fluktuacje względne.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: rozkład dwuwymiarowy i twierdzenie <i>H</i> wykraczają poza Hallidaya, Resnicka i Walkera. Najbliżej jest rozdz. 19 (Kinetyczna teoria gazów, z rozkładem Maxwella w 3D) oraz rozdz. 20 (Entropia i druga zasada termodynamiki). Dalej: D. V. Schroeder, <em>An Introduction to Thermal Physics</em>, rozdz. 6 (Boltzmann Statistics, w tym rozkład prędkości Maxwella).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A gas started with any distribution of velocities reaches, after many collisions, one universal state: the Maxwell distribution. The collisions are reversible, yet the gas “forgets” its initial state, which Boltzmann captured with his <i>H</i> function, falling in time like minus the entropy.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>Hard disks collide elastically in a two-dimensional chamber. The «Speed histogram» is compared with the theoretical curve, and the «Over time» plot shows the <i>H</i> function, temperatures or the fraction in the left half.</p>
+      <ul>
+        <li>«All same speed»: a spike (delta distribution) melts into the curve <i>v</i>·e<sup>−<i>v</i>²</sup>, and <i>H</i> falls to a plateau.</li>
+        <li>«Hot half, cold half» and «Two species»: the group temperatures converge to a common value, while the heavy disks stay slower.</li>
+        <li>«Free expansion»: once the partition is gone, the left fraction fluctuates around ½. The «Characteristic speeds» toggle marks <i>v</i><sub>p</sub>, ⟨<i>v</i>⟩ and <i>v</i><sub>rms</sub>.</li>
+      </ul>
+    </article>
+    <article><h3>Theory</h3>
+      <p>In equilibrium the components <i>v</i><sub><i>x</i></sub> and <i>v</i><sub><i>y</i></sub> are independent and the distribution does not depend on direction. The only function with both properties is a product of Gaussians, the Boltzmann factor e<sup>−<i>E</i>/<i>kT</i></sup>. A speed <i>v</i> covers every point of a ring of area 2π<i>v</i> d<i>v</i> in the velocity plane, hence</p>
+      <div class="th-eq"><i>f</i>(<i>v</i>) = <span class="th-fr"><span><i>m</i><i>v</i></span><span><i>k</i><i>T</i></span></span> exp(−<span class="th-fr"><span><i>m</i><i>v</i><sup>2</sup></span><span>2<i>k</i><i>T</i></span></span>)</div>
+      <p>In 3D the ring becomes a shell 4π<i>v</i><sup>2</sup> d<i>v</i> and a factor <i>v</i><sup>2</sup> appears. In 2D a particle has two degrees of freedom, so ⟨<i>E</i><sub>k</sub>⟩ = <i>kT</i>, and the characteristic speeds are</p>
+      <div class="th-eq"><i>v</i><sub>p</sub> = √(<i>kT</i>/<i>m</i>), &nbsp; ⟨<i>v</i>⟩ = √(π<i>kT</i>/2<i>m</i>), &nbsp; <i>v</i><sub>rms</sub> = √(2<i>kT</i>/<i>m</i>)</div>
+      <p>Boltzmann defined <i>H</i> = ∫ <i>f</i> ln <i>f</i> d<sup>2</sup><i>v</i> and showed, assuming colliding particles are uncorrelated (“molecular chaos”), that d<i>H</i>/d<i>t</i> ≤ 0, with equality only for the Maxwell distribution. The entropy <i>S</i> = −<i>kNH</i> + const therefore rises to a maximum. The theorem is statistical: for finite <i>N</i> there is noise, and relative fluctuations shrink like 1/√<i>N</i>:</p>
+      <div class="th-eq"><i>σ</i>(<i>N</i><sub>L</sub>/<i>N</i>) = <span class="th-fr"><span>1</span><span>2√<i>N</i></span></span></div>
+      <p>The model is a 2D hard-disk gas; the mean free path formulas include the Enskog factor because the disks cover a noticeable part of the area.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>The Maxwell distribution sets chemical reaction rates: mostly molecules in the tail react, hence the strong temperature dependence (Arrhenius law).</li>
+        <li>Atmospheric escape: light gases such as hydrogen and helium have tail molecules faster than escape speed and slowly leak away from Earth.</li>
+        <li>Isotope separation and effusion: the flux through a small hole is proportional to ⟨<i>v</i>⟩, that is, to 1/√<i>m</i> (Graham’s law).</li>
+        <li>The arrow of time: the <i>H</i> theorem and the debates with Loschmidt and Zermelo shaped the statistical understanding of the second law.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>“The most probable speed is zero, since each component peaks at zero.” The components do, but few particles have speeds near zero because the ring 2π<i>v</i> d<i>v</i> has almost no area; hence <i>f</i>(0) = 0.</li>
+        <li>“In equilibrium every particle has the same energy.” Only the average is fixed; individual particles keep trading energy in collisions.</li>
+        <li>“Heavy and light particles in a mixture share the same mean speed.” They share the temperature, that is, the mean energy; the heavy ones are slower by a factor √(<i>m</i><sub>2</sub>/<i>m</i><sub>1</sub>).</li>
+        <li>“The <i>H</i> theorem forbids <i>H</i> from rising.” It forbids only a systematic rise; with finite <i>N</i>, brief upward fluctuations are perfectly normal.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>For argon at 300 K, find <i>v</i><sub>p</sub>, ⟨<i>v</i>⟩ and <i>v</i><sub>rms</sub> in this two-dimensional simulation.</summary><p><i>kT</i>/<i>m</i> ≈ 6.24·10<sup>4</sup> m<sup>2</sup>/s<sup>2</sup>, so <i>v</i><sub>p</sub> ≈ 250 m/s, ⟨<i>v</i>⟩ ≈ 313 m/s, <i>v</i><sub>rms</sub> ≈ 353 m/s, in the ratio 1 : 1.253 : 1.414.</p></details>
+    <details class="th-q"><summary>In «Two species», set the mass ratio to 10. How much slower are the heavy disks once the temperatures have equalised?</summary><p>At a common <i>T</i>, ½<i>m</i>⟨<i>v</i><sup>2</sup>⟩ is the same, so the heavy disks’ <i>v</i><sub>rms</sub> is √10 ≈ 3.2 times smaller.</p></details>
+    <details class="th-q"><summary>How does the spread of the left fraction change from <i>N</i> = 150 to <i>N</i> = 600?</summary><p><i>σ</i> = 1/(2√<i>N</i>) drops from about 0.041 to 0.020, a factor of two: four times as many particles give half the relative fluctuation.</p></details>
+  </div>
+  <p class="th-book">In the textbook: the two-dimensional distribution and the <i>H</i> theorem go beyond Halliday, Resnick and Walker. The nearest chapters are ch. 19 (The Kinetic Theory of Gases, with the 3D Maxwell distribution) and ch. 20 (Entropy and the Second Law of Thermodynamics). Further reading: D. V. Schroeder, <em>An Introduction to Thermal Physics</em>, ch. 6 (Boltzmann Statistics, including the Maxwell speed distribution).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

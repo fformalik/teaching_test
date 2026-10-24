@@ -1704,4 +1704,131 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Oscylator harmoniczny z tłumieniem, pobudzany okresową siłą, po krótkim stanie przejściowym drga z częstością wymuszenia, a nie z własną. Amplituda tych drgań zależy od tego, jak blisko częstość wymuszenia leży częstości własnej ω<sub>0</sub>: w pobliżu ω<sub>0</sub> nawet mała siła daje duże wychylenia. To jest rezonans.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Masa wisi na sprężynie, tłumik olejowy daje siłę oporu −<i>bv</i>, a silnik porusza zawieszeniem, więc sprężyna przekazuje siłę <i>F</i><sub>0</sub> cos <i>ωt</i>. Na wykresie <i>x</i>(<i>t</i>) widać sumę stanu ustalonego i zanikającego stanu przejściowego; przycisk «Przeskocz do stanu ustalonego» pomija ten drugi.</p>
+      <ul>
+        <li>Presety «Poniżej ω₀», «Rezonans» i «Powyżej ω₀» pokazują trzy reżimy: masa idzie za siłą, spóźnia się o ćwierć okresu, porusza się w przeciwfazie.</li>
+        <li>Na zakładce «Rezonans A(ω), φ(ω)» kółko pomiaru wspina się do krzywej teoretycznej w miarę zaniku stanu przejściowego.</li>
+        <li>Scenariusz «Drgania swobodne» i presety «Podkrytyczne», «Krytyczne», «Nadkrytyczne» pokazują trzy rodzaje tłumienia; «Dudnienia» to nakładanie się drgań własnych i wymuszonych.</li>
+      </ul>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Z drugiej zasady dynamiki dla masy na sprężynie z tłumieniem i wymuszeniem:</p>
+      <div class="th-eq"><i>m</i><i>ẍ</i> + <i>b</i><i>ẋ</i> + <i>k</i><i>x</i> = <i>F</i><sub>0</sub> cos <i>ωt</i>, &nbsp; <i>ω</i><sub>0</sub> = √(<i>k</i>/<i>m</i>), &nbsp; <i>γ</i> = <i>b</i>/2<i>m</i></div>
+      <p>Równanie jest liniowe, więc rozwiązanie ogólne to suma rozwiązania jednorodnego (drgania swobodne, zanikające jak e<sup>−<i>γt</i></sup>) i rozwiązania szczególnego <i>x</i> = <i>A</i> cos(<i>ωt</i> − <i>φ</i>). Podstawienie daje:</p>
+      <div class="th-eq"><i>A</i>(<i>ω</i>) = <span class="th-fr"><span><i>F</i><sub>0</sub>/<i>m</i></span><span>√((<i>ω</i><sub>0</sub><sup>2</sup> − <i>ω</i><sup>2</sup>)<sup>2</sup> + 4<i>γ</i><sup>2</sup><i>ω</i><sup>2</sup>)</span></span>, &nbsp; tg <i>φ</i> = <span class="th-fr"><span>2<i>γω</i></span><span><i>ω</i><sub>0</sub><sup>2</sup> − <i>ω</i><sup>2</sup></span></span></div>
+      <p>Daleko poniżej ω<sub>0</sub> rządzi sprężyna (<i>A</i> ≈ <i>F</i><sub>0</sub>/<i>k</i>), daleko powyżej bezwładność (<i>A</i> ≈ <i>F</i><sub>0</sub>/<i>mω</i><sup>2</sup>), a przy <i>ω</i> = <i>ω</i><sub>0</sub> sprężystość i bezwładność się znoszą i amplitudę ogranicza tylko tłumienie. Wtedy <i>φ</i> = 90°: prędkość jest w fazie z siłą, więc silnik cały czas wykonuje dodatnią pracę. Maksimum amplitudy leży nieco niżej:</p>
+      <div class="th-eq"><i>ω</i><sub>r</sub> = √(<i>ω</i><sub>0</sub><sup>2</sup> − 2<i>γ</i><sup>2</sup>), &nbsp; <i>Q</i> = <span class="th-fr"><span><i>ω</i><sub>0</sub></span><span>2<i>γ</i></span></span> ≈ <span class="th-fr"><span><i>A</i><sub>max</sub></span><span><i>F</i><sub>0</sub>/<i>k</i></span></span> ≈ <span class="th-fr"><span><i>ω</i><sub>0</sub></span><span>Δ<i>ω</i></span></span></div>
+      <p>Maksimum istnieje tylko dla <i>γ</i> &lt; <i>ω</i><sub>0</sub>/√2. W stanie ustalonym średnia moc silnika równa się mocy traconej w tłumiku, ⟨<i>P</i>⟩ = ½<i>bω</i><sup>2</sup><i>A</i><sup>2</sup>. Model zakłada liniową sprężynę i opór proporcjonalny do prędkości; przy dużych wychyleniach prawdziwe układy stają się nieliniowe.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Strojenie: obwód <i>RLC</i> w radiu wybiera jedną stację, bo odpowiada silnie tylko w wąskim paśmie wokół swojej częstości rezonansowej.</li>
+        <li>Inżynieria: mosty, kładki i budynki projektuje się tak, by częstości własne nie pokrywały się z rytmem kroków, wiatru czy maszyn; amortyzatory samochodu pracują blisko tłumienia krytycznego.</li>
+        <li>Pomiar: kamerton, rezonator kwarcowy w zegarku i mikrowagi w mikroskopie AFM wykorzystują bardzo duże <i>Q</i>.</li>
+        <li>Spektroskopia i NMR: absorpcja promieniowania jest największa przy częstościach własnych drgań cząsteczek lub precesji spinów.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„W rezonansie amplituda jest nieskończona.” Tylko bez tłumienia; przy <i>b</i> &gt; 0 jest skończona i wynosi około <i>Q</i>·<i>F</i><sub>0</sub>/<i>k</i>. Bez tłumienia rośnie liniowo w czasie, a nie skokowo.</li>
+        <li>„Układ drga z częstością własną.” W stanie ustalonym drga z częstością wymuszenia ω; częstość własna pojawia się tylko w stanie przejściowym.</li>
+        <li>„Maksimum amplitudy jest dokładnie przy ω<sub>0</sub>.” Maksimum wychylenia leży przy ω<sub>r</sub> &lt; ω<sub>0</sub>; dokładnie przy ω<sub>0</sub> mają maksimum amplituda prędkości i średnia moc.</li>
+        <li>„Masa porusza się zgodnie z siłą.” Faza zmienia się od 0° do 180°; w rezonansie wychylenie spóźnia się o ćwierć okresu.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Dwukrotnie zmniejszasz współczynnik tłumienia <i>b</i>. Co dzieje się z wysokością i szerokością krzywej rezonansowej?</summary><p>Dobroć <i>Q</i> = <i>ω</i><sub>0</sub>/2<i>γ</i> rośnie dwukrotnie, więc amplituda w rezonansie też mniej więcej się podwaja, a szerokość Δ<i>ω</i> ≈ 2<i>γ</i> maleje o połowę. Porównaj z krzywą «tłumienie b/2» na wykresie.</p></details>
+    <details class="th-q"><summary>Skąd biorą się dudnienia w presecie «Dudnienia»?</summary><p>Przy <i>Q</i> = 40 stan przejściowy zanika powoli, więc przez długi czas nakładają się drgania o częstości własnej (≈ ω<sub>0</sub>) i wymuszone (ω = 0,85 ω<sub>0</sub>). Ich suma ma obwiednię pulsującą z częstością |ω<sub>0</sub> − ω|; dudnienia gasną razem ze stanem przejściowym.</p></details>
+    <details class="th-q"><summary>Dlaczego przy ω = ω<sub>0</sub> silnik oddaje największą średnią moc?</summary><p>Bo wtedy prędkość masy jest w fazie z siłą (<i>φ</i> = 90° dla wychylenia), więc iloczyn <i>F</i>·<i>v</i> jest zawsze nieujemny. Poza rezonansem przez część okresu siła hamuje masę i silnik odbiera część energii z powrotem.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 15 (Drgania), podrozdziały o drganiach tłumionych oraz drganiach wymuszonych i rezonansie. Analogia elektryczna: rozdz. 31 (Drgania elektromagnetyczne i prąd zmienny).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A damped harmonic oscillator pushed by a periodic force settles, after a short transient, into oscillating at the drive frequency rather than its own. The amplitude of that motion depends on how close the drive frequency is to the natural frequency ω<sub>0</sub>: near ω<sub>0</sub> even a small force produces large swings. That is resonance.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>A mass hangs on a spring, an oil damper supplies the resistive force −<i>bv</i>, and a motor shakes the suspension so that the spring passes on a force <i>F</i><sub>0</sub> cos <i>ωt</i>. The <i>x</i>(<i>t</i>) chart shows the sum of the steady state and a decaying transient; the «Skip to steady state» button jumps past the latter.</p>
+      <ul>
+        <li>The «Below ω₀», «Resonance» and «Above ω₀» presets show three regimes: the mass follows the force, lags it by a quarter period, or moves in antiphase.</li>
+        <li>On the «Resonance A(ω), φ(ω)» tab the measurement ring climbs onto the theoretical curve as the transient dies away.</li>
+        <li>The «Free oscillations» scenario and the «Underdamped», «Critical» and «Overdamped» presets show the three kinds of damping; «Beats» is the overlap of free and driven motion.</li>
+      </ul>
+    </article>
+    <article><h3>Theory</h3>
+      <p>Newton’s second law for a damped, driven mass on a spring gives</p>
+      <div class="th-eq"><i>m</i><i>ẍ</i> + <i>b</i><i>ẋ</i> + <i>k</i><i>x</i> = <i>F</i><sub>0</sub> cos <i>ωt</i>, &nbsp; <i>ω</i><sub>0</sub> = √(<i>k</i>/<i>m</i>), &nbsp; <i>γ</i> = <i>b</i>/2<i>m</i></div>
+      <p>The equation is linear, so the general solution is the homogeneous solution (free oscillation decaying as e<sup>−<i>γt</i></sup>) plus a particular solution <i>x</i> = <i>A</i> cos(<i>ωt</i> − <i>φ</i>). Substituting it gives</p>
+      <div class="th-eq"><i>A</i>(<i>ω</i>) = <span class="th-fr"><span><i>F</i><sub>0</sub>/<i>m</i></span><span>√((<i>ω</i><sub>0</sub><sup>2</sup> − <i>ω</i><sup>2</sup>)<sup>2</sup> + 4<i>γ</i><sup>2</sup><i>ω</i><sup>2</sup>)</span></span>, &nbsp; tan <i>φ</i> = <span class="th-fr"><span>2<i>γω</i></span><span><i>ω</i><sub>0</sub><sup>2</sup> − <i>ω</i><sup>2</sup></span></span></div>
+      <p>Far below ω<sub>0</sub> the spring dominates (<i>A</i> ≈ <i>F</i><sub>0</sub>/<i>k</i>), far above it inertia does (<i>A</i> ≈ <i>F</i><sub>0</sub>/<i>mω</i><sup>2</sup>), and at <i>ω</i> = <i>ω</i><sub>0</sub> the spring and inertia terms cancel so that only damping limits the amplitude. Then <i>φ</i> = 90°: the velocity is in phase with the force, so the motor always does positive work. The displacement peak sits slightly lower:</p>
+      <div class="th-eq"><i>ω</i><sub>r</sub> = √(<i>ω</i><sub>0</sub><sup>2</sup> − 2<i>γ</i><sup>2</sup>), &nbsp; <i>Q</i> = <span class="th-fr"><span><i>ω</i><sub>0</sub></span><span>2<i>γ</i></span></span> ≈ <span class="th-fr"><span><i>A</i><sub>max</sub></span><span><i>F</i><sub>0</sub>/<i>k</i></span></span> ≈ <span class="th-fr"><span><i>ω</i><sub>0</sub></span><span>Δ<i>ω</i></span></span></div>
+      <p>A peak exists only for <i>γ</i> &lt; <i>ω</i><sub>0</sub>/√2. In the steady state the mean motor power equals the power lost in the damper, ⟨<i>P</i>⟩ = ½<i>bω</i><sup>2</sup><i>A</i><sup>2</sup>. The model assumes a linear spring and a drag proportional to velocity; at large amplitudes real systems become nonlinear.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Tuning: an <i>RLC</i> circuit in a radio picks out one station because it responds strongly only in a narrow band around its resonance frequency.</li>
+        <li>Engineering: bridges, footbridges and buildings are designed so that their natural frequencies avoid the rhythm of footsteps, wind or machinery; car shock absorbers work close to critical damping.</li>
+        <li>Measurement: tuning forks, the quartz resonator in a watch and AFM cantilevers rely on a very high <i>Q</i>.</li>
+        <li>Spectroscopy and NMR: absorption is strongest at the natural frequencies of molecular vibrations or spin precession.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>“At resonance the amplitude is infinite.” Only without damping; for <i>b</i> &gt; 0 it is finite, about <i>Q</i>·<i>F</i><sub>0</sub>/<i>k</i>. Without damping it grows linearly in time, not instantly.</li>
+        <li>“The system oscillates at its natural frequency.” In the steady state it oscillates at the drive frequency ω; the natural frequency appears only in the transient.</li>
+        <li>“The amplitude peaks exactly at ω<sub>0</sub>.” The displacement peaks at ω<sub>r</sub> &lt; ω<sub>0</sub>; the velocity amplitude and the mean power peak exactly at ω<sub>0</sub>.</li>
+        <li>“The mass moves along with the force.” The phase lag runs from 0° to 180°; at resonance the displacement lags by a quarter period.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>You halve the damping coefficient <i>b</i>. What happens to the height and width of the resonance curve?</summary><p>The quality factor <i>Q</i> = <i>ω</i><sub>0</sub>/2<i>γ</i> doubles, so the peak amplitude roughly doubles too, while the width Δ<i>ω</i> ≈ 2<i>γ</i> halves. Compare with the «damping b/2» curve on the chart.</p></details>
+    <details class="th-q"><summary>Where do the beats in the «Beats» preset come from?</summary><p>With <i>Q</i> = 40 the transient decays slowly, so for a long time free motion at about ω<sub>0</sub> overlaps with driven motion at ω = 0.85 ω<sub>0</sub>. Their sum has an envelope that pulses at |ω<sub>0</sub> − ω|; the beats fade together with the transient.</p></details>
+    <details class="th-q"><summary>Why does the motor deliver the most average power at ω = ω<sub>0</sub>?</summary><p>Because the velocity of the mass is then in phase with the force (<i>φ</i> = 90° for the displacement), so <i>F</i>·<i>v</i> is never negative. Off resonance the force brakes the mass for part of each period and the motor takes some energy back.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 15 (Oscillations), sections on damped simple harmonic motion and forced oscillations and resonance. Electrical analogue: ch. 31 (Electromagnetic Oscillations and Alternating Current).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

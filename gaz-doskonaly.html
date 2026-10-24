@@ -2154,4 +2154,131 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Gaz doskonały to model, w którym cząsteczki są punktami poruszającymi się chaotycznie i oddziałującymi tylko przy zderzeniach. Z tego prostego obrazu wynikają ciśnienie (pęd oddawany ściankom), temperatura (średnia energia kinetyczna) i równanie stanu <i>pV</i> = <i>nRT</i>, a I zasada termodynamiki opisuje, jak praca i ciepło zmieniają energię wewnętrzną.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Kulki w cylindrze z tłokiem reprezentują cząsteczki gazu. Manometr nie korzysta z równania stanu: liczy ciśnienie z pędu przekazanego ściankom w uderzeniach, a mimo to średnia zgadza się z <i>nRT</i>/<i>V</i>.</p>
+      <ul>
+        <li>Przełącznik «Przemiana»: «Izotermiczna», «Izobaryczna», «Izochoryczna» i «Adiabatyczna». Tabela «Wyniki» zapisuje <i>W</i>, <i>Q</i> i Δ<i>U</i> każdego kroku, a karta wzorów sprawdza bilans I zasady.</li>
+        <li>Zakładka «Rozkład prędkości» porównuje prędkości kulek z rozkładem Maxwella 3-D; po zmianie gazu (He, Ar, Xe, N₂, CO₂, CH₄) widać, jak masa molowa przesuwa rozkład.</li>
+        <li>«Cykl silnika» («Carnota» lub «Otto») obiega zamkniętą pętlę na diagramie p–V; pole pętli to praca netto.</li>
+      </ul>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Cząsteczka o masie <i>m</i> odbijająca się sprężyście od ścianki oddaje jej pęd 2<i>mv</i><sub><i>x</i></sub>. Zsumowanie uderzeń wszystkich <i>N</i> cząsteczek w czasie Δ<i>t</i> i uśrednienie po kierunkach (⟨<i>v</i><sub><i>x</i></sub><sup>2</sup>⟩ = ⟨<i>v</i><sup>2</sup>⟩/3) daje</p>
+      <div class="th-eq"><i>p</i><i>V</i> = <span class="th-fr"><span>1</span><span>3</span></span><i>N</i><i>m</i>⟨<i>v</i><sup>2</sup>⟩ = <span class="th-fr"><span>2</span><span>3</span></span><i>N</i>⟨<i>E</i><sub>k</sub>⟩</div>
+      <p>Porównanie z doświadczalnym <i>pV</i> = <i>NkT</i> pokazuje, czym jest temperatura: ⟨<i>E</i><sub>k</sub>⟩ = (3/2)<i>kT</i>, niezależnie od rodzaju gazu. Stąd <i>v</i><sub>rms</sub> = √(3<i>RT</i>/<i>M</i>). Zasada ekwipartycji przypisuje każdemu stopniowi swobody ½<i>kT</i>, więc</p>
+      <div class="th-eq"><i>U</i> = <span class="th-fr"><span><i>f</i></span><span>2</span></span><i>n</i><i>R</i><i>T</i>, &nbsp; Δ<i>U</i> = <i>Q</i> − <i>W</i>, &nbsp; <i>W</i> = ∫ <i>p</i> d<i>V</i></div>
+      <p>W przemianie izochorycznej <i>W</i> = 0, w izotermicznej Δ<i>U</i> = 0 i <i>Q</i> = <i>W</i> = <i>nRT</i> ln(<i>V</i><sub>2</sub>/<i>V</i><sub>1</sub>), w izobarycznej część ciepła idzie na pracę, stąd <i>C</i><sub><i>p</i></sub> = <i>C</i><sub><i>V</i></sub> + <i>R</i>. W adiabatycznej <i>Q</i> = 0, więc praca odbywa się kosztem <i>U</i>; z d<i>U</i> = −<i>p</i> d<i>V</i> i równania stanu wynika</p>
+      <div class="th-eq"><i>p</i><i>V</i><sup><i>γ</i></sup> = const, &nbsp; <i>γ</i> = <span class="th-fr"><span><i>f</i> + 2</span><span><i>f</i></span></span>, &nbsp; <i>η</i><sub>Carnot</sub> = 1 − <span class="th-fr"><span><i>T</i><sub>c</sub></span><span><i>T</i><sub>h</sub></span></span></div>
+      <p>Wzory zakładają gaz rozrzedzony (objętość cząsteczek i przyciąganie między nimi pomijalne) oraz przemiany quasi-statyczne. Model sztywnych cząsteczek pomija drgania wewnętrzne, które w N₂ ujawniają się dopiero w wysokich temperaturach.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Silniki: cykl Otto przybliża silnik benzynowy, a jego sprawność 1 − 1/<i>r</i><sup><i>γ</i>−1</sup> rośnie ze stopniem sprężania; sprawność Carnota to górna granica dla każdego silnika cieplnego.</li>
+        <li>Pompy ciepła, lodówki i klimatyzatory to cykle odwrócone; sprężanie adiabatyczne grzeje gaz, a rozprężanie chłodzi.</li>
+        <li>Atmosfera: wznoszące się powietrze rozpręża się prawie adiabatycznie i stygnie, stąd spadek temperatury z wysokością i powstawanie chmur.</li>
+        <li>Prędkość dźwięku <i>c</i> = √(<i>γRT</i>/<i>M</i>) wynika wprost z adiabatycznego sprężania gazu; jest porównywalna z <i>v</i><sub>rms</sub>.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„W przemianie izotermicznej nie ma przepływu ciepła.” Jest, i to dokładnie tyle, ile gaz wykonuje pracy; stała jest temperatura, nie ciepło.</li>
+        <li>„Adiabatyczna znaczy izotermiczna, bo nie ma ciepła.” Przy <i>Q</i> = 0 temperatura się zmienia: sprężanie podnosi <i>T</i>, bo praca tłoka zwiększa energię kinetyczną cząsteczek.</li>
+        <li>„Cięższe cząsteczki mają przy tej samej <i>T</i> większą energię.” Średnia energia ruchu postępowego zależy tylko od <i>T</i>; cięższe cząsteczki poruszają się wolniej.</li>
+        <li>„Ciśnienie bierze się z odpychania cząsteczek.” W gazie doskonałym nie ma sił międzycząsteczkowych; ciśnienie to wyłącznie pęd oddawany ściankom w uderzeniach.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Ile wynosi <i>v</i><sub>rms</sub> dla N₂ i dla He w temperaturze 300 K?</summary><p>N₂: √(3 · 8,314 · 300/0,028) ≈ 517 m/s. He: √(3 · 8,314 · 300/0,004) ≈ 1370 m/s. Masa molowa jest 7 razy mniejsza, więc prędkość jest √7 ≈ 2,6 razy większa.</p></details>
+    <details class="th-q"><summary>Ogrzewasz gaz o 50 K izochorycznie, a potem izobarycznie. W którym przypadku potrzeba więcej ciepła i dlaczego?</summary><p>W izobarycznym: Δ<i>U</i> jest taka sama, ale gaz dodatkowo wykonuje pracę <i>p</i>Δ<i>V</i> = <i>nR</i>Δ<i>T</i>. Dlatego <i>C</i><sub><i>p</i></sub> = <i>C</i><sub><i>V</i></sub> + <i>R</i>.</p></details>
+    <details class="th-q"><summary>Jaką sprawność ma cykl Otto dla N₂ (<i>γ</i> = 1,4) przy <i>r</i> = 8?</summary><p><i>η</i> = 1 − 1/8<sup>0,4</sup> ≈ 0,565, czyli ok. 56 %. Prawdziwe silniki osiągają znacznie mniej z powodu tarcia, strat ciepła i nieodwracalności.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 19 (Kinetyczna teoria gazów). I zasada termodynamiki: rozdz. 18 (Temperatura, ciepło i pierwsza zasada termodynamiki); silniki cieplne i cykl Carnota: rozdz. 20 (Entropia i druga zasada termodynamiki).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">The ideal gas is a model in which molecules are points moving at random and interacting only when they collide. From this simple picture follow pressure (momentum delivered to the walls), temperature (mean kinetic energy) and the equation of state <i>pV</i> = <i>nRT</i>, while the first law of thermodynamics tells how work and heat change the internal energy.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>Balls in a cylinder with a piston stand for gas molecules. The gauge does not use the equation of state: it computes pressure from the momentum delivered to the walls, and yet its average agrees with <i>nRT</i>/<i>V</i>.</p>
+      <ul>
+        <li>The «Process» switch: «Isothermal», «Isobaric», «Isochoric» and «Adiabatic». The «Results» table logs <i>W</i>, <i>Q</i> and Δ<i>U</i> for each step, and the formula card checks the first-law balance.</li>
+        <li>The «Speed distribution» tab compares the ball speeds with the 3-D Maxwell distribution; switching the gas (He, Ar, Xe, N₂, CO₂, CH₄) shows how molar mass shifts it.</li>
+        <li>The «Engine cycle» («Carnot» or «Otto») traces a closed loop on the p–V diagram; the loop area is the net work.</li>
+      </ul>
+    </article>
+    <article><h3>Theory</h3>
+      <p>A molecule of mass <i>m</i> bouncing elastically off a wall gives it momentum 2<i>mv</i><sub><i>x</i></sub>. Summing the hits of all <i>N</i> molecules over a time Δ<i>t</i> and averaging over directions (⟨<i>v</i><sub><i>x</i></sub><sup>2</sup>⟩ = ⟨<i>v</i><sup>2</sup>⟩/3) gives</p>
+      <div class="th-eq"><i>p</i><i>V</i> = <span class="th-fr"><span>1</span><span>3</span></span><i>N</i><i>m</i>⟨<i>v</i><sup>2</sup>⟩ = <span class="th-fr"><span>2</span><span>3</span></span><i>N</i>⟨<i>E</i><sub>k</sub>⟩</div>
+      <p>Comparing with the empirical <i>pV</i> = <i>NkT</i> reveals what temperature is: ⟨<i>E</i><sub>k</sub>⟩ = (3/2)<i>kT</i>, whatever the gas. Hence <i>v</i><sub>rms</sub> = √(3<i>RT</i>/<i>M</i>). Equipartition gives each degree of freedom ½<i>kT</i>, so</p>
+      <div class="th-eq"><i>U</i> = <span class="th-fr"><span><i>f</i></span><span>2</span></span><i>n</i><i>R</i><i>T</i>, &nbsp; Δ<i>U</i> = <i>Q</i> − <i>W</i>, &nbsp; <i>W</i> = ∫ <i>p</i> d<i>V</i></div>
+      <p>In an isochoric process <i>W</i> = 0; in an isothermal one Δ<i>U</i> = 0 and <i>Q</i> = <i>W</i> = <i>nRT</i> ln(<i>V</i><sub>2</sub>/<i>V</i><sub>1</sub>); in an isobaric one part of the heat goes into work, hence <i>C</i><sub><i>p</i></sub> = <i>C</i><sub><i>V</i></sub> + <i>R</i>. In an adiabatic process <i>Q</i> = 0, so the work comes out of <i>U</i>; from d<i>U</i> = −<i>p</i> d<i>V</i> and the equation of state,</p>
+      <div class="th-eq"><i>p</i><i>V</i><sup><i>γ</i></sup> = const, &nbsp; <i>γ</i> = <span class="th-fr"><span><i>f</i> + 2</span><span><i>f</i></span></span>, &nbsp; <i>η</i><sub>Carnot</sub> = 1 − <span class="th-fr"><span><i>T</i><sub>c</sub></span><span><i>T</i><sub>h</sub></span></span></div>
+      <p>These results assume a dilute gas (negligible molecular volume and attraction) and quasi-static processes. The rigid-molecule model ignores internal vibrations, which in N₂ only matter at high temperatures.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Engines: the Otto cycle models a petrol engine, and its efficiency 1 − 1/<i>r</i><sup><i>γ</i>−1</sup> rises with compression ratio; the Carnot efficiency is the upper limit for any heat engine.</li>
+        <li>Heat pumps, refrigerators and air conditioners run cycles in reverse; adiabatic compression heats a gas and expansion cools it.</li>
+        <li>Atmosphere: rising air expands almost adiabatically and cools, which explains the drop in temperature with altitude and the formation of clouds.</li>
+        <li>The speed of sound <i>c</i> = √(<i>γRT</i>/<i>M</i>) follows directly from adiabatic compression of the gas and is comparable to <i>v</i><sub>rms</sub>.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>“No heat flows in an isothermal process.” It does, exactly as much as the work the gas does; the temperature is constant, not the heat.</li>
+        <li>“Adiabatic means isothermal, since there is no heat.” With <i>Q</i> = 0 the temperature changes: compression raises <i>T</i> because the piston’s work increases the molecules’ kinetic energy.</li>
+        <li>“Heavier molecules carry more energy at the same <i>T</i>.” The mean translational energy depends only on <i>T</i>; heavier molecules simply move more slowly.</li>
+        <li>“Pressure comes from molecules repelling each other.” An ideal gas has no intermolecular forces; pressure is purely the momentum delivered to the walls in collisions.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>What is <i>v</i><sub>rms</sub> for N₂ and for He at 300 K?</summary><p>N₂: √(3 · 8.314 · 300/0.028) ≈ 517 m/s. He: √(3 · 8.314 · 300/0.004) ≈ 1370 m/s. The molar mass is 7 times smaller, so the speed is √7 ≈ 2.6 times larger.</p></details>
+    <details class="th-q"><summary>You heat a gas by 50 K, once isochorically and once isobarically. Which needs more heat, and why?</summary><p>The isobaric one: Δ<i>U</i> is the same, but the gas also does work <i>p</i>Δ<i>V</i> = <i>nR</i>Δ<i>T</i>. That is why <i>C</i><sub><i>p</i></sub> = <i>C</i><sub><i>V</i></sub> + <i>R</i>.</p></details>
+    <details class="th-q"><summary>What is the efficiency of an Otto cycle for N₂ (<i>γ</i> = 1.4) at <i>r</i> = 8?</summary><p><i>η</i> = 1 − 1/8<sup>0.4</sup> ≈ 0.565, about 56 %. Real engines reach much less because of friction, heat losses and irreversibility.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 19 (The Kinetic Theory of Gases). The first law: ch. 18 (Temperature, Heat, and the First Law of Thermodynamics); heat engines and the Carnot cycle: ch. 20 (Entropy and the Second Law of Thermodynamics).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

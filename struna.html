@@ -1295,4 +1295,131 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Struna zamocowana na obu końcach może drgać tylko w modach własnych, falach stojących, w których na długości <i>L</i> mieści się całkowita liczba połówek fali. Szarpnięcie pobudza naraz wiele takich modów, a to, gdzie szarpniemy, decyduje o proporcjach harmonicznych, czyli o barwie dźwięku.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Struna ma naciąg <i>T</i>, gęstość liniową <i>μ</i> i długość <i>L</i>; presety «Gitara E2», «Gitara E4» i «Skrzypce A4» ustawiają realistyczne wartości. Chwyć strunę na scenie albo ustaw «Miejsce szarpnięcia <i>a</i>/<i>L</i>» i naciśnij «Szarpnij».</p>
+      <ul>
+        <li>«Widmo harmonicznych» pokazuje |<i>A</i><sub><i>n</i></sub>| dla <i>n</i> = 1 do 12: kontur tuż po szarpnięciu, wypełnienie teraz. Brakujące harmoniczne są wyróżnione.</li>
+        <li>Przełącznik «Składowe» rysuje pierwsze cztery mody osobno, a «Pojedynczy mod własny» pokazuje jeden mod z węzłami (W) i strzałkami (S).</li>
+        <li>«Tłumienie <i>δ</i>» sprawia, że wyższe harmoniczne gasną szybciej: ostry załom struny się zaokrągla.</li>
+      </ul>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Mały odcinek struny przyspiesza pod działaniem różnicy pionowych składowych naciągu na jego końcach. Prowadzi to do równania falowego, w którym prędkość fali wynosi</p>
+      <div class="th-eq"><i>v</i> = √(<i>T</i>/<i>μ</i>)</div>
+      <p>Fala biegnąca odbija się od zamocowanych końców i nakłada na siebie, tworząc falę stojącą. Warunek <i>y</i> = 0 na obu końcach dopuszcza tylko długości fali <i>λ</i><sub><i>n</i></sub> = 2<i>L</i>/<i>n</i>, więc</p>
+      <div class="th-eq"><i>f</i><sub><i>n</i></sub> = <span class="th-fr"><span><i>n</i><i>v</i></span><span>2<i>L</i></span></span> = <i>n</i><i>f</i><sub>1</sub>, &nbsp; <i>n</i> = 1, 2, 3, …</div>
+      <p>Ruch po szarpnięciu to suma modów <i>A</i><sub><i>n</i></sub> sin(<i>nπx</i>/<i>L</i>) cos(2<i>πf</i><sub><i>n</i></sub><i>t</i>). Amplitudy wyznacza kształt początkowy (trójkąt o wierzchołku na wysokości <i>h</i> w punkcie <i>a</i>) rozłożony w szereg Fouriera:</p>
+      <div class="th-eq"><i>A</i><sub><i>n</i></sub> = <span class="th-fr"><span>2<i>h</i><i>L</i><sup>2</sup></span><span><i>π</i><sup>2</sup><i>n</i><sup>2</sup><i>a</i>(<i>L</i> − <i>a</i>)</span></span> sin <span class="th-fr"><span><i>nπa</i></span><span><i>L</i></span></span></div>
+      <p>Czynnik sin(<i>nπa</i>/<i>L</i>) to wartość kształtu modu <i>n</i> w punkcie szarpnięcia. Jeśli punkt ten jest węzłem modu, mod nie zostaje pobudzony. Przy <i>a</i> = <i>L</i>/2 węzeł w środku mają wszystkie mody parzyste, więc znikają <i>n</i> = 2, 4, 6, …; przy <i>a</i> = <i>L</i>/3 znikają 3, 6, 9, 12. Czynnik 1/<i>n</i><sup>2</sup> powoduje, że wysokie harmoniczne są słabe, chyba że <i>a</i> jest małe: wtedy sin(<i>nπa</i>/<i>L</i>) ≈ <i>nπa</i>/<i>L</i> rośnie z <i>n</i> i widmo opada wolniej, jak 1/<i>n</i>. Model zakłada małe wychylenia, stały naciąg i idealnie giętką strunę; prawdziwe struny mają sztywność, przez co wysokie harmoniczne są lekko zawyżone (inharmoniczność).</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Instrumenty: gitarzysta zmienia barwę, szarpiąc bliżej mostka lub gryfu; progi skracają <i>L</i>, a strojenie zmienia <i>T</i>. Grube, owijane struny basowe mają duże <i>μ</i>, by uzyskać niskie <i>f</i><sub>1</sub> bez zbyt luźnego naciągu.</li>
+        <li>Flażolety: lekkie dotknięcie struny w <i>L</i>/2 wymusza tam węzeł i tłumi mody nieparzyste, więc słychać oktawę wyżej.</li>
+        <li>Analiza Fouriera: każde drganie struny to suma sinusoid; ta sama idea stoi za kompresją dźwięku i obrazów.</li>
+        <li>Fizyka kwantowa: cząstka w studni potencjału ma, jak struna, dozwolone tylko <i>λ</i> = 2<i>L</i>/<i>n</i>, co daje skwantowane energie.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„Struna drga tylko z częstotliwością podstawową.” Drga naraz w wielu modach; wysokość dźwięku wyznacza <i>f</i><sub>1</sub>, a barwę proporcje harmonicznych.</li>
+        <li>„Fala stojąca nie przenosi niczego, więc nie ma w niej fal biegnących.” Jest sumą dwóch fal biegnących w przeciwne strony o prędkości <i>v</i>.</li>
+        <li>„Długość fali dźwięku w powietrzu jest równa 2<i>L</i>.” W powietrzu przenosi się częstotliwość <i>f</i>, a długość fali wynosi tam <i>c</i>/<i>f</i>, gdzie <i>c</i> ≈ 343 m/s jest inne niż <i>v</i> na strunie.</li>
+        <li>„Dwa razy większy naciąg to dwa razy wyższy ton.” <i>f</i> ∝ √<i>T</i>, więc trzeba naciągu czterokrotnie większego, by podnieść ton o oktawę.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Preset «Gitara E2»: <i>T</i> = 73 N, <i>μ</i> = 6,4 g/m, <i>L</i> = 0,648 m. Ile wynosi <i>f</i><sub>1</sub>?</summary><p><i>v</i> = √(73/0,0064) ≈ 107 m/s, więc <i>f</i><sub>1</sub> = <i>v</i>/2<i>L</i> ≈ 82,4 Hz, czyli dźwięk E2.</p></details>
+    <details class="th-q"><summary>Szarpiesz w <i>a</i>/<i>L</i> = 1/4. Które harmoniczne z zakresu 1 do 12 znikną?</summary><p>Te, dla których <i>n</i>/4 jest liczbą całkowitą: 4, 8 i 12. Harmoniczne 2, 6 i 10 pozostają, bo <i>L</i>/4 nie jest ich węzłem.</p></details>
+    <details class="th-q"><summary>Dlaczego dźwięk z czasem łagodnieje?</summary><p>W tym modelu harmoniczna <i>n</i> gaśnie <i>n</i><sup>2</sup> razy szybciej niż podstawowa. Po chwili zostaje głównie <i>f</i><sub>1</sub> i kilka niskich harmonicznych, więc barwa robi się bliższa czystemu tonowi.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 16 (Fale I), podrozdziały o prędkości fali w strunie, falach stojących i rezonansie. Barwa i dźwięki muzyczne: rozdz. 17 (Fale II).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A string fixed at both ends can vibrate only in its normal modes, standing waves that fit a whole number of half wavelengths into the length <i>L</i>. A pluck excites many of these modes at once, and where you pluck sets the mix of harmonics, that is, the timbre of the sound.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The string has tension <i>T</i>, linear density <i>μ</i> and length <i>L</i>; the «Guitar E2», «Guitar E4» and «Violin A4» presets set realistic values. Grab the string on the stage, or set «Pluck position <i>a</i>/<i>L</i>» and press «Pluck».</p>
+      <ul>
+        <li>The «Harmonic spectrum» shows |<i>A</i><sub><i>n</i></sub>| for <i>n</i> = 1 to 12: outline right after the pluck, fill now. Missing harmonics are flagged.</li>
+        <li>The «Components» toggle draws the first four modes separately, and «Single normal mode» shows one mode with its nodes (N) and antinodes (A).</li>
+        <li>«Damping <i>δ</i>» makes higher harmonics die faster, so the sharp kink in the string rounds off.</li>
+      </ul>
+    </article>
+    <article><h3>Theory</h3>
+      <p>A short piece of string accelerates because the vertical components of the tension at its two ends differ. This leads to the wave equation, with wave speed</p>
+      <div class="th-eq"><i>v</i> = √(<i>T</i>/<i>μ</i>)</div>
+      <p>A travelling wave reflects from the fixed ends and overlaps with itself to form a standing wave. The condition <i>y</i> = 0 at both ends allows only wavelengths <i>λ</i><sub><i>n</i></sub> = 2<i>L</i>/<i>n</i>, so</p>
+      <div class="th-eq"><i>f</i><sub><i>n</i></sub> = <span class="th-fr"><span><i>n</i><i>v</i></span><span>2<i>L</i></span></span> = <i>n</i><i>f</i><sub>1</sub>, &nbsp; <i>n</i> = 1, 2, 3, …</div>
+      <p>After a pluck the motion is a sum of modes <i>A</i><sub><i>n</i></sub> sin(<i>nπx</i>/<i>L</i>) cos(2<i>πf</i><sub><i>n</i></sub><i>t</i>). The amplitudes come from expanding the initial shape (a triangle with its apex at height <i>h</i> at the point <i>a</i>) in a Fourier series:</p>
+      <div class="th-eq"><i>A</i><sub><i>n</i></sub> = <span class="th-fr"><span>2<i>h</i><i>L</i><sup>2</sup></span><span><i>π</i><sup>2</sup><i>n</i><sup>2</sup><i>a</i>(<i>L</i> − <i>a</i>)</span></span> sin <span class="th-fr"><span><i>nπa</i></span><span><i>L</i></span></span></div>
+      <p>The factor sin(<i>nπa</i>/<i>L</i>) is the mode shape <i>n</i> evaluated at the pluck point. If that point is a node of the mode, the mode is not excited. At <i>a</i> = <i>L</i>/2 every even mode has a node in the middle, so <i>n</i> = 2, 4, 6, … vanish; at <i>a</i> = <i>L</i>/3 the 3rd, 6th, 9th and 12th vanish. The 1/<i>n</i><sup>2</sup> factor keeps high harmonics weak unless <i>a</i> is small: then sin(<i>nπa</i>/<i>L</i>) ≈ <i>nπa</i>/<i>L</i> grows with <i>n</i> and the spectrum falls off more slowly, like 1/<i>n</i>. The model assumes small displacements, constant tension and a perfectly flexible string; real strings have some stiffness, which pushes high harmonics slightly sharp (inharmonicity).</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Instruments: guitarists change timbre by plucking nearer the bridge or the neck; frets shorten <i>L</i> and tuning changes <i>T</i>. Thick wound bass strings have a large <i>μ</i> to reach a low <i>f</i><sub>1</sub> without going slack.</li>
+        <li>Harmonics: lightly touching the string at <i>L</i>/2 forces a node there and suppresses the odd modes, so the note sounds an octave higher.</li>
+        <li>Fourier analysis: every string vibration is a sum of sine waves; the same idea underlies audio and image compression.</li>
+        <li>Quantum physics: a particle in a potential well, like the string, allows only <i>λ</i> = 2<i>L</i>/<i>n</i>, which gives quantised energies.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>“The string vibrates only at its fundamental.” It vibrates in many modes at once; <i>f</i><sub>1</sub> sets the pitch and the harmonic mix sets the timbre.</li>
+        <li>“A standing wave carries nothing, so there are no travelling waves in it.” It is the sum of two waves travelling in opposite directions at speed <i>v</i>.</li>
+        <li>“The wavelength of the sound in air equals 2<i>L</i>.” What passes into the air is the frequency <i>f</i>; the wavelength there is <i>c</i>/<i>f</i>, with <i>c</i> ≈ 343 m/s, which differs from <i>v</i> on the string.</li>
+        <li>“Twice the tension gives twice the pitch.” <i>f</i> ∝ √<i>T</i>, so raising a note by an octave takes four times the tension.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>«Guitar E2» preset: <i>T</i> = 73 N, <i>μ</i> = 6.4 g/m, <i>L</i> = 0.648 m. What is <i>f</i><sub>1</sub>?</summary><p><i>v</i> = √(73/0.0064) ≈ 107 m/s, so <i>f</i><sub>1</sub> = <i>v</i>/2<i>L</i> ≈ 82.4 Hz, the note E2.</p></details>
+    <details class="th-q"><summary>You pluck at <i>a</i>/<i>L</i> = 1/4. Which harmonics from 1 to 12 disappear?</summary><p>Those for which <i>n</i>/4 is a whole number: 4, 8 and 12. Harmonics 2, 6 and 10 remain, because <i>L</i>/4 is not one of their nodes.</p></details>
+    <details class="th-q"><summary>Why does the sound mellow over time?</summary><p>In this model harmonic <i>n</i> dies <i>n</i><sup>2</sup> times faster than the fundamental. After a while mostly <i>f</i><sub>1</sub> and a few low harmonics remain, so the timbre approaches a pure tone.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 16 (Waves I), sections on wave speed on a stretched string, standing waves and resonance. Timbre and musical sound: ch. 17 (Waves II).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>
