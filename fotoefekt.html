@@ -1,0 +1,1378 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Efekt fotoelektryczny</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: photocell bench. Vacuum tube on graph paper, transport bar below,
+   light/circuit/cathode controls on the right, formulas, plots and prompts underneath. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --acc:#0A6CD6; --acc-soft:#DCEAFB; --amber:#C77A2A; --violet:#6A4CFF; --ok:#13915A; --warn:#D2423A;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --acc:#4AA3FF; --acc-soft:#12304F; --amber:#D08A38; --violet:#9A86FF; --ok:#3CCB84; --warn:#F06A5F;
+    --on-accent:#06121F; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --acc:#4AA3FF; --acc-soft:#12304F; --amber:#D08A38; --violet:#9A86FF; --ok:#3CCB84; --warn:#F06A5F;
+  --on-accent:#06121F; --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1.05em; height:.66em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px; font-style:normal}
+.hud dd{margin:0; font-size:13.5px; min-width:7ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.hud dd.zero{color:var(--warn)}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-wave{width:22px; height:10px}
+.sw-el{width:9px; height:9px; border-radius:50%; background:var(--acc); box-shadow:0 0 6px var(--acc)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.canvas-box{position:relative; height:clamp(340px, 58vh, 600px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease; min-width:150px; justify-content:center}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.btn.sm{padding:4px 10px; font-size:12.5px}
+.btn i{font-family:var(--f-math); font-size:15px}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--c, var(--acc)); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+.bar .note{font-size:12px; color:var(--ink-3)}
+
+/* Classical comparison strip */
+.classic{border-top:1px solid var(--line); padding:12px 14px 14px; display:flex; flex-direction:column; gap:10px; background:var(--sunk)}
+.classic h3{margin:0; font-family:var(--f-display); font-weight:700; font-size:16px}
+.cgrid{display:grid; grid-template-columns:minmax(0,1.1fr) minmax(0,1fr) minmax(0,1fr); gap:0; font-size:13px; border:1px solid var(--line); border-radius:10px; overflow:hidden; background:var(--paper)}
+.cgrid > div{padding:7px 10px; border-top:1px solid var(--line); min-width:0}
+.cgrid > div:nth-child(-n+3){border-top:0; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); font-family:var(--f-mono)}
+.cgrid .w{color:var(--amber)}
+.cgrid .o{color:var(--acc); font-weight:500}
+.cgrid i{font-family:var(--f-math); font-size:14.5px}
+.cgrid b{font-family:var(--f-mono); font-weight:500}
+.cbar{display:flex; flex-direction:column; gap:4px; font-size:12.5px; color:var(--ink-2)}
+.cbar .track{height:8px; border-radius:4px; background:var(--paper); border:1px solid var(--line); overflow:hidden}
+.cbar .fill{height:100%; width:0; background:var(--amber)}
+.cbar small{color:var(--ink-3); font-size:11.5px}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .pills i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+.ctl .hint i{font-family:var(--f-math); font-size:13px}
+.ctl .row{display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+#lam::-webkit-slider-runnable-track{height:8px; border-radius:4px; background:var(--spec, var(--line))}
+#lam::-webkit-slider-thumb{margin-top:-5px; border-color:var(--ink)}
+#lam::-moz-range-track{height:8px; border-radius:4px; background:var(--spec, var(--line))}
+#lam::-moz-range-progress{background:transparent}
+#lam::-moz-range-thumb{border-color:var(--ink)}
+.bands{display:flex; font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3); letter-spacing:.04em}
+.bands span{text-align:center}
+#U::-webkit-slider-runnable-track{background:linear-gradient(to right, var(--line) 0 calc(min(var(--p), 50%)), var(--c) calc(min(var(--p), 50%)) calc(max(var(--p), 50%)), var(--line) calc(max(var(--p), 50%)))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.chips.metals{display:grid; grid-template-columns:repeat(3, minmax(0,1fr))}
+.chips.metals .chip .sym{font-family:var(--f-display); font-weight:700; font-size:15px; color:var(--ink)}
+.chips.presets{display:grid; grid-template-columns:repeat(2, minmax(0,1fr))}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.rcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.bad{color:var(--warn)}
+.eq .r.amb{color:var(--amber)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button i{font-family:var(--f-math); font-size:15px}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.clegend .ln{width:18px; height:0; border-top:2.5px solid}
+.clegend .dt{width:9px; height:9px; border-radius:50%}
+.chart-box{position:relative; height:260px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+.kfrow{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.fitres{font-family:var(--f-mono); font-size:13px; padding:8px 10px; border-radius:8px; background:var(--sunk); color:var(--ink)}
+.fitres i{font-family:var(--f-math); font-size:15px}
+.fitres .k{color:var(--amber)}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.try{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); text-align:left; cursor:pointer; color:var(--ink); transition:border-color .12s; width:100%}
+.try:hover{border-color:var(--acc)}
+.try .n{grid-row:span 2; width:26px; height:26px; border-radius:50%; background:var(--acc-soft); display:inline-flex; align-items:center; justify-content:center; font-family:var(--f-mono); font-size:12.5px; color:var(--acc); font-weight:500}
+.try b{font-family:var(--f-display); font-weight:700; font-size:15.5px}
+.try span{font-size:13px; color:var(--ink-2); line-height:1.45}
+.try span i{font-family:var(--f-math); font-size:14.5px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 3.5; max-width:100%}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .fire{min-width:0}
+  .cgrid{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .cgrid > div:nth-child(3n+1){grid-column:1 / -1; background:var(--sunk); font-weight:500}
+  .cgrid > div:nth-child(1){display:none}
+  .cgrid > div:nth-child(3n+2), .cgrid > div:nth-child(3n+3){border-top:0}
+  .cgrid > div:nth-child(2), .cgrid > div:nth-child(3){border-top:0}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .try{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang','magnes-lang','falaem-lang','browna-lang','foto-lang','wodor-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka kwantowa · fotony</span>
+      <h1>
+        <svg viewBox="0 0 66 40" aria-hidden="true"><path d="M2 8 q3 -5 6 0 t6 0 t6 0 t6 0 t6 0" fill="none" stroke="var(--violet)" stroke-width="3" stroke-linecap="round" transform="rotate(28 2 8)"/><rect x="38" y="4" width="6" height="34" rx="1.5" fill="var(--ink-3)"/><circle cx="52" cy="16" r="3.6" fill="var(--acc)"/><path d="M47 16h-5" stroke="var(--acc)" stroke-width="2" stroke-linecap="round" opacity=".5"/><circle cx="60" cy="27" r="3.6" fill="var(--acc)"/></svg>
+        <span data-i18n="title">Efekt fotoelektryczny</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Oświetl metal w próżniowej fotokomórce.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>λ</dt><dd id="hud-lam"></dd></div>
+            <div><dt>f</dt><dd id="hud-f"></dd></div>
+            <div><dt>hf</dt><dd id="hud-E"></dd></div>
+            <div><dt>K<sub>max</sub></dt><dd id="hud-K"></dd></div>
+            <div><dt id="hud-us-dt">U<sub>h</sub></dt><dd id="hud-Us"></dd></div>
+            <div><dt>I</dt><dd id="hud-I"></dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" data-i18n-aria="sceneAria" aria-label="Animacja fotokomórki"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="play">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="play-ico"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="play-lbl">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-energy" aria-pressed="false" style="--c:var(--ok)" data-i18n="tgEnergy">Bilans energii</button>
+            <button type="button" class="tg" id="tg-classic" aria-pressed="false" style="--c:var(--amber)" data-i18n="tgClassic">Przewidywanie klasyczne</button>
+          </div>
+          <span class="spacer"></span>
+          <span class="note" data-i18n="slowmo">Animacja w zwolnionym tempie</span>
+        </div>
+        <div class="classic" id="classic" hidden>
+          <h3 data-i18n="clTitle">Teoria falowa a pomiar</h3>
+          <div class="cgrid" id="cgrid"></div>
+          <div class="cbar">
+            <span data-i18n="clBar">Energia zebrana przez jeden atom według teorii falowej</span>
+            <div class="track"><div class="fill" id="cl-fill"></div></div>
+            <small id="cl-prog"></small>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="panelAria" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gLight">Światło</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="lam" data-i18n-html="lLam">Długość fali <i>λ</i></label><output id="lam-out" for="lam"></output></div>
+          <input type="range" id="lam" min="100" max="850" step="1" value="405">
+          <div class="bands" aria-hidden="true"><span style="width:37.3%" data-i18n="bUV">UV</span><span style="width:53.4%" data-i18n="bVis">widzialne</span><span style="width:9.3%" data-i18n="bIR">IR</span></div>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pF">częstotliwość f</small><span id="pill-f">—</span></div>
+          <div class="pill"><small data-i18n="pE">energia fotonu</small><span id="pill-E">—</span></div>
+          <div class="pill"><small data-i18n="pL0">próg λ₀ metalu</small><span id="pill-l0">—</span></div>
+        </div>
+        <div class="ctl" style="--c:var(--amber)">
+          <div class="ctl-head"><label for="phi" data-i18n-html="lPhi">Natężenie <i>Φ</i></label><output id="phi-out" for="phi"></output></div>
+          <input type="range" id="phi" min="0.1" max="10" step="0.1" value="4">
+          <span class="hint" data-i18n="phiHint">Strumień fotonów padających na katodę.</span>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gCirc">Obwód</h3>
+        <div class="ctl" style="--c:var(--acc)">
+          <div class="ctl-head"><label for="U" data-i18n-html="lU">Napięcie <i>U</i></label><output id="U-out" for="U"></output></div>
+          <input type="range" id="U" min="-5" max="5" step="0.01" value="0">
+          <div class="row"><span class="hint" data-i18n-html="uHint">− hamuje, + przyspiesza</span><button type="button" class="btn sm" id="set-stop" data-i18n-html="setStop">Ustaw U = −U_h</button></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gMetal">Katoda</h3>
+        <div class="chips metals" id="metals"></div>
+        <span class="ctl"><span class="hint" data-i18n-html="metalHint">Typowe prace wyjścia.</span></span>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gPre">Presety</h3>
+        <div class="chips presets" id="presets"></div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <div class="rcol">
+      <section class="card charts">
+        <div class="sec-h"><h2 data-i18n="charts">Wykresy</h2></div>
+        <div class="tabs" role="tablist" id="tabs">
+          <button type="button" role="tab" data-tab="iu" aria-selected="true" data-i18n-html="tabIU">Prąd <i>I</i>(<i>U</i>)</button>
+          <button type="button" role="tab" data-tab="kf" aria-selected="false" data-i18n-html="tabKF">Prosta Einsteina</button>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart" data-i18n-aria="chartAria" aria-label="Wykres"></canvas></div>
+        <div class="kfrow" id="kfrow" hidden>
+          <button type="button" class="tg" id="tg-fit" aria-pressed="false" style="--c:var(--amber)" data-i18n="fit">Dopasuj prostą</button>
+          <button type="button" class="btn sm" id="clear-pts" data-i18n="clearPts">Wyczyść punkty</button>
+        </div>
+        <div class="fitres" id="fitres" hidden></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <div id="trylist" style="display:flex;flex-direction:column;gap:8px"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+/* ---------- constants (SI, CODATA exact values) ---------- */
+const H = 6.62607015e-34, C = 299792458, QE = 1.602176634e-19;
+const HC = H * C / QE * 1e9;          // 1239.84 eV·nm
+const H_EV = H / QE;                  // 4.1357e-15 eV·s = h/e in V·s
+const ETA = 0.01;                     // assumed quantum yield (electrons per photon)
+const I_FS = 20;                      // ammeter full scale, nA
+const SPOT = 1e-4, SIGMA = 1e-20;     // classical estimate: 1 cm² spot, atom cross-section (0.1 nm)²
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka kwantowa · fotony', title:'Efekt fotoelektryczny',
+    lede:'Oświetl metal w próżniowej fotokomórce. Zmieniaj barwę i natężenie światła, zmierz napięcie hamowania i przekonaj się, że energia światła przychodzi porcjami hf.',
+    sceneAria:'Animacja fotokomórki: lampa, katoda, anoda, źródło napięcia i amperomierz', panelAria:'Ustawienia', chartAria:'Wykres',
+    gLight:'Światło', lLam:'Długość fali <i>λ</i>', bUV:'UV', bVis:'widzialne', bIR:'IR',
+    pF:'częstotliwość f', pE:'energia fotonu', pL0:'próg λ₀ metalu',
+    lPhi:'Natężenie <i>Φ</i>', phiHint:'Strumień fotonów padających na katodę.', perS:'fotonów/s',
+    gCirc:'Obwód', lU:'Napięcie <i>U</i> (anoda względem katody)', uHint:'− hamuje elektrony, + przyspiesza',
+    setStop:'Ustaw <i>U</i> = −<i>U</i><sub>h</sub>',
+    gMetal:'Katoda', metalHint:'Typowe prace wyjścia <i>W</i>; rzeczywiste wartości zależą od czystości i stanu powierzchni.',
+    Na:'Sód', K:'Potas', Ca:'Wapń', Zn:'Cynk', Cu:'Miedź', Pt:'Platyna',
+    gPre:'Presety', pre1:'Sód · fiolet', pre2:'Sód · zieleń', pre3:'Cynk · lampa Hg', pre4:'Platyna · UV',
+    kbd:'spacja', start:'Start', pause:'Pauza', resume:'Wznów', reset:'Od nowa',
+    tgEnergy:'Bilans energii', tgClassic:'Przewidywanie klasyczne', slowmo:'Animacja w zwolnionym tempie',
+    sIdle:'gotowy', sRun:'lampa świeci', sPause:'pauza',
+    lgPhoton:'foton', lgElectron:'elektron',
+    cvCathode:'katoda', cvAnode:'anoda', cvWindow:'okno kwarcowe', cvVacuum:'próżnia', cvUV:'UV, niewidzialne', cvIR:'podczerwień',
+    cvNoEmit:'hf < W: brak emisji', cvRetard:'pole hamuje elektrony', cvAccel:'pole przyspiesza elektrony', cvSource:'źródło napięcia', cvAmm:'amperomierz',
+    cvOff:'Naciśnij Start, by włączyć lampę',
+    enTitle:'Bilans energii', enVac:'poziom próżni', enFermi:'najwyższy zajęty poziom', enShort:'za mało',
+    clTitle:'Teoria falowa a pomiar', clH0:'Pytanie', clH1:'Fala klasyczna', clH2:'Pomiar',
+    clR1:'Opóźnienie emisji przy tym natężeniu', clR1o:'natychmiast (< 10⁻⁹ s)',
+    clR2:'Od czego zależy <i>K</i><sub>max</sub>', clR2w:'rośnie z natężeniem <i>Φ</i>', clR2o:'tylko od <i>f</i>: <i>hf</i> − <i>W</i>',
+    clR3:'Światło o <i>f</i> < <i>f</i><sub>0</sub>', clR3w:'po odczekaniu też wybije elektrony', clR3o:'nie wybija ani jednego',
+    clBar:'Energia zebrana przez jeden atom według teorii falowej (potrzeba W)',
+    clProg:'Szacunek: plamka 1 cm², przekrój atomu (0,1 nm)², t = W/(S·σ). Lampa świeci od', clOf:'z',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżących ustawień. hc ≈ 1240 eV·nm, h ≈ 6,626·10⁻³⁴ J·s.',
+    fPhoton:'Energia fotonu', fEin:'Równanie Einsteina', fStop:'Napięcie hamowania', fThr:'Próg fotoelektryczny', fSat:'Prąd nasycenia', fLine:'Prosta Einsteina',
+    nPhoton:'Energia przychodzi porcjami: jeden foton oddaje całą energię jednemu elektronowi.',
+    nEinNo:'<i>hf</i> < <i>W</i>: foton nie może wyrwać elektronu, niezależnie od natężenia.',
+    nEin:'Elektron z najwyższego zajętego poziomu zużywa <i>W</i> na wyjście z metalu, reszta to energia kinetyczna. Głębiej położone elektrony wychodzą wolniej.',
+    nStop:'Przy <i>U</i> = −<i>U</i><sub>h</sub> nawet najszybsze elektrony zawracają tuż przed anodą i prąd spada do zera.',
+    nThr:'Poniżej <i>f</i><sub>0</sub> (powyżej <i>λ</i><sub>0</sub>) emisji nie ma, choćby światło było bardzo jasne.',
+    nSat:'Model: wydajność kwantowa <i>η</i> = 1% (stała), czyli co setny foton wybija elektron. Prąd nasycenia jest proporcjonalny do natężenia, a <i>U</i><sub>h</sub> od niego nie zależy.',
+    nLine:'Nachylenie prostej <i>U</i><sub>h</sub>(<i>f</i>) jest takie samo dla każdego metalu: to <i>h</i>/<i>e</i>. Metal zmienia tylko przesunięcie.',
+    noEmit:'brak emisji',
+    charts:'Wykresy', tabIU:'Prąd <i>I</i>(<i>U</i>)', tabKF:'Prosta Einsteina', fit:'Dopasuj prostą', clearPts:'Wyczyść punkty',
+    lgNow:'teraz', lgGhost:'poprzednio', lgClassic:'teoria falowa (jakościowo)', lgPts:'pomiary', lgLine:'K_max = hf − W', lgFit:'dopasowanie', lgCur:'bieżący punkt',
+    cnoteIU:'Elektrony wychodzą z energiami od 0 do <i>K</i><sub>max</sub> (rozkład równomierny, kierunki kosinusowe; liczy się składowa prędkości w stronę anody), więc prąd maleje płynnie aż do <i>U</i> = −<i>U</i><sub>h</sub>. Dla <i>U</i> > 0 do anody docierają wszystkie: prąd nasycenia.',
+    cnoteKF:'Każda zmiana <i>λ</i> dodaje punkt pomiarowy dla bieżącego metalu (szum ±0,015 V). Nachylenie prostej to <i>h</i>/<i>e</i>, przecięcie z osią pionową to −<i>W</i>/<i>e</i>, z osią poziomą <i>f</i><sub>0</sub>.',
+    fitNeed:'Potrzeba co najmniej dwóch punktów powyżej progu o różnych <i>λ</i>. Przesuń suwak <i>λ</i>.',
+    fitPts:'pkt', fitErr:'błąd', axU:'U [V]', axI:'I [nA]', axF:'f [10¹⁴ Hz]', axK:'K_max [eV]',
+    tries:'Spróbuj',
+    t1h:'Jasno, ale za czerwono', t1b:'Sód i światło 650 nm na pełnej mocy. Foton ma tylko 1,91 eV, mniej niż <i>W</i> = 2,28 eV, więc prądu nie ma, choćbyś podkręcał natężenie.',
+    t2h:'Ciemno, ale natychmiast', t2b:'Najsłabsze światło fioletowe. Pierwszy foton od razu wybija elektron, a teoria falowa kazałaby czekać kwadranse (porównanie się otworzy).',
+    t3h:'Podwój natężenie', t3b:'Krzywa <i>I</i>(<i>U</i>) przed i po: prąd nasycenia rośnie dwukrotnie, a napięcie hamowania zostaje dokładnie takie samo.',
+    t4h:'Zmierz stałą Plancka', t4b:'Dwa pomiary <i>U</i><sub>h</sub> na sodzie, dla 300 nm i 450 nm. Nachylenie prostej przez te punkty daje <i>h</i> ≈ 6,6·10⁻³⁴ J·s.'
+  },
+  en: {
+    eyebrow:'Quantum physics · photons', title:'Photoelectric effect',
+    lede:'Shine light on a metal inside a vacuum phototube. Change the colour and brightness, measure the stopping voltage and see that light delivers its energy in packets of hf.',
+    sceneAria:'Phototube animation: lamp, cathode, anode, voltage source and ammeter', panelAria:'Settings', chartAria:'Chart',
+    gLight:'Light', lLam:'Wavelength <i>λ</i>', bUV:'UV', bVis:'visible', bIR:'IR',
+    pF:'frequency f', pE:'photon energy', pL0:'metal threshold λ₀',
+    lPhi:'Intensity <i>Φ</i>', phiHint:'Rate of photons striking the cathode.', perS:'photons/s',
+    gCirc:'Circuit', lU:'Voltage <i>U</i> (anode relative to cathode)', uHint:'− slows electrons, + speeds them up',
+    setStop:'Set <i>U</i> = −<i>U</i><sub>stop</sub>',
+    gMetal:'Cathode', metalHint:'Typical work functions <i>W</i>; real values depend on surface purity and condition.',
+    Na:'Sodium', K:'Potassium', Ca:'Calcium', Zn:'Zinc', Cu:'Copper', Pt:'Platinum',
+    gPre:'Presets', pre1:'Sodium · violet', pre2:'Sodium · green', pre3:'Zinc · Hg lamp', pre4:'Platinum · UV',
+    kbd:'space', start:'Start', pause:'Pause', resume:'Resume', reset:'Reset',
+    tgEnergy:'Energy balance', tgClassic:'Classical prediction', slowmo:'Animation in slow motion',
+    sIdle:'ready', sRun:'lamp on', sPause:'paused',
+    lgPhoton:'photon', lgElectron:'electron',
+    cvCathode:'cathode', cvAnode:'anode', cvWindow:'quartz window', cvVacuum:'vacuum', cvUV:'UV, invisible', cvIR:'infrared',
+    cvNoEmit:'hf < W: no emission', cvRetard:'field slows electrons', cvAccel:'field speeds electrons up', cvSource:'voltage source', cvAmm:'ammeter',
+    cvOff:'Press Start to switch the lamp on',
+    enTitle:'Energy balance', enVac:'vacuum level', enFermi:'highest occupied level', enShort:'too little',
+    clTitle:'Wave theory versus measurement', clH0:'Question', clH1:'Classical wave', clH2:'Measurement',
+    clR1:'Emission delay at this intensity', clR1o:'instant (< 10⁻⁹ s)',
+    clR2:'What sets <i>K</i><sub>max</sub>', clR2w:'grows with intensity <i>Φ</i>', clR2o:'only <i>f</i>: <i>hf</i> − <i>W</i>',
+    clR3:'Light with <i>f</i> < <i>f</i><sub>0</sub>', clR3w:'ejects electrons after a wait', clR3o:'never ejects a single one',
+    clBar:'Energy collected by one atom according to wave theory (needs W)',
+    clProg:'Estimate: 1 cm² spot, atomic cross-section (0.1 nm)², t = W/(S·σ). Lamp on for', clOf:'of',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current settings. hc ≈ 1240 eV·nm, h ≈ 6.626·10⁻³⁴ J·s.',
+    fPhoton:'Photon energy', fEin:'Einstein equation', fStop:'Stopping voltage', fThr:'Photoelectric threshold', fSat:'Saturation current', fLine:'Einstein line',
+    nPhoton:'Energy comes in packets: one photon gives all its energy to one electron.',
+    nEinNo:'<i>hf</i> < <i>W</i>: a photon cannot free an electron, however bright the light.',
+    nEin:'An electron from the highest occupied level spends <i>W</i> to leave the metal; the rest is kinetic energy. Deeper electrons leave more slowly.',
+    nStop:'At <i>U</i> = −<i>U</i><sub>stop</sub> even the fastest electrons turn back just short of the anode and the current drops to zero.',
+    nThr:'Below <i>f</i><sub>0</sub> (above <i>λ</i><sub>0</sub>) there is no emission, however bright the light.',
+    nSat:'Model: quantum yield <i>η</i> = 1% (constant), so one photon in a hundred frees an electron. The saturation current is proportional to intensity, while <i>U</i><sub>stop</sub> does not depend on it.',
+    nLine:'The slope of <i>U</i><sub>stop</sub>(<i>f</i>) is the same for every metal: it is <i>h</i>/<i>e</i>. The metal only shifts the line.',
+    noEmit:'no emission',
+    charts:'Charts', tabIU:'Current <i>I</i>(<i>U</i>)', tabKF:'Einstein line', fit:'Fit a line', clearPts:'Clear points',
+    lgNow:'now', lgGhost:'before', lgClassic:'wave theory (qualitative)', lgPts:'measurements', lgLine:'K_max = hf − W', lgFit:'fit', lgCur:'current point',
+    cnoteIU:'Electrons leave with energies from 0 to <i>K</i><sub>max</sub> (uniform spread, cosine directions; what counts is the velocity component towards the anode), so the current falls smoothly down to <i>U</i> = −<i>U</i><sub>stop</sub>. For <i>U</i> > 0 all of them reach the anode: saturation current.',
+    cnoteKF:'Every change of <i>λ</i> adds a measured point for the current metal (noise ±0.015 V). The slope is <i>h</i>/<i>e</i>, the vertical intercept is −<i>W</i>/<i>e</i>, the horizontal one is <i>f</i><sub>0</sub>.',
+    fitNeed:'Needs at least two points above threshold at different <i>λ</i>. Move the <i>λ</i> slider.',
+    fitPts:'pts', fitErr:'error', axU:'U [V]', axI:'I [nA]', axF:'f [10¹⁴ Hz]', axK:'K_max [eV]',
+    tries:'Try this',
+    t1h:'Bright but too red', t1b:'Sodium and 650 nm light at full power. Each photon carries only 1.91 eV, less than <i>W</i> = 2.28 eV, so there is no current however much you raise the intensity.',
+    t2h:'Dim but instant', t2b:'The weakest violet light. The very first photon frees an electron at once, while wave theory would make you wait many minutes (the comparison opens).',
+    t3h:'Double the intensity', t3b:'The <i>I</i>(<i>U</i>) curve before and after: the saturation current doubles, the stopping voltage stays exactly the same.',
+    t4h:'Measure Planck’s constant', t4b:'Two stopping voltages on sodium, at 300 nm and 450 nm. The slope of the line through them gives <i>h</i> ≈ 6.6·10⁻³⁴ J·s.'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('foto-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+const SUB = () => (lang === 'pl' ? 'h' : 'stop');
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUP = (n) => String(n).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'[+c] ?? (c === '-' ? '⁻' : c)).join('');
+function fsci(x, dec = 2) {
+  if (!isFinite(x) || x === 0) return fmt(0, 0);
+  const e = Math.floor(Math.log10(Math.abs(x)) + 1e-12); let m = x / Math.pow(10, e);
+  return `${fmt(m, dec)}·10${SUP(e)}`;
+}
+const sgn = (x, dec = 2) => (x > 0.5 * Math.pow(10, -dec) ? '+' : '') + fmt(x, dec);
+function fdur(s) {
+  if (s < 1) return lang === 'pl' ? `${fmt(s * 1000, 0)} ms` : `${fmt(s * 1000, 0)} ms`;
+  if (s < 120) return `${fmt(s, 0)} s`;
+  if (s < 7200) return `${fmt(s / 60, 0)} min`;
+  if (s < 172800) return `${fmt(s / 3600, 1)} h`;
+  return lang === 'pl' ? `${fmt(s / 86400, 0)} dni` : `${fmt(s / 86400, 0)} days`;
+}
+
+/* ---------- materials, presets ---------- */
+const METALS = {
+  Na: { W: 2.28, tint: [196, 200, 206] }, K: { W: 2.30, tint: [190, 196, 204] }, Ca: { W: 2.87, tint: [178, 184, 190] },
+  Zn: { W: 4.30, tint: [160, 172, 186] }, Cu: { W: 4.70, tint: [200, 120, 76] }, Pt: { W: 5.65, tint: [210, 212, 216] }
+};
+const PRESETS = [
+  { k: 'pre1', metal: 'Na', lam: 405, phi: 4, U: 0, small: '405 nm' },
+  { k: 'pre2', metal: 'Na', lam: 532, phi: 6, U: 0, small: '532 nm' },
+  { k: 'pre3', metal: 'Zn', lam: 254, phi: 4, U: 0, small: '254 nm' },
+  { k: 'pre4', metal: 'Pt', lam: 200, phi: 4, U: 0, small: '200 nm' }
+];
+
+/* ---------- state ---------- */
+const P = { lam: 405, phi: 4, U: 0, metal: 'Na' };
+const S = { run: 'idle', energy: false, classic: false, fit: false, tab: 'iu', tOn: 0, ghost: null, pts: { Na: [], K: [], Ca: [], Zn: [], Cu: [], Pt: [] } };
+const D = {};   // derived
+function derive() {
+  D.E = HC / P.lam;                         // eV
+  D.f = C / (P.lam * 1e-9);                 // Hz
+  D.W = METALS[P.metal].W;
+  D.K = D.E - D.W;                          // eV (negative: below threshold)
+  D.emit = D.K > 0;
+  D.Us = D.emit ? D.K : 0;                  // V
+  D.f0 = D.W / H_EV;
+  D.l0 = HC / D.W;
+  D.Phi = P.phi * 1e12;
+  D.Isat = D.emit ? ETA * QE * D.Phi * 1e9 : 0;   // nA
+  D.I = current(P.U, D.Us, D.Isat);
+  // classical estimate: irradiance S = Φ·E/A, power on an atom S·σ, time W/(S·σ)
+  D.Sirr = D.Phi * D.E * QE / SPOT;
+  D.tcl = D.W * QE / (D.Sirr * SIGMA);
+}
+// fraction of emitted electrons reaching the anode. K uniform on [0,Kmax], cos²θ uniform (Lambert):
+// P(K cos²θ > e|U|) = 1 − s + s ln s with s = |U|/U_stop.
+function frac(U, Us) {
+  if (Us <= 0) return 0;
+  if (U >= 0) return 1;
+  const s = -U / Us; if (s >= 1) return 0;
+  return 1 - s + s * Math.log(s);
+}
+const current = (U, Us, Isat) => Isat * frac(U, Us);
+
+/* ---------- colour of light ---------- */
+function wlRGB(l) {
+  let r = 0, g = 0, b = 0;
+  if (l < 380) return [138, 92, 255];
+  if (l > 780) return [150, 20, 20];
+  if (l < 440) { r = -(l - 440) / 60; b = 1; }
+  else if (l < 490) { g = (l - 440) / 50; b = 1; }
+  else if (l < 510) { g = 1; b = -(l - 510) / 20; }
+  else if (l < 580) { r = (l - 510) / 70; g = 1; }
+  else if (l < 645) { r = 1; g = -(l - 645) / 65; }
+  else r = 1;
+  const f = l < 420 ? 0.35 + 0.65 * (l - 380) / 40 : l > 700 ? 0.35 + 0.65 * (780 - l) / 80 : 1;
+  return [r, g, b].map(v => Math.round(255 * Math.pow(v * f, 0.8)));
+}
+const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+// colour used for drawing strokes: darken bright yellows on light paper
+function lightInk(l) {
+  const c = wlRGB(l);
+  if (!isDark()) { const lum = 0.3 * c[0] + 0.59 * c[1] + 0.11 * c[2]; if (lum > 150) { const k = 150 / lum; return c.map(v => Math.round(v * k)); } }
+  return c;
+}
+const isDark = () => getComputedStyle(document.documentElement).getPropertyValue('--paper').trim().toLowerCase() !== '#fbfcfd';
+function spectrumGradient() {
+  const st = [];
+  for (let l = 100; l <= 850; l += 10) {
+    const c = wlRGB(l), p = (l - 100) / 750 * 100;
+    const a = l < 380 ? 0.25 + 0.5 * (l - 100) / 280 : l > 780 ? 0.5 : 1;
+    st.push(`${rgba(c, a.toFixed(2))} ${p.toFixed(1)}%`);
+  }
+  return `linear-gradient(to right, ${st.join(', ')})`;
+}
+
+/* ---------- canvas setup ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 450, dpr = 1, dirty = true, col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'amber', 'violet', 'ok', 'warn'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+function hexRGB(hex) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+const withAlpha = (hex, a) => rgba(hexRGB(hex), a);
+
+/* virtual 1000 × 560 layout, scaled to fit */
+const VW = 1000, VH = 560;
+const G = { xc: 262, xa: 742, yTop: 150, yBot: 330, tubeL: 150, tubeR: 850, tubeT: 92, tubeB: 388, wire: 478,
+  lamp: { x: 560, y: 36 }, P1: [522, 58], P2: [556, 70], Q1: [262, 176], Q2: [262, 306] };
+let K = 1, OX = 0, OY = 0;
+const X = (v) => OX + v * K, Y = (v) => OY + v * K;
+const fs = (n) => Math.max(10, Math.round(n * Math.min(1.05, Math.max(0.7, K * 1.12))));
+function layout() {
+  // content spans x ≈ 130..870 of the virtual frame; crop the empty margins
+  const x0 = 130, x1 = 870;
+  K = Math.min(cw / (x1 - x0), ch / VH);
+  OX = (cw - (x1 - x0) * K) / 2 - x0 * K; OY = (ch - VH * K) / 2;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function rrect(x, y, w, h, r) { const c = ctx; c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r); c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath(); }
+
+/* ---------- particles ---------- */
+const photons = [], electrons = [], flashes = [];
+let nextPhoton = 0, simT = 0;
+const VSC = 230;             // virtual units per second for a 1 eV electron
+const PH_SPEED = 560;        // photon speed in virtual units per second (slow motion)
+const EMIT_P = 0.55;         // fraction of drawn above-threshold photons that free a drawn electron
+const photonRate = () => 5 * P.phi;   // drawn photons per second
+function spawnPhoton() {
+  const u = Math.random(), v = 0.06 + 0.88 * Math.random();
+  const a = [G.P1[0] + (G.P2[0] - G.P1[0]) * u, G.P1[1] + (G.P2[1] - G.P1[1]) * u];
+  const b = [G.Q1[0], G.Q1[1] + (G.Q2[1] - G.Q1[1]) * v];
+  const L = Math.hypot(b[0] - a[0], b[1] - a[1]);
+  photons.push({ a, b, L, s: 0, ph: Math.random() * 6.28 });
+}
+function photonArrives(p) {
+  const y = p.b[1];
+  if (D.emit && Math.random() < EMIT_P) {
+    const Ke = D.K * Math.random();          // uniform 0..Kmax
+    const mu2 = Math.random();               // Lambertian: cos²θ uniform
+    const Kn = Ke * mu2, Kt = Ke - Kn;
+    electrons.push({ x: G.xc + 2, y0: y, y, vx: VSC * Math.sqrt(Kn), vy: (Math.random() < 0.5 ? -1 : 1) * VSC * Math.sqrt(Kt) * 0.3, t: 0, life: 1, out: false });
+    flashes.push({ x: G.xc, y, r: 3, life: 1, kind: 'emit' });
+  } else {
+    flashes.push({ x: G.xc, y, r: 2, life: 0.7, kind: 'abs' });
+  }
+}
+function stepParticles(dt) {
+  simT += dt;
+  if (S.run === 'run') {
+    S.tOn += dt;
+    while (simT >= nextPhoton) {
+      spawnPhoton();
+      nextPhoton += -Math.log(1 - Math.random()) / photonRate();
+      if (nextPhoton < simT) nextPhoton = simT + 0.001;
+    }
+  }
+  for (let i = photons.length - 1; i >= 0; i--) {
+    const p = photons[i]; p.s += PH_SPEED * dt / p.L;
+    if (p.s >= 1) { photons.splice(i, 1); photonArrives(p); }
+  }
+  const D_ = G.xa - G.xc, acc = VSC * VSC / 2 * P.U / D_;   // e U / (m d) in these units
+  const A = 26;
+  for (let i = electrons.length - 1; i >= 0; i--) {
+    const e = electrons[i];
+    if (e.out) { e.life -= dt * 3; if (e.life <= 0) electrons.splice(i, 1); continue; }
+    e.t += dt;
+    e.vx += acc * dt; e.x += e.vx * dt;   // semi-implicit Euler, constant field
+    e.y = e.y0 + A * Math.tanh(e.vy * e.t / A);
+    if (e.x >= G.xa) { e.x = G.xa; e.out = true; flashes.push({ x: G.xa, y: e.y, r: 3, life: 1, kind: 'hit' }); }
+    else if (e.x <= G.xc && e.t > 0.05) { e.x = G.xc; e.out = true; flashes.push({ x: G.xc, y: e.y, r: 2, life: 0.6, kind: 'back' }); }
+    else if (e.t > 40) e.out = true;
+  }
+  if (electrons.length > 400) electrons.splice(0, electrons.length - 400);
+  for (let i = flashes.length - 1; i >= 0; i--) { const f = flashes[i]; f.r += 40 * dt; f.life -= dt * 2.2; if (f.life <= 0) flashes.splice(i, 1); }
+}
+
+/* ---------- drawing ---------- */
+let needle = 0;
+function drawScene(now) {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  layout();
+  // graph paper
+  const step = 20 * K, major = 100 * K;
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.beginPath();
+  for (let x = OX % step; x < cw; x += step) { c.moveTo(Math.round(x) + 0.5, 0); c.lineTo(Math.round(x) + 0.5, ch); }
+  for (let y = OY % step; y < ch; y += step) { c.moveTo(0, Math.round(y) + 0.5); c.lineTo(cw, Math.round(y) + 0.5); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let x = OX % major; x < cw; x += major) { c.moveTo(Math.round(x) + 0.5, 0); c.lineTo(Math.round(x) + 0.5, ch); }
+  for (let y = OY % major; y < ch; y += major) { c.moveTo(0, Math.round(y) + 0.5); c.lineTo(cw, Math.round(y) + 0.5); }
+  c.stroke();
+
+  const lc = wlRGB(P.lam), li = lightInk(P.lam);
+  const lampOn = S.run !== 'idle';
+  const uv = P.lam < 380, ir = P.lam > 780;
+
+  // circuit wires
+  drawCircuit();
+
+  // tube glass
+  const tr_ = (G.tubeB - G.tubeT) / 2;
+  rrect(X(G.tubeL), Y(G.tubeT), (G.tubeR - G.tubeL) * K, (G.tubeB - G.tubeT) * K, tr_ * K);
+  c.fillStyle = isDark() ? 'rgba(120,160,200,.05)' : 'rgba(120,160,200,.07)'; c.fill();
+  c.lineWidth = 2; c.strokeStyle = col.ink3; c.stroke();
+  // glass highlight
+  c.save(); c.strokeStyle = isDark() ? 'rgba(255,255,255,.08)' : 'rgba(255,255,255,.9)'; c.lineWidth = 4 * K;
+  c.beginPath(); c.moveTo(X(G.tubeL + tr_ * 0.9), Y(G.tubeT + 12)); c.lineTo(X(G.tubeR - tr_ * 0.9), Y(G.tubeT + 12)); c.stroke(); c.restore();
+  halo(tr('cvVacuum'), X(560), Y(G.tubeB - 18), col.ink3, `italic ${fs(12)}px ${FONT_BODY}`, 'center');
+
+  // quartz window on top
+  c.save(); c.fillStyle = isDark() ? 'rgba(160,200,255,.18)' : 'rgba(150,190,230,.35)'; c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+  c.fillRect(X(428), Y(G.tubeT - 5), 112 * K, 10 * K); c.strokeRect(X(428), Y(G.tubeT - 5), 112 * K, 10 * K); c.restore();
+  halo(tr('cvWindow'), X(548), Y(G.tubeT - 14), col.ink3, `${fs(11)}px ${FONT_BODY}`, 'left');
+
+  // field chevrons
+  if (Math.abs(P.U) > 0.02) {
+    const dir = P.U > 0 ? 1 : -1, a = Math.min(0.5, 0.12 + Math.abs(P.U) * 0.07);
+    c.save(); c.strokeStyle = withAlpha(P.U > 0 ? col.acc : col.warn, a); c.lineWidth = 1.6 * Math.max(0.7, K); c.lineCap = 'round'; c.lineJoin = 'round';
+    for (let gx = 330; gx <= 690; gx += 60) for (const gy of [196, 240, 284]) {
+      const x0 = X(gx), y0 = Y(gy), w = 6 * K;
+      c.beginPath(); c.moveTo(x0 - dir * w, y0 - w * 1.2); c.lineTo(x0 + dir * w, y0); c.lineTo(x0 - dir * w, y0 + w * 1.2); c.stroke();
+    }
+    c.restore();
+    halo(tr(P.U > 0 ? 'cvAccel' : 'cvRetard'), X(500), Y(G.tubeT + 32), P.U > 0 ? col.acc : col.warn, `500 ${fs(12)}px ${FONT_BODY}`, 'center');
+  }
+
+  // light beam
+  {
+    const a = lampOn ? (uv || ir ? 0.22 : 0.3) : 0.12;
+    const g = c.createLinearGradient(X(G.P1[0]), Y(G.P1[1]), X(G.Q1[0]), Y(G.Q2[1]));
+    g.addColorStop(0, rgba(lc, a * 1.4)); g.addColorStop(1, rgba(lc, a * 0.6));
+    c.save(); c.beginPath(); c.moveTo(X(G.P1[0]), Y(G.P1[1])); c.lineTo(X(G.P2[0]), Y(G.P2[1])); c.lineTo(X(G.Q2[0]), Y(G.Q2[1])); c.lineTo(X(G.Q1[0]), Y(G.Q1[1])); c.closePath();
+    c.fillStyle = g; c.fill();
+    if (uv || ir) { c.setLineDash([5, 5]); c.strokeStyle = rgba(li, lampOn ? 0.6 : 0.3); c.lineWidth = 1; c.stroke(); }
+    c.restore();
+  }
+
+  // cathode
+  {
+    const t = METALS[P.metal].tint, dark = isDark();
+    const g = c.createLinearGradient(X(G.xc - 16), 0, X(G.xc), 0);
+    g.addColorStop(0, rgba(t.map(v => v * (dark ? 0.45 : 0.6)), 1)); g.addColorStop(0.6, rgba(t.map(v => Math.min(255, v * (dark ? 0.85 : 1.08))), 1)); g.addColorStop(1, rgba(t.map(v => v * (dark ? 0.6 : 0.82)), 1));
+    c.fillStyle = g; c.fillRect(X(G.xc - 16), Y(G.yTop - 10), 16 * K, (G.yBot - G.yTop + 20) * K);
+    c.strokeStyle = col.ink2; c.lineWidth = 1.2; c.strokeRect(X(G.xc - 16), Y(G.yTop - 10), 16 * K, (G.yBot - G.yTop + 20) * K);
+    // lead
+    c.strokeStyle = col.ink2; c.lineWidth = 2; c.beginPath(); c.moveTo(X(G.xc - 8), Y(G.yBot + 10)); c.lineTo(X(G.xc - 8), Y(G.tubeB + 2)); c.stroke();
+    halo(tr('cvCathode'), X(G.xc - 8), Y(G.yTop - 26), col.ink2, `${fs(12)}px ${FONT_BODY}`, 'center');
+    halo(`${P.metal}  W = ${fmt(D.W, 2)} eV`, X(G.xc + 8), Y(G.yBot + 26), col.ink, `600 ${fs(12)}px ${FONT_MONO}`, 'left');
+  }
+  // anode
+  {
+    c.fillStyle = col.ink2; c.fillRect(X(G.xa), Y(G.yTop - 10), 10 * K, (G.yBot - G.yTop + 20) * K);
+    c.strokeStyle = col.ink2; c.lineWidth = 2; c.beginPath(); c.moveTo(X(G.xa + 5), Y(G.yBot + 10)); c.lineTo(X(G.xa + 5), Y(G.tubeB + 2)); c.stroke();
+    halo(tr('cvAnode'), X(G.xa + 5), Y(G.yTop - 26), col.ink2, `${fs(12)}px ${FONT_BODY}`, 'center');
+    const pol = P.U > 0.005 ? '+' : P.U < -0.005 ? '−' : '';
+    if (pol) { halo(pol, X(G.xa + 30), Y(G.yTop + 4), P.U > 0 ? col.acc : col.warn, `700 ${fs(20)}px ${FONT_MONO}`, 'center'); halo(pol === '+' ? '−' : '+', X(G.xc - 40), Y(G.yTop + 4), col.ink3, `700 ${fs(20)}px ${FONT_MONO}`, 'center'); }
+  }
+
+  // lamp
+  {
+    const lx = G.lamp.x, ly = G.lamp.y;
+    c.save(); c.translate(X(lx), Y(ly)); c.rotate(0.42);
+    if (lampOn) { const rg = c.createRadialGradient(0, 14 * K, 0, 0, 14 * K, 46 * K); rg.addColorStop(0, rgba(lc, 0.55)); rg.addColorStop(1, rgba(lc, 0)); c.fillStyle = rg; c.beginPath(); c.arc(0, 14 * K, 46 * K, 0, Math.PI * 2); c.fill(); }
+    rrect(-34 * K, -22 * K, 68 * K, 36 * K, 7 * K); c.fillStyle = col.ink; c.fill();
+    c.fillStyle = lampOn ? rgba(lc, 1) : rgba(lc, 0.35); c.fillRect(-26 * K, 12 * K, 52 * K, 6 * K);
+    c.restore();
+    const tag = `λ = ${fmt(P.lam, 0)} nm`;
+    halo(tag, X(lx + 52), Y(ly - 6), col.ink, `600 ${fs(13)}px ${FONT_MONO}`, 'left');
+    if (uv || ir) halo(tr(uv ? 'cvUV' : 'cvIR'), X(lx + 52), Y(ly + 14), rgba(li, 1), `500 ${fs(12)}px ${FONT_BODY}`, 'left');
+    else { c.fillStyle = rgba(lc, 1); c.beginPath(); c.arc(X(lx + 58), Y(ly + 14), 5 * Math.max(0.8, K), 0, Math.PI * 2); c.fill(); }
+  }
+
+  // photons (wave packets)
+  for (const p of photons) drawPhoton(p, li);
+  if (S.run === 'idle') {
+    // calm initial frame: two frozen packets suggest light without motion
+    halo(tr('cvOff'), X(500), Y(G.tubeT + 60), col.ink3, `${fs(12.5)}px ${FONT_BODY}`, 'center');
+  }
+
+  // electrons
+  for (const e of electrons) {
+    const x = X(e.x), y = Y(e.y), r = 3.2 * Math.max(0.75, K);
+    c.save(); c.globalAlpha = e.out ? Math.max(0, e.life) : 1;
+    const sp = e.vx * K; const tail = Math.max(-26, Math.min(26, sp * 0.06));
+    if (Math.abs(tail) > 2) { c.strokeStyle = withAlpha(col.acc, 0.35); c.lineWidth = r * 1.2; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - tail, y); c.lineTo(x, y); c.stroke(); }
+    if (!reduceMotion) { c.shadowColor = col.acc; c.shadowBlur = 8; }
+    c.fillStyle = col.acc; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill();
+    c.restore();
+  }
+  // flashes
+  for (const f of flashes) {
+    c.save(); c.globalAlpha = Math.max(0, f.life) * (f.kind === 'abs' ? 0.6 : 0.8);
+    c.strokeStyle = f.kind === 'abs' ? rgba(li, 1) : f.kind === 'back' ? col.warn : col.acc; c.lineWidth = 1.5;
+    c.beginPath(); c.arc(X(f.x), Y(f.y), f.r * K, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  // below threshold label
+  if (!D.emit && lampOn) halo(tr('cvNoEmit'), X(G.xc + 20), Y(G.yBot - 6), col.warn, `600 ${fs(13)}px ${FONT_MONO}`, 'left');
+
+  if (S.energy) drawEnergy();
+}
+
+function drawPhoton(p, li) {
+  const c = ctx;
+  const x0 = p.a[0] + (p.b[0] - p.a[0]) * p.s, y0 = p.a[1] + (p.b[1] - p.a[1]) * p.s;
+  const dx = (p.b[0] - p.a[0]) / p.L, dy = (p.b[1] - p.a[1]) / p.L, nx = -dy, ny = dx;
+  const lv = 4 + P.lam / 42, L = 30, amp = 6;
+  c.save(); c.strokeStyle = rgba(li, 0.95); c.lineWidth = 1.8 * Math.max(0.7, K); c.lineJoin = 'round';
+  if (!reduceMotion) { c.shadowColor = rgba(wlRGB(P.lam), 0.8); c.shadowBlur = 6; }
+  c.beginPath();
+  for (let u = -L; u <= L; u += 1.2) {
+    const env = Math.exp(-((u / (L / 2.2)) ** 2)), w = amp * env * Math.sin(2 * Math.PI * u / lv + p.ph);
+    const px = X(x0 + dx * u + nx * w), py = Y(y0 + dy * u + ny * w);
+    u === -L ? c.moveTo(px, py) : c.lineTo(px, py);
+  }
+  c.stroke(); c.restore();
+}
+
+function drawCircuit() {
+  const c = ctx, yw = G.wire;
+  c.save(); c.strokeStyle = col.ink2; c.lineWidth = 2; c.lineJoin = 'round';
+  const xs = 420, xm = 640;   // battery, ammeter centres
+  c.beginPath();
+  c.moveTo(X(G.xc - 8), Y(G.tubeB)); c.lineTo(X(G.xc - 8), Y(yw)); c.lineTo(X(xs - 16), Y(yw));
+  c.moveTo(X(xs + 16), Y(yw)); c.lineTo(X(xm - 32), Y(yw));
+  c.moveTo(X(xm + 32), Y(yw)); c.lineTo(X(G.xa + 5), Y(yw)); c.lineTo(X(G.xa + 5), Y(G.tubeB));
+  c.stroke();
+  // battery: long plate = +; anode side positive when U > 0
+  const posRight = P.U >= 0;
+  const xl = X(xs - 8), xr = X(xs + 8);
+  const long = 26 * K, short = 14 * K;
+  c.lineWidth = 3;
+  c.beginPath();
+  c.moveTo(xl, Y(yw) - (posRight ? short : long)); c.lineTo(xl, Y(yw) + (posRight ? short : long));
+  c.moveTo(xr, Y(yw) - (posRight ? long : short)); c.lineTo(xr, Y(yw) + (posRight ? long : short));
+  c.stroke();
+  // variable arrow
+  c.lineWidth = 1.5; c.strokeStyle = col.ink3;
+  c.beginPath(); c.moveTo(X(xs - 26), Y(yw + 26)); c.lineTo(X(xs + 26), Y(yw - 26)); c.stroke();
+  c.fillStyle = col.ink3; c.beginPath(); c.moveTo(X(xs + 28), Y(yw - 28)); c.lineTo(X(xs + 16), Y(yw - 24)); c.lineTo(X(xs + 24), Y(yw - 16)); c.closePath(); c.fill();
+  halo(`U = ${sgn(P.U)} V`, X(xs), Y(yw + 46), P.U > 0.005 ? col.acc : P.U < -0.005 ? col.warn : col.ink, `600 ${fs(13)}px ${FONT_MONO}`, 'center');
+  halo(tr('cvSource'), X(xs), Y(yw + 66), col.ink3, `${fs(11)}px ${FONT_BODY}`, 'center');
+  // ammeter
+  const ax = X(xm), ay = Y(yw), R = 30 * K;
+  c.fillStyle = col.surface; c.strokeStyle = col.ink2; c.lineWidth = 2;
+  c.beginPath(); c.arc(ax, ay, R, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.strokeStyle = col.ink3; c.lineWidth = 1;
+  for (let i = 0; i <= 10; i++) { const a = Math.PI * (1.15 + 0.7 * i / 10); c.beginPath(); c.moveTo(ax + Math.cos(a) * R * 0.78, ay + Math.sin(a) * R * 0.78); c.lineTo(ax + Math.cos(a) * R * (i % 5 ? 0.88 : 0.95), ay + Math.sin(a) * R * (i % 5 ? 0.88 : 0.95)); c.stroke(); }
+  const na = Math.PI * (1.15 + 0.7 * Math.min(1.04, needle));
+  c.strokeStyle = col.warn; c.lineWidth = 1.8; c.beginPath(); c.moveTo(ax, ay + R * 0.2); c.lineTo(ax + Math.cos(na) * R * 0.86, ay + Math.sin(na) * R * 0.86); c.stroke();
+  c.fillStyle = col.ink; c.beginPath(); c.arc(ax, ay + R * 0.2, 2.5, 0, Math.PI * 2); c.fill();
+  c.font = `700 ${fs(13)}px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillStyle = col.ink2; c.fillText('A', ax, ay + R * 0.55);
+  const Ishow = S.run !== 'idle' ? D.I : 0;
+  halo(`I = ${fmtI(Ishow)} nA`, X(xm), Y(yw + 46), Ishow > 0 ? col.ink : col.warn, `600 ${fs(13)}px ${FONT_MONO}`, 'center');
+  halo(tr('cvAmm'), X(xm), Y(yw + 66), col.ink3, `${fs(11)}px ${FONT_BODY}`, 'center');
+  c.restore();
+}
+const fmtI = (I) => fmt(I, I >= 10 ? 1 : 2);
+
+function drawEnergy() {
+  // small energy-level card, top-left, fixed pixel size scaled down on small canvases
+  const c = ctx, s = Math.min(1, Math.max(0.62, cw / 900));
+  const w = 196 * s, h = 196 * s, x0 = 10, y0 = ch - h - 10;   // bottom-left corner, clear of the tube labels
+  c.save();
+  rrect(x0, y0, w, h, 10); c.fillStyle = withAlpha(col.surface, 0.94); c.fill(); c.strokeStyle = col.line; c.lineWidth = 1; c.stroke();
+  halo(tr('enTitle'), x0 + 10, y0 + 15 * s, col.ink, `700 ${Math.round(12.5 * s)}px ${FONT_BODY}`, 'left');
+  // energy scale: 0 at Fermi, top at max(E, W)+...
+  const top = Math.max(D.E, D.W) * 1.08 + 0.2, yB = y0 + h - 22 * s, yT = y0 + 34 * s;
+  const ey = (e) => yB - (e / top) * (yB - yT);
+  const xa = x0 + 16 * s, xb = x0 + w - 12 * s;
+  // metal band (filled sea)
+  c.fillStyle = withAlpha(col.ink3, 0.18); c.fillRect(xa, ey(0), (xb - xa) * 0.42, yB + 12 * s - ey(0));
+  c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(xa, ey(0)); c.lineTo(xb, ey(0)); c.stroke();
+  c.setLineDash([4, 3]); c.beginPath(); c.moveTo(xa, ey(D.W)); c.lineTo(xb, ey(D.W)); c.stroke(); c.setLineDash([]);
+  const fsz = Math.round(10.5 * s);
+  halo(tr('enVac'), xb, ey(D.W) + 9 * s, col.ink3, `${fsz}px ${FONT_BODY}`, 'right');
+  halo(tr('enFermi'), xb, ey(0) + 9 * s, col.ink3, `${fsz}px ${FONT_BODY}`, 'right');
+  // W bracket
+  const xw = xa + 18 * s;
+  c.strokeStyle = col.warn; c.lineWidth = 2; c.beginPath(); c.moveTo(xw, ey(0)); c.lineTo(xw, ey(D.W)); c.stroke();
+  halo(`W ${fmt(D.W, 2)}`, xw - 2, (ey(0) + ey(D.W)) / 2, col.warn, `600 ${fsz}px ${FONT_MONO}`, 'right');
+  // photon arrow hf
+  const xp = xa + 76 * s, eTop = D.E;
+  const li = lightInk(P.lam);
+  c.strokeStyle = rgba(li, 1); c.fillStyle = rgba(li, 1); c.lineWidth = 2.4;
+  c.beginPath(); c.moveTo(xp, ey(0)); c.lineTo(xp, ey(eTop) + 6); c.stroke();
+  c.beginPath(); c.moveTo(xp, ey(eTop)); c.lineTo(xp - 5, ey(eTop) + 8); c.lineTo(xp + 5, ey(eTop) + 8); c.closePath(); c.fill();
+  halo(`hf ${fmt(D.E, 2)}`, xp + 6, (ey(0) + ey(Math.min(eTop, D.W))) / 2 + 10 * s, rgba(li, 1), `600 ${fsz}px ${FONT_MONO}`, 'left');
+  if (D.emit) {
+    c.strokeStyle = col.ok; c.lineWidth = 3; c.beginPath(); c.moveTo(xp + 3, ey(D.W)); c.lineTo(xp + 3, ey(D.E)); c.stroke();
+    halo(`K ${fmt(D.K, 2)}`, xp + 9, (ey(D.W) + ey(D.E)) / 2, col.ok, `700 ${fsz}px ${FONT_MONO}`, 'left');
+  } else {
+    halo(tr('enShort'), xp + 6, ey(D.E) - 7 * s, col.warn, `700 ${fsz}px ${FONT_BODY}`, 'left');
+  }
+  halo('eV', x0 + w - 10, y0 + 15 * s, col.ink3, `${fsz}px ${FONT_MONO}`, 'right');
+  c.restore();
+}
+
+/* ---------- chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box');
+let ccw = 400, cch = 260, chartDirty = true;
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); chartDirty = true; }).observe(cbox);
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+const classicUs = () => 0.35 * P.phi;   // qualitative wave-theory stopping voltage ∝ intensity
+function axes(c, W, Hh, x0, x1, y0, y1, xstep, ystep, xlab, ylab) {
+  c.font = `500 11px ${FONT_MONO}`;
+  const ydec = ystep < 1 ? 1 : 0, xdec = xstep < 1 ? 1 : 0;
+  let labW = 0; for (let y = Math.ceil(y0 / ystep) * ystep; y <= y1 + 1e-9; y += ystep) labW = Math.max(labW, c.measureText(fmt(y, ydec)).width);
+  const L = labW + 14, R = 12, T = 20, B = 26, pw = W - L - R, ph = Hh - T - B;
+  const sx = v => L + (v - x0) / (x1 - x0) * pw, sy = v => T + (1 - (v - y0) / (y1 - y0)) * ph;
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = Math.ceil(y0 / ystep) * ystep; y <= y1 + 1e-9; y += ystep) { const yy = Math.round(sy(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fmt(y, ydec), L - 8, yy); }
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let x = Math.ceil(x0 / xstep) * xstep; x <= x1 + 1e-9; x += xstep) { const xx = Math.round(sx(x)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); c.fillText(fmt(x, xdec), xx, Hh - B + 8); }
+  c.strokeStyle = col.ink3;
+  if (y0 < 0 && y1 > 0) { const yy = Math.round(sy(0)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); }
+  if (x0 < 0 && x1 > 0) { const xx = Math.round(sx(0)) + 0.5; c.beginPath(); c.moveTo(xx, T); c.lineTo(xx, T + ph); c.stroke(); }
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(ylab, 2, 2);
+  c.textAlign = 'right'; c.fillText(xlab, W - R, 2);
+  return { L, R, T, B, pw, ph, sx, sy };
+}
+function drawChart() {
+  const c = cctx, W = ccw, Hh = cch;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, Hh);
+  if (S.tab === 'iu') drawIU(c, W, Hh); else drawKF(c, W, Hh);
+  updateChartLegend();
+}
+function curvePath(c, g, Us, Isat) {
+  c.beginPath();
+  for (let i = 0; i <= 400; i++) { const U = -5 + 10 * i / 400, I = current(U, Us, Isat); i ? c.lineTo(g.sx(U), g.sy(I)) : c.moveTo(g.sx(U), g.sy(I)); }
+}
+function drawIU(c, W, Hh) {
+  const ghostI = S.ghost ? S.ghost.Isat : 0;
+  const clI = S.classic ? ETA * QE * D.Phi * 1e9 : 0;
+  let ymax = Math.max(D.Isat, ghostI, clI, 2) * 1.18;
+  const ys = niceStep(ymax, 4); ymax = Math.ceil(ymax / ys) * ys;
+  const g = axes(c, W, Hh, -5, 5, 0, ymax, 1, ys, tr('axU'), tr('axI'));
+  if (S.classic) { curvePath(c, g, classicUs(), clI); c.save(); c.strokeStyle = col.amber; c.lineWidth = 2; c.setLineDash([6, 5]); c.stroke(); c.restore(); }
+  if (S.ghost) { curvePath(c, g, S.ghost.Us, S.ghost.Isat); c.save(); c.strokeStyle = col.ink3; c.lineWidth = 2; c.setLineDash([3, 4]); c.stroke(); c.restore(); }
+  curvePath(c, g, D.Us, D.Isat); c.save(); c.strokeStyle = col.acc; c.lineWidth = 2.6; c.lineJoin = 'round'; c.stroke(); c.restore();
+  // stopping voltage marker
+  if (D.emit && D.Us <= 5) {
+    const xx = g.sx(-D.Us);
+    c.save(); c.strokeStyle = col.warn; c.setLineDash([3, 3]); c.lineWidth = 1.2; c.beginPath(); c.moveTo(xx, g.T); c.lineTo(xx, g.T + g.ph); c.stroke(); c.restore();
+    c.font = `600 11px ${FONT_MONO}`; c.fillStyle = col.warn; c.textAlign = xx < g.L + 60 ? 'left' : 'right'; c.textBaseline = 'top';
+    c.fillText(`−U${SUB() === 'h' ? 'ₕ' : '_stop'} = ${fmt(-D.Us, 2)} V`, xx + (xx < g.L + 60 ? 5 : -5), g.T + 4);
+  }
+  // current point
+  const px = g.sx(P.U), py = g.sy(D.I);
+  c.save(); c.fillStyle = col.acc; c.strokeStyle = col.surface; c.lineWidth = 2.5; c.beginPath(); c.arc(px, py, 5.5, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+  if (!D.emit) { c.font = `600 12px ${FONT_BODY}`; c.fillStyle = col.warn; c.textAlign = 'center'; c.textBaseline = 'bottom'; c.fillText(tr('noEmit'), g.L + g.pw / 2, g.sy(0) - 8); }
+}
+function fitLine(pts) {
+  const q = pts.filter(p => p.U > 0.02);
+  if (q.length < 2) return null;
+  const fx = q.map(p => p.f), mx = fx.reduce((a, b) => a + b) / q.length;
+  if (Math.max(...fx) - Math.min(...fx) < 1e12) return null;
+  const my = q.reduce((a, p) => a + p.U, 0) / q.length;
+  let sxx = 0, sxy = 0; for (const p of q) { sxx += (p.f - mx) ** 2; sxy += (p.f - mx) * (p.U - my); }
+  const m = sxy / sxx, b = my - m * mx;
+  return { m, b, n: q.length, h: m * QE, W: -b };
+}
+function drawKF(c, W, Hh) {
+  const g = axes(c, W, Hh, 0, 31, -6.5, 11, 5, 2, tr('axF'), tr('axK'));
+  const F = (f) => f / 1e14;
+  // Einstein line: dashed below threshold back to the intercept, solid above
+  const W0 = D.W, f0 = D.f0;
+  c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.4; c.setLineDash([5, 4]);
+  c.beginPath(); c.moveTo(g.sx(0), g.sy(-W0)); c.lineTo(g.sx(F(f0)), g.sy(0)); c.stroke(); c.restore();
+  const fEnd = Math.min(31e14, (11 + W0) / H_EV);
+  c.save(); c.strokeStyle = col.ink; c.lineWidth = 2; c.beginPath(); c.moveTo(g.sx(F(f0)), g.sy(0)); c.lineTo(g.sx(F(fEnd)), g.sy(fEnd * H_EV - W0)); c.stroke(); c.restore();
+  // zero-current segment below threshold
+  c.save(); c.strokeStyle = col.ink; c.lineWidth = 2; c.globalAlpha = 0.5; c.beginPath(); c.moveTo(g.sx(0), g.sy(0)); c.lineTo(g.sx(F(f0)), g.sy(0)); c.stroke(); c.restore();
+  // labels
+  c.font = `600 11px ${FONT_MONO}`; c.fillStyle = col.warn; c.textAlign = 'left'; c.textBaseline = 'middle';
+  c.fillText(`−W/e = ${fmt(-W0, 2)} V`, g.sx(0) + 6, g.sy(-W0));
+  c.fillStyle = col.ink2; c.textAlign = 'center'; c.textBaseline = 'top';
+  c.fillText(`f₀`, g.sx(F(f0)), g.sy(0) + 6);
+  c.fillStyle = col.ink; c.beginPath(); c.arc(g.sx(F(f0)), g.sy(0), 3, 0, Math.PI * 2); c.fill();
+  // classical
+  if (S.classic) {
+    const yc = classicUs();
+    c.save(); c.strokeStyle = col.amber; c.lineWidth = 2; c.setLineDash([6, 5]); c.beginPath(); c.moveTo(g.sx(0), g.sy(yc)); c.lineTo(g.sx(31), g.sy(yc)); c.stroke(); c.restore();
+  }
+  // fit
+  const pts = S.pts[P.metal];
+  const fit = S.fit ? fitLine(pts) : null;
+  if (fit) {
+    c.save(); c.strokeStyle = col.amber; c.lineWidth = 1.8; c.setLineDash([2, 4]);
+    const fa = 0, fb = 31e14; c.beginPath(); c.moveTo(g.sx(0), g.sy(fit.b)); c.lineTo(g.sx(31), g.sy(fit.m * fb + fit.b)); c.stroke(); c.restore();
+  }
+  // measured points
+  for (const p of pts) {
+    const x = g.sx(F(p.f)), y = g.sy(p.U);
+    c.save(); c.lineWidth = 2; c.strokeStyle = col.acc;
+    c.fillStyle = p.U > 0.02 ? col.acc : col.surface;
+    c.beginPath(); c.arc(x, y, 4, 0, Math.PI * 2); c.fill(); c.stroke(); c.restore();
+  }
+  // current point
+  const cx = g.sx(F(D.f)), cy = g.sy(D.Us);
+  c.save(); c.strokeStyle = col.acc; c.lineWidth = 2; c.beginPath(); c.arc(cx, cy, 8, 0, Math.PI * 2); c.stroke();
+  c.setLineDash([2, 3]); c.globalAlpha = 0.6; c.beginPath(); c.moveTo(cx, cy); c.lineTo(cx, g.T + g.ph); c.stroke(); c.restore();
+}
+function updateChartLegend() {
+  let h = '';
+  const ln = (color, dash, name) => `<span><i class="ln" style="border-top-color:${color};border-top-style:${dash ? 'dashed' : 'solid'}"></i>${name}</span>`;
+  const dt = (color, name, hollow) => `<span><i class="dt" style="${hollow ? `border:2px solid ${color}` : `background:${color}`}"></i>${name}</span>`;
+  if (S.tab === 'iu') {
+    h += ln(col.acc, false, `${tr('lgNow')} (Φ = ${fmt(P.phi, 1)}·10¹²/s)`);
+    if (S.ghost) h += ln(col.ink3, true, `${tr('lgGhost')} (Φ = ${fmt(S.ghost.phi, 1)}·10¹²/s)`);
+    if (S.classic) h += ln(col.amber, true, tr('lgClassic'));
+  } else {
+    h += ln(col.ink, false, tr('lgLine'));
+    h += dt(col.acc, tr('lgPts'));
+    h += dt(col.acc, tr('lgCur'), true);
+    if (S.fit) h += ln(col.amber, true, tr('lgFit'));
+    if (S.classic) h += ln(col.amber, true, tr('lgClassic'));
+  }
+  $('#clegend').innerHTML = h;
+  $('#cnote').innerHTML = tr(S.tab === 'iu' ? 'cnoteIU' : 'cnoteKF');
+  $('#kfrow').hidden = S.tab !== 'kf';
+  const fr = $('#fitres');
+  fr.hidden = !(S.tab === 'kf' && S.fit);
+  if (!fr.hidden) {
+    const fit = fitLine(S.pts[P.metal]);
+    fr.innerHTML = fit
+      ? `<i>h</i> = <span class="k">${fsci(fit.h, 3)} J·s</span> &nbsp;(${tr('fitErr')} ${sgn((fit.h / H - 1) * 100, 1)} %) &nbsp; <i>W</i> = <span class="k">${fmt(fit.W, 2)} eV</span> &nbsp; <span style="color:var(--ink-3)">${fit.n} ${tr('fitPts')}</span>`
+      : `<span style="color:var(--ink-3)">${tr('fitNeed')}</span>`;
+  }
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+function updateFormulas() {
+  const res = (s, cls = '') => `<span class="r ${cls}">${s}</span>`;
+  const us = V('U', SUB()), cards = [];
+  cards.push(`<div class="fcard"><h4>${tr('fPhoton')}</h4>
+    <div class="eq">${V('E')}${EQ}${V('h')}${V('f')}${EQ}${FR(`${V('h')}${V('c')}`, V('λ'))}</div>
+    <div class="eq num">${V('E')}${EQ}${FR('1240 eV·nm', `${fmt(P.lam, 0)} nm`)}${EQ}${res(`${fmt(D.E, 2)} eV`)}</div>
+    <div class="eq num">${V('f')}${EQ}${FR(V('c'), V('λ'))}${EQ}${res(`${fsci(D.f, 2)} Hz`)}</div>
+    <p class="fnote">${tr('nPhoton')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fEin')}</h4>
+    <div class="eq">${V('K', 'max')}${EQ}${V('h')}${V('f')} − ${V('W')}</div>
+    <div class="eq num">${V('K', 'max')}${EQ}${fmt(D.E, 2)} − ${fmt(D.W, 2)}${EQ}${res(`${fmt(D.K, 2)} eV`, D.emit ? '' : 'bad')}</div>
+    <p class="fnote">${tr(D.emit ? 'nEin' : 'nEinNo')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fStop')}</h4>
+    <div class="eq">${V('e')}${us}${EQ}${V('K', 'max')}</div>
+    <div class="eq num">${us}${EQ}${FR(`${fmt(Math.max(D.K, 0), 2)} eV`, V('e'))}${EQ}${res(`${fmt(D.Us, 2)} V`, D.emit ? '' : 'bad')}</div>
+    <p class="fnote">${tr('nStop')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fThr')}</h4>
+    <div class="eq">${V('f', '0')}${EQ}${FR(V('W'), V('h'))}${EQ}${FR(`${fmt(D.W, 2)} eV`, `${fsci(H_EV, 3)} eV·s`)}${EQ}${res(`${fsci(D.f0, 2)} Hz`)}</div>
+    <div class="eq num">${V('λ', '0')}${EQ}${FR(`${V('h')}${V('c')}`, V('W'))}${EQ}${FR('1240 eV·nm', `${fmt(D.W, 2)} eV`)}${EQ}${res(`${fmt(D.l0, 0)} nm`)}</div>
+    <p class="fnote">${tr('nThr')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fSat')}</h4>
+    <div class="eq">${V('I', 'sat')}${EQ}${V('η')}${V('e')}${V('Φ')}</div>
+    <div class="eq num">${V('I', 'sat')}${EQ}${fmt(ETA, 2)} · ${fsci(QE, 3)} C · ${fsci(D.Phi, 1)} s⁻¹</div>
+    <div class="eq num">${V('I', 'sat')}${EQ}${res(`${fmtI(D.Isat)} nA`, D.emit ? '' : 'bad')}</div>
+    <p class="fnote">${tr('nSat')}</p></div>`);
+  cards.push(`<div class="fcard"><h4>${tr('fLine')}</h4>
+    <div class="eq">${us}${EQ}${FR(V('h'), V('e'))}${V('f')} − ${FR(V('W'), V('e'))}</div>
+    <div class="eq num">${FR(V('h'), V('e'))}${EQ}${res(`${fsci(H_EV, 3)} V·s`)}, &nbsp;${V('h')} ≈ ${fsci(H, 3)} J·s</div>
+    <p class="fnote">${tr('nLine')}</p></div>`);
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- HUD, outputs ---------- */
+function setFill(el) { const p = (el.value - el.min) / (el.max - el.min) * 100; el.style.setProperty('--p', p + '%'); }
+function updateHud() {
+  const set = (id, v, u, bad) => { const el = $('#hud-' + id); el.innerHTML = `${v} <span>${u}</span>`; el.classList.toggle('zero', !!bad); };
+  set('lam', fmt(P.lam, 0), 'nm');
+  set('f', fsci(D.f, 2), 'Hz');
+  set('E', fmt(D.E, 2), 'eV');
+  set('K', D.emit ? fmt(D.K, 2) : fmt(0, 2), 'eV', !D.emit);
+  set('Us', fmt(D.Us, 2), 'V', !D.emit);
+  const I = S.run === 'idle' ? 0 : D.I;
+  set('I', fmtI(I), 'nA', S.run !== 'idle' && I <= 0);
+  $('#hud-us-dt').innerHTML = `U<sub>${SUB()}</sub>`;
+}
+function updateOutputs() {
+  $('#lam-out').textContent = `${fmt(P.lam, 0)} nm`;
+  $('#phi-out').textContent = `${fmt(P.phi, 1)}·10¹² ${tr('perS')}`;
+  $('#U-out').textContent = `${sgn(P.U)} V`;
+  $('#pill-f').textContent = `${fmt(D.f / 1e12, 0)} THz`;
+  $('#pill-E').textContent = `${fmt(D.E, 2)} eV`;
+  $('#pill-l0').textContent = `${fmt(D.l0, 0)} nm`;
+  $$('#metals .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.m === P.metal)));
+  $$('#presets .chip').forEach(b => { const q = PRESETS[+b.dataset.p]; b.setAttribute('aria-pressed', String(q.metal === P.metal && q.lam === P.lam && Math.abs(q.phi - P.phi) < 1e-6 && Math.abs(q.U - P.U) < 1e-6)); });
+  $$('input[type=range]').forEach(setFill);
+}
+function updateLegend() {
+  const li = lightInk(P.lam);
+  const wave = `<svg class="sw-wave" viewBox="0 0 22 10" aria-hidden="true"><path d="M1 5 q2.5 -6 5 0 t5 0 t5 0 t5 0" fill="none" stroke="${rgba(li, 1)}" stroke-width="1.8"/></svg>`;
+  const sk = S.run === 'run' ? 'run' : S.run === 'pause' ? 'pause' : 'idle';
+  $('#legend').innerHTML = `<span>${wave}${tr('lgPhoton')}</span><span><i class="sw-el"></i>${tr('lgElectron')}</span><span class="state" data-s="${sk}">${tr(sk === 'run' ? 'sRun' : sk === 'pause' ? 'sPause' : 'sIdle')}</span>`;
+}
+function updateClassic() {
+  $('#classic').hidden = !S.classic;
+  if (!S.classic) return;
+  $('#cgrid').innerHTML = [
+    tr('clH0'), tr('clH1'), tr('clH2'),
+    tr('clR1'), `<span class="w"><b>≈ ${fdur(D.tcl)}</b></span>`, `<span class="o">${tr('clR1o')}</span>`,
+    tr('clR2'), `<span class="w">${tr('clR2w')}</span>`, `<span class="o">${tr('clR2o')}</span>`,
+    tr('clR3'), `<span class="w">${tr('clR3w')}</span>`, `<span class="o">${tr('clR3o')}</span>`
+  ].map(x => `<div>${x}</div>`).join('');
+  updateClassicBar();
+}
+function updateClassicBar() {
+  if (!S.classic) return;
+  const fr = Math.min(1, S.tOn / D.tcl);
+  $('#cl-fill').style.width = (fr * 100).toFixed(3) + '%';
+  $('#cl-prog').textContent = `${tr('clProg')} ${fmt(S.tOn, 1)} s ${tr('clOf')} ≈ ${fdur(D.tcl)} (${fmt(fr * 100, fr < 0.01 ? 3 : 1)} %).`;
+}
+function updatePlay() {
+  const playing = S.run === 'run';
+  $('#play-lbl').textContent = tr(playing ? 'pause' : S.run === 'pause' ? 'resume' : 'start');
+  $('#play-ico').innerHTML = playing ? '<path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' : '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+  $('#play').setAttribute('aria-pressed', String(playing));
+}
+
+function refresh() {
+  derive(); updateOutputs(); updateHud(); updateFormulas(); updateLegend(); updateClassic(); updatePlay();
+  dirty = true; chartDirty = true;
+}
+function readParams() { P.lam = +$('#lam').value; P.phi = +$('#phi').value; P.U = +$('#U').value; }
+function setParams(o) {
+  if (o.metal) P.metal = o.metal;
+  if (o.lam != null) { P.lam = o.lam; $('#lam').value = o.lam; }
+  if (o.phi != null) { P.phi = o.phi; $('#phi').value = o.phi; }
+  if (o.U != null) { P.U = o.U; $('#U').value = o.U; }
+}
+function recordPoint() {
+  derive();
+  const arr = S.pts[P.metal];
+  const noise = (Math.random() - 0.5) * 0.03;
+  const U = D.emit ? Math.max(0, D.Us + noise) : 0;
+  const i = arr.findIndex(p => Math.abs(p.lam - P.lam) < 0.5);
+  if (i >= 0) arr.splice(i, 1);
+  arr.push({ lam: P.lam, f: D.f, U });
+  if (arr.length > 40) arr.shift();
+}
+
+/* ---------- actions ---------- */
+function play() {
+  if (S.run === 'run') S.run = 'pause';
+  else {
+    if (S.run === 'idle') { simT = 0; nextPhoton = 0.05; S.tOn = 0; }
+    S.run = 'run';
+  }
+  updatePlay(); updateLegend(); updateHud(); dirty = true;
+}
+function clearParticles() { photons.length = 0; electrons.length = 0; flashes.length = 0; }
+function reset() {
+  S.run = 'idle'; photons.length = 0; electrons.length = 0; flashes.length = 0; S.ghost = null; S.tOn = 0; simT = 0;
+  refresh();
+}
+
+/* ---------- wiring ---------- */
+function buildChips() {
+  $('#metals').innerHTML = Object.keys(METALS).map(m => `<button type="button" class="chip" data-m="${m}" aria-pressed="false"><span><span class="sym">${m}</span> <span data-i18n="${m}">${tr(m)}</span></span><small data-w="${m}"></small></button>`).join('');
+  $('#presets').innerHTML = PRESETS.map((p, i) => `<button type="button" class="chip" data-p="${i}" aria-pressed="false"><span data-i18n="${p.k}">${tr(p.k)}</span><small>${p.small}</small></button>`).join('');
+  $$('#metals .chip').forEach(b => b.addEventListener('click', () => { P.metal = b.dataset.m; clearParticles(); refresh(); }));
+  $$('#presets .chip').forEach(b => b.addEventListener('click', () => { const q = PRESETS[+b.dataset.p]; setParams(q); clearParticles(); recordPoint(); refresh(); }));
+}
+const TRIES = [
+  { h: 't1h', b: 't1b', go() { setParams({ metal: 'Na', lam: 650, phi: 10, U: 0 }); S.ghost = null; recordPoint(); } },
+  { h: 't2h', b: 't2b', go() { setParams({ metal: 'Na', lam: 405, phi: 0.1, U: 0 }); S.ghost = null; S.classic = true; $('#tg-classic').setAttribute('aria-pressed', 'true'); S.tOn = 0; recordPoint(); } },
+  { h: 't3h', b: 't3b', go() {
+      const base = Math.max(0.5, Math.min(5, P.phi >= 5 ? 2.5 : P.phi));
+      if (!(HC / P.lam > METALS[P.metal].W)) setParams({ lam: 405, metal: 'Na' });
+      setParams({ phi: base }); derive();
+      S.ghost = { Us: D.Us, Isat: D.Isat, phi: base };
+      setParams({ phi: Math.round(base * 2 * 10) / 10 });
+      setTab('iu');
+  } },
+  { h: 't4h', b: 't4b', go() {
+      S.pts.Na = []; setParams({ metal: 'Na', U: 0 });
+      setParams({ lam: 300 }); recordPoint();
+      setParams({ lam: 450 }); recordPoint();
+      S.fit = true; $('#tg-fit').setAttribute('aria-pressed', 'true'); setTab('kf');
+  } }
+];
+function buildTries() {
+  $('#trylist').innerHTML = TRIES.map((t, i) => `<button type="button" class="try" data-try="${i}"><span class="n">${i + 1}</span><b>${tr(t.h)}</b><span>${tr(t.b)}</span></button>`).join('');
+  $$('#trylist .try').forEach(b => b.addEventListener('click', () => { TRIES[+b.dataset.try].go(); clearParticles(); refresh(); }));
+}
+function setTab(t) { S.tab = t; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === t))); chartDirty = true; }
+
+['lam', 'phi', 'U'].forEach(id => $('#' + id).addEventListener('input', () => { readParams(); refresh(); }));
+$('#lam').addEventListener('change', () => { readParams(); recordPoint(); refresh(); });
+$('#set-stop').addEventListener('click', () => { derive(); setParams({ U: Math.max(-5, -Math.round(D.Us * 100) / 100) }); refresh(); });
+$('#play').addEventListener('click', play);
+$('#reset').addEventListener('click', reset);
+$('#tg-energy').addEventListener('click', (e) => { S.energy = !S.energy; e.currentTarget.setAttribute('aria-pressed', String(S.energy)); dirty = true; });
+$('#tg-classic').addEventListener('click', (e) => { S.classic = !S.classic; e.currentTarget.setAttribute('aria-pressed', String(S.classic)); updateClassic(); chartDirty = true; });
+$('#tg-fit').addEventListener('click', (e) => { S.fit = !S.fit; e.currentTarget.setAttribute('aria-pressed', String(S.fit)); chartDirty = true; });
+$('#clear-pts').addEventListener('click', () => { S.pts[P.metal] = []; chartDirty = true; });
+$$('#tabs button').forEach(b => b.addEventListener('click', () => setTab(b.dataset.tab)));
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); play(); }
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => el.setAttribute('aria-label', tr(el.dataset.i18nAria)));
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $$('#metals small').forEach(s => { s.textContent = `W = ${fmt(METALS[s.dataset.w].W, 2)} eV`; });
+  buildTries();
+  refresh();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('foto-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), rafId = 0, hudTick = 0;
+function frame(now) {
+  rafId = 0;
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.run === 'run') {
+    stepParticles(dt); dirty = true;
+    hudTick += dt; if (hudTick > 0.2) { hudTick = 0; updateClassicBar(); }
+  }
+  const target = S.run === 'idle' ? 0 : D.I / I_FS;
+  if (Math.abs(needle - target) > 1e-4) { needle += (target - needle) * (reduceMotion ? 1 : 1 - Math.exp(-dt * 6)); dirty = true; }
+  if (dirty) { drawScene(now); dirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  if (!document.hidden) rafId = requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden && !rafId) { lastT = performance.now(); rafId = requestAnimationFrame(frame); }
+});
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+$('#lam').style.setProperty('--spec', spectrumGradient());
+buildChips();
+readTokens();
+resize();
+readParams();
+applyLang();
+rafId = requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Efekt fotoelektryczny to wybijanie elektronów z powierzchni metalu przez światło. Jego prawa nie dają się wyjaśnić falową teorią światła: Einstein (1905) wytłumaczył je, przyjmując, że światło przekazuje energię porcjami, fotonami o energii <i>hf</i>, a jeden foton oddaje całą swoją energię jednemu elektronowi.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Lampa oświetla przez okno kwarcowe katodę w próżniowej fotokomórce. Fotony (paczki falowe w barwie światła, UV jako fiolet) trafiają w katodę; jeśli <i>hf</i> > <i>W</i>, część z nich wybija elektrony, które lecą do anody. Suwak «Napięcie <i>U</i>» przyspiesza je (<i>U</i> > 0) albo hamuje (<i>U</i> < 0), a amperomierz pokazuje prąd <i>I</i>.</p>
+      <p>Wykres «Prąd <i>I</i>(<i>U</i>)» ma płaskie nasycenie dla <i>U</i> > 0 i spada do zera przy <i>U</i> = −<i>U</i><sub>h</sub>. Na wykresie «Prosta Einsteina» każda zmiana <i>λ</i> dodaje punkt; przełącznik «Dopasuj prostą» wyznacza z nich <i>h</i>. Przełącznik «Przewidywanie klasyczne» zestawia pomiar z oczekiwaniami teorii falowej, a «Bilans energii» rysuje poziomy energii elektronu.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Energia fotonu zależy tylko od częstotliwości:</p>
+      <div class="th-eq"><i>E</i> = <i>h</i><i>f</i> = <span class="th-fr"><span><i>h</i><i>c</i></span><span><i>λ</i></span></span>, &nbsp; <i>h</i><i>c</i> ≈ 1240 eV·nm</div>
+      <p>Aby opuścić metal, elektron musi pokonać pracę wyjścia <i>W</i> (odległość najwyższego zajętego poziomu od poziomu próżni). Zasada zachowania energii dla najsłabiej związanego elektronu daje równanie Einsteina:</p>
+      <div class="th-eq"><i>K</i><sub>max</sub> = <i>h</i><i>f</i> − <i>W</i></div>
+      <p>Elektrony związane głębiej, a także te, które tracą energię w zderzeniach w drodze do powierzchni, wychodzą wolniej, więc energie kinetyczne rozkładają się od 0 do <i>K</i><sub>max</sub>. Napięcie hamujące zatrzymuje najszybsze z nich, gdy praca pola równa się <i>K</i><sub>max</sub>:</p>
+      <div class="th-eq"><i>e</i><i>U</i><sub>h</sub> = <i>K</i><sub>max</sub> &nbsp;⇒&nbsp; <i>U</i><sub>h</sub> = <span class="th-fr"><span><i>h</i></span><span><i>e</i></span></span><i>f</i> − <span class="th-fr"><span><i>W</i></span><span><i>e</i></span></span></div>
+      <p>Wykres <i>U</i><sub>h</sub>(<i>f</i>) jest więc prostą o nachyleniu <i>h</i>/<i>e</i> ≈ 4,14·10⁻¹⁵ V·s, jednakowym dla wszystkich metali. Przecina oś częstotliwości w progu <i>f</i><sub>0</sub> = <i>W</i>/<i>h</i>; poniżej niego emisja nie zachodzi. Natężenie światła to liczba fotonów na sekundę: zmienia liczbę wybitych elektronów, czyli prąd nasycenia, ale nie energię pojedynczego elektronu. Model zakłada stałą wydajność kwantową i pomija m.in. emisję termiczną oraz zależność <i>W</i> od stanu powierzchni.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Był to kluczowy argument za kwantową naturą światła; Einstein otrzymał za to wyjaśnienie Nagrodę Nobla (1921), a Millikan, mierząc prostą <i>U</i><sub>h</sub>(<i>f</i>), wyznaczył <i>h</i>.</li>
+        <li>Fotopowielacze i fotokomórki wykorzystują ten efekt do rejestracji pojedynczych fotonów (detektory scyntylacyjne, noktowizory).</li>
+        <li>Spektroskopia fotoelektronów (XPS, UPS) mierzy energie wiązania elektronów i bada skład chemiczny powierzchni.</li>
+        <li>Pokrewne zjawiska wewnętrzne (fotoprzewodnictwo, efekt fotowoltaiczny) działają w ogniwach słonecznych i matrycach aparatów.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„Jaśniejsze światło daje szybsze elektrony.” Nie: natężenie zwiększa liczbę elektronów, a <i>K</i><sub>max</sub> zależy tylko od <i>f</i> i <i>W</i>.</li>
+        <li>„Wszystkie elektrony mają energię <i>hf</i> − <i>W</i>.” To tylko górna granica; dlatego krzywa <i>I</i>(<i>U</i>) opada płynnie, a nie skokowo.</li>
+        <li>„Przy <i>U</i> = 0 prąd jest zerowy.” Elektrony mają własną energię kinetyczną, więc docierają do anody bez napięcia; zatrzymuje je dopiero napięcie hamujące.</li>
+        <li>„Wystarczy poczekać, a słabe czerwone światło w końcu wybije elektron.” Foton poniżej progu nie ma dość energii, a fotony nie sumują swoich energii na jednym elektronie (w zwykłych natężeniach).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Ile wynosi napięcie hamujące dla sodu (<i>W</i> = 2,28 eV) oświetlonego światłem 300 nm?</summary><p><i>E</i> = 1240/300 ≈ 4,13 eV, więc <i>K</i><sub>max</sub> ≈ 1,85 eV i <i>U</i><sub>h</sub> ≈ 1,85 V.</p></details>
+    <details class="th-q"><summary>Co się stanie z krzywą <i>I</i>(<i>U</i>), gdy podwoisz natężenie przy stałym <i>λ</i>?</summary><p>Prąd nasycenia wzrośnie dwukrotnie, a punkt przecięcia z osią, −<i>U</i><sub>h</sub>, pozostanie w tym samym miejscu (próba «Podwój natężenie»).</p></details>
+    <details class="th-q"><summary>Czy światło zielone 532 nm wybije elektrony z cynku?</summary><p>Nie. Foton ma 2,33 eV, a <i>W</i> cynku to około 4,3 eV; próg wynosi <i>λ</i><sub>0</sub> ≈ 288 nm, więc potrzeba ultrafioletu.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 38 (Fotony i fale materii), podrozdziały o fotonie i efekcie fotoelektrycznym.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">The photoelectric effect is the ejection of electrons from a metal surface by light. Its laws cannot be explained by the wave theory of light: Einstein (1905) explained them by assuming that light delivers energy in packets, photons of energy <i>hf</i>, and that one photon gives all its energy to one electron.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>A lamp shines through a quartz window onto the cathode of a vacuum phototube. Photons (wave packets drawn in the colour of the light, UV as violet) strike the cathode; if <i>hf</i> > <i>W</i>, some of them free electrons that fly to the anode. The «Voltage <i>U</i>» slider speeds them up (<i>U</i> > 0) or slows them down (<i>U</i> < 0), and the ammeter shows the current <i>I</i>.</p>
+      <p>The «Current <i>I</i>(<i>U</i>)» chart is flat (saturated) for <i>U</i> > 0 and falls to zero at <i>U</i> = −<i>U</i><sub>stop</sub>. On the «Einstein line» chart each change of <i>λ</i> adds a point; the «Fit a line» toggle extracts <i>h</i> from them. The «Classical prediction» toggle sets the measurement against what wave theory expects, and «Energy balance» draws the electron energy levels.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>A photon's energy depends only on its frequency:</p>
+      <div class="th-eq"><i>E</i> = <i>h</i><i>f</i> = <span class="th-fr"><span><i>h</i><i>c</i></span><span><i>λ</i></span></span>, &nbsp; <i>h</i><i>c</i> ≈ 1240 eV·nm</div>
+      <p>To leave the metal an electron must overcome the work function <i>W</i> (the gap between the highest occupied level and the vacuum level). Energy conservation for the most loosely bound electron gives Einstein's equation:</p>
+      <div class="th-eq"><i>K</i><sub>max</sub> = <i>h</i><i>f</i> − <i>W</i></div>
+      <p>Electrons bound more deeply, or that lose energy in collisions on the way to the surface, come out slower, so kinetic energies spread from 0 to <i>K</i><sub>max</sub>. A retarding voltage stops the fastest ones when the work done by the field equals <i>K</i><sub>max</sub>:</p>
+      <div class="th-eq"><i>e</i><i>U</i><sub>stop</sub> = <i>K</i><sub>max</sub> &nbsp;⇒&nbsp; <i>U</i><sub>stop</sub> = <span class="th-fr"><span><i>h</i></span><span><i>e</i></span></span><i>f</i> − <span class="th-fr"><span><i>W</i></span><span><i>e</i></span></span></div>
+      <p>So <i>U</i><sub>stop</sub>(<i>f</i>) is a straight line with slope <i>h</i>/<i>e</i> ≈ 4.14·10⁻¹⁵ V·s, the same for every metal. It crosses the frequency axis at the threshold <i>f</i><sub>0</sub> = <i>W</i>/<i>h</i>; below it there is no emission. Light intensity is the number of photons per second: it changes how many electrons are freed, hence the saturation current, but not the energy of any single electron. The model assumes a constant quantum yield and ignores thermal emission and the dependence of <i>W</i> on surface condition.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>It was a key argument for the quantum nature of light; Einstein's 1921 Nobel Prize cites this explanation, and Millikan determined <i>h</i> by measuring the <i>U</i><sub>stop</sub>(<i>f</i>) line.</li>
+        <li>Photomultiplier tubes and phototubes use the effect to detect single photons (scintillation detectors, night vision).</li>
+        <li>Photoelectron spectroscopy (XPS, UPS) measures electron binding energies and the chemical make-up of surfaces.</li>
+        <li>Related internal effects (photoconductivity, the photovoltaic effect) power solar cells and camera sensors.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>"Brighter light gives faster electrons." No: intensity raises the number of electrons, while <i>K</i><sub>max</sub> depends only on <i>f</i> and <i>W</i>.</li>
+        <li>"Every electron has energy <i>hf</i> − <i>W</i>." That is only the upper limit, which is why the <i>I</i>(<i>U</i>) curve falls smoothly rather than in a step.</li>
+        <li>"At <i>U</i> = 0 the current is zero." Electrons leave with their own kinetic energy and reach the anode without any voltage; only a retarding voltage stops them.</li>
+        <li>"Wait long enough and dim red light will eventually free an electron." A photon below threshold lacks the energy, and photons do not pool their energy on one electron (at ordinary intensities).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>What is the stopping voltage for sodium (<i>W</i> = 2.28 eV) lit with 300 nm light?</summary><p><i>E</i> = 1240/300 ≈ 4.13 eV, so <i>K</i><sub>max</sub> ≈ 1.85 eV and <i>U</i><sub>stop</sub> ≈ 1.85 V.</p></details>
+    <details class="th-q"><summary>What happens to the <i>I</i>(<i>U</i>) curve if you double the intensity at fixed <i>λ</i>?</summary><p>The saturation current doubles, while the axis crossing at −<i>U</i><sub>stop</sub> stays put (the «Double the intensity» prompt).</p></details>
+    <details class="th-q"><summary>Will 532 nm green light free electrons from zinc?</summary><p>No. The photon carries 2.33 eV while zinc's <i>W</i> is about 4.3 eV; the threshold is <i>λ</i><sub>0</sub> ≈ 288 nm, so ultraviolet is needed.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 38 (Photons and Matter Waves), sections on the photon and the photoelectric effect.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
+</body></html>
