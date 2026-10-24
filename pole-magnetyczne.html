@@ -1,0 +1,1332 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Pole magnetyczne prądów</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: lab bench. Graph-paper cross-section with a compass grid, control panel on the right,
+   live formulas and a supporting plot underneath. */
+:root{
+  --bg:#E5ECEB; --surface:#F6F9F9; --paper:#FBFDFD; --sunk:#ECF2F1;
+  --ink:#11211F; --ink-2:#455A57; --ink-3:#7A8D8A; --line:#CAD6D4;
+  --grid:#E0E8E7; --grid-major:#C6D4D2;
+  --acc:#0E9384; --out:#E41C55; --in:#2F7FE0; --amber:#C77A2A; --violet:#6A5CFF;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(17,33,31,.04), 0 8px 24px -12px rgba(17,33,31,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#07100F; --surface:#0E1A19; --paper:#0C1615; --sunk:#12211F;
+    --ink:#E2EEEC; --ink-2:#A0B5B1; --ink-3:#6A807C; --line:#203432;
+    --grid:#13211F; --grid-major:#1F3431;
+    --acc:#2DC2AE; --out:#EE3A68; --in:#3F8EF0; --amber:#D08A3A; --violet:#8A7FFF;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#07100F; --surface:#0E1A19; --paper:#0C1615; --sunk:#12211F;
+  --ink:#E2EEEC; --ink-2:#A0B5B1; --ink-3:#6A807C; --line:#203432;
+  --grid:#13211F; --grid-major:#1F3431;
+  --acc:#2DC2AE; --out:#EE3A68; --in:#3F8EF0; --amber:#D08A3A; --violet:#8A7FFF;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--acc); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:.8em; height:.8em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:12px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dd{margin:0; font-size:13.5px; min-width:7.6ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.legend svg{width:14px; height:14px; flex:none}
+.cbar{display:inline-block; width:54px; height:8px; border-radius:2px; background:linear-gradient(to right, color-mix(in srgb, var(--acc) 6%, var(--paper)), var(--acc)); border:1px solid var(--line)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.canvas-box{position:relative; height:clamp(360px, 60vh, 660px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.palette{position:absolute; left:10px; top:10px; display:flex; flex-direction:column; gap:3px; padding:4px; background:var(--surface); border:1px solid var(--line); border-radius:12px; box-shadow:var(--shadow); z-index:2}
+.tool{position:relative; width:36px; height:36px; border:0; border-radius:9px; background:transparent; display:inline-flex; align-items:center; justify-content:center; cursor:pointer; color:var(--ink-2); padding:0}
+.tool:hover{background:var(--sunk); color:var(--ink)}
+.tool[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.tool svg{width:18px; height:18px}
+.tool kbd{position:absolute; right:2px; bottom:1px; font-family:var(--f-mono); font-size:8.5px; opacity:.55}
+.tool-hint{position:absolute; left:60px; bottom:10px; right:96px; font-size:12.5px; color:var(--ink-2); pointer-events:none; z-index:1}
+.tool-hint span{background:var(--surface); border:1px solid var(--line); border-radius:8px; padding:4px 9px; display:inline-block; max-width:100%}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.85; border:1px solid rgba(255,255,255,.55); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn:disabled{opacity:.45; cursor:default}
+.btn svg{width:15px; height:15px}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+
+/* Try card */
+.tries{padding:16px 18px; display:flex; flex-direction:column; gap:12px}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.try{display:flex; flex-direction:column; gap:8px; align-items:flex-start; text-align:left; background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; cursor:pointer; color:var(--ink-2); font-size:14px}
+.try:hover{border-color:var(--ink-3)}
+.try b{font-family:var(--f-display); font-weight:700; font-size:15.5px; color:var(--ink); display:flex; align-items:center; gap:8px}
+.try b::before{content:""; width:8px; height:8px; border-radius:50%; background:var(--acc); flex:none}
+.try i{font-family:var(--f-math); font-size:15.5px}
+.try small{font-family:var(--f-mono); font-size:11px; color:var(--acc); letter-spacing:.06em; text-transform:uppercase}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.hint{font-size:12px; color:var(--ink-3); margin:0}
+.dim{opacity:.4; pointer-events:none}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.seg button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px}
+.seg button svg{width:14px; height:14px}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.row{display:flex; gap:8px; flex-wrap:wrap; align-items:center}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pill.ok span{color:var(--acc)}
+.selinfo{font-size:13px; color:var(--ink-2); display:flex; align-items:center; gap:8px; min-height:22px}
+.selinfo .dot{width:14px; height:14px; border-radius:50%; flex:none; display:inline-flex; align-items:center; justify-content:center}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.35fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq b{font-weight:700; font-style:normal}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.v{color:var(--violet)}
+.eq .r.a{color:var(--amber)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.oint{font-size:1.25em; vertical-align:-.12em; margin-right:.05em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper); align-self:flex-start}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.chart-box{position:relative; height:260px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+  .charts{position:static}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 4.2; max-width:100%}
+  .fgrid, .tgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:6.8ch; font-size:12.5px}
+  .tool{width:32px; height:32px}
+  .palette{left:8px; top:8px}
+  .tool-hint{left:52px; right:78px; bottom:8px; font-size:11.5px}
+  .fire{font-size:15.5px; padding:9px 16px 9px 13px}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang','magnes-lang','falaem-lang','browna-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Magnetyzm · prawo Biota-Savarta</span>
+      <h1>
+        <svg viewBox="0 0 40 40" aria-hidden="true"><circle cx="20" cy="20" r="17" fill="none" stroke="var(--acc)" stroke-width="2.4" stroke-dasharray="3 4.2"/><circle cx="20" cy="20" r="10.5" fill="none" stroke="var(--acc)" stroke-width="2.4" opacity=".55"/><circle cx="20" cy="20" r="5" fill="var(--out)"/><circle cx="20" cy="20" r="1.7" fill="#fff"/></svg>
+        <span data-i18n="title">Pole magnetyczne prądów</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Przekrój przez długie, proste przewody z prądem. Przesuwaj je, dodawaj nowe i patrz, jak siatka kompasów układa się wzdłuż pola B.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt>|B|</dt><dd id="hud-b">0 <span>μT</span></dd></div>
+            <div><dt>B<sub>x</sub></dt><dd id="hud-bx">0 <span>μT</span></dd></div>
+            <div><dt>B<sub>y</sub></dt><dd id="hud-by">0 <span>μT</span></dd></div>
+            <div><dt>ΣI</dt><dd id="hud-i">0 <span>A</span></dd></div>
+            <div><dt>N</dt><dd id="hud-n">0</dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box">
+          <canvas id="scene" data-i18n-aria="aScene" aria-label="Przekrój z przewodami i siatką kompasów"></canvas>
+          <div class="palette" role="toolbar" id="palette" data-i18n-aria="aTools" aria-label="Narzędzia">
+            <button type="button" class="tool" data-tool="move" aria-pressed="true" data-i18n-title="tMove" title="Przesuń">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M10 2.5v15M2.5 10h15M10 2.5 7.6 4.9M10 2.5l2.4 2.4M10 17.5l-2.4-2.4M10 17.5l2.4-2.4M2.5 10l2.4-2.4M2.5 10l2.4 2.4M17.5 10l-2.4-2.4M17.5 10l-2.4 2.4" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><kbd>1</kbd>
+            </button>
+            <button type="button" class="tool" data-tool="out" aria-pressed="false" data-i18n-title="tOut" title="Dodaj prąd ⊙">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="var(--out)"/><circle cx="10" cy="10" r="2.2" fill="#fff"/></svg><kbd>2</kbd>
+            </button>
+            <button type="button" class="tool" data-tool="in" aria-pressed="false" data-i18n-title="tIn" title="Dodaj prąd ⊗">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="7.5" fill="var(--in)"/><path d="M7 7l6 6M13 7l-6 6" stroke="#fff" stroke-width="1.9" stroke-linecap="round"/></svg><kbd>3</kbd>
+            </button>
+            <button type="button" class="tool" data-tool="del" aria-pressed="false" data-i18n-title="tDel" title="Usuń">
+              <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 6h12M8 6V4h4v2M5.5 6l.8 10.5h7.4L14.5 6M8.5 9v5M11.5 9v5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg><kbd>4</kbd>
+            </button>
+          </div>
+          <div class="tool-hint" id="tool-hint"><span></span></div>
+        </div>
+        <div class="bar">
+          <button type="button" class="fire" id="run">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="run-ico"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="run-lbl">Puść przewody</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset" disabled>
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-lines" aria-pressed="false" data-i18n="tgLines">Linie pola</button>
+            <button type="button" class="tg" id="tg-map" aria-pressed="false" data-i18n="tgMap">Mapa |B|</button>
+            <button type="button" class="tg" id="tg-force" aria-pressed="false" data-i18n="tgForce">Siły</button>
+            <button type="button" class="tg" id="tg-loop" aria-pressed="false" data-i18n="tgLoop">Pętla Ampère'a</button>
+          </div>
+        </div>
+      </section>
+
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2><p data-i18n="triesSub">Kliknij kartę, żeby przygotować układ. Nic nie rusza samo.</p></div>
+        <div class="tgrid">
+          <button type="button" class="try" data-try="coax"><b data-i18n="try1h">Kabel koncentryczny</b><span data-i18n-html="try1">Igły na zewnątrz pierścienia prawie nie czują pola: prąd w żyle i w oplocie płynie w przeciwne strony, więc prąd netto wynosi zero.</span><small data-i18n="tryGo">Wczytaj</small></button>
+          <button type="button" class="try" data-try="ampere"><b data-i18n="try2h">Pętla Ampère'a</b><span data-i18n-html="try2">Przeciągnij pętlę i zmień jej promień. Całka <i>∮B·dl</i> zmienia się skokowo tylko wtedy, gdy przewód przekracza pętlę.</span><small data-i18n="tryGo">Wczytaj</small></button>
+          <button type="button" class="try" data-try="attract"><b data-i18n="try3h">Prądy się przyciągają</b><span data-i18n-html="try3">Dwa prądy zgodne i włączone siły. Naciśnij „Puść przewody”. Potem odwróć jeden prąd (dwuklik) i powtórz.</span><small data-i18n="tryGo">Wczytaj</small></button>
+          <button type="button" class="try" data-try="sol"><b data-i18n="try4h">Wnętrze solenoidu</b><span data-i18n-html="try4">Wodź sondą po wnętrzu: |<i>B</i>| prawie się nie zmienia i jest bliskie <i>μ</i><sub>0</sub><i>nI</i>. Tuż za zwojami pole prawie znika.</span><small data-i18n="tryGo">Wczytaj</small></button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="aPanel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gWire">Przewód</h3>
+        <div class="selinfo" id="selinfo"></div>
+        <div class="ctl" style="--c:var(--acc)">
+          <div class="ctl-head"><label for="cur" data-i18n-html="lI">Natężenie prądu <i>I</i></label><output id="cur-out" for="cur"></output></div>
+          <input type="range" id="cur" min="0.5" max="50" step="0.5" value="10">
+        </div>
+        <div class="seg" role="group" id="dir">
+          <button type="button" data-dir="1" aria-pressed="true"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="var(--out)"/><circle cx="10" cy="10" r="2.4" fill="#fff"/></svg><span data-i18n="dOut">do nas</span></button>
+          <button type="button" data-dir="-1" aria-pressed="false"><svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8" fill="var(--in)"/><path d="M6.8 6.8l6.4 6.4M13.2 6.8l-6.4 6.4" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg><span data-i18n="dIn">od nas</span></button>
+        </div>
+        <div class="row">
+          <button type="button" class="btn" id="del-sel" disabled><span data-i18n="delSel">Usuń wybrany</span></button>
+          <button type="button" class="btn" id="clear-all"><span data-i18n="clearAll">Wyczyść planszę</span></button>
+        </div>
+        <p class="hint" data-i18n="wireHint">Dwuklik na przewodzie odwraca kierunek prądu.</p>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gPresets">Układy</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-preset="single" aria-pressed="false"><span data-i18n="pSingle">Jeden przewód</span><small>1 × ⊙</small></button>
+          <button type="button" class="chip" data-preset="para" aria-pressed="false"><span data-i18n="pPara">Prądy zgodne</span><small>⊙ ⊙</small></button>
+          <button type="button" class="chip" data-preset="anti" aria-pressed="true"><span data-i18n="pAnti">Prądy przeciwne</span><small>⊙ ⊗</small></button>
+          <button type="button" class="chip" data-preset="coax" aria-pressed="false"><span data-i18n="pCoax">Kabel koncentryczny</span><small>8 × ⊙ + ⊗</small></button>
+          <button type="button" class="chip" data-preset="sol" aria-pressed="false"><span data-i18n="pSol">Solenoid (przekrój)</span><small>16 ⊙ / 16 ⊗</small></button>
+          <button type="button" class="chip" data-preset="helm" aria-pressed="false"><span data-i18n="pHelm">Para Helmholtza</span><small>⊙⊙ / ⊗⊗</small></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp" id="loopgrp">
+        <h3 data-i18n="gLoop">Pętla Ampère'a</h3>
+        <div class="ctl" style="--c:var(--violet)">
+          <div class="ctl-head"><label for="loopR" data-i18n-html="lR">Promień pętli <i>R</i></label><output id="loopR-out" for="loopR"></output></div>
+          <input type="range" id="loopR" min="0.5" max="14" step="0.1" value="6">
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pInt">∮B·dl</small><span id="pill-int">—</span></div>
+          <div class="pill"><small data-i18n="pMu">μ₀·I<sub>enc</sub></small><span id="pill-mu">—</span></div>
+          <div class="pill"><small data-i18n="pEnc">I wewnątrz</small><span id="pill-enc">—</span></div>
+        </div>
+        <p class="hint" id="loophint" data-i18n="loopHint">Włącz „Pętla Ampère'a” pod planszą. Środek i brzeg pętli można przeciągać.</p>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżącego układu i położenia sondy (jednostki SI).</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card charts">
+      <div class="sec-h"><h2 data-i18n="charts">Wykres</h2></div>
+      <div class="tabs" role="tablist" id="tabs">
+        <button type="button" role="tab" data-tab="prof" aria-selected="true" data-i18n="tabProf">Profil |B|</button>
+        <button type="button" role="tab" data-tab="loop" aria-selected="false" data-i18n="tabLoop">Wzdłuż pętli</button>
+      </div>
+      <div class="chart-box" id="chart-box"><canvas id="chart"></canvas></div>
+      <p class="cnote" id="cnote"></p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const MU0 = 4e-7 * Math.PI;
+const LAMBDA = 0.010;          // linear mass density of the free wires, kg/m (copper, d about 1.2 mm)
+const MAXW = 40;
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Magnetyzm · prawo Biota-Savarta', title:'Pole magnetyczne prądów',
+    lede:'Przekrój przez długie, proste przewody z prądem. Przesuwaj je, dodawaj nowe i patrz, jak siatka kompasów układa się wzdłuż pola B.',
+    aScene:'Przekrój z przewodami i siatką kompasów', aTools:'Narzędzia', aPanel:'Ustawienia',
+    tMove:'Przesuń (1)', tOut:'Dodaj prąd do nas ⊙ (2)', tIn:'Dodaj prąd od nas ⊗ (3)', tDel:'Usuń przewód (4)',
+    hMove:'Przeciągaj przewody, sondę i pętlę. Kliknij przewód, żeby go wybrać.', hOut:'Kliknij na planszy, żeby dodać prąd płynący do nas ⊙.',
+    hIn:'Kliknij na planszy, żeby dodać prąd płynący od nas ⊗.', hDel:'Kliknij przewód, żeby go usunąć.', hFull:'Osiągnięto limit 40 przewodów.',
+    run:'Puść przewody', stop:'Zatrzymaj', kbd:'spacja', reset:'Od nowa',
+    tgLines:'Linie pola', tgMap:'Mapa |B|', tgForce:'Siły', tgLoop:'Pętla Ampère\'a',
+    lgOut:'prąd do nas', lgIn:'prąd od nas', lgNeedle:'igła: biegun N', lgMap:'1 μT … 1 mT',
+    sIdle:'statyka', sRun:'w ruchu', sPause:'pauza',
+    tries:'Spróbuj', triesSub:'Kliknij kartę, żeby przygotować układ. Nic nie rusza samo.', tryGo:'Wczytaj',
+    try1h:'Kabel koncentryczny', try1:'Igły na zewnątrz pierścienia prawie nie czują pola: prąd w żyle i w oplocie płynie w przeciwne strony, więc prąd netto wynosi zero.',
+    try2h:'Pętla Ampère\'a', try2:'Przeciągnij pętlę i zmień jej promień. Całka <i>∮B·dl</i> zmienia się skokowo tylko wtedy, gdy przewód przekracza pętlę.',
+    try3h:'Prądy się przyciągają', try3:'Dwa prądy zgodne i włączone siły. Naciśnij „Puść przewody”. Potem odwróć jeden prąd (dwuklik) i powtórz.',
+    try4h:'Wnętrze solenoidu', try4:'Wodź sondą po wnętrzu: |<i>B</i>| prawie się nie zmienia i jest bliskie <i>μ</i><sub>0</sub><i>nI</i>. Tuż za zwojami pole prawie znika.',
+    gWire:'Przewód', lI:'Natężenie prądu <i>I</i>', dOut:'do nas', dIn:'od nas', delSel:'Usuń wybrany', clearAll:'Wyczyść planszę',
+    wireHint:'Dwuklik na przewodzie odwraca kierunek prądu.', selNone:'Nic nie wybrano: ustawienia dotyczą nowych przewodów.', selWire:'Wybrany przewód nr',
+    gPresets:'Układy', pSingle:'Jeden przewód', pPara:'Prądy zgodne', pAnti:'Prądy przeciwne', pCoax:'Kabel koncentryczny', pSol:'Solenoid (przekrój)', pHelm:'Para Helmholtza',
+    gLoop:'Pętla Ampère\'a', lR:'Promień pętli <i>R</i>', pInt:'∮B·dl', pMu:'μ₀·I wewnątrz', pEnc:'I wewnątrz',
+    loopHint:'Włącz „Pętla Ampère\'a” pod planszą. Środek i brzeg pętli można przeciągać.', loopHintOn:'Przeciągnij środek pętli albo jej brzeg. Kierunek obiegu: przeciwnie do ruchu wskazówek zegara.',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżącego układu i położenia sondy (jednostki SI).',
+    fWire:'Pole długiego przewodu', fSup:'Superpozycja', fAmp:'Prawo Ampère\'a', fForce:'Siła między przewodami', fSol:'Solenoid',
+    nWire:'Najbliższy przewód do sondy, odległość', nWireDir:'Kierunek: kciuk prawej dłoni wzdłuż prądu, palce pokazują <b>B</b>.', nNoWire:'Brak przewodów na planszy.',
+    nSup:'Każdy przewód daje wektor styczny do okręgu wokół siebie; w sondzie wektory dodają się. Liczba przewodów:',
+    nAmpOff:'Włącz przełącznik „Pętla Ampère\'a”, żeby policzyć całkę numerycznie.', nAmpIn:'Przewody wewnątrz pętli', nAmpOut:'poza nią', nAmpNum:'Całka liczona numerycznie z 1440 odcinków. Przewody spoza pętli dają wkład zerowy.',
+    nAmpEdge:'Uwaga: przewód leży prawie na pętli, całka jest wtedy źle określona.',
+    nForceNone:'Potrzebne są co najmniej dwa przewody.', nAttr:'prądy zgodne: przyciąganie', nRep:'prądy przeciwne: odpychanie', nForcePair:'Para: wybrany (albo pierwszy) przewód i jego najbliższy sąsiad, odległość',
+    nSol:'Dla presetu „Solenoid”: odstęp zwojów Δ<i>x</i> = 1,2 cm. Wzór dotyczy nieskończenie długiego solenoidu, więc dla tego krótkiego układu daje trochę za dużo.', nSolNow:'Pole policzone w środku tego układu:', nSolLoad:'Wczytaj preset „Solenoid”, żeby porównać ze środkiem układu.',
+    charts:'Wykres', tabProf:'Profil |B|', tabLoop:'Wzdłuż pętli',
+    cProf:'|<i>B</i>| wzdłuż poziomej prostej przez sondę (skala logarytmiczna). Szpilki to przewody, kropka to sonda.',
+    cLoop:'Składowa styczna <i>B</i><sub>t</sub> wzdłuż pętli. Kształt krzywej zależy od położenia pętli, ale pole pod nią razy <i>R</i> zawsze daje <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub>.',
+    cLoopOff:'Włącz „Pętla Ampère\'a”, żeby zobaczyć <i>B</i><sub>t</sub> wzdłuż pętli.', loopOffMsg:'Pętla wyłączona',
+    xcm:'x [cm]', ylog:'|B| [μT]', ydeg:'θ [°]', ybt:'Bt [μT]', mean:'średnia',
+    probe:'sonda', wireN:'nr', none:'—'
+  },
+  en: {
+    eyebrow:'Magnetism · Biot-Savart law', title:'Magnetic field of currents',
+    lede:'A cross-section through long straight wires carrying current. Drag them, add new ones and watch the grid of compasses line up along the field B.',
+    aScene:'Cross-section with wires and a grid of compasses', aTools:'Tools', aPanel:'Settings',
+    tMove:'Move (1)', tOut:'Add current out of page ⊙ (2)', tIn:'Add current into page ⊗ (3)', tDel:'Delete wire (4)',
+    hMove:'Drag wires, the probe and the loop. Click a wire to select it.', hOut:'Click on the board to add a current out of the page ⊙.',
+    hIn:'Click on the board to add a current into the page ⊗.', hDel:'Click a wire to delete it.', hFull:'Limit of 40 wires reached.',
+    run:'Release wires', stop:'Pause', kbd:'space', reset:'Reset',
+    tgLines:'Field lines', tgMap:'|B| map', tgForce:'Forces', tgLoop:'Ampère loop',
+    lgOut:'current out of page', lgIn:'current into page', lgNeedle:'needle: N pole', lgMap:'1 μT … 1 mT',
+    sIdle:'static', sRun:'moving', sPause:'paused',
+    tries:'Try this', triesSub:'Click a card to set up the scene. Nothing moves on its own.', tryGo:'Load',
+    try1h:'Coaxial cable', try1:'Needles outside the ring barely feel any field: the core and the braid carry opposite currents, so the net current is zero.',
+    try2h:'Ampère loop', try2:'Drag the loop and change its radius. The integral <i>∮B·dl</i> jumps only when a wire crosses the loop.',
+    try3h:'Currents attract', try3:'Two parallel currents with forces shown. Press “Release wires”. Then flip one current (double click) and try again.',
+    try4h:'Inside a solenoid', try4:'Move the probe around the inside: |<i>B</i>| barely changes and is close to <i>μ</i><sub>0</sub><i>nI</i>. Just outside the turns the field almost vanishes.',
+    gWire:'Wire', lI:'Current <i>I</i>', dOut:'out of page', dIn:'into page', delSel:'Delete selected', clearAll:'Clear board',
+    wireHint:'Double click a wire to reverse its current.', selNone:'Nothing selected: settings apply to new wires.', selWire:'Selected wire no.',
+    gPresets:'Setups', pSingle:'Single wire', pPara:'Parallel currents', pAnti:'Antiparallel currents', pCoax:'Coaxial cable', pSol:'Solenoid (section)', pHelm:'Helmholtz pair',
+    gLoop:'Ampère loop', lR:'Loop radius <i>R</i>', pInt:'∮B·dl', pMu:'μ₀·I enclosed', pEnc:'I enclosed',
+    loopHint:'Turn on “Ampère loop” below the board. Drag the loop centre or its rim.', loopHintOn:'Drag the loop centre or its rim. The loop is traversed counterclockwise.',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current setup and probe position (SI units).',
+    fWire:'Field of a long wire', fSup:'Superposition', fAmp:'Ampère\'s law', fForce:'Force between wires', fSol:'Solenoid',
+    nWire:'Wire nearest to the probe, distance', nWireDir:'Direction: right thumb along the current, fingers curl along <b>B</b>.', nNoWire:'No wires on the board.',
+    nSup:'Each wire gives a vector tangent to a circle around it; at the probe the vectors add. Number of wires:',
+    nAmpOff:'Turn on the “Ampère loop” switch to evaluate the integral numerically.', nAmpIn:'Wires inside the loop', nAmpOut:'outside', nAmpNum:'Integral evaluated numerically with 1440 segments. Wires outside the loop contribute zero.',
+    nAmpEdge:'Note: a wire lies almost on the loop, so the integral is ill defined there.',
+    nForceNone:'At least two wires are needed.', nAttr:'parallel currents: attraction', nRep:'antiparallel currents: repulsion', nForcePair:'Pair: the selected (or first) wire and its nearest neighbour, distance',
+    nSol:'For the “Solenoid” preset: turn spacing Δ<i>x</i> = 1.2 cm. The formula is for an infinitely long solenoid, so it overestimates this short one a little.', nSolNow:'Field computed at the centre of this setup:', nSolLoad:'Load the “Solenoid” preset to compare with the centre of the setup.',
+    charts:'Plot', tabProf:'|B| profile', tabLoop:'Along the loop',
+    cProf:'|<i>B</i>| along the horizontal line through the probe (log scale). Spikes are wires, the dot is the probe.',
+    cLoop:'Tangential component <i>B</i><sub>t</sub> along the loop. The curve changes shape as the loop moves, but its area times <i>R</i> always gives <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub>.',
+    cLoopOff:'Turn on “Ampère loop” to see <i>B</i><sub>t</sub> along the loop.', loopOffMsg:'Loop is off',
+    xcm:'x [cm]', ylog:'|B| [μT]', ydeg:'θ [°]', ybt:'Bt [μT]', mean:'mean',
+    probe:'probe', wireN:'no.', none:'—'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('magnes-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function autoDec(x) { const a = Math.abs(x); return a >= 100 ? 0 : a >= 10 ? 1 : 2; }
+const fa = (x) => fmt(x, autoDec(x));
+// field in tesla -> [value, unit]
+function bU(T) { const a = Math.abs(T); return a >= 1e-3 ? [fmt(T * 1e3, 2), 'mT'] : [fa(T * 1e6), 'μT']; }
+const fB = (T) => bU(T).join(' ');
+// T·m -> μT·m
+const fTm = (v) => `${fa(v * 1e6)} μT·m`;
+function fF(N) { const a = Math.abs(N); return a >= 1e-3 ? `${fmt(N * 1e3, 2)} mN/m` : `${fa(N * 1e6)} μN/m`; }
+
+/* ---------- state ---------- */
+let uid = 1;
+const S = {
+  wires: [], sel: null, tool: 'move', probe: { x: 0, y: 0.05 }, loop: { x: 0, y: 0, R: 0.06 },
+  show: { lines: false, map: false, force: false, loop: false },
+  running: false, snapshot: null, preset: null, newI: 10, newDir: 1, chartTab: 'prof', hint: null
+};
+const W = (x, y, I, s) => ({ id: uid++, x, y, I, s, vx: 0, vy: 0 });
+
+/* ---------- physics ---------- */
+function field(x, y, skip = null) {
+  let bx = 0, by = 0;
+  for (const w of S.wires) {
+    if (w === skip) continue;
+    const dx = x - w.x, dy = y - w.y, r2 = dx * dx + dy * dy;
+    if (r2 < 1e-10) continue;
+    const k = MU0 * w.I * w.s / (2 * Math.PI * r2);
+    bx -= k * dy; by += k * dx;
+  }
+  return [bx, by];
+}
+function forceOn(w) {                          // force per unit length on wire w, N/m
+  const [bx, by] = field(w.x, w.y, w);
+  const I = w.I * w.s;                         // F/L = I ẑ × B
+  return [-I * by, I * bx];
+}
+function loopIntegral(n = 1440) {
+  const L = S.loop; let sum = 0;
+  for (let i = 0; i < n; i++) {
+    const th = (i + 0.5) / n * 2 * Math.PI, c = Math.cos(th), s = Math.sin(th);
+    const [bx, by] = field(L.x + L.R * c, L.y + L.R * s);
+    sum += (-bx * s + by * c);
+  }
+  return sum * 2 * Math.PI * L.R / n;
+}
+function enclosed() {
+  const L = S.loop; let I = 0, inN = 0, outN = 0, edge = false;
+  for (const w of S.wires) {
+    const d = Math.hypot(w.x - L.x, w.y - L.y);
+    if (Math.abs(d - L.R) < 0.0025) edge = true;
+    if (d < L.R) { I += w.I * w.s; inN++; } else outN++;
+  }
+  return { I, inN, outN, edge };
+}
+
+/* ---------- presets ---------- */
+const SOL_DX = 0.012;
+function preset(name) {
+  S.running = false; S.snapshot = null; S.sel = null; uid = 1;
+  const I = 10; let ws = [];
+  if (name === 'single') { ws = [W(0, 0, I, 1)]; S.probe = { x: 0.06, y: 0.035 }; S.loop = { x: 0, y: 0, R: 0.06 }; }
+  else if (name === 'para') { ws = [W(-0.045, 0, I, 1), W(0.045, 0, I, 1)]; S.probe = { x: 0, y: 0.05 }; S.loop = { x: -0.045, y: 0, R: 0.05 }; }
+  else if (name === 'anti') { ws = [W(-0.045, 0, I, 1), W(0.045, 0, I, -1)]; S.probe = { x: 0, y: 0.05 }; S.loop = { x: -0.045, y: 0, R: 0.05 }; }
+  else if (name === 'coax') {
+    ws = [W(0, 0, 40, -1)];
+    for (let k = 0; k < 8; k++) { const a = k / 8 * 2 * Math.PI + Math.PI / 8; ws.push(W(0.065 * Math.cos(a), 0.065 * Math.sin(a), 5, 1)); }
+    S.probe = { x: 0.035, y: 0.02 }; S.loop = { x: 0, y: 0, R: 0.1 };
+  } else if (name === 'sol') {
+    for (let k = 0; k < 16; k++) { const x = (k - 7.5) * SOL_DX; ws.push(W(x, 0.02, I, 1)); ws.push(W(x, -0.02, I, -1)); }
+    S.probe = { x: 0.02, y: 0.008 }; S.loop = { x: 0, y: 0.02, R: 0.015 };
+  } else if (name === 'helm') {
+    const b = 0.06, a = b / Math.sqrt(3);      // 60° geometry: field curvature at centre vanishes (2D analogue)
+    ws = [W(-a, b, I, 1), W(a, b, I, 1), W(-a, -b, I, -1), W(a, -b, I, -1)];
+    S.probe = { x: 0.015, y: 0.01 }; S.loop = { x: 0, y: 0.06, R: 0.05 };
+  }
+  S.wires = ws; S.preset = name;
+  fieldChanged(true);
+  syncLoopSlider(); syncPanel();
+}
+
+/* ---------- canvas setup ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 500, dpr = 1, sc = 2000, dirty = true, fieldDirty = true, chartDirty = true, uiDirty = true;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'out', 'in', 'amber', 'violet'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true; fieldDirty = true;
+}
+const X = (x) => cw / 2 + x * sc, Y = (y) => ch / 2 - y * sc;
+const WX = (px) => (px - cw / 2) / sc, WY = (py) => (ch / 2 - py) / sc;
+const wireRpx = () => Math.max(5, Math.min(10, 0.0045 * sc));
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  sc = Math.min(cw, ch * 1.05) / 0.30;
+  buildNeedles(); fieldDirty = true; dirty = true;
+}
+new ResizeObserver(resize).observe(box);
+
+function rgb(hex) { const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16); return [(n >> 16) & 255, (n >> 8) & 255, n & 255]; }
+function withAlpha(hex, a) { const [r, g, b] = rgb(hex); return `rgba(${r},${g},${b},${a})`; }
+
+/* ---------- compass needles ---------- */
+let needles = [], needleSnap = true;
+function buildNeedles() {
+  const sp = cw < 640 ? 27 : 34;
+  needles = [];
+  const nx = Math.floor(cw / sp), ny = Math.floor(ch / sp);
+  const ox = (cw - (nx - 1) * sp) / 2, oy = (ch - (ny - 1) * sp) / 2;
+  for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) needles.push({ px: ox + i * sp, py: oy + j * sp, a: 0, t: 0, al: 0, hide: false, len: sp * 0.62 });
+  needleSnap = true;
+}
+function updateNeedleTargets() {
+  const rw = wireRpx() + 9;
+  for (const n of needles) {
+    const x = WX(n.px), y = WY(n.py);
+    n.hide = S.wires.some(w => Math.hypot(X(w.x) - n.px, Y(w.y) - n.py) < rw);
+    const [bx, by] = field(x, y), B = Math.hypot(bx, by);
+    if (B > 1e-12) n.t = Math.atan2(-by, bx);
+    n.al = Math.max(0.16, Math.min(1, 0.22 + 0.78 * (Math.log10(Math.max(B, 1e-9)) + 6) / 3));
+    if (needleSnap || reduceMotion) n.a = n.t;
+  }
+  needleSnap = false;
+}
+function stepNeedles(dt) {
+  const k = 1 - Math.exp(-dt / 0.085);
+  let moving = false;
+  for (const n of needles) {
+    let d = n.t - n.a; d = Math.atan2(Math.sin(d), Math.cos(d));
+    if (Math.abs(d) > 0.003) { n.a += d * k; moving = true; } else n.a = n.t;
+  }
+  return moving;
+}
+function drawNeedles() {
+  const c = ctx, nC = col.acc, sC = col.ink3;
+  for (const n of needles) {
+    if (n.hide) continue;
+    const h = n.len / 2, w = Math.max(2.4, n.len * 0.12), ca = Math.cos(n.a), sa = Math.sin(n.a);
+    const tx = n.px + ca * h, ty = n.py + sa * h, bx = n.px - ca * h, by = n.py - sa * h;
+    const px = -sa * w, py = ca * w;
+    c.globalAlpha = n.al;
+    c.fillStyle = nC; c.beginPath(); c.moveTo(tx, ty); c.lineTo(n.px + px, n.py + py); c.lineTo(n.px - px, n.py - py); c.closePath(); c.fill();
+    c.globalAlpha = n.al * 0.55;
+    c.fillStyle = sC; c.beginPath(); c.moveTo(bx, by); c.lineTo(n.px + px, n.py + py); c.lineTo(n.px - px, n.py - py); c.closePath(); c.fill();
+    c.globalAlpha = 1;
+  }
+}
+
+/* ---------- |B| map + field lines (cached) ---------- */
+const mapCv = document.createElement('canvas'), mapCtx = mapCv.getContext('2d');
+let linesPath = null;
+function buildMap() {
+  const st = 4, gw = Math.ceil(cw / st) + 1, gh = Math.ceil(ch / st) + 1;
+  mapCv.width = gw; mapCv.height = gh;
+  const img = mapCtx.createImageData(gw, gh), d = img.data;
+  const [r, g, b] = rgb(col.acc);
+  for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+    const [bx, by] = field(WX(i * st), WY(j * st)), B = Math.hypot(bx, by);
+    const t = Math.max(0, Math.min(1, (Math.log10(Math.max(B, 1e-12)) + 6) / 3));
+    const o = (j * gw + i) * 4; d[o] = r; d[o + 1] = g; d[o + 2] = b; d[o + 3] = Math.round(255 * (0.04 + 0.62 * Math.pow(t, 1.35)));
+  }
+  mapCtx.putImageData(img, 0, 0);
+}
+function buildLines() {
+  linesPath = new Path2D();
+  if (!S.wires.length) return;
+  const st = S.running ? 7 : 5, gw = Math.ceil(cw / st) + 1, gh = Math.ceil(ch / st) + 1;
+  const psi = new Float64Array(gw * gh), near = new Uint8Array(gw * gh);
+  const rr = (wireRpx() + 3);
+  let Imax = 0; for (const w of S.wires) Imax = Math.max(Imax, w.I);
+  const D = 0.3 * Imax * Math.sqrt(S.wires.length);
+  const wp = S.wires.map(w => [X(w.x), Y(w.y), w.I * w.s]);
+  for (let j = 0; j < gh; j++) for (let i = 0; i < gw; i++) {
+    const px = i * st, py = j * st; let v = 0, nr = 0;
+    for (const [wx, wy, I] of wp) {
+      const dx = px - wx, dy = py - wy, r2 = dx * dx + dy * dy;
+      if (r2 < rr * rr) nr = 1;
+      v += I * 0.5 * Math.log(Math.max(r2, 1e-6) / (sc * sc));
+    }
+    psi[j * gw + i] = v / D; near[j * gw + i] = nr;
+  }
+  const P = linesPath;
+  for (let j = 0; j < gh - 1; j++) for (let i = 0; i < gw - 1; i++) {
+    const a = j * gw + i, b = a + 1, c = a + gw + 1, d = a + gw;
+    if (near[a] || near[b] || near[c] || near[d]) continue;
+    const va = psi[a], vb = psi[b], vc = psi[c], vd = psi[d];
+    const lo = Math.min(va, vb, vc, vd), hi = Math.max(va, vb, vc, vd);
+    const k0 = Math.ceil(lo), k1 = Math.floor(hi);
+    if (k1 < k0 || k1 - k0 > 4) continue;
+    const x0 = i * st, y0 = j * st;
+    for (let L = k0; L <= k1; L++) {
+      const pts = [];
+      const e = (v1, v2, x1, y1, x2, y2) => { if ((v1 - L) * (v2 - L) < 0) { const u = (L - v1) / (v2 - v1); pts.push(x1 + u * (x2 - x1), y1 + u * (y2 - y1)); } };
+      e(va, vb, x0, y0, x0 + st, y0); e(vb, vc, x0 + st, y0, x0 + st, y0 + st);
+      e(vc, vd, x0 + st, y0 + st, x0, y0 + st); e(vd, va, x0, y0 + st, x0, y0);
+      if (pts.length >= 4) { P.moveTo(pts[0], pts[1]); P.lineTo(pts[2], pts[3]); }
+      if (pts.length === 8) { P.moveTo(pts[4], pts[5]); P.lineTo(pts[6], pts[7]); }
+    }
+  }
+}
+
+/* ---------- drawing helpers ---------- */
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(x1, y1, x2, y2, color, w = 2, head = 9) {
+  const c = ctx, a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 3) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.42) * head, y2 - Math.sin(a - 0.42) * head);
+  c.lineTo(x2 - Math.cos(a + 0.42) * head, y2 - Math.sin(a + 0.42) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+function drawGrid() {
+  const c = ctx;
+  c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+  const step = 0.01, x0 = Math.floor(WX(0) / step) - 1, x1 = Math.ceil(WX(cw) / step) + 1;
+  const y0 = Math.floor(WY(ch) / step) - 1, y1 = Math.ceil(WY(0) / step) + 1;
+  c.lineWidth = 1;
+  for (const major of [false, true]) {
+    c.strokeStyle = major ? col.gridmajor : col.grid; c.beginPath();
+    for (let k = x0; k <= x1; k++) { if ((k % 5 === 0) !== major) continue; const px = Math.round(X(k * step)) + 0.5; c.moveTo(px, 0); c.lineTo(px, ch); }
+    for (let k = y0; k <= y1; k++) { if ((k % 5 === 0) !== major) continue; const py = Math.round(Y(k * step)) + 0.5; c.moveTo(0, py); c.lineTo(cw, py); }
+    c.stroke();
+  }
+}
+function drawScale() {
+  const c = ctx, L = 0.05 * sc, x2 = cw - 14, x1 = x2 - L, y = ch - 16;
+  c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(x1, y - 4); c.lineTo(x1, y); c.lineTo(x2, y); c.lineTo(x2, y - 4); c.stroke(); c.restore();
+  halo('5 cm', (x1 + x2) / 2, y - 9, col.ink2, `500 11px ${FONT_MONO}`, 'center', 'bottom');
+}
+function drawWire(w) {
+  const c = ctx, x = X(w.x), y = Y(w.y), r = wireRpx(), color = w.s > 0 ? col.out : col.in;
+  if (S.sel === w) {
+    c.save(); c.strokeStyle = col.ink; c.lineWidth = 1.6; c.setLineDash([3, 3]);
+    c.beginPath(); c.arc(x, y, r + 5, 0, Math.PI * 2); c.stroke(); c.restore();
+  }
+  c.save(); c.shadowColor = withAlpha(color, 0.45); c.shadowBlur = 8;
+  c.fillStyle = color; c.beginPath(); c.arc(x, y, r, 0, Math.PI * 2); c.fill(); c.restore();
+  c.fillStyle = '#fff'; c.strokeStyle = '#fff';
+  if (w.s > 0) { c.beginPath(); c.arc(x, y, Math.max(1.4, r * 0.26), 0, Math.PI * 2); c.fill(); }
+  else { const q = r * 0.45; c.lineWidth = Math.max(1.3, r * 0.2); c.lineCap = 'round'; c.beginPath(); c.moveTo(x - q, y - q); c.lineTo(x + q, y + q); c.moveTo(x + q, y - q); c.lineTo(x - q, y + q); c.stroke(); }
+  if (S.wires.length <= 9 || S.sel === w) halo(`${fmt(w.I, w.I % 1 ? 1 : 0)} A`, x, y + r + 6, col.ink2, `500 11px ${FONT_MONO}`, 'center', 'top');
+}
+function drawLoop() {
+  const c = ctx, L = S.loop, x = X(L.x), y = Y(L.y), R = L.R * sc;
+  const enc = enclosed();
+  c.save();
+  c.fillStyle = withAlpha(col.violet, 0.05); c.beginPath(); c.arc(x, y, R, 0, Math.PI * 2); c.fill();
+  c.strokeStyle = col.violet; c.lineWidth = 2; c.setLineDash([7, 5]); c.stroke(); c.setLineDash([]);
+  // direction arrows (counterclockwise in world = counterclockwise on screen)
+  for (let k = 0; k < 4; k++) {
+    const th = k * Math.PI / 2 + Math.PI / 4, px = x + R * Math.cos(th), py = y - R * Math.sin(th);
+    const tx = -Math.sin(th), ty = -Math.cos(th);
+    arrow(px - tx * 6, py - ty * 6, px + tx * 7, py + ty * 7, col.violet, 2, 8);
+  }
+  // centre handle and rim knob
+  c.strokeStyle = col.violet; c.lineWidth = 1.6;
+  c.beginPath(); c.moveTo(x - 6, y); c.lineTo(x + 6, y); c.moveTo(x, y - 6); c.lineTo(x, y + 6); c.stroke();
+  const kx = x + R, ky = y;
+  c.fillStyle = col.paper; c.beginPath(); c.arc(kx, ky, 6, 0, Math.PI * 2); c.fill(); c.stroke();
+  // enclosed wires highlight
+  for (const w of S.wires) if (Math.hypot(w.x - L.x, w.y - L.y) < L.R) {
+    c.strokeStyle = withAlpha(col.violet, 0.8); c.lineWidth = 2; c.beginPath(); c.arc(X(w.x), Y(w.y), wireRpx() + 3, 0, Math.PI * 2); c.stroke();
+  }
+  c.restore();
+  // label
+  const int = loopIntegral(720), mu = MU0 * enc.I;
+  const t1 = `∮B·dl = ${fTm(int)}`, t2 = `μ₀I = ${fTm(mu)}`;
+  let ly = y - R - 30; if (ly < 26) ly = y + R + 14;
+  const lx = Math.max(90, Math.min(cw - 90, x));
+  halo(t1, lx, ly, col.violet, `600 12px ${FONT_MONO}`, 'center', 'top');
+  halo(t2, lx, ly + 15, col.ink2, `500 11.5px ${FONT_MONO}`, 'center', 'top');
+}
+function drawForces() {
+  const many = S.wires.length > 9, placed = [];
+  for (const w of S.wires) {
+    const [fx, fy] = forceOn(w), F = Math.hypot(fx, fy);
+    if (F < 1e-9) continue;
+    const L = Math.max(14, Math.min(90, 20 + 24 * Math.log10(F / 1e-5)));
+    const ux = fx / F, uy = -fy / F, r = wireRpx() + 2, x = X(w.x), y = Y(w.y);
+    arrow(x + ux * r, y + uy * r, x + ux * (r + L), y + uy * (r + L), col.amber, 2.4, 9);
+    const lx = x + ux * (r + L + 8), ly = y + uy * (r + L + 8);
+    if (placed.some(([qx, qy]) => Math.abs(qx - lx) < 70 && Math.abs(qy - ly) < 16)) continue;
+    placed.push([lx, ly]);
+    if (!many) halo(fF(F), x + ux * (r + L + 8), y + uy * (r + L + 8), col.amber, `500 11px ${FONT_MONO}`, ux > 0.3 ? 'left' : ux < -0.3 ? 'right' : 'center', uy > 0.3 ? 'top' : uy < -0.3 ? 'bottom' : 'middle');
+  }
+}
+function drawProbe() {
+  const c = ctx, x = X(S.probe.x), y = Y(S.probe.y);
+  const [bx, by] = field(S.probe.x, S.probe.y), B = Math.hypot(bx, by);
+  if (B > 1e-10) {
+    const L = Math.max(16, Math.min(80, 26 + 20 * Math.log10(B / 1e-6)));
+    arrow(x, y, x + bx / B * L, y - by / B * L, col.ink, 2.6, 10);
+  }
+  c.save(); c.strokeStyle = col.amber; c.lineWidth = 2.2; c.fillStyle = withAlpha(col.amber, 0.14);
+  c.beginPath(); c.arc(x, y, 8, 0, Math.PI * 2); c.fill(); c.stroke();
+  c.lineWidth = 1.4; c.beginPath(); c.moveTo(x - 13, y); c.lineTo(x - 9, y); c.moveTo(x + 9, y); c.lineTo(x + 13, y); c.moveTo(x, y - 13); c.lineTo(x, y - 9); c.moveTo(x, y + 9); c.lineTo(x, y + 13); c.stroke();
+  c.restore();
+  const below = by > 0;
+  halo(`|B| = ${fB(B)}`, x + 14, below ? y + 18 : y - 18, col.amber, `600 12px ${FONT_MONO}`, x > cw - 150 ? 'right' : 'left', 'middle');
+}
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  drawGrid();
+  if (S.show.map) { c.save(); c.imageSmoothingEnabled = true; c.drawImage(mapCv, 0, 0, mapCv.width * 4, mapCv.height * 4); c.restore(); }
+  if (S.show.lines && linesPath) { c.save(); c.strokeStyle = withAlpha(col.acc, 0.6); c.lineWidth = 1.3; c.stroke(linesPath); c.restore(); }
+  drawNeedles();
+  if (S.show.loop) drawLoop();
+  if (S.show.force) drawForces();
+  for (const w of S.wires) drawWire(w);
+  drawProbe();
+  drawScale();
+}
+
+/* ---------- motion of free wires ---------- */
+function stepWires(dt) {
+  const n = 8, h = dt / n, rw = 0.0045, xmax = WX(cw) - rw, ymax = WY(0) - rw;
+  for (let s = 0; s < n; s++) {
+    const F = S.wires.map(w => (w === dragObj?.w ? [0, 0] : forceOn(w)));
+    S.wires.forEach((w, i) => {
+      if (dragObj && dragObj.w === w) { w.vx = w.vy = 0; return; }
+      w.vx += F[i][0] / LAMBDA * h; w.vy += F[i][1] / LAMBDA * h;
+      w.x += w.vx * h; w.y += w.vy * h;
+      if (w.x > xmax) { w.x = xmax; w.vx = 0; } if (w.x < -xmax) { w.x = -xmax; w.vx = 0; }
+      if (w.y > ymax) { w.y = ymax; w.vy = 0; } if (w.y < -ymax) { w.y = -ymax; w.vy = 0; }
+    });
+    // inelastic contacts between wires (equal masses)
+    for (let i = 0; i < S.wires.length; i++) for (let j = i + 1; j < S.wires.length; j++) {
+      const a = S.wires[i], b = S.wires[j], dx = b.x - a.x, dy = b.y - a.y, d = Math.hypot(dx, dy), m = 2 * rw;
+      if (d >= m || d < 1e-9) continue;
+      const nx = dx / d, ny = dy / d, o = (m - d) / 2;
+      a.x -= nx * o; a.y -= ny * o; b.x += nx * o; b.y += ny * o;
+      const vn = (b.vx - a.vx) * nx + (b.vy - a.vy) * ny;
+      if (vn < 0) { a.vx += nx * vn / 2; a.vy += ny * vn / 2; b.vx -= nx * vn / 2; b.vy -= ny * vn / 2; }
+    }
+  }
+}
+
+/* ---------- UI sync ---------- */
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function syncPanel() {
+  const w = S.sel;
+  const I = w ? w.I : S.newI, s = w ? w.s : S.newDir;
+  $('#cur').value = I; $('#cur-out').textContent = `${fmt(I, 1)} A`;
+  $$('#dir button').forEach(b => b.setAttribute('aria-pressed', String(+b.dataset.dir === s)));
+  $('#del-sel').disabled = !w;
+  const si = $('#selinfo');
+  if (w) {
+    const k = S.wires.indexOf(w) + 1;
+    si.innerHTML = `<span class="dot" style="background:${w.s > 0 ? col.out : col.in}"></span>${tr('selWire')} ${k}`;
+  } else si.textContent = tr('selNone');
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === S.preset)));
+  $$('input[type=range]').forEach(setFill);
+}
+function syncLoopSlider() {
+  $('#loopR').value = Math.max(0.5, Math.min(14, S.loop.R * 100)); setFill($('#loopR'));
+  $('#loopR-out').textContent = `${fmt(S.loop.R * 100, 1)} cm`;
+}
+function updateLegend() {
+  const sw = (c, inn) => `<svg viewBox="0 0 14 14"><circle cx="7" cy="7" r="6" fill="${c}"/>${inn ? '<path d="M4.6 4.6l4.8 4.8M9.4 4.6l-4.8 4.8" stroke="#fff" stroke-width="1.5" stroke-linecap="round"/>' : '<circle cx="7" cy="7" r="1.8" fill="#fff"/>'}</svg>`;
+  let h = `<span>${sw(col.out, false)}${tr('lgOut')}</span><span>${sw(col.in, true)}${tr('lgIn')}</span>`;
+  h += `<span><svg viewBox="0 0 14 14"><path d="M13 7 7 5.4v3.2z" fill="${col.acc}"/><path d="M1 7l6-1.6v3.2z" fill="${col.ink3}" opacity=".6"/></svg>${tr('lgNeedle')}</span>`;
+  if (S.show.map) h += `<span><i class="cbar"></i>${tr('lgMap')}</span>`;
+  const st = S.running ? 'run' : S.snapshot ? 'pause' : 'idle';
+  h += `<span class="state" data-s="${st}">${tr(st === 'run' ? 'sRun' : st === 'pause' ? 'sPause' : 'sIdle')}</span>`;
+  $('#legend').innerHTML = h;
+}
+function updateRunBtn() {
+  $('#run-lbl').textContent = tr(S.running ? 'stop' : 'run');
+  $('#run-ico').innerHTML = S.running ? '<path d="M5 3.5h3.4v13H5zM11.6 3.5H15v13h-3.4z" fill="currentColor"/>' : '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+  $('#reset').disabled = !S.snapshot;
+  updateLegend();
+}
+let hudKey = '';
+function updateHud() {
+  const [bx, by] = field(S.probe.x, S.probe.y), B = Math.hypot(bx, by);
+  const unit = B >= 1e-3 ? 'mT' : 'μT', f = unit === 'mT' ? 1e3 : 1e6;
+  const net = S.wires.reduce((a, w) => a + w.I * w.s, 0);
+  const key = [bx, by, net, S.wires.length, lang].map(v => typeof v === 'number' ? v.toPrecision(5) : v).join('|');
+  if (key === hudKey) return; hudKey = key;
+  const d = unit === 'mT' ? 3 : 1;
+  $('#hud-b').innerHTML = `${fmt(B * f, d)} <span>${unit}</span>`;
+  $('#hud-bx').innerHTML = `${fmt(bx * f, d)} <span>${unit}</span>`;
+  $('#hud-by').innerHTML = `${fmt(by * f, d)} <span>${unit}</span>`;
+  $('#hud-i').innerHTML = `${fmt(net, 1)} <span>A</span>`;
+  $('#hud-n').textContent = String(S.wires.length);
+}
+function updatePills() {
+  const on = S.show.loop;
+  $('#loopgrp').querySelectorAll('.ctl, .pills').forEach(el => el.classList.toggle('dim', !on));
+  $('#loophint').textContent = tr(on ? 'loopHintOn' : 'loopHint');
+  if (!on) { $('#pill-int').textContent = $('#pill-mu').textContent = $('#pill-enc').textContent = tr('none'); return; }
+  const int = loopIntegral(), enc = enclosed();
+  $('#pill-int').textContent = fTm(int); $('#pill-mu').textContent = fTm(MU0 * enc.I); $('#pill-enc').textContent = `${fmt(enc.I, 1)} A`;
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+const MU = `${V('μ', '0')}`;
+const MUN = '4π·10<sup>−7</sup>';
+function nearestTo(x, y, skip = null) {
+  let best = null, bd = Infinity;
+  for (const w of S.wires) { if (w === skip) continue; const d = Math.hypot(w.x - x, w.y - y); if (d < bd) { bd = d; best = w; } }
+  return [best, bd];
+}
+function updateFormulas() {
+  const cards = [];
+  const [nw, nd] = nearestTo(S.probe.x, S.probe.y);
+  // 1. single wire
+  let b1 = `<div class="eq">${V('B')}${EQ}${FR(`${MU}${V('I')}`, `2π${V('r')}`)}</div>`;
+  if (nw) {
+    const B1 = MU0 * nw.I / (2 * Math.PI * nd);
+    b1 += `<div class="eq num">${V('B')}${EQ}${FR(`${MUN} · ${fmt(nw.I, 1)}`, `2π · ${fmt(nd, 4)}`)}${EQ}<span class="r">${fB(B1)}</span></div>
+      <p class="fnote">${tr('nWire')} <i>r</i> = ${fmt(nd * 100, 2)} cm. ${tr('nWireDir')}</p>`;
+  } else b1 += `<p class="fnote">${tr('nNoWire')}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fWire')}</h4>${b1}</div>`);
+  // 2. superposition
+  const [bx, by] = field(S.probe.x, S.probe.y), B = Math.hypot(bx, by);
+  const [vx, ux] = bU(bx), [vy, uy] = bU(by);
+  cards.push(`<div class="fcard"><h4>${tr('fSup')}</h4>
+    <div class="eq"><b>B</b>${EQ}Σ ${FR(`${MU}${V('I', 'i')}`, `2π${V('r', 'i')}`)} <b>φ̂</b><sub>i</sub></div>
+    <div class="eq num">${V('B', 'x')}${EQ}${vx} ${ux}, &nbsp;${V('B', 'y')}${EQ}${vy} ${uy}</div>
+    <div class="eq num">|<b>B</b>|${EQ}<span class="rt"><span>√</span><span>${V('B', 'x')}<sup>2</sup> + ${V('B', 'y')}<sup>2</sup></span></span>${EQ}<span class="r">${fB(B)}</span></div>
+    <p class="fnote">${tr('nSup')} ${S.wires.length}.</p></div>`);
+  // 3. Ampère
+  let b3 = `<div class="eq"><span class="oint">∮</span><b>B</b> · d<b>l</b>${EQ}${MU}${V('I', 'enc')}</div>`;
+  if (S.show.loop) {
+    const int = loopIntegral(), enc = enclosed();
+    b3 += `<div class="eq num"><span class="oint">∮</span><b>B</b> · d<b>l</b>${EQ}<span class="r v">${fTm(int)}</span> &nbsp; ${MU}${V('I', 'enc')}${EQ}${MUN} · ${fmt(enc.I, 1)}${EQ}<span class="r v">${fTm(MU0 * enc.I)}</span></div>
+      <p class="fnote">${tr('nAmpIn')}: ${enc.inN}, ${tr('nAmpOut')}: ${enc.outN}. <i>R</i> = ${fmt(S.loop.R * 100, 1)} cm. ${tr('nAmpNum')}${enc.edge ? ' ' + tr('nAmpEdge') : ''}</p>`;
+  } else b3 += `<p class="fnote">${tr('nAmpOff')}</p>`;
+  cards.push(`<div class="fcard wide"><h4>${tr('fAmp')}</h4>${b3}</div>`);
+  // 4. force
+  let b4 = `<div class="eq">${FR(V('F'), V('L'))}${EQ}${FR(`${MU}${V('I', '1')}${V('I', '2')}`, `2π${V('d')}`)}</div>`;
+  const w1 = S.sel || S.wires[0];
+  const [w2, d12] = w1 ? nearestTo(w1.x, w1.y, w1) : [null, 0];
+  if (w1 && w2) {
+    const F = MU0 * w1.I * w2.I / (2 * Math.PI * d12);
+    b4 += `<div class="eq num">${FR(V('F'), V('L'))}${EQ}${FR(`${MUN} · ${fmt(w1.I, 1)} · ${fmt(w2.I, 1)}`, `2π · ${fmt(d12, 4)}`)}${EQ}<span class="r a">${fF(F)}</span></div>
+      <p class="fnote">${tr('nForcePair')} <i>d</i> = ${fmt(d12 * 100, 2)} cm; ${tr(w1.s === w2.s ? 'nAttr' : 'nRep')}.</p>`;
+  } else b4 += `<p class="fnote">${tr('nForceNone')}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fForce')}</h4>${b4}</div>`);
+  // 5. solenoid
+  const nS = 1 / SOL_DX, Isol = S.preset === 'sol' && S.wires[0] ? S.wires[0].I : (S.sel ? S.sel.I : S.newI);
+  let b5 = `<div class="eq">${V('B')}${EQ}${MU}${V('n')}${V('I')}</div>
+    <div class="eq num">${V('B')}${EQ}${MUN} · ${fmt(nS, 1)} m<sup>−1</sup> · ${fmt(Isol, 1)}${EQ}<span class="r">${fB(MU0 * nS * Isol)}</span></div>
+    <p class="fnote">${tr('nSol')}</p>`;
+  if (S.preset === 'sol') { const [cx, cy] = field(0, 0); b5 += `<p class="fnote">${tr('nSolNow')} <i>B</i> = ${fB(Math.hypot(cx, cy))}.</p>`; }
+  else b5 += `<p class="fnote">${tr('nSolLoad')}</p>`;
+  cards.push(`<div class="fcard"><h4>${tr('fSol')}</h4>${b5}</div>`);
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- chart ---------- */
+const chv = $('#chart'), cctx = chv.getContext('2d'), cbox = $('#chart-box');
+let chW = 400, chH = 260;
+new ResizeObserver(() => { chW = cbox.clientWidth; chH = cbox.clientHeight; chv.width = Math.round(chW * dpr); chv.height = Math.round(chH * dpr); chartDirty = true; }).observe(cbox);
+function drawChart() {
+  const c = cctx; c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, chW, chH);
+  c.font = `500 11px ${FONT_MONO}`;
+  const Lm = 46, Rm = 12, Tm = 16, Bm = 28, pw = chW - Lm - Rm, ph = chH - Tm - Bm;
+  if (S.chartTab === 'prof') {
+    $('#cnote').innerHTML = tr('cProf');
+    const xa = WX(0), xb = WX(cw), y = S.probe.y, N = 500;
+    const lo = 0, hi = 4;                        // log10 μT: 1 μT .. 10 mT
+    const PX = (x) => Lm + (x - xa) / (xb - xa) * pw, PY = (v) => Tm + (1 - (v - lo) / (hi - lo)) * ph;
+    c.strokeStyle = col.grid; c.fillStyle = col.ink2; c.lineWidth = 1; c.textAlign = 'right'; c.textBaseline = 'middle';
+    const labs = ['1', '10', '100', '1000', '10⁴'];
+    for (let k = lo; k <= hi; k++) { const yy = Math.round(PY(k)) + 0.5; c.beginPath(); c.moveTo(Lm, yy); c.lineTo(Lm + pw, yy); c.stroke(); c.fillText(labs[k], Lm - 7, yy); }
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    const st = (xb - xa) > 0.3 ? 0.05 : 0.05;
+    for (let x = Math.ceil(xa / st) * st; x <= xb + 1e-9; x += st) c.fillText(fmt(x * 100, 0), PX(x), Tm + ph + 7);
+    c.fillStyle = col.ink3; c.textAlign = 'left'; c.fillText(tr('ylog'), 4, 0);
+    c.textAlign = 'right'; c.fillText(tr('xcm'), Lm + pw, 0);
+    c.save(); c.beginPath(); c.rect(Lm, Tm, pw, ph); c.clip();
+    c.beginPath();
+    for (let i = 0; i <= N; i++) {
+      const x = xa + (xb - xa) * i / N, [bx, by] = field(x, y), v = Math.log10(Math.max(Math.hypot(bx, by) * 1e6, 1e-3));
+      i ? c.lineTo(PX(x), PY(v)) : c.moveTo(PX(x), PY(v));
+    }
+    c.strokeStyle = col.acc; c.lineWidth = 2; c.lineJoin = 'round'; c.stroke();
+    c.lineTo(Lm + pw, Tm + ph); c.lineTo(Lm, Tm + ph); c.closePath(); c.fillStyle = withAlpha(col.acc, 0.1); c.fill();
+    for (const w of S.wires) if (Math.abs(w.y - y) < 0.006) {
+      c.strokeStyle = withAlpha(w.s > 0 ? col.out : col.in, 0.6); c.setLineDash([2, 3]); c.beginPath(); c.moveTo(PX(w.x), Tm); c.lineTo(PX(w.x), Tm + ph); c.stroke(); c.setLineDash([]);
+    }
+    c.restore();
+    const [bx, by] = field(S.probe.x, y), pv = Math.log10(Math.max(Math.hypot(bx, by) * 1e6, 1e-3));
+    c.fillStyle = col.amber; c.strokeStyle = col.surface; c.lineWidth = 2;
+    c.beginPath(); c.arc(PX(S.probe.x), PY(Math.max(lo, Math.min(hi, pv))), 5, 0, Math.PI * 2); c.fill(); c.stroke();
+  } else {
+    if (!S.show.loop) {
+      $('#cnote').innerHTML = tr('cLoopOff');
+      c.fillStyle = col.ink3; c.textAlign = 'center'; c.textBaseline = 'middle'; c.font = `500 13px ${FONT_MONO}`;
+      c.fillText(tr('loopOffMsg'), chW / 2, chH / 2); return;
+    }
+    $('#cnote').innerHTML = tr('cLoop');
+    const L = S.loop, N = 720, vals = [];
+    let mn = 0, mx = 0, sum = 0;
+    for (let i = 0; i <= N; i++) {
+      const th = i / N * 2 * Math.PI, cs = Math.cos(th), sn = Math.sin(th);
+      const [bx, by] = field(L.x + L.R * cs, L.y + L.R * sn), bt = (-bx * sn + by * cs) * 1e6;
+      vals.push(bt); if (i < N) sum += bt;
+    }
+    const sorted = vals.slice().sort((a, b) => a - b);
+    mn = Math.min(0, sorted[Math.floor(N * 0.01)]); mx = Math.max(0, sorted[Math.floor(N * 0.99)]);
+    if (mx - mn < 1e-6) { mx = 1; mn = -1; }
+    const pad = (mx - mn) * 0.08; mx += pad; mn -= mn < 0 ? pad : 0;
+    const raw = (mx - mn) / 4, p10 = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p10, ys = (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p10;
+    const PX = (i) => Lm + i / N * pw, PY = (v) => Tm + (1 - (v - mn) / (mx - mn)) * ph;
+    c.strokeStyle = col.grid; c.fillStyle = col.ink2; c.lineWidth = 1; c.textAlign = 'right'; c.textBaseline = 'middle';
+    const yd = ys < 1 ? (ys < 0.1 ? 2 : 1) : 0;
+    for (let v = Math.ceil(mn / ys) * ys; v <= mx + 1e-9; v += ys) { const yy = Math.round(PY(v)) + 0.5; c.beginPath(); c.moveTo(Lm, yy); c.lineTo(Lm + pw, yy); c.stroke(); c.fillText(fmt(v, yd), Lm - 7, yy); }
+    c.textAlign = 'center'; c.textBaseline = 'top';
+    for (let d = 0; d <= 360; d += 90) c.fillText(String(d), PX(d / 360 * N), Tm + ph + 7);
+    c.fillStyle = col.ink3; c.textAlign = 'left'; c.fillText(tr('ybt'), 4, 0);
+    c.textAlign = 'right'; c.fillText(tr('ydeg'), Lm + pw, 0);
+    c.save(); c.beginPath(); c.rect(Lm, Tm, pw, ph); c.clip();
+    c.beginPath(); c.moveTo(PX(0), PY(0));
+    vals.forEach((v, i) => c.lineTo(PX(i), PY(v)));
+    c.lineTo(PX(N), PY(0)); c.closePath(); c.fillStyle = withAlpha(col.violet, 0.16); c.fill();
+    c.beginPath(); vals.forEach((v, i) => i ? c.lineTo(PX(i), PY(v)) : c.moveTo(PX(i), PY(v)));
+    c.strokeStyle = col.violet; c.lineWidth = 2; c.lineJoin = 'round'; c.stroke();
+    c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(Lm, PY(0)); c.lineTo(Lm + pw, PY(0)); c.stroke();
+    const mean = sum / N;
+    c.setLineDash([5, 4]); c.strokeStyle = col.acc; c.beginPath(); c.moveTo(Lm, PY(mean)); c.lineTo(Lm + pw, PY(mean)); c.stroke(); c.setLineDash([]);
+    c.restore();
+    c.font = `500 11px ${FONT_MONO}`; c.fillStyle = col.acc; c.textAlign = 'right'; c.textBaseline = 'bottom';
+    c.fillText(`${tr('mean')} ${fa(mean)} μT`, Lm + pw - 4, Math.max(Tm + 12, PY(mean) - 3));
+  }
+}
+
+/* ---------- change propagation ---------- */
+function fieldChanged(markPresetKeep = true) {
+  if (!markPresetKeep) S.preset = null;
+  fieldDirty = true; dirty = true; chartDirty = true; uiDirty = true;
+}
+
+/* ---------- pointer interaction ---------- */
+let dragObj = null, lastTap = { t: 0, w: null };
+function pos(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+function hit(px, py) {
+  if (Math.hypot(px - X(S.probe.x), py - Y(S.probe.y)) < 15) return { type: 'probe' };
+  let best = null, bd = wireRpx() + 7;
+  for (const w of S.wires) { const d = Math.hypot(px - X(w.x), py - Y(w.y)); if (d < bd) { bd = d; best = w; } }
+  if (best) return { type: 'wire', w: best };
+  if (S.show.loop) {
+    const lx = X(S.loop.x), ly = Y(S.loop.y), R = S.loop.R * sc, d = Math.hypot(px - lx, py - ly);
+    if (Math.hypot(px - lx - R, py - ly) < 11 || Math.abs(d - R) < 7) return { type: 'rim' };
+    if (d < 14) return { type: 'loop' };
+  }
+  return null;
+}
+cv.addEventListener('pointerdown', (e) => {
+  const [px, py] = pos(e), h = hit(px, py);
+  try { cv.setPointerCapture(e.pointerId); } catch (err) {}
+  if (h && h.type === 'wire') {
+    const now = performance.now();
+    if (S.tool === 'del') { removeWire(h.w); return; }
+    if (lastTap.w === h.w && now - lastTap.t < 330) { h.w.s *= -1; S.preset = null; S.sel = h.w; fieldChanged(); syncPanel(); lastTap = { t: 0, w: null }; return; }
+    lastTap = { t: now, w: h.w };
+    S.sel = h.w; syncPanel();
+    dragObj = { type: 'wire', w: h.w, dx: WX(px) - h.w.x, dy: WY(py) - h.w.y };
+    dirty = true; return;
+  }
+  if (h && h.type === 'probe') { dragObj = { type: 'probe', dx: WX(px) - S.probe.x, dy: WY(py) - S.probe.y }; return; }
+  if (h && h.type === 'rim') { dragObj = { type: 'rim' }; return; }
+  if (h && h.type === 'loop') { dragObj = { type: 'loop', dx: WX(px) - S.loop.x, dy: WY(py) - S.loop.y }; return; }
+  if (S.tool === 'out' || S.tool === 'in') {
+    if (S.wires.length >= MAXW) { S.hint = 'hFull'; updateHint(); return; }
+    const w = W(WX(px), WY(py), S.newI, S.tool === 'out' ? 1 : -1);
+    S.wires.push(w); S.sel = w; S.preset = null;
+    dragObj = { type: 'wire', w, dx: 0, dy: 0 };
+    fieldChanged(false); syncPanel(); return;
+  }
+  if (S.sel) { S.sel = null; syncPanel(); dirty = true; }
+});
+cv.addEventListener('pointermove', (e) => {
+  const [px, py] = pos(e);
+  if (!dragObj) {
+    const h = hit(px, py);
+    cv.style.cursor = S.tool === 'del' ? (h && h.type === 'wire' ? 'pointer' : 'default') : h ? (h.type === 'rim' ? 'ew-resize' : 'grab') : (S.tool === 'move' ? 'default' : 'copy');
+    return;
+  }
+  cv.style.cursor = 'grabbing';
+  const x = Math.max(WX(4), Math.min(WX(cw - 4), WX(px))), y = Math.max(WY(ch - 4), Math.min(WY(4), WY(py)));
+  if (dragObj.type === 'wire') { dragObj.w.x = x - dragObj.dx; dragObj.w.y = y - dragObj.dy; dragObj.w.vx = dragObj.w.vy = 0; fieldChanged(); }
+  else if (dragObj.type === 'probe') { S.probe.x = x - dragObj.dx; S.probe.y = y - dragObj.dy; dirty = true; chartDirty = true; uiDirty = true; }
+  else if (dragObj.type === 'loop') { S.loop.x = x - dragObj.dx; S.loop.y = y - dragObj.dy; dirty = true; chartDirty = true; uiDirty = true; }
+  else if (dragObj.type === 'rim') { S.loop.R = Math.max(0.005, Math.min(0.14, Math.hypot(x - S.loop.x, y - S.loop.y))); syncLoopSlider(); dirty = true; chartDirty = true; uiDirty = true; }
+});
+const endDrag = () => { dragObj = null; cv.style.cursor = ''; };
+cv.addEventListener('pointerup', endDrag);
+cv.addEventListener('pointercancel', endDrag);
+
+function removeWire(w) {
+  S.wires = S.wires.filter(q => q !== w);
+  if (S.sel === w) S.sel = null;
+  fieldChanged(false); syncPanel();
+}
+function setTool(t) {
+  S.tool = t; S.hint = null;
+  $$('#palette .tool').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.tool === t)));
+  if (t === 'out' || t === 'in') { S.newDir = t === 'out' ? 1 : -1; if (!S.sel) syncPanel(); }
+  updateHint();
+}
+function updateHint() { $('#tool-hint span').textContent = tr(S.hint || ('h' + { move: 'Move', out: 'Out', in: 'In', del: 'Del' }[S.tool])); }
+
+/* ---------- run / reset ---------- */
+function toggleRun() {
+  if (!S.wires.length) return;
+  if (!S.running && !S.snapshot) S.snapshot = S.wires.map(w => ({ ...w }));
+  S.running = !S.running;
+  if (S.running) S.wires.forEach(w => { if (!isFinite(w.vx)) w.vx = w.vy = 0; });
+  updateRunBtn(); dirty = true;
+}
+function resetRun() {
+  if (!S.snapshot) return;
+  const selIdx = S.sel ? S.wires.indexOf(S.sel) : -1;
+  S.wires = S.snapshot.map(w => ({ ...w, vx: 0, vy: 0 }));
+  S.sel = selIdx >= 0 ? S.wires[selIdx] || null : null;
+  S.running = false; S.snapshot = null;
+  updateRunBtn(); fieldChanged(); syncPanel();
+}
+function stopRunState() { S.running = false; S.snapshot = null; updateRunBtn(); }
+
+/* ---------- wiring ---------- */
+$$('#palette .tool').forEach(b => b.addEventListener('click', () => setTool(b.dataset.tool)));
+$('#cur').addEventListener('input', (e) => {
+  const v = +e.target.value;
+  if (S.sel) { S.sel.I = v; S.preset = null; fieldChanged(); } else { S.newI = v; uiDirty = true; }
+  $('#cur-out').textContent = `${fmt(v, 1)} A`; setFill(e.target);
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === S.preset)));
+});
+$$('#dir button').forEach(b => b.addEventListener('click', () => {
+  const s = +b.dataset.dir;
+  if (S.sel) { S.sel.s = s; S.preset = null; fieldChanged(); } else S.newDir = s;
+  syncPanel();
+}));
+$('#del-sel').addEventListener('click', () => { if (S.sel) removeWire(S.sel); });
+$('#clear-all').addEventListener('click', () => { stopRunState(); S.wires = []; S.sel = null; fieldChanged(false); syncPanel(); });
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => { preset(b.dataset.preset); updateRunBtn(); }));
+$('#loopR').addEventListener('input', (e) => { S.loop.R = +e.target.value / 100; syncLoopSlider(); dirty = true; chartDirty = true; uiDirty = true; });
+const TG = { 'tg-lines': 'lines', 'tg-map': 'map', 'tg-force': 'force', 'tg-loop': 'loop' };
+function setShow(key, on) {
+  S.show[key] = on;
+  const id = Object.keys(TG).find(k => TG[k] === key);
+  $('#' + id).setAttribute('aria-pressed', String(on));
+  fieldDirty = true; dirty = true; chartDirty = true; uiDirty = true; updateLegend();
+}
+Object.entries(TG).forEach(([id, key]) => $('#' + id).addEventListener('click', () => setShow(key, !S.show[key])));
+$('#run').addEventListener('click', toggleRun);
+$('#reset').addEventListener('click', resetRun);
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  S.chartTab = b.dataset.tab; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); chartDirty = true;
+}));
+$$('.try').forEach(b => b.addEventListener('click', () => {
+  const t = b.dataset.try;
+  if (t === 'coax') { preset('coax'); setShow('lines', false); setShow('force', false); setShow('loop', false); S.probe = { x: 0.11, y: 0.05 }; }
+  if (t === 'ampere') { preset('anti'); setShow('loop', true); setShow('force', false); S.loop = { x: -0.045, y: 0, R: 0.04 }; syncLoopSlider(); selectTab('loop'); }
+  if (t === 'attract') { preset('para'); setShow('force', true); setShow('loop', false); }
+  if (t === 'sol') { preset('sol'); setShow('loop', false); setShow('force', false); S.probe = { x: 0.03, y: 0.008 }; selectTab('prof'); }
+  setTool('move'); updateRunBtn(); fieldChanged();
+  $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+}));
+function selectTab(t) { S.chartTab = t; $$('#tabs button').forEach(x => x.setAttribute('aria-selected', String(x.dataset.tab === t))); chartDirty = true; }
+
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); toggleRun(); return; }
+  if (tag === 'input') return;
+  if ((e.key === 'Delete' || e.key === 'Backspace') && S.sel) { e.preventDefault(); removeWire(S.sel); }
+  else if (e.key === 'Escape') { S.sel = null; syncPanel(); dirty = true; }
+  else if (e.key === 'r' || e.key === 'R') resetRun();
+  else if (['1', '2', '3', '4'].includes(e.key)) setTool(['move', 'out', 'in', 'del'][+e.key - 1]);
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-title]').forEach(el => { el.title = tr(el.dataset.i18nTitle); el.setAttribute('aria-label', tr(el.dataset.i18nTitle)); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  hudKey = '';
+  updateHint(); updateRunBtn(); syncPanel(); syncLoopSlider();
+  uiDirty = true; dirty = true; chartDirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('magnes-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readTokens(); updateLegend(); syncPanel(); });
+new MutationObserver(() => { readTokens(); updateLegend(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirty = true; chartDirty = true; });
+
+/* ---------- main loop ---------- */
+let lastT = 0, needlesMoving = false;
+function frame(t) {
+  const dt = Math.min(0.05, Math.max(0, (t - lastT) / 1000)); lastT = t;
+  if (S.running && dt > 0) { stepWires(dt); fieldDirty = true; dirty = true; chartDirty = true; uiDirty = true; }
+  if (fieldDirty) {
+    updateNeedleTargets();
+    if (S.show.map) buildMap();
+    if (S.show.lines) buildLines();
+    fieldDirty = false; dirty = true;
+  }
+  if (needles.length) { const m = stepNeedles(dt || 0.016); if (m || needlesMoving) dirty = true; needlesMoving = m; }
+  if (dirty) { drawScene(); dirty = false; }
+  if (uiDirty) { updateHud(); updatePills(); updateFormulas(); uiDirty = false; }
+  if (chartDirty) { drawChart(); chartDirty = false; }
+  requestAnimationFrame(frame);
+}
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+
+readTokens();
+resize();
+preset('anti');
+needleSnap = true;
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Każdy prąd elektryczny wytwarza wokół siebie pole magnetyczne. Wokół długiego, prostego przewodu linie pola <strong>B</strong> są okręgami, a wartość pola maleje jak 1/<i>r</i>. Pola wielu przewodów po prostu się dodają, a prawo Ampère'a wiąże całkę z <strong>B</strong> po zamkniętej pętli z prądem przechodzącym przez tę pętlę.</p>
+  <div class="th-grid">
+    <article>
+      <h3>Co tu widzisz</h3>
+      <p>Plansza to przekrój: przewody biegną prostopadle do ekranu. Czerwony znak ⊙ to prąd płynący do nas (widzimy „grot strzałki”), niebieski ⊗ to prąd od nas („lotki”). Każda igła kompasu w siatce ustawia się biegunem N wzdłuż lokalnego <strong>B</strong>, a jej jasność rośnie z |<i>B</i>|.</p>
+      <ul>
+        <li><strong>Sonda</strong> (pomarańczowy celownik) pokazuje wektor <strong>B</strong> i jego składowe w pasku na górze.</li>
+        <li>Przełączniki „Linie pola” i „Mapa |B|” rysują linie pola i rozkład wartości pola; „Siły” dodaje strzałki siły na jednostkę długości działającej na każdy przewód.</li>
+        <li>„Pętla Ampère'a” rysuje okrąg, po którym liczona jest numerycznie całka ∮<strong>B</strong>·d<strong>l</strong>, porównywana z <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub>. Zakładka „Wzdłuż pętli” pokazuje składową styczną <i>B</i><sub>t</sub> na obwodzie.</li>
+        <li>Przycisk „Puść przewody” uwalnia przewody, które zaczynają się poruszać pod wpływem wzajemnych sił.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Teoria</h3>
+      <p>Prawo Biota-Savarta, scałkowane wzdłuż nieskończenie długiego, prostego przewodu, daje pole w odległości <i>r</i>:</p>
+      <div class="th-eq"><i>B</i> = <span class="th-fr"><span><i>μ</i><sub>0</sub><i>I</i></span><span>2π<i>r</i></span></span>,&nbsp;&nbsp; <i>μ</i><sub>0</sub> ≈ 4π · 10<sup>−7</sup> T·m/A</div>
+      <p>Kierunek wyznacza <strong>reguła prawej dłoni</strong>: kciuk wzdłuż prądu, zgięte palce pokazują zwrot <strong>B</strong>. Dla prądu ⊙ linie pola biegną przeciwnie do ruchu wskazówek zegara. Pole jest liniowe względem prądów, więc pole układu to suma wektorowa pól poszczególnych przewodów (<strong>superpozycja</strong>).</p>
+      <p>Prawo Ampère'a mówi, że dla dowolnej zamkniętej pętli</p>
+      <div class="th-eq">∮ <strong>B</strong> · d<strong>l</strong> = <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub></div>
+      <p>Dla okręgu o promieniu <i>R</i> wokół jednego przewodu <i>B</i> · 2π<i>R</i> = <i>μ</i><sub>0</sub><i>I</i>, niezależnie od <i>R</i>: pole maleje jak 1/<i>R</i>, a obwód rośnie jak <i>R</i>. Dla przewodu poza pętlą kąt, o jaki obraca się kierunek do przewodu, wraca po pełnym obiegu do zera, więc jego wkład znika. Przewód z prądem <i>I</i><sub>2</sub> w polu przewodu z prądem <i>I</i><sub>1</sub> odczuwa siłę <i>I</i><sub>2</sub><strong>L</strong> × <strong>B</strong>, czyli na jednostkę długości</p>
+      <div class="th-eq"><span class="th-fr"><span><i>F</i></span><span><i>L</i></span></span> = <span class="th-fr"><span><i>μ</i><sub>0</sub><i>I</i><sub>1</sub><i>I</i><sub>2</sub></span><span>2π<i>d</i></span></span></div>
+      <p>Prądy zgodne się przyciągają, przeciwne odpychają. Dla długiego solenoidu prawo Ampère'a zastosowane do prostokąta, którego jeden bok leży wewnątrz, daje jednorodne pole <i>B</i> = <i>μ</i><sub>0</sub><i>nI</i>, gdzie <i>n</i> to liczba zwojów na metr. Model zakłada przewody nieskończenie długie, cienkie i prądy stałe (magnetostatyka).</p>
+    </article>
+    <article>
+      <h3>Dlaczego to ważne</h3>
+      <ul>
+        <li><strong>Kable koncentryczne</strong> i skręcone pary przewodów: prądy przeciwne w jednym kablu niemal całkowicie znoszą pole na zewnątrz, co ogranicza zakłócenia.</li>
+        <li><strong>Elektromagnesy i solenoidy</strong>: zawory, przekaźniki, magnesy nadprzewodzące w tomografach MRI i akceleratorach wytwarzają silne, jednorodne pole.</li>
+        <li><strong>Cewki Helmholtza</strong> dają obszar prawie jednorodnego pola, używany do kalibracji magnetometrów i kompensacji pola Ziemi.</li>
+        <li><strong>Definicja ampera</strong>: do 2019 roku amper definiowano przez siłę 2 · 10<sup>−7</sup> N/m między dwoma przewodami odległymi o 1 m.</li>
+        <li><strong>Siły w szynoprzewodach</strong>: przy prądach zwarciowych rzędu kiloamperów przyciąganie i odpychanie szyn może je wygiąć; projektanci rozdzielni muszą to uwzględniać.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Pole magnetyczne przewodu jest skierowane do niego albo od niego”.</strong> Nie: <strong>B</strong> jest styczne do okręgów wokół przewodu, prostopadłe do promienia. Widać to w siatce kompasów.</li>
+        <li><strong>„Przewody spoza pętli nie mają wpływu na <strong>B</strong> na pętli”.</strong> Mają, i to duży (zakładka „Wzdłuż pętli”). Znika tylko ich wkład do <em>całki</em> ∮<strong>B</strong>·d<strong>l</strong>.</li>
+        <li><strong>„Jak w elektrostatyce, jednoimienne się odpychają”.</strong> Dla prądów jest odwrotnie: prądy zgodne się przyciągają.</li>
+        <li><strong>„Skoro ∮<strong>B</strong>·d<strong>l</strong> = 0, to <strong>B</strong> = 0 na pętli”.</strong> Zerowa całka oznacza tylko, że wkłady dodatnie i ujemne się znoszą. Na zewnątrz kabla koncentrycznego pole jest zerowe dzięki symetrii, nie samemu prawu Ampère'a.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Jaka jest wartość pola w odległości 5 cm od przewodu z prądem 10 A? Porównaj z polem Ziemi (około 50 μT).</summary><p><i>B</i> = 2 · 10<sup>−7</sup> · 10 / 0,05 = 40 μT, czyli tyle co pole Ziemi. Dlatego kompas przy przewodzie z prądem wyraźnie się odchyla.</p></details>
+    <details class="th-q"><summary>W presecie „Prądy zgodne” przewody są odległe o 9 cm i niosą po 10 A. Jaka jest siła na metr i w którą stronę działa?</summary><p><i>F</i>/<i>L</i> = 2 · 10<sup>−7</sup> · 10 · 10 / 0,09 ≈ 222 μN/m, skierowana do drugiego przewodu (przyciąganie). Po zmianie jednego prądu na ⊗ wartość jest ta sama, ale przewody się odpychają.</p></details>
+    <details class="th-q"><summary>Pętla Ampère'a obejmuje przewody ⊙ 10 A i ⊗ 10 A. Ile wynosi całka? Czy pole na pętli jest zerowe?</summary><p>Prąd netto wewnątrz wynosi 0, więc ∮<strong>B</strong>·d<strong>l</strong> = 0. Pole na pętli na ogół nie jest zerowe: <i>B</i><sub>t</sub> jest w jednych miejscach dodatnie, w innych ujemne i wkłady się znoszą.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 29 (Pole magnetyczne wywołane przepływem prądu). Siła działająca na przewód z prądem w polu magnetycznym: rozdz. 28 (Pole magnetyczne).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Every electric current produces a magnetic field around it. Around a long straight wire the field lines of <strong>B</strong> are circles and the field strength falls off as 1/<i>r</i>. The fields of many wires simply add, and Ampère's law links the integral of <strong>B</strong> around a closed loop to the current passing through that loop.</p>
+  <div class="th-grid">
+    <article>
+      <h3>What you see</h3>
+      <p>The board is a cross-section: the wires run perpendicular to the screen. The red ⊙ is a current out of the page (you see the arrow's tip), the blue ⊗ a current into the page (you see its tail feathers). Each compass needle in the grid points its N pole along the local <strong>B</strong>, and its brightness grows with |<i>B</i>|.</p>
+      <ul>
+        <li>The <strong>probe</strong> (orange crosshair) shows the vector <strong>B</strong> and its components in the top strip.</li>
+        <li>The “Field lines” and “|B| map” switches draw the field lines and the field strength; “Forces” adds arrows for the force per unit length on each wire.</li>
+        <li>“Ampère loop” draws a circle along which ∮<strong>B</strong>·d<strong>l</strong> is integrated numerically and compared with <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub>. The “Along the loop” tab shows the tangential component <i>B</i><sub>t</sub> around the rim.</li>
+        <li>The “Release wires” button frees the wires so they move under their mutual forces.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Theory</h3>
+      <p>The Biot-Savart law, integrated along an infinitely long straight wire, gives the field at distance <i>r</i>:</p>
+      <div class="th-eq"><i>B</i> = <span class="th-fr"><span><i>μ</i><sub>0</sub><i>I</i></span><span>2π<i>r</i></span></span>,&nbsp;&nbsp; <i>μ</i><sub>0</sub> ≈ 4π · 10<sup>−7</sup> T·m/A</div>
+      <p>The direction follows the <strong>right-hand rule</strong>: thumb along the current, curled fingers give the sense of <strong>B</strong>. For a ⊙ current the field lines run counterclockwise. The field is linear in the currents, so the field of the system is the vector sum of the fields of the individual wires (<strong>superposition</strong>).</p>
+      <p>Ampère's law states that for any closed loop</p>
+      <div class="th-eq">∮ <strong>B</strong> · d<strong>l</strong> = <i>μ</i><sub>0</sub><i>I</i><sub>enc</sub></div>
+      <p>For a circle of radius <i>R</i> around one wire, <i>B</i> · 2π<i>R</i> = <i>μ</i><sub>0</sub><i>I</i> whatever <i>R</i> is: the field drops as 1/<i>R</i> while the circumference grows as <i>R</i>. For a wire outside the loop, the angle swept by the direction to the wire returns to zero after a full circuit, so its contribution vanishes. A wire carrying <i>I</i><sub>2</sub> in the field of a wire carrying <i>I</i><sub>1</sub> feels the force <i>I</i><sub>2</sub><strong>L</strong> × <strong>B</strong>, which per unit length is</p>
+      <div class="th-eq"><span class="th-fr"><span><i>F</i></span><span><i>L</i></span></span> = <span class="th-fr"><span><i>μ</i><sub>0</sub><i>I</i><sub>1</sub><i>I</i><sub>2</sub></span><span>2π<i>d</i></span></span></div>
+      <p>Parallel currents attract, antiparallel currents repel. For a long solenoid, Ampère's law applied to a rectangle with one side inside gives a uniform field <i>B</i> = <i>μ</i><sub>0</sub><i>nI</i>, where <i>n</i> is the number of turns per metre. The model assumes infinitely long thin wires and steady currents (magnetostatics).</p>
+    </article>
+    <article>
+      <h3>Why it matters</h3>
+      <ul>
+        <li><strong>Coaxial cables</strong> and twisted pairs: opposite currents in one cable almost cancel the field outside, which reduces interference.</li>
+        <li><strong>Electromagnets and solenoids</strong>: valves, relays and the superconducting magnets of MRI scanners and accelerators produce strong, uniform fields.</li>
+        <li><strong>Helmholtz coils</strong> give a region of nearly uniform field, used to calibrate magnetometers and cancel the Earth's field.</li>
+        <li><strong>Definition of the ampere</strong>: until 2019 the ampere was defined by a force of 2 · 10<sup>−7</sup> N/m between two wires 1 m apart.</li>
+        <li><strong>Forces on busbars</strong>: at short-circuit currents of kiloamperes, attraction and repulsion can bend the bars, and switchgear designers must allow for it.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>“The magnetic field of a wire points towards it or away from it.”</strong> No: <strong>B</strong> is tangent to circles around the wire, perpendicular to the radius. The compass grid shows it.</li>
+        <li><strong>“Wires outside the loop do not affect <strong>B</strong> on the loop.”</strong> They do, strongly (see “Along the loop”). Only their contribution to the <em>integral</em> ∮<strong>B</strong>·d<strong>l</strong> vanishes.</li>
+        <li><strong>“As in electrostatics, like ones repel.”</strong> For currents it is the other way round: parallel currents attract.</li>
+        <li><strong>“If ∮<strong>B</strong>·d<strong>l</strong> = 0, then <strong>B</strong> = 0 on the loop.”</strong> A zero integral only means positive and negative contributions cancel. Outside a coaxial cable the field is zero thanks to symmetry, not to Ampère's law alone.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>What is the field 5 cm from a wire carrying 10 A? Compare it with the Earth's field (about 50 μT).</summary><p><i>B</i> = 2 · 10<sup>−7</sup> · 10 / 0.05 = 40 μT, about the same as the Earth's field. That is why a compass next to a current-carrying wire turns noticeably.</p></details>
+    <details class="th-q"><summary>In the “Parallel currents” preset the wires are 9 cm apart and carry 10 A each. What is the force per metre and which way does it act?</summary><p><i>F</i>/<i>L</i> = 2 · 10<sup>−7</sup> · 10 · 10 / 0.09 ≈ 222 μN/m, directed towards the other wire (attraction). If one current is switched to ⊗ the magnitude is the same but the wires repel.</p></details>
+    <details class="th-q"><summary>An Ampère loop encloses a ⊙ 10 A wire and a ⊗ 10 A wire. What is the integral? Is the field on the loop zero?</summary><p>The net enclosed current is 0, so ∮<strong>B</strong>·d<strong>l</strong> = 0. The field on the loop is generally not zero: <i>B</i><sub>t</sub> is positive in some places and negative in others, and the contributions cancel.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 29 (Magnetic Fields Due to Currents). Force on a current-carrying wire in a magnetic field: ch. 28 (Magnetic Fields).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
+</body></html>
