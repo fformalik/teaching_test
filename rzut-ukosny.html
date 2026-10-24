@@ -1360,4 +1360,127 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Rzut ukośny to ruch ciała wyrzuconego pod kątem do poziomu, na które działa tylko ciężar (a w realnym powietrzu także siła oporu). Kluczowa idea: ruch na płaszczyźnie rozkłada się na dwa niezależne ruchy prostoliniowe, jednostajny w poziomie i jednostajnie zmienny w pionie, dopóki nie pojawi się opór, który te kierunki ze sobą sprzęga.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Suwaki <i>v</i><sub>0</sub>, <i>θ</i> i <i>h</i><sub>0</sub> ustalają warunki początkowe, a przyciski planet zmieniają <i>g</i> (i domyślną gęstość atmosfery). Przełącznik «Tor w próżni» rysuje idealną parabolę, a po zaznaczeniu «Uwzględnij opór powietrza» drugi tor odkleja się od niej: jest niższy, krótszy i niesymetryczny.</p>
+      <p>Włącz «Stroboskop»: w próżni kolejne zdjęcia są w poziomie równo rozstawione (stała <i>v</i><sub>x</sub>), z oporem zagęszczają się. «Wektory» pokazują, że przyspieszenie w próżni jest zawsze to samo, skierowane w dół. W tabeli «Wyniki» porównaj zasięg <i>R</i>, wysokość <i>H</i> i czas <i>T</i>, a przyciskiem «Ustaw θ*» sprawdź, jak opór przesuwa kąt optymalny poniżej 45°.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>W próżni jedyną siłą jest ciężar, więc <strong>a</strong> = <strong>g</strong> = (0, −<i>g</i>). Całkując dwukrotnie:</p>
+      <div class="th-eq"><i>x</i>(<i>t</i>) = <i>v</i><sub>0</sub> cos <i>θ</i> · <i>t</i>, &nbsp; <i>y</i>(<i>t</i>) = <i>h</i><sub>0</sub> + <i>v</i><sub>0</sub> sin <i>θ</i> · <i>t</i> − ½<i>g</i><i>t</i><sup>2</sup></div>
+      <p>Eliminując <i>t</i> dostajemy kwadratową funkcję <i>y</i>(<i>x</i>), czyli parabolę. Dla <i>h</i><sub>0</sub> = 0 czas lotu wynosi 2<i>v</i><sub>0</sub> sin <i>θ</i>/<i>g</i>, a zasięg</p>
+      <div class="th-eq"><i>R</i> = <span class="th-fr"><span><i>v</i><sub>0</sub><sup>2</sup> sin 2<i>θ</i></span><span><i>g</i></span></span></div>
+      <p>Funkcja sin 2<i>θ</i> ma maksimum przy <i>θ</i> = 45°, a kąty <i>θ</i> i 90° − <i>θ</i> dają ten sam zasięg. Gdy start jest wyżej niż lądowanie, kąt optymalny spada poniżej 45°, bo dłuższy lot w dół „dokłada” zasięgu tym bardziej, im większa jest prędkość pozioma.</p>
+      <p>Opór aerodynamiczny przy dużych liczbach Reynoldsa jest proporcjonalny do kwadratu prędkości względem powietrza:</p>
+      <div class="th-eq"><i>m</i><span class="th-fr"><span>d<strong>v</strong></span><span>d<i>t</i></span></span> = <i>m</i><strong>g</strong> − ½<i>ρ</i><i>C</i><sub>D</sub><i>A</i> |<strong>v</strong> − <strong>w</strong>| (<strong>v</strong> − <strong>w</strong>)</div>
+      <p>Czynnik |<strong>v</strong>| wiąże składowe <i>x</i> i <i>y</i>, więc ruchy przestają być niezależne i nie ma rozwiązania analitycznego; symulacja całkuje równanie metodą RK4. Przy swobodnym spadku opór równoważy ciężar przy prędkości granicznej <i>v</i><sub>t</sub> = √(<i>g</i>/<i>k</i>), gdzie <i>k</i> = <i>ρ</i><i>C</i><sub>D</sub><i>A</i>/(2<i>m</i>). Model zakłada stałe <i>g</i>, płaską Ziemię, stałe <i>C</i><sub>D</sub> i brak rotacji piłki (efekt Magnusa pominięty).</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Balistyka i sport: w golfie i baseballu opór skraca zasięg o kilkadziesiąt procent, a optymalny kąt wybicia jest wyraźnie mniejszy niż 45°.</li>
+        <li>Niezależność ruchów w osiach to pierwszy przykład rozkładu wektorów na składowe, techniki używanej w całej mechanice.</li>
+        <li>Prędkość graniczna decyduje o bezpieczeństwie spadochroniarzy, o opadaniu kropli deszczu i ziaren pyłu.</li>
+        <li>Na Księżycu brak atmosfery i mniejsze <i>g</i> sprawiają, że ten sam rzut leci około sześć razy dalej; tę fizykę obejmuje także planowanie lotów lądowników.</li>
+        <li>Galileusz pokazał paraboliczny kształt toru już w 1638 roku, co było jednym z pierwszych matematycznych opisów ruchu.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„W najwyższym punkcie prędkość jest zerowa.”</strong> Zeruje się tylko <i>v</i><sub>y</sub>; składowa pozioma trwa, a wykres «Prędkość» ma tam minimum, nie zero.</li>
+        <li><strong>„Przyspieszenie zmienia kierunek wzdłuż toru.”</strong> W próżni <strong>a</strong> = <strong>g</strong> przez cały lot, także w szczycie.</li>
+        <li><strong>„45° zawsze daje największy zasięg.”</strong> Tylko w próżni i dla <i>h</i><sub>0</sub> = 0. Wysokość startu i opór obniżają <i>θ</i>*.</li>
+        <li><strong>„Cięższa piłka spada tak samo z oporem.”</strong> Opór działa przez <i>k</i> ∝ <i>A</i>/<i>m</i>: kula armatnia prawie nie odczuwa powietrza, a piłeczka ping-pongowa bardzo.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>W próżni, przy <i>h</i><sub>0</sub> = 0, strzelasz pod kątem 30° i 60° z tą samą prędkością. Który pocisk leci dalej, a który dłużej?</summary><p>Zasięgi są równe, bo sin 60° = sin 120°. Pocisk pod 60° leci dłużej (większe <i>v</i><sub>0y</sub>), ale wolniej w poziomie.</p></details>
+    <details class="th-q"><summary>Dlaczego z oporem tor opada bardziej stromo, niż się wznosi?</summary><p>Opór cały czas zabiera energię, więc w drugiej połowie lotu prędkość pozioma jest mniejsza. Ciało przebywa w dół mniejszy odcinek poziomy niż w górę, a kąt uderzenia jest większy od kąta wystrzału.</p></details>
+    <details class="th-q"><summary>Ile wynosi prędkość graniczna piłeczki ping-pongowej w powietrzu (presety «Ping-pong», «Ziemia»)?</summary><p>Z <i>k</i> = <i>ρ</i><i>C</i><sub>D</sub><i>A</i>/(2<i>m</i>) ≈ 0,14 m<sup>−1</sup> dostajemy <i>v</i><sub>t</sub> = √(<i>g</i>/<i>k</i>) ≈ 8 m/s. Dla kuli armatniej to około 140 m/s.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 4 (Ruch w dwóch i trzech wymiarach). Opór i prędkość graniczna: rozdz. 6 (Siła i ruch II).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Projectile motion is the motion of a body launched at an angle to the horizontal, acted on only by its weight (and, in real air, by drag). The key idea: motion in a plane splits into two independent straight-line motions, uniform horizontally and uniformly accelerated vertically, until drag appears and couples the two directions.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The <i>v</i><sub>0</sub>, <i>θ</i> and <i>h</i><sub>0</sub> sliders set the initial conditions, and the planet buttons change <i>g</i> (and the default air density). The «Vacuum path» toggle draws the ideal parabola; tick «Include air drag» and a second path peels away from it: lower, shorter and lopsided.</p>
+      <p>Turn on «Strobe»: in vacuum the snapshots are evenly spaced horizontally (constant <i>v</i><sub>x</sub>), with drag they bunch up. «Vectors» shows that in vacuum the acceleration is always the same, pointing straight down. In the «Results» table compare range <i>R</i>, height <i>H</i> and time <i>T</i>, and use «Set θ*» to see drag pull the optimal angle below 45°.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>In vacuum the only force is weight, so <strong>a</strong> = <strong>g</strong> = (0, −<i>g</i>). Integrating twice:</p>
+      <div class="th-eq"><i>x</i>(<i>t</i>) = <i>v</i><sub>0</sub> cos <i>θ</i> · <i>t</i>, &nbsp; <i>y</i>(<i>t</i>) = <i>h</i><sub>0</sub> + <i>v</i><sub>0</sub> sin <i>θ</i> · <i>t</i> − ½<i>g</i><i>t</i><sup>2</sup></div>
+      <p>Eliminating <i>t</i> gives <i>y</i> as a quadratic function of <i>x</i>, a parabola. For <i>h</i><sub>0</sub> = 0 the flight time is 2<i>v</i><sub>0</sub> sin <i>θ</i>/<i>g</i> and the range is</p>
+      <div class="th-eq"><i>R</i> = <span class="th-fr"><span><i>v</i><sub>0</sub><sup>2</sup> sin 2<i>θ</i></span><span><i>g</i></span></span></div>
+      <p>sin 2<i>θ</i> peaks at <i>θ</i> = 45°, and the angles <i>θ</i> and 90° − <i>θ</i> give the same range. When the launch point is above the landing point the optimum drops below 45°: the extra drop adds more range the larger the horizontal speed is.</p>
+      <p>At high Reynolds numbers aerodynamic drag grows with the square of the speed relative to the air:</p>
+      <div class="th-eq"><i>m</i><span class="th-fr"><span>d<strong>v</strong></span><span>d<i>t</i></span></span> = <i>m</i><strong>g</strong> − ½<i>ρ</i><i>C</i><sub>D</sub><i>A</i> |<strong>v</strong> − <strong>w</strong>| (<strong>v</strong> − <strong>w</strong>)</div>
+      <p>The factor |<strong>v</strong>| ties the <i>x</i> and <i>y</i> components together, so the motions are no longer independent and there is no closed form; the simulation integrates with RK4. In free fall drag balances weight at the terminal speed <i>v</i><sub>t</sub> = √(<i>g</i>/<i>k</i>), with <i>k</i> = <i>ρ</i><i>C</i><sub>D</sub><i>A</i>/(2<i>m</i>). The model assumes constant <i>g</i>, a flat ground, constant <i>C</i><sub>D</sub> and no spin (no Magnus force).</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Ballistics and sport: in golf and baseball drag cuts the range by tens of percent, and the best launch angle is well below 45°.</li>
+        <li>Independent axes are the first example of resolving vectors into components, a technique used throughout mechanics.</li>
+        <li>Terminal speed sets the safety of skydivers and the fall of raindrops and dust grains.</li>
+        <li>On the Moon, with no air and a smaller <i>g</i>, the same throw goes about six times farther; the same physics enters lander trajectory planning.</li>
+        <li>Galileo showed the parabolic shape of the path in 1638, one of the first mathematical descriptions of motion.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"At the top the velocity is zero."</strong> Only <i>v</i><sub>y</sub> vanishes; the horizontal part remains, and the «Speed» chart has a minimum there, not a zero.</li>
+        <li><strong>"The acceleration changes direction along the path."</strong> In vacuum <strong>a</strong> = <strong>g</strong> throughout the flight, the top included.</li>
+        <li><strong>"45° always gives the longest range."</strong> Only in vacuum and for <i>h</i><sub>0</sub> = 0. Launch height and drag both lower <i>θ</i>*.</li>
+        <li><strong>"A heavier ball feels the same drag."</strong> Drag acts through <i>k</i> ∝ <i>A</i>/<i>m</i>: a cannonball hardly notices the air, a ping-pong ball very much does.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>In vacuum with <i>h</i><sub>0</sub> = 0 you fire at 30° and at 60° with the same speed. Which goes farther, and which stays up longer?</summary><p>The ranges are equal, since sin 60° = sin 120°. The 60° shot stays up longer (larger <i>v</i><sub>0y</sub>) but moves more slowly horizontally.</p></details>
+    <details class="th-q"><summary>Why does the drag path come down more steeply than it went up?</summary><p>Drag keeps removing energy, so the horizontal speed is smaller in the second half of the flight. The body covers less horizontal distance on the way down, and the impact angle is larger than the launch angle.</p></details>
+    <details class="th-q"><summary>What is the terminal speed of a ping-pong ball in air (presets «Ping-pong», «Earth»)?</summary><p>With <i>k</i> = <i>ρ</i><i>C</i><sub>D</sub><i>A</i>/(2<i>m</i>) ≈ 0.14 m<sup>−1</sup> we get <i>v</i><sub>t</sub> = √(<i>g</i>/<i>k</i>) ≈ 8 m/s. For the cannonball it is about 140 m/s.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 4 (Motion in Two and Three Dimensions). Drag and terminal speed: ch. 6 (Force and Motion II).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

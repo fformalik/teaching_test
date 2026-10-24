@@ -1212,4 +1212,123 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Tęcza nie jest przedmiotem zawieszonym na niebie, lecz kierunkiem: to stożek wokół punktu antysłonecznego, wzdłuż którego kropla deszczu odsyła najwięcej światła. Powstaje dlatego, że kąt wyjścia promienia z kropli ma ekstremum, więc promienie wchodzące w szerokim zakresie parametru zderzenia wychodzą niemal pod tym samym kątem.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Równoległa wiązka światła słonecznego pada na kulistą kroplę. W trybie «Jeden promień» śledzisz pojedynczy promień o parametrze zderzenia <i>b</i>/<i>R</i>: załamuje się na wejściu, odbija wewnątrz (raz dla tęczy głównej, dwa razy dla wtórnej) i załamuje ponownie na wyjściu. Przycisk «Skanuj b» przesuwa promień od osi do krawędzi kropli, a pasek u góry pokazuje kąt <i>φ</i> od kierunku do Słońca.</p>
+      <p>Zwróć uwagę, że <i>φ</i> rośnie, zatrzymuje się przy około 42° i maleje. W trybie «Wachlarz» (preset «Wachlarz promieni») widać, że promienie zagęszczają się właśnie przy tym kącie. Zakładka «Niebo» pokazuje ten sam wynik oczami obserwatora: łuki są okręgami wokół punktu antysłonecznego.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Na każdej granicy obowiązuje prawo Snelliusa, a wewnątrz kropli promień odbija się od ścianki pod tym samym kątem <i>θ</i><sub>r</sub>:</p>
+      <div class="th-eq">sin <i>θ</i><sub>i</sub> = <i>n</i> sin <i>θ</i><sub>r</sub>, &nbsp; sin <i>θ</i><sub>i</sub> = <i>b</i>/<i>R</i></div>
+      <p>Każde załamanie skręca promień o <i>θ</i><sub>i</sub> − <i>θ</i><sub>r</sub>, każde odbicie wewnętrzne o 180° − 2<i>θ</i><sub>r</sub>. Po <i>k</i> odbiciach całkowity kąt odchylenia wynosi</p>
+      <div class="th-eq"><i>D</i> = <i>k</i>·180° + 2<i>θ</i><sub>i</sub> − 2(<i>k</i> + 1)<i>θ</i><sub>r</sub></div>
+      <p>Funkcja <i>D</i>(<i>θ</i><sub>i</sub>) ma minimum. Tam, gdzie d<i>D</i>/d<i>θ</i><sub>i</sub> = 0, mała zmiana <i>b</i> prawie nie zmienia kierunku wyjścia, więc wiele sąsiednich promieni wychodzi razem (kaustyka). Z warunku stacjonarności i prawa Snelliusa otrzymujemy</p>
+      <div class="th-eq">cos<sup>2</sup> <i>θ</i><sub>i</sub> = <span class="th-fr"><span><i>n</i><sup>2</sup> − 1</span><span><i>k</i>(<i>k</i> + 2)</span></span></div>
+      <p>Dla wody (<i>n</i> ≈ 1,333) daje to <i>b</i>*/<i>R</i> ≈ 0,86 i <i>φ</i><sub>1</sub> = 180° − <i>D</i> ≈ 42° dla tęczy głównej oraz <i>φ</i><sub>2</sub> ≈ 50° do 51° dla wtórnej. Ponieważ <i>n</i> zależy od <i>λ</i> (dyspersja), czerwień i fiolet mają różne kąty: łuk ma szerokość około 2°. To jest model optyki geometrycznej; dla bardzo małych kropel (poniżej ok. 0,1 mm) ważna staje się dyfrakcja, która daje łuki dodatkowe i bladą „mglistą” tęczę.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Kartezjusz w 1637 r. wyznaczył kąt tęczy, śledząc promienie przez kulę wody; Newton wyjaśnił barwy dyspersją.</li>
+        <li>Szklane mikrokulki w farbie drogowej i na znakach odsyłają światło reflektorów z powrotem do kierowcy.</li>
+        <li>Ten sam mechanizm kaustyki tłumaczy jasne linie na dnie basenu i „tęczę” w rozpraszaniu cząstek w fizyce jądrowej.</li>
+        <li>Położenie tęczy zależy od <i>n</i>, więc refraktometria tęczowa mierzy temperaturę i skład kropel w rozpylaczach; satelity z kąta tęczy w chmurach odróżniają krople wody od kryształków lodu.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Każda kropla daje całą tęczę.”</strong> Do oka trafia z danej kropli tylko jedna barwa; różne barwy pochodzą z kropel na różnych wysokościach.</li>
+        <li><strong>„Tęcza powstaje przez odbicie całkowite.”</strong> Odbicie wewnątrz kropli jest częściowe; kąt padania jest mniejszy od granicznego.</li>
+        <li><strong>„Kolejność barw jest zawsze ta sama.”</strong> W tęczy głównej czerwień jest na zewnątrz, we wtórnej wewnątrz, bo dodatkowe odbicie odwraca kolejność.</li>
+        <li><strong>„Tęcza jest w określonym miejscu.”</strong> To kierunek: każdy obserwator widzi własną tęczę wokół własnego punktu antysłonecznego.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Dlaczego niebo między łukami jest ciemniejsze?</summary><p>Po jednym odbiciu żaden promień nie wychodzi pod kątem większym niż ok. 42°, a po dwóch odbiciach mniejszym niż ok. 50°. Między tymi kątami krople nie odsyłają światła: to pas Aleksandra (wybierz «Obie»).</p></details>
+    <details class="th-q"><summary>Co się stanie z kątem tęczy, gdy podniesiesz <i>n</i> do 1,5 (preset «Kula szklana»)?</summary><p>Z warunku cos<sup>2</sup> <i>θ</i><sub>i</sub> = (<i>n</i><sup>2</sup> − 1)/3 wychodzi <i>φ</i><sub>1</sub> ≈ 23°. Większe <i>n</i> mocniej zakrzywia promień, więc wraca on bliżej kierunku do Słońca.</p></details>
+    <details class="th-q"><summary>Dlaczego czerwień leży na zewnątrz łuku głównego?</summary><p>Dla czerwieni <i>n</i> jest najmniejsze (dyspersja normalna wody), co daje największy kąt <i>φ</i><sub>1</sub> (ok. 42,5° wobec ok. 40,6° dla fioletu).</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 33 (Fale elektromagnetyczne), część o odbiciu, załamaniu i dyspersji światła, gdzie omówiono tęczę.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A rainbow is not an object hanging in the sky but a direction: a cone around the antisolar point along which raindrops send back the most light. It exists because the exit angle of a ray has an extremum, so rays entering over a wide range of impact parameters leave at almost the same angle.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>A parallel beam of sunlight hits a spherical drop. In «One ray» mode you follow a single ray with impact parameter <i>b</i>/<i>R</i>: it refracts on entry, reflects inside (once for the primary bow, twice for the secondary) and refracts again on exit. «Sweep b» moves the ray from the axis to the edge of the drop while the top strip shows the angle <i>φ</i> from the sunward direction.</p>
+      <p>Notice that <i>φ</i> grows, stalls near 42° and falls again. In «Fan» mode (preset «Fan of rays») the rays crowd together at exactly that angle. The «Sky» tab shows the same result as the observer sees it: the bows are circles around the antisolar point.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>Snell's law holds at every surface, and inside the drop the ray meets the wall at the same angle <i>θ</i><sub>r</sub> at each reflection:</p>
+      <div class="th-eq">sin <i>θ</i><sub>i</sub> = <i>n</i> sin <i>θ</i><sub>r</sub>, &nbsp; sin <i>θ</i><sub>i</sub> = <i>b</i>/<i>R</i></div>
+      <p>Each refraction turns the ray by <i>θ</i><sub>i</sub> − <i>θ</i><sub>r</sub>, each internal reflection by 180° − 2<i>θ</i><sub>r</sub>. After <i>k</i> reflections the total deflection is</p>
+      <div class="th-eq"><i>D</i> = <i>k</i>·180° + 2<i>θ</i><sub>i</sub> − 2(<i>k</i> + 1)<i>θ</i><sub>r</sub></div>
+      <p><i>D</i>(<i>θ</i><sub>i</sub>) has a minimum. Where d<i>D</i>/d<i>θ</i><sub>i</sub> = 0, a small change in <i>b</i> hardly changes the exit direction, so many neighbouring rays leave together (a caustic). The stationarity condition combined with Snell's law gives</p>
+      <div class="th-eq">cos<sup>2</sup> <i>θ</i><sub>i</sub> = <span class="th-fr"><span><i>n</i><sup>2</sup> − 1</span><span><i>k</i>(<i>k</i> + 2)</span></span></div>
+      <p>For water (<i>n</i> ≈ 1.333) this gives <i>b</i>*/<i>R</i> ≈ 0.86 and <i>φ</i><sub>1</sub> = 180° − <i>D</i> ≈ 42° for the primary bow, and <i>φ</i><sub>2</sub> ≈ 50° to 51° for the secondary. Because <i>n</i> depends on <i>λ</i> (dispersion), red and violet have different angles and the bow is about 2° wide. This is a geometric optics model; for very small drops (below about 0.1 mm) diffraction matters, producing supernumerary arcs and the pale fogbow.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Descartes found the rainbow angle in 1637 by tracing rays through a sphere of water; Newton explained the colours by dispersion.</li>
+        <li>Glass microbeads in road paint and on signs send headlight beams back towards the driver.</li>
+        <li>The same caustic mechanism explains the bright lines on a pool floor and "rainbow scattering" of particles in nuclear physics.</li>
+        <li>The bow position depends on <i>n</i>, so rainbow refractometry measures the temperature and composition of droplets in sprays; satellites use the rainbow angle in clouds to tell water drops from ice crystals.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"Each drop makes the whole rainbow."</strong> A given drop sends only one colour to your eye; different colours come from drops at different heights.</li>
+        <li><strong>"The rainbow is due to total internal reflection."</strong> The reflection inside the drop is partial; the angle of incidence is below the critical angle.</li>
+        <li><strong>"The colour order is always the same."</strong> Red is outside in the primary bow and inside in the secondary, because the extra reflection reverses the order.</li>
+        <li><strong>"The rainbow is at a particular place."</strong> It is a direction: every observer sees their own bow around their own antisolar point.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>Why is the sky between the two bows darker?</summary><p>After one reflection no ray leaves at more than about 42°, and after two reflections none leaves at less than about 50°. Between these angles the drops send no light back: this is Alexander's band (choose «Both»).</p></details>
+    <details class="th-q"><summary>What happens to the rainbow angle if you raise <i>n</i> to 1.5 (preset «Glass sphere»)?</summary><p>From cos<sup>2</sup> <i>θ</i><sub>i</sub> = (<i>n</i><sup>2</sup> − 1)/3 one gets <i>φ</i><sub>1</sub> ≈ 23°. A larger <i>n</i> bends the ray more strongly, so it returns closer to the sunward direction.</p></details>
+    <details class="th-q"><summary>Why is red on the outside of the primary bow?</summary><p>Red has the smallest <i>n</i> (normal dispersion of water), which gives the largest angle <i>φ</i><sub>1</sub> (about 42.5° versus about 40.6° for violet).</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 33 (Electromagnetic Waves), the section on reflection, refraction and chromatic dispersion, which discusses rainbows.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

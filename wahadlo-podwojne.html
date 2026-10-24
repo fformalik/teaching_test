@@ -1854,4 +1854,125 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Wahadło podwójne to jedno wahadło zawieszone na drugim: układ o dwóch stopniach swobody, opisany prostymi, w pełni deterministycznymi równaniami. Przy małych wychyleniach ruch jest regularną sumą dwóch drgań własnych, a przy dużych staje się chaotyczny: maleńka różnica warunków początkowych rośnie wykładniczo i po kilku sekundach prognoza traci sens.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Na scenie porusza się jednocześnie <i>K</i> kopii wahadła. Kopia <i>k</i> startuje z kątem <i>θ</i><sub>20</sub> + <i>k</i>·<i>δ</i>, gdzie <i>δ</i> może być rzędu 10<sup>−4</sup> rad. Dopóki kopie pokrywają się, status brzmi „razem”; potem „rozchodzą się” i wreszcie są „rozproszone”.</p>
+      <p>Porównaj presety «Mod w fazie», «W przeciwfazie» i «Małe drgania» (z włączonym «Przybliżeniem liniowym») z presetami «Chaos» i «Przewrót». Na zakładce «Rozbieżność» |Δ<i>θ</i>| w skali logarytmicznej rośnie wzdłuż prostej o nachyleniu <i>λ</i>. «Przekrój Poincarégo» rysuje gładkie krzywe dla ruchu regularnego i chmurę punktów dla chaosu, a «Mapa czasu przewrotu» pokazuje, jak poszarpana jest granica między startami, które szybko i późno kończą się przewrotem.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Ruch wygodnie opisać lagranżjanem <i>L</i> = <i>E</i><sub>k</sub> − <i>E</i><sub>p</sub> we współrzędnych <i>θ</i><sub>1</sub>, <i>θ</i><sub>2</sub>. Równania Eulera–Lagrange’a dają dwa sprzężone, nieliniowe równania drugiego rzędu (człony sin <i>θ</i>, sin(<i>θ</i><sub>1</sub> − <i>θ</i><sub>2</sub>) i <i>ω</i><sup>2</sup>), których nie da się rozwiązać w postaci zamkniętej; symulacja całkuje je metodą RK4. Bez tłumienia energia całkowita jest stała, a to jedyna zachowana wielkość, za mało, by ruch był regularny.</p>
+      <p>Dla małych kątów (sin <i>θ</i> ≈ <i>θ</i>, cos <i>θ</i> ≈ 1) równania stają się liniowe i każdy ruch jest sumą dwóch modów normalnych. Dla równych mas punktowych i długości <i>l</i>:</p>
+      <div class="th-eq"><i>ω</i><sub>∓</sub><sup>2</sup> = <span class="th-fr"><span><i>g</i></span><span><i>l</i></span></span>(2 ∓ √2)</div>
+      <p>czyli <i>ω</i><sub>−</sub> ≈ 0,77√(<i>g</i>/<i>l</i>) (kulki w fazie) i <i>ω</i><sub>+</sub> ≈ 1,85√(<i>g</i>/<i>l</i>) (w przeciwfazie). Częstości są niewspółmierne, więc suma modów jest quasi-okresowa, ale przewidywalna.</p>
+      <p>W reżimie chaotycznym odległość dwóch bliskich trajektorii rośnie średnio wykładniczo, a tempo wzrostu mierzy wykładnik Lapunowa <i>λ</i>:</p>
+      <div class="th-eq">|Δ<i>θ</i>(<i>t</i>)| ≈ <i>δ</i> e<sup><i>λ</i><i>t</i></sup> &nbsp; ⇒ &nbsp; <i>t</i>* = <span class="th-fr"><span>ln(<i>ε</i>/<i>δ</i>)</span><span><i>λ</i></span></span></div>
+      <p>Horyzont przewidywalności <i>t</i>* zależy od dokładności startu tylko logarytmicznie: dziesięciokrotnie lepszy pomiar (<i>δ</i> ÷ 10) wydłuża go zaledwie o ln 10/<i>λ</i> ≈ 2,3/<i>λ</i>. Wzrost wykładniczy kończy się nasyceniem, gdy |Δ<i>θ</i>| staje się porównywalne z rozmiarem obszaru ruchu.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Prognoza pogody: Lorenz odkrył w 1963 roku, że atmosfera ma tę samą wrażliwość na warunki początkowe, co ogranicza prognozy do mniej więcej dwóch tygodni.</li>
+        <li>Mechanika nieba: orbity planet Układu Słonecznego są chaotyczne w skali milionów lat, a wykładniki Lapunowa mierzy się dokładnie takimi metodami.</li>
+        <li>Mody normalne to ten sam język, co drgania cząsteczek w spektroskopii IR, fonony w kryształach czy drgania mostów.</li>
+        <li>Lagranżjan jest punktem wyjścia mechaniki teoretycznej i dalej kwantowej teorii pola.</li>
+        <li>Ten sam przekrój Poincarégo, z wyspami regularności w morzu chaosu, opisuje akceleratory cząstek i plazmę w tokamakach.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Chaos to przypadek.”</strong> Równania są w pełni deterministyczne: ten sam start daje dokładnie ten sam ruch. Nieprzewidywalność wynika z niedokładności znajomości startu.</li>
+        <li><strong>„Lepszy komputer albo pomiar rozwiąże problem.”</strong> Horyzont rośnie tylko jak ln(1/<i>δ</i>), więc każda dekada dokładności daje stały, niewielki zysk czasu.</li>
+        <li><strong>„Wahadło podwójne jest zawsze chaotyczne.”</strong> Przy małej energii ruch jest regularny; chaos pojawia się dopiero przy dużych wychyleniach, a i wtedy obok niego istnieją obszary regularne.</li>
+        <li><strong>„Dryf energii w wynikach to fizyka.”</strong> Bez tłumienia <i>E</i> jest stała; mały dryf to błąd numeryczny RK4, nie źródło chaosu.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Dla <i>λ</i> = 2 s<sup>−1</sup>, <i>δ</i> = 10<sup>−4</sup> rad i <i>ε</i> = 0,1 rad oblicz horyzont <i>t</i>*. Ile zyskasz, zmniejszając <i>δ</i> dziesięciokrotnie?</summary><p><i>t</i>* = ln(1000)/2 ≈ 3,5 s. Przy <i>δ</i> = 10<sup>−5</sup> rad horyzont wydłuża się tylko o ln 10/2 ≈ 1,15 s.</p></details>
+    <details class="th-q"><summary>Dlaczego w presecie «Mod w fazie» kopie nie rozchodzą się, choć startują z różnych kątów?</summary><p>Przy małych drganiach równania są liniowe, więc różnica dwóch rozwiązań też jest rozwiązaniem i nie rośnie wykładniczo; λ ≈ 0, a rozbieżność rośnie najwyżej liniowo.</p></details>
+    <details class="th-q"><summary>Jak rozpoznać chaos na «Przekroju Poincarégo»?</summary><p>Ruch regularny zostawia punkty na gładkich zamkniętych krzywych; ruch chaotyczny rozrzuca je po całym obszarze dostępnym przy danej energii.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 15 (Drgania) obejmuje wahadło i małe drgania; chaos i mechanika Lagrange’a wykraczają poza ten podręcznik. Dalej: S. H. Strogatz, <em>Nonlinear Dynamics and Chaos</em>, rozdz. 9 (Lorenz Equations), oraz J. R. Taylor, <em>Classical Mechanics</em>, rozdz. 11 (mody normalne) i 12 (chaos).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A double pendulum is one pendulum hanging from another: a system with two degrees of freedom, governed by simple, fully deterministic equations. At small swings the motion is a regular sum of two natural vibrations; at large ones it becomes chaotic: a tiny difference in the starting state grows exponentially, and within seconds a forecast becomes meaningless.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The stage shows <i>K</i> copies of the pendulum moving at once. Copy <i>k</i> starts at angle <i>θ</i><sub>20</sub> + <i>k</i>·<i>δ</i>, where <i>δ</i> can be as small as 10<sup>−4</sup> rad. While the copies overlap, the status reads "together"; then "diverging", and finally "scattered".</p>
+      <p>Compare the presets «In-phase mode», «Anti-phase» and «Small swings» (with «Linear approximation» on) against «Chaos» and «Flip». On the «Divergence» tab |Δ<i>θ</i>| on a log scale climbs along a straight line of slope <i>λ</i>. The «Poincaré section» draws smooth curves for regular motion and a cloud of points for chaos, and the «Flip-time map» shows how ragged the border is between starts that flip early and late.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>The motion is best described by the Lagrangian <i>L</i> = <i>E</i><sub>k</sub> − <i>E</i><sub>p</sub> in the coordinates <i>θ</i><sub>1</sub>, <i>θ</i><sub>2</sub>. The Euler–Lagrange equations give two coupled, nonlinear second-order equations (terms in sin <i>θ</i>, sin(<i>θ</i><sub>1</sub> − <i>θ</i><sub>2</sub>) and <i>ω</i><sup>2</sup>) with no closed-form solution; the simulation integrates them with RK4. Without damping the total energy is constant, and it is the only conserved quantity: not enough to make the motion regular.</p>
+      <p>For small angles (sin <i>θ</i> ≈ <i>θ</i>, cos <i>θ</i> ≈ 1) the equations become linear and every motion is a sum of two normal modes. For equal point masses and lengths <i>l</i>:</p>
+      <div class="th-eq"><i>ω</i><sub>∓</sub><sup>2</sup> = <span class="th-fr"><span><i>g</i></span><span><i>l</i></span></span>(2 ∓ √2)</div>
+      <p>so <i>ω</i><sub>−</sub> ≈ 0.77√(<i>g</i>/<i>l</i>) (bobs in phase) and <i>ω</i><sub>+</sub> ≈ 1.85√(<i>g</i>/<i>l</i>) (anti-phase). The frequencies are incommensurate, so the sum is quasi-periodic, but still predictable.</p>
+      <p>In the chaotic regime the separation of two nearby trajectories grows exponentially on average, at a rate set by the Lyapunov exponent <i>λ</i>:</p>
+      <div class="th-eq">|Δ<i>θ</i>(<i>t</i>)| ≈ <i>δ</i> e<sup><i>λ</i><i>t</i></sup> &nbsp; ⇒ &nbsp; <i>t</i>* = <span class="th-fr"><span>ln(<i>ε</i>/<i>δ</i>)</span><span><i>λ</i></span></span></div>
+      <p>The predictability horizon <i>t</i>* depends on the initial precision only logarithmically: a ten times better measurement (<i>δ</i> ÷ 10) extends it by just ln 10/<i>λ</i> ≈ 2.3/<i>λ</i>. Exponential growth ends in saturation once |Δ<i>θ</i>| becomes comparable to the size of the region the motion explores.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Weather forecasting: in 1963 Lorenz found the same sensitivity to initial conditions in a model of the atmosphere, which limits forecasts to roughly two weeks.</li>
+        <li>Celestial mechanics: the planetary orbits of the Solar System are chaotic over millions of years, and their Lyapunov exponents are measured with exactly these methods.</li>
+        <li>Normal modes are the same language as molecular vibrations in IR spectroscopy, phonons in crystals and the vibrations of bridges.</li>
+        <li>The Lagrangian is the starting point of theoretical mechanics and, further on, of quantum field theory.</li>
+        <li>The same Poincaré section, with islands of regularity in a chaotic sea, describes particle accelerators and plasma in tokamaks.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"Chaos means randomness."</strong> The equations are fully deterministic: the same start gives exactly the same motion. Unpredictability comes from imperfect knowledge of the start.</li>
+        <li><strong>"A better computer or measurement will fix it."</strong> The horizon grows only as ln(1/<i>δ</i>), so each decade of precision buys a fixed, small amount of time.</li>
+        <li><strong>"A double pendulum is always chaotic."</strong> At low energy the motion is regular; chaos appears only at large swings, and even then regular regions coexist with it.</li>
+        <li><strong>"The energy drift in the results is physics."</strong> Without damping <i>E</i> is constant; the small drift is the numerical error of RK4, not the source of chaos.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>With <i>λ</i> = 2 s<sup>−1</sup>, <i>δ</i> = 10<sup>−4</sup> rad and <i>ε</i> = 0.1 rad, find the horizon <i>t</i>*. How much do you gain by making <i>δ</i> ten times smaller?</summary><p><i>t</i>* = ln(1000)/2 ≈ 3.5 s. With <i>δ</i> = 10<sup>−5</sup> rad the horizon grows by only ln 10/2 ≈ 1.15 s.</p></details>
+    <details class="th-q"><summary>Why don't the copies separate in the «In-phase mode» preset, even though they start at different angles?</summary><p>For small swings the equations are linear, so the difference of two solutions is itself a solution and does not grow exponentially; λ ≈ 0 and the divergence grows at most linearly.</p></details>
+    <details class="th-q"><summary>How do you recognise chaos on the «Poincaré section»?</summary><p>Regular motion leaves its points on smooth closed curves; chaotic motion scatters them over the whole region allowed at that energy.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 15 (Oscillations) covers the pendulum and small oscillations; chaos and Lagrangian mechanics go beyond this book. Further reading: S. H. Strogatz, <em>Nonlinear Dynamics and Chaos</em>, ch. 9 (Lorenz Equations), and J. R. Taylor, <em>Classical Mechanics</em>, ch. 11 (normal modes) and ch. 12 (chaos).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

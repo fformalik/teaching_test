@@ -2407,4 +2407,127 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Bryła sztywna to ciało, którego punkty zachowują stałe odległości. Jej ruch zawsze da się rozłożyć na ruch postępowy środka masy i obrót wokół niego, a w ruchu obrotowym rolę masy przejmuje moment bezwładności, zależny od rozkładu masy względem osi.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Wybierz bryłę (np. «Pręt», «Krążek», «Kształt L») albo w trybie «Rysuj» narysuj własną, także z otworem («Wycinaj otwór»). Symulacja liczy pole, środek masy i moment bezwładności <i>I</i><sub>c</sub> dokładnie z konturu wielokąta.</p>
+      <p>W trybie «Wahadło» wbij gwóźdź: bryła obraca się, aż środek masy stanie pod osią. Dwa zawieszenia z włączonymi «Pionami» dają dwie proste przecinające się w środku masy. Wykres «Okres T(d)» pokazuje, jak okres zależy od odległości osi od środka masy, a przyciski «Oś w odległości k» i «Zawieś w środku wahań O» pokazują dwa szczególne położenia. W trybie «Rzut z obrotem» środek masy leci po paraboli, a ω jest stałe; w trybie «Moment siły» ciężarek na nici rozpędza bryłę.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Moment bezwładności to suma mas pomnożonych przez kwadrat odległości od osi, a twierdzenie Steinera przenosi go na oś równoległą odległą o <i>d</i> od środka masy:</p>
+      <div class="th-eq"><i>I</i><sub>c</sub> = ∫ <i>r</i><sup>2</sup> d<i>m</i> = <i>m</i><i>k</i><sup>2</sup>, &nbsp; <i>I</i><sub>p</sub> = <i>I</i><sub>c</sub> + <i>m</i><i>d</i><sup>2</sup></div>
+      <p>Zasada dynamiki ruchu obrotowego względem nieruchomej osi brzmi <i>M</i> = <i>I</i><i>ε</i>. Dla wahadła fizycznego moment ciężaru wynosi −<i>m</i><i>g</i><i>d</i> sin <i>θ</i>; dla małych kątów sin <i>θ</i> ≈ <i>θ</i> i ruch jest harmoniczny z okresem</p>
+      <div class="th-eq"><i>T</i><sub>0</sub> = 2π√(<span class="th-fr"><span><i>I</i><sub>p</sub></span><span><i>m</i><i>g</i><i>d</i></span></span>) = 2π√(<span class="th-fr"><span><i>k</i><sup>2</sup> + <i>d</i><sup>2</sup></span><span><i>g</i><i>d</i></span></span>)</div>
+      <p>Masa się skraca. Funkcja (<i>k</i><sup>2</sup> + <i>d</i><sup>2</sup>)/<i>d</i> ma minimum przy <i>d</i> = <i>k</i> i przyjmuje tę samą wartość dla <i>d</i> oraz <i>k</i><sup>2</sup>/<i>d</i>. Stąd długość zredukowana <i>l</i><sub>red</sub> = <i>d</i> + <i>k</i><sup>2</sup>/<i>d</i>: zawieszenie w środku wahań O daje ten sam okres. Przy dużych amplitudach okres rośnie, <i>T</i> ≈ <i>T</i><sub>0</sub>(1 + <i>θ</i><sub>0</sub><sup>2</sup>/16 + …).</p>
+      <p>W trybie «Moment siły» nić o napięciu <i>N</i> działa na bęben o promieniu <i>r</i>. Z równań <i>N</i><i>r</i> = <i>I</i><sub>c</sub><i>ε</i>, <i>m</i><sub>c</sub><i>a</i> = <i>m</i><sub>c</sub><i>g</i> − <i>N</i> i więzu <i>a</i> = <i>ε</i><i>r</i>:</p>
+      <div class="th-eq"><i>ε</i> = <span class="th-fr"><span><i>m</i><sub>c</sub><i>g</i><i>r</i></span><span><i>I</i><sub>c</sub> + <i>m</i><sub>c</sub><i>r</i><sup>2</sup></span></span></div>
+      <p>Bryła jest dla ciężarka dodatkową „masą” <i>I</i><sub>c</sub>/<i>r</i><sup>2</sup>. W rzucie ciężar działa w środku masy, więc nie daje względem niego momentu: moment pędu <i>L</i> = <i>I</i><sub>c</sub><i>ω</i> i prędkość kątowa są stałe. Model: bryła płaska i jednorodna, oś prostopadła do jej płaszczyzny, brak oporu powietrza.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Wahadło rewersyjne Katera wykorzystuje równość okresów dla osi w odległościach <i>d</i> i <i>k</i><sup>2</sup>/<i>d</i> do precyzyjnego pomiaru <i>g</i> bez znajomości <i>I</i>.</li>
+        <li>Metoda pionów to praktyczny sposób znajdowania środka ciężkości tablic, części maszyn czy modeli samolotów.</li>
+        <li>Koła zamachowe i rotory magazynują energię ½<i>I</i><i>ω</i><sup>2</sup>; dlatego masę umieszcza się na obwodzie.</li>
+        <li>Skoczkowie, gimnastycy i koty w locie nie zmieniają <i>L</i>, ale zmieniają <i>I</i>, a więc i <i>ω</i>.</li>
+        <li>Nogi przy chodzeniu wahają się jak wahadła fizyczne, co dobrze przewiduje naturalne tempo kroku.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Moment bezwładności to cecha ciała.”</strong> Zależy od wyboru osi; ta sama bryła ma inne <i>I</i> względem każdego gwoździa.</li>
+        <li><strong>„Wahadło fizyczne ma okres jak matematyczne o długości <i>d</i>.”</strong> Odpowiada mu wahadło matematyczne o długości <i>l</i><sub>red</sub> &gt; <i>d</i>.</li>
+        <li><strong>„Im bliżej środka masy oś, tym szybciej bryła się waha.”</strong> Dla <i>d</i> &lt; <i>k</i> okres znowu rośnie, a przy <i>d</i> → 0 dąży do nieskończoności (równowaga obojętna).</li>
+        <li><strong>„Ciężarek spada z przyspieszeniem <i>g</i>, bo nić jest lekka.”</strong> Napięcie <i>N</i> = <i>m</i><sub>c</sub>(<i>g</i> − <i>a</i>) &gt; 0 hamuje go, a <i>a</i> &lt; <i>g</i>.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Pręt o długości 1 m zawieszony za koniec na Ziemi. Jaki jest okres małych wahań i gdzie leży środek wahań?</summary><p><i>I</i><sub>p</sub> = <i>m</i><i>L</i><sup>2</sup>/3, <i>d</i> = <i>L</i>/2, więc <i>l</i><sub>red</sub> = 2<i>L</i>/3 ≈ 0,67 m i <i>T</i><sub>0</sub> = 2π√(<i>l</i><sub>red</sub>/<i>g</i>) ≈ 1,64 s. Środek wahań leży w 2/3 długości od osi.</p></details>
+    <details class="th-q"><summary>Krążek i pierścień (preset «Pierścień», promienie <i>R</i> i <i>r</i>) o tej samej masie i promieniu zewnętrznym <i>R</i> zawieszasz na brzegu. Który ma dłuższy okres?</summary><p>Pierścień: jego masa leży dalej od środka, więc <i>k</i><sup>2</sup> = (<i>R</i><sup>2</sup> + <i>r</i><sup>2</sup>)/2 jest większe niż <i>R</i><sup>2</sup>/2 dla krążka. Przy tym samym <i>d</i> = <i>R</i> daje to większe <i>I</i><sub>p</sub> i dłuższy okres.</p></details>
+    <details class="th-q"><summary>Jak zmieni się przyspieszenie kątowe w trybie «Moment siły», jeśli podwoisz masę bryły?</summary><p><i>I</i><sub>c</sub> się podwaja, więc <i>ε</i> = <i>m</i><sub>c</sub><i>g</i><i>r</i>/(<i>I</i><sub>c</sub> + <i>m</i><sub>c</sub><i>r</i><sup>2</sup>) maleje, ale mniej niż dwukrotnie, bo w mianowniku jest też człon ciężarka.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 10 (Obroty) i rozdz. 11 (Toczenie się ciał, moment siły i moment pędu). Wahadło fizyczne: rozdz. 15 (Drgania), środek masy: rozdz. 9.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A rigid body is one whose points keep fixed distances from each other. Its motion can always be split into translation of the centre of mass and rotation about it, and in rotation the role of mass is taken by the moment of inertia, which depends on how the mass is spread around the axis.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>Pick a body (e.g. «Rod», «Disc», «L-shape») or use «Draw» to make your own, holes included («Cut a hole»). The simulation computes the area, centre of mass and moment of inertia <i>I</i><sub>c</sub> exactly from the polygon outline.</p>
+      <p>In «Pendulum» mode drive in a nail: the body turns until its centre of mass hangs below the axis. Two hangings with «Plumb lines» on give two lines that cross at the centre of mass. The «Period T(d)» chart shows how the period depends on the distance from axis to centre of mass, and the buttons «Axis at distance k» and «Hang at centre of oscillation O» pick out two special positions. In «Spinning throw» the centre of mass flies on a parabola while ω stays constant; in «Torque» a hanging mass on a string spins the body up.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>The moment of inertia sums each mass times its squared distance from the axis, and the parallel-axis theorem moves it to a parallel axis a distance <i>d</i> from the centre of mass:</p>
+      <div class="th-eq"><i>I</i><sub>c</sub> = ∫ <i>r</i><sup>2</sup> d<i>m</i> = <i>m</i><i>k</i><sup>2</sup>, &nbsp; <i>I</i><sub>p</sub> = <i>I</i><sub>c</sub> + <i>m</i><i>d</i><sup>2</sup></div>
+      <p>Newton's second law for rotation about a fixed axis reads <i>τ</i> = <i>I</i><i>α</i>. For a physical pendulum the torque of gravity is −<i>m</i><i>g</i><i>d</i> sin <i>θ</i>; for small angles sin <i>θ</i> ≈ <i>θ</i> and the motion is simple harmonic with period</p>
+      <div class="th-eq"><i>T</i><sub>0</sub> = 2π√(<span class="th-fr"><span><i>I</i><sub>p</sub></span><span><i>m</i><i>g</i><i>d</i></span></span>) = 2π√(<span class="th-fr"><span><i>k</i><sup>2</sup> + <i>d</i><sup>2</sup></span><span><i>g</i><i>d</i></span></span>)</div>
+      <p>The mass cancels. The function (<i>k</i><sup>2</sup> + <i>d</i><sup>2</sup>)/<i>d</i> has its minimum at <i>d</i> = <i>k</i> and takes the same value at <i>d</i> and at <i>k</i><sup>2</sup>/<i>d</i>. Hence the equivalent length <i>l</i><sub>red</sub> = <i>d</i> + <i>k</i><sup>2</sup>/<i>d</i>: hanging the body at the centre of oscillation O gives the same period. At large amplitudes the period grows, <i>T</i> ≈ <i>T</i><sub>0</sub>(1 + <i>θ</i><sub>0</sub><sup>2</sup>/16 + …).</p>
+      <p>In «Torque» mode a string with tension <i>N</i> pulls on a drum of radius <i>r</i>. From <i>N</i><i>r</i> = <i>I</i><sub>c</sub><i>α</i>, <i>m</i><sub>c</sub><i>a</i> = <i>m</i><sub>c</sub><i>g</i> − <i>N</i> and the constraint <i>a</i> = <i>α</i><i>r</i>:</p>
+      <div class="th-eq"><i>α</i> = <span class="th-fr"><span><i>m</i><sub>c</sub><i>g</i><i>r</i></span><span><i>I</i><sub>c</sub> + <i>m</i><sub>c</sub><i>r</i><sup>2</sup></span></span></div>
+      <p>To the falling mass the body acts as an extra "mass" <i>I</i><sub>c</sub>/<i>r</i><sup>2</sup>. In a throw, weight acts at the centre of mass and has no torque about it, so the angular momentum <i>L</i> = <i>I</i><sub>c</sub><i>ω</i> and the angular velocity stay constant. Model: a flat, uniform body, axis perpendicular to its plane, no air drag.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Kater's reversible pendulum uses the equal periods for axes at <i>d</i> and <i>k</i><sup>2</sup>/<i>d</i> to measure <i>g</i> precisely without knowing <i>I</i>.</li>
+        <li>The plumb-line method is a practical way to find the centre of gravity of boards, machine parts or model aircraft.</li>
+        <li>Flywheels and rotors store energy ½<i>I</i><i>ω</i><sup>2</sup>, which is why their mass sits at the rim.</li>
+        <li>Divers, gymnasts and falling cats cannot change <i>L</i> in the air, but they change <i>I</i> and therefore <i>ω</i>.</li>
+        <li>Legs swing like physical pendulums when we walk, which predicts our natural stepping rate quite well.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"The moment of inertia is a property of the body."</strong> It depends on the axis; the same body has a different <i>I</i> about every nail.</li>
+        <li><strong>"A physical pendulum has the period of a simple pendulum of length <i>d</i>."</strong> It matches a simple pendulum of length <i>l</i><sub>red</sub> &gt; <i>d</i>.</li>
+        <li><strong>"The closer the axis to the centre of mass, the faster the swing."</strong> For <i>d</i> &lt; <i>k</i> the period grows again, and as <i>d</i> → 0 it goes to infinity (neutral equilibrium).</li>
+        <li><strong>"The hanging mass falls at <i>g</i> because the string is light."</strong> The tension <i>N</i> = <i>m</i><sub>c</sub>(<i>g</i> − <i>a</i>) &gt; 0 holds it back, so <i>a</i> &lt; <i>g</i>.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>A 1 m rod hangs from one end on Earth. What is the small-swing period, and where is the centre of oscillation?</summary><p><i>I</i><sub>p</sub> = <i>m</i><i>L</i><sup>2</sup>/3, <i>d</i> = <i>L</i>/2, so <i>l</i><sub>red</sub> = 2<i>L</i>/3 ≈ 0.67 m and <i>T</i><sub>0</sub> = 2π√(<i>l</i><sub>red</sub>/<i>g</i>) ≈ 1.64 s. The centre of oscillation is two thirds of the way down from the axis.</p></details>
+    <details class="th-q"><summary>A disc and a ring (the «Ring» preset, radii <i>R</i> and <i>r</i>) of equal mass and outer radius <i>R</i> hang from their outer rims. Which has the longer period?</summary><p>The ring: its mass lies farther out, so <i>k</i><sup>2</sup> = (<i>R</i><sup>2</sup> + <i>r</i><sup>2</sup>)/2 exceeds the disc’s <i>R</i><sup>2</sup>/2. For the same <i>d</i> = <i>R</i> that means a larger <i>I</i><sub>p</sub> and a longer period.</p></details>
+    <details class="th-q"><summary>How does the angular acceleration in «Torque» mode change if you double the body's mass?</summary><p><i>I</i><sub>c</sub> doubles, so <i>α</i> = <i>m</i><sub>c</sub><i>g</i><i>r</i>/(<i>I</i><sub>c</sub> + <i>m</i><sub>c</sub><i>r</i><sup>2</sup>) drops, but by less than half, because the denominator also contains the hanging mass term.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 10 (Rotation) and ch. 11 (Rolling, Torque, and Angular Momentum). Physical pendulum: ch. 15 (Oscillations); centre of mass: ch. 9.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

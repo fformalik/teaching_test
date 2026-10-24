@@ -1269,4 +1269,125 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Zderzenie to krótkie, silne oddziaływanie dwóch ciał, w czasie którego siły zewnętrzne są zaniedbywalne. Dlatego całkowity pęd układu jest zawsze zachowany, natomiast energia kinetyczna zachowuje się tylko w zderzeniu sprężystym; w pozostałych część jej zamienia się w ciepło i odkształcenie.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Dwa wózki na torze powietrznym, na którym tarcie jest prawie zerowe, więc jedynymi istotnymi siłami w kierunku ruchu są siły zderzenia. Ustawiasz masy <i>m</i><sub>1</sub>, <i>m</i><sub>2</sub>, prędkości <i>v</i><sub>1</sub>, <i>v</i><sub>2</sub> oraz współczynnik restytucji <i>e</i>.</p>
+      <p>Słupki w panelu «Bilans pędu i energii» pokazują, że Σ<i>p</i> nie zmienia się w zderzeniu, a ΣK spada o ciepło <i>Q</i> (o ile <i>e</i> &lt; 1). Na wykresie «Położenie x(t)» linia środka masy jest prosta mimo zderzeń. Przełącz «Układ» na «środek masy»: wózki zbliżają się z przeciwnymi pędami i odbijają z prędkościami odwróconymi i pomnożonymi przez <i>e</i>. Włączenie «Odbijających ścian» wprowadza siłę zewnętrzną, więc wtedy pęd przy odbiciu od ściany się zmienia.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>W czasie zderzenia wózki działają na siebie siłami równymi co do wartości i przeciwnie skierowanymi (III zasada dynamiki), więc ich popędy się znoszą i:</p>
+      <div class="th-eq"><i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> = <i>m</i><sub>1</sub><i>v</i>′<sub>1</sub> + <i>m</i><sub>2</sub><i>v</i>′<sub>2</sub></div>
+      <p>Jedno równanie nie wystarcza na dwie niewiadome. Drugie daje współczynnik restytucji, który opisuje materiał zderzaków:</p>
+      <div class="th-eq"><i>v</i>′<sub>2</sub> − <i>v</i>′<sub>1</sub> = −<i>e</i>(<i>v</i><sub>2</sub> − <i>v</i><sub>1</sub>)</div>
+      <p>Najprościej widać to w układzie środka masy, który porusza się z prędkością <i>v</i><sub>ŚM</sub> = (<i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub>)/(<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>). Tam całkowity pęd jest zerowy, więc każde zderzenie może tylko odwrócić prędkości i przeskalować je o <i>e</i>. Energię kinetyczną można rozdzielić na część związaną z ruchem środka masy (której zderzenie nie zmienia, bo pęd jest stały) i część względną. Strata dotyczy tylko tej drugiej:</p>
+      <div class="th-eq">Δ<i>K</i> = ½ <i>μ</i> (1 − <i>e</i><sup>2</sup>) (<i>v</i><sub>1</sub> − <i>v</i><sub>2</sub>)<sup>2</sup>, &nbsp; <i>μ</i> = <span class="th-fr"><span><i>m</i><sub>1</sub><i>m</i><sub>2</sub></span><span><i>m</i><sub>1</sub> + <i>m</i><sub>2</sub></span></span></div>
+      <p>Dla <i>e</i> = 1 strata jest zerowa (zderzenie sprężyste), dla <i>e</i> = 0 jest największa możliwa (wózki się sklejają). Przy „Wybuchu” energia sprężyny zamienia się w kinetyczną, a pęd startowy zero pozostaje zerem. Założenia: zderzenie jednowymiarowe, chwilowe, bez tarcia toru.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Wahadło Newtona i bilard: przy równych masach i <i>e</i> ≈ 1 ciało uderzające staje, a uderzone przejmuje cały pęd.</li>
+        <li>Bezpieczeństwo w ruchu drogowym: strefy zgniotu celowo zmniejszają <i>e</i> i wydłużają czas zderzenia, co obniża siły działające na pasażerów.</li>
+        <li>Odrzut broni i napęd rakietowy to „wybuchy”: pęd całkowity zero rozdziela się na dwa przeciwne pędy.</li>
+        <li>Fizyka cząstek: zderzenia sprężyste i niesprężyste w układzie środka masy to podstawowy język eksperymentów w akceleratorach; neutrony spowalnia się w moderatorach przez zderzenia z lekkimi jądrami.</li>
+        <li>Asysta grawitacyjna sond kosmicznych jest „zderzeniem sprężystym” z planetą: lekka sonda może zyskać prędkość, jak lekki wózek w presecie «Ciężki w lekki».</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„W zderzeniu niesprężystym pęd się nie zachowuje.”</strong> Pęd zachowuje się w każdym zderzeniu izolowanego układu; nie zachowuje się energia kinetyczna.</li>
+        <li><strong>„Przy sklejeniu ginie cała energia kinetyczna.”</strong> Ginie tylko część względna; energia ruchu środka masy zostaje, bo zlepek nadal się porusza.</li>
+        <li><strong>„Ciężki wózek może wybić lekki dowolnie szybko.”</strong> Przy <i>e</i> = 1 lekki wózek osiąga co najwyżej 2<i>v</i><sub>1</sub> (gdy <i>m</i><sub>1</sub> ≫ <i>m</i><sub>2</sub>).</li>
+        <li><strong>„Odbicie od ściany też zachowuje pęd wózka.”</strong> Ściana jest zewnętrzna wobec układu dwóch wózków i zmienia jego pęd; zachowana jest jedynie energia (tu przy sprężystym odbiciu).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Wózek 1 kg o prędkości 2 m/s skleja się ze spoczywającym wózkiem 1 kg. Jaka część energii kinetycznej zamienia się w ciepło?</summary><p>Zlepek jedzie z prędkością 1 m/s, więc <i>K</i> spada z 2 J do 1 J: dokładnie połowa, zgodnie z presetem «Sklejenie».</p></details>
+    <details class="th-q"><summary>Jak wygląda zderzenie w układzie środka masy dla <i>e</i> = 0,5?</summary><p>Oba wózki odwracają kierunek ruchu, a ich prędkości maleją o połowę. Całkowity pęd przed i po jest zerowy, a energia kinetyczna spada do 1/4 wartości (<i>e</i><sup>2</sup>).</p></details>
+    <details class="th-q"><summary>W presecie «Wybuch» wózek lżejszy dostaje większą prędkość. Który ma większą energię kinetyczną?</summary><p>Lżejszy. Pędy są równe co do wartości, a <i>K</i> = <i>p</i><sup>2</sup>/(2<i>m</i>), więc energia jest odwrotnie proporcjonalna do masy.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 9 (Środek masy i pęd). Zwłaszcza podrozdziały o zderzeniach niesprężystych i sprężystych w jednym wymiarze.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A collision is a brief, strong interaction between two bodies during which external forces are negligible. That is why the total momentum of the system is always conserved, while kinetic energy is conserved only in an elastic collision; otherwise part of it goes into heat and deformation.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>Two gliders on an air track with almost no friction, so the only significant forces along the track are the collision forces. You set the masses <i>m</i><sub>1</sub>, <i>m</i><sub>2</sub>, the velocities <i>v</i><sub>1</sub>, <i>v</i><sub>2</sub> and the coefficient of restitution <i>e</i>.</p>
+      <p>The bars in the «Momentum and energy ledger» show that Σ<i>p</i> does not change in a collision, while ΣK drops by the heat <i>Q</i> (when <i>e</i> &lt; 1). On the «Position x(t)» plot the centre of mass line stays straight through every collision. Switch the «Frame» to «centre of mass»: the gliders approach with opposite momenta and bounce back with velocities reversed and scaled by <i>e</i>. Turning on «Bouncy walls» adds an external force, so momentum changes at a wall bounce.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>During the collision the gliders push on each other with equal and opposite forces (Newton's third law), so their impulses cancel and</p>
+      <div class="th-eq"><i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub> = <i>m</i><sub>1</sub><i>v</i>′<sub>1</sub> + <i>m</i><sub>2</sub><i>v</i>′<sub>2</sub></div>
+      <p>One equation is not enough for two unknowns. The second comes from the coefficient of restitution, a property of the bumpers:</p>
+      <div class="th-eq"><i>v</i>′<sub>2</sub> − <i>v</i>′<sub>1</sub> = −<i>e</i>(<i>v</i><sub>2</sub> − <i>v</i><sub>1</sub>)</div>
+      <p>It is clearest in the centre of mass frame, which moves at <i>v</i><sub>cm</sub> = (<i>m</i><sub>1</sub><i>v</i><sub>1</sub> + <i>m</i><sub>2</sub><i>v</i><sub>2</sub>)/(<i>m</i><sub>1</sub> + <i>m</i><sub>2</sub>). There the total momentum is zero, so a collision can only reverse the velocities and scale them by <i>e</i>. Kinetic energy splits into a part tied to the motion of the centre of mass (untouched by the collision, since momentum is fixed) and a relative part. Only the relative part can be lost:</p>
+      <div class="th-eq">Δ<i>K</i> = ½ <i>μ</i> (1 − <i>e</i><sup>2</sup>) (<i>v</i><sub>1</sub> − <i>v</i><sub>2</sub>)<sup>2</sup>, &nbsp; <i>μ</i> = <span class="th-fr"><span><i>m</i><sub>1</sub><i>m</i><sub>2</sub></span><span><i>m</i><sub>1</sub> + <i>m</i><sub>2</sub></span></span></div>
+      <p>For <i>e</i> = 1 the loss is zero (elastic), for <i>e</i> = 0 it is the largest possible (the gliders stick). In the «Explosion» the spring energy becomes kinetic energy, and the zero initial momentum stays zero. Assumptions: one dimension, an instantaneous collision, a frictionless track.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Newton's cradle and billiards: with equal masses and <i>e</i> ≈ 1 the striking body stops and the struck one takes all the momentum.</li>
+        <li>Road safety: crumple zones deliberately lower <i>e</i> and stretch the collision time, which reduces the forces on passengers.</li>
+        <li>Gun recoil and rocket propulsion are "explosions": zero total momentum splits into two opposite momenta.</li>
+        <li>Particle physics: elastic and inelastic collisions in the centre of mass frame are the basic language of accelerator experiments; neutrons are slowed in moderators by colliding with light nuclei.</li>
+        <li>A spacecraft's gravity assist is an "elastic collision" with a planet: the light probe can gain speed, like the light glider in «Heavy hits light».</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"Momentum is not conserved in an inelastic collision."</strong> Momentum is conserved in every collision of an isolated system; kinetic energy is what is not.</li>
+        <li><strong>"When the gliders stick, all kinetic energy is lost."</strong> Only the relative part is; the centre of mass energy remains, because the pair keeps moving.</li>
+        <li><strong>"A heavy glider can knock a light one away arbitrarily fast."</strong> With <i>e</i> = 1 the light glider reaches at most 2<i>v</i><sub>1</sub> (when <i>m</i><sub>1</sub> ≫ <i>m</i><sub>2</sub>).</li>
+        <li><strong>"A wall bounce conserves the glider's momentum too."</strong> The wall is external to the two-glider system and changes its momentum; only energy is conserved there (for an elastic bounce).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>A 1 kg glider at 2 m/s sticks to a 1 kg glider at rest. What fraction of the kinetic energy becomes heat?</summary><p>The pair moves at 1 m/s, so <i>K</i> drops from 2 J to 1 J: exactly half, as in the «Stick together» preset.</p></details>
+    <details class="th-q"><summary>What does a collision with <i>e</i> = 0.5 look like in the centre of mass frame?</summary><p>Both gliders reverse direction and their speeds are halved. Total momentum is zero before and after, and the kinetic energy falls to 1/4 of its value (<i>e</i><sup>2</sup>).</p></details>
+    <details class="th-q"><summary>In the «Explosion» preset the lighter glider gets the larger speed. Which one gets more kinetic energy?</summary><p>The lighter one. The momenta are equal in size and <i>K</i> = <i>p</i><sup>2</sup>/(2<i>m</i>), so the energy is inversely proportional to the mass.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 9 (Center of Mass and Linear Momentum), especially the sections on inelastic and elastic collisions in one dimension.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

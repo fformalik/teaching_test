@@ -1978,4 +1978,121 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Szczególna teoria względności wynika z dwóch postulatów: prawa fizyki są takie same w każdym inercjalnym układzie odniesienia, a prędkość światła w próżni <i>c</i> jest w nich wszystkich jednakowa. Z tych założeń wynika, że czas i odległości przestrzenne zależą od układu, a niezmienny dla wszystkich obserwatorów jest dopiero interwał czasoprzestrzenny.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Suwak <i>β</i> = <i>v</i>/<i>c</i> steruje trzema scenami. W scenie «Zegar świetlny» foton odbija się między lustrami w pociągu; z peronu jego droga jest dłuższa (włącz «Trójkąt» i «Ślad fotonu»), więc zegar tyka wolniej, a pociąg jest krótszy. Scena «Diagram Minkowskiego» pokazuje, jak osie układu S′ przechylają się ku stożkowi światła; przeciągnij zdarzenia A i B i sprawdź przyciskiem, czy da się je uczynić jednoczesnymi. Scena «Paradoks bliźniąt» porównuje wiek bliźniąt, z sygnałami wysyłanymi co rok.</p>
+      <p>Presety «ISS» i «Satelita GPS» pokazują, jak drobne są efekty w życiu codziennym; «Mion z atmosfery» i «Proton w LHC» pokazują, jak ogromne stają się przy <i>β</i> bliskim 1.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>W zegarze świetlnym o wysokości <i>h</i> foton w układzie pociągu przebywa 2<i>h</i> w czasie <i>Δt</i><sub>0</sub>. Z peronu przebywa przeciwprostokątną trójkąta o przyprostokątnych <i>c</i><i>Δt</i>/2 i <i>v</i><i>Δt</i>/2 (wysokość się nie zmienia, bo jest prostopadła do ruchu). Twierdzenie Pitagorasa daje</p>
+      <div class="th-eq"><i>Δt</i> = <i>γ</i><i>Δt</i><sub>0</sub>, &nbsp; <i>γ</i> = <span class="th-fr"><span>1</span><span>√(1 − <i>β</i><sup>2</sup>)</span></span></div>
+      <p>Czas własny <i>Δt</i><sub>0</sub> mierzy zegar, dla którego oba zdarzenia zachodzą w tym samym miejscu. Długość mierzona wzdłuż ruchu jest skrócona, <i>L</i> = <i>L</i><sub>0</sub>/<i>γ</i>. Ogólnie współrzędne zdarzeń przelicza transformacja Lorentza, przy której zachowany jest interwał:</p>
+      <div class="th-eq"><i>x</i>′ = <i>γ</i>(<i>x</i> − <i>v</i><i>t</i>), &nbsp; <i>t</i>′ = <i>γ</i>(<i>t</i> − <i>v</i><i>x</i>/<i>c</i><sup>2</sup>)</div>
+      <div class="th-eq">(<i>c</i><i>Δt</i>)<sup>2</sup> − (<i>Δx</i>)<sup>2</sup> = (<i>c</i><i>Δt</i>′)<sup>2</sup> − (<i>Δx</i>′)<sup>2</sup></div>
+      <p>Człon <i>v</i><i>x</i>/<i>c</i><sup>2</sup> sprawia, że jednoczesność jest względna. Dla interwału czasopodobnego kolejność zdarzeń jest taka sama we wszystkich układach (możliwy związek przyczynowy); dla przestrzennopodobnego zależy od układu. W paradoksie bliźniąt sytuacja nie jest symetryczna: podróżnik zmienia układ inercjalny przy gwieździe, więc to jego linia świata jest krótsza w sensie czasu własnego. Teoria szczególna opisuje układy inercjalne bez grawitacji; dla GPS trzeba dodatkowo uwzględnić efekt grawitacyjny z ogólnej teorii względności.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Miony powstają ok. 15 km nad Ziemią i przy <i>β</i> = 0,998 przelatują w czasie ok. 50 μs, ponad 20 razy dłużej niż ich średni czas życia 2,2 μs. Docierają do powierzchni dzięki <i>γ</i> ≈ 16.</li>
+        <li>Zegary satelitów GPS przez ruch orbitalny tracą ok. 7 μs na dobę; bez poprawek błąd pozycji rósłby o kilometry dziennie.</li>
+        <li>Akceleratory (LHC) projektuje się z relatywistyczną zależnością energii od pędu; czas życia niestabilnych cząstek w wiązce rośnie o czynnik <i>γ</i>.</li>
+        <li>Związek <i>E</i> = <i>γ</i><i>m</i><i>c</i><sup>2</sup> leży u podstaw fizyki jądrowej i cząstek elementarnych.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Zegar w ruchu naprawdę się psuje.”</strong> Każdy obserwator widzi swój zegar tykający normalnie; dylatacja to relacja między pomiarami w dwóch układach.</li>
+        <li><strong>„Skrócenie dotyczy wszystkich wymiarów.”</strong> Skraca się tylko wymiar równoległy do prędkości; dlatego wysokość zegara świetlnego się nie zmienia.</li>
+        <li><strong>„Bliźnięta są symetryczne, więc paradoks jest sprzecznością.”</strong> Tylko podróżnik zmienia układ inercjalny; na diagramie widać skok jego linii „teraz” przy zawróceniu.</li>
+        <li><strong>„Prędkości dodaje się zwyczajnie.”</strong> Wzór relatywistyczny <i>u</i>′ = (<i>u</i> − <i>v</i>)/(1 − <i>u</i><i>v</i>/<i>c</i><sup>2</sup>) nigdy nie daje wyniku większego od <i>c</i>.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Przy <i>β</i> = 0,8 ile wynosi <i>γ</i> i jak długi jest pociąg o <i>L</i><sub>0</sub> = 100 m widziany z peronu?</summary><p><i>γ</i> = 1/√(1 − 0,64) = 1/0,6 ≈ 1,67, więc <i>L</i> = 100 m · 0,6 = 60 m.</p></details>
+    <details class="th-q"><summary>Gwiazda w odległości 4 lat świetlnych, <i>β</i> = 0,8, zawrócenie natychmiastowe. Ile lat mija na Ziemi, a ile dla podróżnika?</summary><p>Na Ziemi <i>T</i> = 2 · 4/0,8 = 10 lat, dla podróżnika <i>τ</i> = <i>T</i>/<i>γ</i> = 6 lat. Podróżnik wraca młodszy o 4 lata.</p></details>
+    <details class="th-q"><summary>Jak w układzie mionu wyjaśnić, że dolatuje on do ziemi?</summary><p>W jego układzie żyje on zwykłe 2,2 μs, ale grubość atmosfery jest skrócona do <i>h</i>/<i>γ</i> ≈ 15 km/16 ≈ 0,95 km. Oba opisy dają tę samą liczbę mionów przy ziemi.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 37 (Teoria względności).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Special relativity follows from two postulates: the laws of physics are the same in every inertial frame, and the speed of light in vacuum <i>c</i> is the same in all of them. It follows that time intervals and spatial distances depend on the frame, and only the spacetime interval is the same for all observers.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The <i>β</i> = <i>v</i>/<i>c</i> slider drives three scenes. In «Light clock» a photon bounces between mirrors on a train; seen from the platform its path is longer (switch on «Triangle» and «Photon trail»), so the clock ticks more slowly and the train is shorter. «Minkowski diagram» shows the axes of frame S′ tilting towards the light cone; drag events A and B and use the buttons to see whether they can be made simultaneous. «Twin paradox» compares the twins' ages, with signals sent once a year.</p>
+      <p>The «ISS» and «GPS satellite» presets show how tiny the effects are in everyday life; «Atmospheric muon» and «LHC proton» show how large they become for <i>β</i> close to 1.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>In a light clock of height <i>h</i>, the photon travels 2<i>h</i> in time <i>Δt</i><sub>0</sub> in the train frame. Seen from the platform it travels the hypotenuse of a triangle with legs <i>c</i><i>Δt</i>/2 and <i>v</i><i>Δt</i>/2 (the height is unchanged because it is perpendicular to the motion). Pythagoras gives</p>
+      <div class="th-eq"><i>Δt</i> = <i>γ</i><i>Δt</i><sub>0</sub>, &nbsp; <i>γ</i> = <span class="th-fr"><span>1</span><span>√(1 − <i>β</i><sup>2</sup>)</span></span></div>
+      <p>The proper time <i>Δt</i><sub>0</sub> is measured by a clock for which both events happen at the same place. Length along the motion is contracted, <i>L</i> = <i>L</i><sub>0</sub>/<i>γ</i>. In general, event coordinates transform by the Lorentz transformation, which preserves the interval:</p>
+      <div class="th-eq"><i>x</i>′ = <i>γ</i>(<i>x</i> − <i>v</i><i>t</i>), &nbsp; <i>t</i>′ = <i>γ</i>(<i>t</i> − <i>v</i><i>x</i>/<i>c</i><sup>2</sup>)</div>
+      <div class="th-eq">(<i>c</i><i>Δt</i>)<sup>2</sup> − (<i>Δx</i>)<sup>2</sup> = (<i>c</i><i>Δt</i>′)<sup>2</sup> − (<i>Δx</i>′)<sup>2</sup></div>
+      <p>The <i>v</i><i>x</i>/<i>c</i><sup>2</sup> term makes simultaneity relative. For a timelike interval the order of events is the same in every frame (a causal link is possible); for a spacelike one it depends on the frame. In the twin paradox the situation is not symmetric: the traveller changes inertial frame at the star, so their world line is the shorter one in proper time. Special relativity covers inertial frames without gravity; for GPS the gravitational effect from general relativity must be added as well.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Muons are produced about 15 km up and at <i>β</i> = 0.998 need about 50 μs to reach the ground, over 20 times their mean lifetime of 2.2 μs. They arrive thanks to <i>γ</i> ≈ 16.</li>
+        <li>GPS satellite clocks lose about 7 μs per day from orbital motion; without corrections position errors would grow by kilometres per day.</li>
+        <li>Accelerators such as the LHC are designed with the relativistic energy-momentum relation; unstable particles in a beam live longer by a factor <i>γ</i>.</li>
+        <li>The relation <i>E</i> = <i>γ</i><i>m</i><i>c</i><sup>2</sup> underlies nuclear and particle physics.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"A moving clock really malfunctions."</strong> Every observer sees their own clock tick normally; dilation is a relation between measurements in two frames.</li>
+        <li><strong>"Contraction affects all dimensions."</strong> Only the dimension parallel to the velocity shrinks, which is why the light clock's height is unchanged.</li>
+        <li><strong>"The twins are symmetric, so the paradox is a contradiction."</strong> Only the traveller changes inertial frame; the diagram shows the jump in their "now" line at the turnaround.</li>
+        <li><strong>"Velocities simply add."</strong> The relativistic formula <i>u</i>′ = (<i>u</i> − <i>v</i>)/(1 − <i>u</i><i>v</i>/<i>c</i><sup>2</sup>) never gives a result above <i>c</i>.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>At <i>β</i> = 0.8, what is <i>γ</i>, and how long does a train with <i>L</i><sub>0</sub> = 100 m look from the platform?</summary><p><i>γ</i> = 1/√(1 − 0.64) = 1/0.6 ≈ 1.67, so <i>L</i> = 100 m × 0.6 = 60 m.</p></details>
+    <details class="th-q"><summary>A star 4 light-years away, <i>β</i> = 0.8, instant turnaround. How many years pass on Earth, and for the traveller?</summary><p>On Earth <i>T</i> = 2 × 4/0.8 = 10 years; for the traveller <i>τ</i> = <i>T</i>/<i>γ</i> = 6 years. The traveller comes back 4 years younger.</p></details>
+    <details class="th-q"><summary>How does the muon's own frame explain that it reaches the ground?</summary><p>In its frame it lives the usual 2.2 μs, but the atmosphere is contracted to <i>h</i>/<i>γ</i> ≈ 15 km/16 ≈ 0.95 km. Both descriptions predict the same number of muons at ground level.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 37 (Relativity).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

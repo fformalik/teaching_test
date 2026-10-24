@@ -1884,4 +1884,125 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Rozpad promieniotwórczy jest procesem losowym: nie da się przewidzieć, kiedy rozpadnie się dane jądro, ale każde ma w jednostce czasu takie samo prawdopodobieństwo rozpadu <i>λ</i>. Z tej jednej własności wynika wykładnicze prawo rozpadu dla całej próbki i rozkład Poissona dla liczby zliczeń licznika.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>W trybie «Jeden izotop» próbka <i>N</i><sub>0</sub> jąder wybranego izotopu (np. ¹⁴C, ¹³¹I, ²²²Rn, ⁶⁰Co) rozpada się jądro po jądrze, a licznik Geigera-Müllera zlicza rozpady w przedziałach Δt. Wykres «Liczba jąder» porównuje schodki symulacji z krzywą <i>N</i><sub>0</sub>e<sup>−<i>λt</i></sup>; w «Skali logarytmicznej» staje się ona prostą. «Histogram zliczeń» pokazuje, że wariancja liczby zliczeń jest bliska średniej.</p>
+      <p>Tryb «Łańcuch A → B → C» pokazuje równowagę «Wiekową», «Przejściową» (generator ⁹⁹Mo/⁹⁹ᵐTc) i przypadek «Bez równowagi». Panel «Datowanie radiowęglowe» zamienia zmierzony ułamek ¹⁴C na wiek próbki.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Jeśli każde jądro w czasie d<i>t</i> rozpada się z prawdopodobieństwem <i>λ</i> d<i>t</i>, niezależnie od swojego wieku, to d<i>N</i> = −<i>λN</i> d<i>t</i>, a stąd</p>
+      <div class="th-eq"><i>N</i>(<i>t</i>) = <i>N</i><sub>0</sub> e<sup>−<i>λt</i></sup>, &nbsp; <i>T</i><sub>½</sub> = <span class="th-fr"><span>ln 2</span><span><i>λ</i></span></span>, &nbsp; <i>τ</i> = <span class="th-fr"><span>1</span><span><i>λ</i></span></span></div>
+      <p>Aktywność to liczba rozpadów na sekundę, <i>A</i> = <i>λN</i> (w bekerelach), i maleje z tym samym okresem połowicznego rozpadu. Ponieważ rozpady są niezależne, liczba zliczeń <i>n</i> w przedziale Δt podlega rozkładowi Poissona: odchylenie standardowe wynosi √<i>n</i>, a niepewność względna 1/√<i>n</i>. Dlatego w małej próbce widać duże fluktuacje wokół krzywej teoretycznej.</p>
+      <p>Odwracając prawo rozpadu, z ułamka pozostałych jąder dostajemy czas:</p>
+      <div class="th-eq"><i>t</i> = <span class="th-fr"><span><i>T</i><sub>½</sub></span><span>ln 2</span></span> ln <span class="th-fr"><span><i>N</i><sub>0</sub></span><span><i>N</i></span></span></div>
+      <p>W łańcuchu A → B → C liczba jąder B rośnie dzięki rozpadom A i maleje przez własne rozpady: d<i>N</i><sub>B</sub>/d<i>t</i> = <i>λ</i><sub>A</sub><i>N</i><sub>A</sub> − <i>λ</i><sub>B</sub><i>N</i><sub>B</sub>. Rozwiązanie Batemana ma maksimum, gdy <i>A</i><sub>A</sub> = <i>A</i><sub>B</sub>:</p>
+      <div class="th-eq"><i>t</i><sub>max</sub> = <span class="th-fr"><span>ln(<i>λ</i><sub>B</sub>/<i>λ</i><sub>A</sub>)</span><span><i>λ</i><sub>B</sub> − <i>λ</i><sub>A</sub></span></span></div>
+      <p>Gdy <i>T</i><sub>½</sub>(A) ≫ <i>T</i><sub>½</sub>(B), aktywności się zrównują (równowaga wiekowa); gdy <i>T</i><sub>½</sub>(A) jest tylko trochę dłuższy, stosunek <i>A</i><sub>B</sub>/<i>A</i><sub>A</sub> dąży do <i>λ</i><sub>B</sub>/(<i>λ</i><sub>B</sub> − <i>λ</i><sub>A</sub>) &gt; 1 (równowaga przejściowa). Okres połowicznego rozpadu praktycznie nie zależy od temperatury, ciśnienia ani stanu chemicznego, bo o rozpadzie decydują siły jądrowe.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Datowanie radiowęglowe (Libby, Nagroda Nobla 1960) określa wiek szczątków organicznych do ok. 50 000 lat; uran i potas pozwalają datować skały i wiek Ziemi.</li>
+        <li>Medycyna nuklearna: ⁹⁹ᵐTc (<i>T</i><sub>½</sub> ≈ 6 h) do diagnostyki uzyskuje się na miejscu z generatora ⁹⁹Mo, a ¹³¹I służy do leczenia tarczycy.</li>
+        <li>Radon ²²²Rn z rozpadu uranu w glebie jest głównym źródłem naturalnej dawki promieniowania w budynkach.</li>
+        <li>Ciepło rozpadu w paliwie jądrowym trzeba odprowadzać jeszcze długo po wyłączeniu reaktora; rozpady w głębi Ziemi współtworzą jej strumień ciepła.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Po dwóch okresach połowicznego rozpadu nic nie zostaje.”</strong> Zostaje ćwiartka; po każdym <i>T</i><sub>½</sub> ubywa połowa tego, co jeszcze jest.</li>
+        <li><strong>„Stare jądro rozpadnie się szybciej.”</strong> Jądra się nie starzeją: prawdopodobieństwo rozpadu w następnej sekundzie nie zależy od tego, jak długo jądro istnieje.</li>
+        <li><strong>„Średni czas życia to okres połowicznego rozpadu.”</strong> <i>τ</i> = <i>T</i><sub>½</sub>/ln 2 ≈ 1,44 <i>T</i><sub>½</sub>.</li>
+        <li><strong>„Odstępstwo od krzywej to błąd symulacji.”</strong> To szum statystyczny rzędu √<i>N</i>; panel «Wyniki» wyraża je w jednostkach <i>σ</i>, a |<i>z</i>| &lt; 2 jest normalne.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Ile ¹³¹I (<i>T</i><sub>½</sub> = 8,02 d) zostanie po 24 dniach?</summary><p>24 d to około 3 okresy połowicznego rozpadu, więc zostaje (1/2)<sup>3</sup> ≈ 1/8, czyli ok. 12,5 %.</p></details>
+    <details class="th-q"><summary>Próbka zawiera 53 % pierwotnego ¹⁴C. Ile ma lat?</summary><p><i>t</i> = 5730 lat · ln(1/0,53)/ln 2 ≈ 5250 lat (wiek nieskalibrowany).</p></details>
+    <details class="th-q"><summary>Licznik zarejestrował 400 zliczeń. Jaka jest niepewność względna?</summary><p>√400 = 20, więc 20/400 = 5 %. Aby zejść do 1 %, potrzeba 10 000 zliczeń.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 42 (Fizyka jądrowa), części o rozpadzie promieniotwórczym, rozpadach α i β oraz datowaniu promieniotwórczym.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Radioactive decay is a random process: you cannot predict when a given nucleus will decay, but each one has the same probability per unit time <i>λ</i> of doing so. From this single property follow the exponential decay law for a whole sample and the Poisson distribution for the counter readings.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>In «Single isotope» mode a sample of <i>N</i><sub>0</sub> nuclei of the chosen isotope (e.g. ¹⁴C, ¹³¹I, ²²²Rn, ⁶⁰Co) decays nucleus by nucleus, and the Geiger-Müller counter records decays in intervals Δt. The «Nuclei» chart compares the simulation steps with <i>N</i><sub>0</sub>e<sup>−<i>λt</i></sup>; with «Log scale» it becomes a straight line. The «Count histogram» shows that the variance of the counts is close to the mean.</p>
+      <p>«Chain A → B → C» mode shows «Secular» and «Transient» equilibrium (the ⁹⁹Mo/⁹⁹ᵐTc generator) and the «No equilibrium» case. The «Radiocarbon dating» panel turns a measured ¹⁴C fraction into a sample age.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>If every nucleus decays in time d<i>t</i> with probability <i>λ</i> d<i>t</i>, independent of its age, then d<i>N</i> = −<i>λN</i> d<i>t</i>, which gives</p>
+      <div class="th-eq"><i>N</i>(<i>t</i>) = <i>N</i><sub>0</sub> e<sup>−<i>λt</i></sup>, &nbsp; <i>T</i><sub>½</sub> = <span class="th-fr"><span>ln 2</span><span><i>λ</i></span></span>, &nbsp; <i>τ</i> = <span class="th-fr"><span>1</span><span><i>λ</i></span></span></div>
+      <p>Activity is the number of decays per second, <i>A</i> = <i>λN</i> (in becquerels), and falls with the same half-life. Because decays are independent, the number of counts <i>n</i> in an interval Δt follows a Poisson distribution: the standard deviation is √<i>n</i> and the relative uncertainty 1/√<i>n</i>. That is why a small sample fluctuates visibly around the theoretical curve.</p>
+      <p>Inverting the decay law gives the elapsed time from the surviving fraction:</p>
+      <div class="th-eq"><i>t</i> = <span class="th-fr"><span><i>T</i><sub>½</sub></span><span>ln 2</span></span> ln <span class="th-fr"><span><i>N</i><sub>0</sub></span><span><i>N</i></span></span></div>
+      <p>In a chain A → B → C the number of B nuclei grows through decays of A and shrinks through its own decays: d<i>N</i><sub>B</sub>/d<i>t</i> = <i>λ</i><sub>A</sub><i>N</i><sub>A</sub> − <i>λ</i><sub>B</sub><i>N</i><sub>B</sub>. The Bateman solution peaks when <i>A</i><sub>A</sub> = <i>A</i><sub>B</sub>:</p>
+      <div class="th-eq"><i>t</i><sub>max</sub> = <span class="th-fr"><span>ln(<i>λ</i><sub>B</sub>/<i>λ</i><sub>A</sub>)</span><span><i>λ</i><sub>B</sub> − <i>λ</i><sub>A</sub></span></span></div>
+      <p>When <i>T</i><sub>½</sub>(A) ≫ <i>T</i><sub>½</sub>(B) the activities become equal (secular equilibrium); when <i>T</i><sub>½</sub>(A) is only somewhat longer, <i>A</i><sub>B</sub>/<i>A</i><sub>A</sub> tends to <i>λ</i><sub>B</sub>/(<i>λ</i><sub>B</sub> − <i>λ</i><sub>A</sub>) &gt; 1 (transient equilibrium). The half-life is practically independent of temperature, pressure and chemical state, because decay is governed by nuclear forces.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Radiocarbon dating (Libby, Nobel Prize 1960) dates organic remains up to about 50 000 years; uranium and potassium date rocks and the age of the Earth.</li>
+        <li>Nuclear medicine: diagnostic ⁹⁹ᵐTc (<i>T</i><sub>½</sub> ≈ 6 h) is obtained on site from a ⁹⁹Mo generator, and ¹³¹I is used to treat the thyroid.</li>
+        <li>Radon ²²²Rn from uranium decay in the soil is the main source of natural radiation dose indoors.</li>
+        <li>Decay heat in nuclear fuel must be removed long after a reactor shuts down; decays deep inside the Earth contribute to its heat flow.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"After two half-lives nothing is left."</strong> A quarter is left; each <i>T</i><sub>½</sub> removes half of what remains.</li>
+        <li><strong>"An old nucleus will decay sooner."</strong> Nuclei do not age: the chance of decaying in the next second does not depend on how long the nucleus has existed.</li>
+        <li><strong>"The mean lifetime equals the half-life."</strong> <i>τ</i> = <i>T</i><sub>½</sub>/ln 2 ≈ 1.44 <i>T</i><sub>½</sub>.</li>
+        <li><strong>"A deviation from the curve is a bug."</strong> It is statistical noise of order √<i>N</i>; the «Results» panel expresses it in units of <i>σ</i>, and |<i>z</i>| &lt; 2 is normal.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>How much ¹³¹I (<i>T</i><sub>½</sub> = 8.02 d) is left after 24 days?</summary><p>24 d is about 3 half-lives, so (1/2)<sup>3</sup> ≈ 1/8, i.e. about 12.5%, remains.</p></details>
+    <details class="th-q"><summary>A sample contains 53% of its original ¹⁴C. How old is it?</summary><p><i>t</i> = 5730 years × ln(1/0.53)/ln 2 ≈ 5250 years (uncalibrated age).</p></details>
+    <details class="th-q"><summary>The counter recorded 400 counts. What is the relative uncertainty?</summary><p>√400 = 20, so 20/400 = 5%. Getting down to 1% takes 10 000 counts.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 42 (Nuclear Physics), the sections on radioactive decay, alpha and beta decay, and radioactive dating.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

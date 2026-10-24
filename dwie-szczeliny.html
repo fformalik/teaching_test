@@ -1579,4 +1579,125 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Doświadczenie z dwiema szczelinami pokazuje, że światło i materia rozchodzą się jak fale, a rejestrowane są jak cząstki. Każdy kwant trafia w jeden punkt ekranu, ale prawdopodobieństwo trafienia wyznacza kwadrat modułu sumy dwóch amplitud, dlatego z wielu punktów wyłaniają się prążki interferencyjne.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Źródło wysyła kwanty pojedynczo: fotony, elektrony, neutrony albo cząsteczki fulerenu C₆₀. Przez pierwsze kilkadziesiąt trafień obraz wygląda losowo; po kilkuset histogram zaczyna odtwarzać krzywą |<i>ψ</i>|², co widać na wykresie «Zbieżność». Suwakami zmieniasz odstęp szczelin <i>d</i>, szerokość szczeliny <i>a</i>, odległość ekranu <i>L</i> oraz <i>λ</i>, napięcie <i>U</i> lub prędkość <i>v</i>.</p>
+      <p>Przełącznik «Detektor drogi» niszczy prążki, a «Zasłoń dolną szczelinę» zostawia sam obraz dyfrakcyjny jednej szczeliny. Porównaj wtedy obie krzywe na wykresie «Natężenie I(y)».</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Fale z obu szczelin docierają do punktu ekranu z różnicą dróg <i>d</i> sin <i>θ</i>. Maksima pojawiają się, gdy jest ona całkowitą wielokrotnością <i>λ</i>; dla małych kątów odstęp prążków jest stały:</p>
+      <div class="th-eq"><i>d</i> sin <i>θ</i> = <i>m</i><i>λ</i>, &nbsp; <i>Δy</i> = <span class="th-fr"><span><i>λ</i><i>L</i></span><span><i>d</i></span></span></div>
+      <p>Skończona szerokość szczeliny dokłada obwiednię dyfrakcyjną (przybliżenie Fraunhofera, <i>L</i> ≫ <i>d</i><sup>2</sup>/<i>λ</i>):</p>
+      <div class="th-eq"><i>I</i>(<i>θ</i>) = <i>I</i><sub>0</sub> cos<sup>2</sup><i>α</i> · (sin <i>β</i>/<i>β</i>)<sup>2</sup>, &nbsp; <i>α</i> = π<i>d</i> sin <i>θ</i>/<i>λ</i>, &nbsp; <i>β</i> = π<i>a</i> sin <i>θ</i>/<i>λ</i></div>
+      <p>Dla cząstek o masie <i>m</i> długością fali jest długość fali de Broglie'a <i>λ</i> = <i>h</i>/<i>p</i>. Elektron przyspieszony napięciem <i>U</i> ma <i>p</i> = √(2<i>m</i><i>e</i><i>U</i>), czyli <i>λ</i> ≈ 1,226 nm/√(<i>U</i>/V); powyżej ok. 10 kV trzeba uwzględnić poprawkę relatywistyczną.</p>
+      <p>Kluczowe jest dodawanie amplitud, a nie natężeń:</p>
+      <div class="th-eq">|<i>ψ</i><sub>1</sub> + <i>ψ</i><sub>2</sub>|<sup>2</sup> = |<i>ψ</i><sub>1</sub>|<sup>2</sup> + |<i>ψ</i><sub>2</sub>|<sup>2</sup> + 2|<i>ψ</i><sub>1</sub>||<i>ψ</i><sub>2</sub>| cos Δ<i>φ</i></div>
+      <p>Ostatni człon odpowiada za prążki. Gdy detektor drogi zapisze, przez którą szczelinę przeszedł kwant, stany obu dróg stają się rozróżnialne, człon interferencyjny znika i zostaje <i>I</i><sub>1</sub> + <i>I</i><sub>2</sub>.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Young (1801) dowiódł falowej natury światła; Jönsson (1961) powtórzył to dla elektronów, Zeilinger z neutronami, a Arndt i współpracownicy (1999) z cząsteczkami C₆₀.</li>
+        <li>Dyfrakcja elektronów i neutronów to podstawowe narzędzia badania struktury kryształów; mikroskop elektronowy wykorzystuje bardzo krótkie fale elektronów.</li>
+        <li>Interferometry atomowe mierzą przyspieszenie ziemskie i obroty z ogromną czułością.</li>
+        <li>Utrata interferencji przy pomiarze drogi (dekoherencja) to główna przeszkoda w budowie komputerów kwantowych.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Prążki powstają, bo kwanty zderzają się ze sobą.”</strong> Obraz tworzy się także przy wysyłaniu pojedynczych kwantów; każdy interferuje sam ze sobą.</li>
+        <li><strong>„Elektron rozpada się na dwie części.”</strong> Detektor zawsze rejestruje cały kwant w jednym punkcie; dzieli się tylko amplituda prawdopodobieństwa.</li>
+        <li><strong>„Prążki to po prostu suma dwóch obrazów jednej szczeliny.”</strong> Suma natężeń <i>I</i><sub>1</sub> + <i>I</i><sub>2</sub> nie ma prążków; to właśnie wynik z włączonym detektorem.</li>
+        <li><strong>„Szersza szczelina daje szersze prążki.”</strong> Odstęp prążków zależy od <i>d</i>; szerokość <i>a</i> zmienia tylko obwiednię (większe <i>a</i> to węższa obwiednia).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Foton o <i>λ</i> = 532 nm, <i>d</i> = 0,25 mm, <i>L</i> = 1,5 m. Jaki jest odstęp prążków?</summary><p><i>Δy</i> = <i>λ</i><i>L</i>/<i>d</i> = 532·10<sup>−9</sup> · 1,5 / 2,5·10<sup>−4</sup> m ≈ 3,2 mm.</p></details>
+    <details class="th-q"><summary>Co stanie się z prążkami elektronów, gdy czterokrotnie zwiększysz <i>U</i>?</summary><p>W przybliżeniu nierelatywistycznym <i>λ</i> ∝ 1/√<i>U</i>, więc długość fali, a z nią odstęp prążków, zmaleje dwukrotnie.</p></details>
+    <details class="th-q"><summary>Przy <i>d</i> = 3<i>a</i> którego prążka brakuje?</summary><p>Maksimum rzędu <i>m</i> = 3 wypada na pierwsze minimum obwiedni (<i>a</i> sin <i>θ</i> = <i>λ</i>), więc znika; w obwiedni centralnej zostaje 5 prążków.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 35 (Interferencja) i rozdz. 36 (Dyfrakcja); fale materii i ich interpretację probabilistyczną omawia rozdz. 38 (Fotony i fale materii). Dalej: R. Feynman, <em>Feynmana wykłady z fizyki</em>, t. III, rozdz. 1.</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">The double-slit experiment shows that light and matter propagate as waves yet are detected as particles. Each quantum lands at a single point, but the probability of landing there is the squared modulus of a sum of two amplitudes, so fringes emerge from many dots.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The source sends quanta one at a time: photons, electrons, neutrons or C₆₀ fullerene molecules. For the first few dozen hits the screen looks random; after a few hundred the histogram traces the |<i>ψ</i>|² curve, as the «Convergence» chart shows. The sliders set the slit separation <i>d</i>, slit width <i>a</i>, screen distance <i>L</i>, and <i>λ</i>, voltage <i>U</i> or speed <i>v</i>.</p>
+      <p>The «Which-path detector» switch wipes out the fringes, and «Cover the lower slit» leaves only the single-slit diffraction pattern. Compare both curves on the «Intensity I(y)» chart.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>Waves from the two slits reach a point on the screen with a path difference <i>d</i> sin <i>θ</i>. Maxima occur when it is a whole number of wavelengths; for small angles the fringe spacing is constant:</p>
+      <div class="th-eq"><i>d</i> sin <i>θ</i> = <i>m</i><i>λ</i>, &nbsp; <i>Δy</i> = <span class="th-fr"><span><i>λ</i><i>L</i></span><span><i>d</i></span></span></div>
+      <p>The finite slit width adds a diffraction envelope (Fraunhofer limit, <i>L</i> ≫ <i>d</i><sup>2</sup>/<i>λ</i>):</p>
+      <div class="th-eq"><i>I</i>(<i>θ</i>) = <i>I</i><sub>0</sub> cos<sup>2</sup><i>α</i> · (sin <i>β</i>/<i>β</i>)<sup>2</sup>, &nbsp; <i>α</i> = π<i>d</i> sin <i>θ</i>/<i>λ</i>, &nbsp; <i>β</i> = π<i>a</i> sin <i>θ</i>/<i>λ</i></div>
+      <p>For particles of mass <i>m</i> the wavelength is the de Broglie wavelength <i>λ</i> = <i>h</i>/<i>p</i>. An electron accelerated through <i>U</i> has <i>p</i> = √(2<i>m</i><i>e</i><i>U</i>), so <i>λ</i> ≈ 1.226 nm/√(<i>U</i>/V); above about 10 kV the relativistic correction is needed.</p>
+      <p>The key is that amplitudes add, not intensities:</p>
+      <div class="th-eq">|<i>ψ</i><sub>1</sub> + <i>ψ</i><sub>2</sub>|<sup>2</sup> = |<i>ψ</i><sub>1</sub>|<sup>2</sup> + |<i>ψ</i><sub>2</sub>|<sup>2</sup> + 2|<i>ψ</i><sub>1</sub>||<i>ψ</i><sub>2</sub>| cos Δ<i>φ</i></div>
+      <p>The last term produces the fringes. Once a which-path detector records the slit, the two paths become distinguishable, the interference term vanishes and <i>I</i><sub>1</sub> + <i>I</i><sub>2</sub> remains.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Young (1801) established the wave nature of light; Jönsson (1961) repeated it with electrons, Zeilinger with neutrons, and Arndt and co-workers (1999) with C₆₀ molecules.</li>
+        <li>Electron and neutron diffraction are standard tools for determining crystal structures; the electron microscope exploits the very short electron wavelength.</li>
+        <li>Atom interferometers measure gravity and rotation with extreme sensitivity.</li>
+        <li>Loss of interference under path measurement (decoherence) is the main obstacle to building quantum computers.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"Fringes form because quanta collide with each other."</strong> The pattern builds up even with one quantum at a time; each one interferes with itself.</li>
+        <li><strong>"The electron splits into two pieces."</strong> The detector always registers a whole quantum at one point; only the probability amplitude is split.</li>
+        <li><strong>"The fringes are just two single-slit patterns added."</strong> The intensity sum <i>I</i><sub>1</sub> + <i>I</i><sub>2</sub> has no fringes; that is precisely the result with the detector on.</li>
+        <li><strong>"A wider slit gives wider fringes."</strong> Fringe spacing depends on <i>d</i>; the width <i>a</i> only changes the envelope (larger <i>a</i>, narrower envelope).</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>Photons with <i>λ</i> = 532 nm, <i>d</i> = 0.25 mm, <i>L</i> = 1.5 m. What is the fringe spacing?</summary><p><i>Δy</i> = <i>λ</i><i>L</i>/<i>d</i> = 532×10<sup>−9</sup> × 1.5 / 2.5×10<sup>−4</sup> m ≈ 3.2 mm.</p></details>
+    <details class="th-q"><summary>What happens to the electron fringes if you make <i>U</i> four times larger?</summary><p>Non-relativistically <i>λ</i> ∝ 1/√<i>U</i>, so the wavelength, and with it the fringe spacing, halves.</p></details>
+    <details class="th-q"><summary>With <i>d</i> = 3<i>a</i>, which fringe is missing?</summary><p>The <i>m</i> = 3 maximum falls on the first envelope minimum (<i>a</i> sin <i>θ</i> = <i>λ</i>) and disappears; 5 fringes remain in the central envelope.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 35 (Interference) and ch. 36 (Diffraction); matter waves and their probabilistic interpretation are in ch. 38 (Photons and Matter Waves). Further reading: R. Feynman, <em>The Feynman Lectures on Physics</em>, Vol. III, ch. 1.</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

@@ -1155,4 +1155,123 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Tunelowanie to przenikanie cząstki przez barierę potencjału wyższą niż jej energia, czego mechanika klasyczna zabrania. W mechanice kwantowej funkcja falowa nie urywa się na krawędzi bariery, lecz zanika w niej wykładniczo, więc dla cienkiej bariery po drugiej stronie zostaje niezerowa amplituda.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Paczka falowa elektronu (gaussowska, o szerokości <i>σ</i>) biegnie w stronę potencjału <i>V</i>(<i>x</i>). Wykres pokazuje gęstość prawdopodobieństwa |<i>ψ</i>|²; przełącznik «Re <i>ψ</i>, Im <i>ψ</i>» odsłania oscylacje fali, a «Lupa ×50» powiększa to, co przeszło. Po zderzeniu panel «Prawdopodobieństwa» podaje ustalone <i>R</i> i <i>T</i>, a wykres <i>T</i>(<i>E</i>) porównuje wynik symulacji z wynikiem dla fali płaskiej.</p>
+      <p>Presety «Bariera», «Podwójna bariera», «Schodek» i «Studnia» pokazują cztery różne zjawiska: tunelowanie, rezonans, odbicie od schodka i odbicie nad studnią.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Stan elektronu opisuje równanie Schrödingera. Dla stanu o energii <i>E</i> w obszarze stałego potencjału jego rozwiązania to fale lub funkcje wykładnicze:</p>
+      <div class="th-eq"><i>k</i> = <span class="th-fr"><span>√(2<i>m</i>ₑ<i>E</i>)</span><span>ħ</span></span>, &nbsp; <i>κ</i> = <span class="th-fr"><span>√(2<i>m</i>ₑ(<i>V</i><sub>0</sub> − <i>E</i>))</span><span>ħ</span></span></div>
+      <p>Poza barierą fala oscyluje z liczbą falową <i>k</i>, wewnątrz (dla <i>E</i> &lt; <i>V</i><sub>0</sub>) zanika jak e<sup>−<i>κx</i></sup>. Zszywając <i>ψ</i> i d<i>ψ</i>/d<i>x</i> na obu krawędziach, otrzymuje się dokładny współczynnik transmisji dla prostokątnej bariery:</p>
+      <div class="th-eq"><i>T</i> = [1 + <span class="th-fr"><span><i>V</i><sub>0</sub><sup>2</sup> sh<sup>2</sup>(<i>κa</i>)</span><span>4<i>E</i>(<i>V</i><sub>0</sub> − <i>E</i>)</span></span>]<sup>−1</sup></div>
+      <p>Dla grubej bariery (<i>κa</i> ≫ 1) sh(<i>κa</i>) ≈ e<sup><i>κa</i></sup>/2, więc</p>
+      <div class="th-eq"><i>T</i> ≈ 16 <span class="th-fr"><span><i>E</i></span><span><i>V</i><sub>0</sub></span></span>(1 − <span class="th-fr"><span><i>E</i></span><span><i>V</i><sub>0</sub></span></span>) e<sup>−2<i>κa</i></sup></div>
+      <p>To wykładnik decyduje o wszystkim: podwojenie <i>a</i> nie zmniejsza <i>T</i> dwa razy, tylko mnoży je przez e<sup>−2<i>κa</i></sup>. Dla <i>E</i> &gt; <i>V</i><sub>0</sub> zamiast sh pojawia się sin(<i>k</i>′<i>a</i>), więc część fali odbija się nawet nad barierą, a <i>T</i> = 1 tylko gdy <i>k</i>′<i>a</i> = <i>n</i>π. Paczka zawiera cały zakres energii, więc symulacja daje <i>T</i> uśrednione po jej rozkładzie energii. Model jest jednowymiarowy i nierelatywistyczny.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Rozpad α: Gamow (1928) wyjaśnił ogromny rozrzut okresów połowicznego rozpadu tunelowaniem cząstki α przez barierę kulombowską.</li>
+        <li>Skaningowy mikroskop tunelowy (STM) wykorzystuje wykładniczą zależność prądu od szerokości szczeliny i rozróżnia pojedyncze atomy.</li>
+        <li>Pamięci flash zapisują dane, przepuszczając elektrony przez cienki tlenek; diody tunelowe i rezonansowe diody tunelowe działają na zasadzie podwójnej bariery.</li>
+        <li>Fuzja w Słońcu zachodzi w temperaturach zbyt niskich do klasycznego pokonania odpychania protonów; umożliwia ją tunelowanie.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Elektron traci energię w barierze.”</strong> Bariera jest statyczna, więc elektron przechodzi z tą samą energią <i>E</i>; zmniejsza się tylko amplituda fali, a więc prawdopodobieństwo.</li>
+        <li><strong>„Część elektronu przechodzi, część się odbija.”</strong> Detektor znajdzie cały elektron po jednej stronie; <i>R</i> i <i>T</i> to prawdopodobieństwa.</li>
+        <li><strong>„Gdy <i>E</i> &gt; <i>V</i><sub>0</sub>, wszystko przechodzi.”</strong> Skok liczby falowej na krawędzi powoduje częściowe odbicie; to samo dzieje się nad studnią.</li>
+        <li><strong>„Dwie bariery zawsze przepuszczają mniej niż jedna.”</strong> W rezonansie fala odbijana między barierami interferuje konstruktywnie i <i>T</i> dla fali płaskiej sięga 1.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Elektron o <i>E</i> = 3 eV, bariera <i>V</i><sub>0</sub> = 5 eV. Ile wynosi głębokość wnikania 1/<i>κ</i>?</summary><p><i>κ</i> = √(26,25 · 2) nm<sup>−1</sup> ≈ 7,2 nm<sup>−1</sup>, więc 1/<i>κ</i> ≈ 0,14 nm. Przy <i>a</i> = 0,3 nm mamy <i>κa</i> ≈ 2,2 i <i>T</i> ≈ 5 %.</p></details>
+    <details class="th-q"><summary>Dlaczego w schodku przy <i>E</i> &lt; <i>V</i><sub>0</sub> mamy <i>R</i> = 1, choć fala wnika pod schodek?</summary><p>Schodek ciągnie się w nieskończoność, więc zanikająca fala nigdzie nie wychodzi na drugą stronę. Fala zanikająca nie niesie strumienia prawdopodobieństwa.</p></details>
+    <details class="th-q"><summary>Jak zmieni się wynik symulacji, gdy zmniejszysz <i>σ</i>?</summary><p>Węższa paczka ma szerszy rozkład energii, więc jej <i>T</i> jest średnią z szerszego zakresu <i>T</i>(<i>E</i>); ostre piki rezonansowe są bardziej rozmyte.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 38 (Fotony i fale materii), część o tunelowaniu przez barierę potencjału. Rozdz. 39 (Więcej o falach materii) omawia studnie potencjału. Dalej: D. J. Griffiths, <em>Introduction to Quantum Mechanics</em>, rozdz. 2 (bariery i schodki potencjału).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Tunnelling is the passage of a particle through a potential barrier higher than its energy, something classical mechanics forbids. In quantum mechanics the wave function does not stop at the barrier edge but decays exponentially inside it, so for a thin barrier a nonzero amplitude survives on the far side.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>A Gaussian electron wave packet of width <i>σ</i> travels towards the potential <i>V</i>(<i>x</i>). The plot shows the probability density |<i>ψ</i>|²; the «Re <i>ψ</i>, Im <i>ψ</i>» toggle reveals the wave's oscillations, and «Magnify ×50» enlarges whatever got through. After the collision the «Probabilities» panel shows the settled <i>R</i> and <i>T</i>, and the <i>T</i>(<i>E</i>) chart compares the simulation with the plane-wave result.</p>
+      <p>The «Barrier», «Double barrier», «Step» and «Well» presets show four distinct effects: tunnelling, resonance, reflection from a step and reflection above a well.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>The electron is described by the Schrödinger equation. For a state of energy <i>E</i> in a region of constant potential the solutions are waves or exponentials:</p>
+      <div class="th-eq"><i>k</i> = <span class="th-fr"><span>√(2<i>m</i>ₑ<i>E</i>)</span><span>ħ</span></span>, &nbsp; <i>κ</i> = <span class="th-fr"><span>√(2<i>m</i>ₑ(<i>V</i><sub>0</sub> − <i>E</i>))</span><span>ħ</span></span></div>
+      <p>Outside the barrier the wave oscillates with wave number <i>k</i>; inside (for <i>E</i> &lt; <i>V</i><sub>0</sub>) it decays as e<sup>−<i>κx</i></sup>. Matching <i>ψ</i> and d<i>ψ</i>/d<i>x</i> at both edges gives the exact transmission for a rectangular barrier:</p>
+      <div class="th-eq"><i>T</i> = [1 + <span class="th-fr"><span><i>V</i><sub>0</sub><sup>2</sup> sinh<sup>2</sup>(<i>κa</i>)</span><span>4<i>E</i>(<i>V</i><sub>0</sub> − <i>E</i>)</span></span>]<sup>−1</sup></div>
+      <p>For a thick barrier (<i>κa</i> ≫ 1), sinh(<i>κa</i>) ≈ e<sup><i>κa</i></sup>/2, so</p>
+      <div class="th-eq"><i>T</i> ≈ 16 <span class="th-fr"><span><i>E</i></span><span><i>V</i><sub>0</sub></span></span>(1 − <span class="th-fr"><span><i>E</i></span><span><i>V</i><sub>0</sub></span></span>) e<sup>−2<i>κa</i></sup></div>
+      <p>The exponential dominates: doubling <i>a</i> does not halve <i>T</i>, it multiplies it by e<sup>−2<i>κa</i></sup>. For <i>E</i> &gt; <i>V</i><sub>0</sub> the sinh is replaced by sin(<i>k</i>′<i>a</i>), so part of the wave reflects even above the barrier, and <i>T</i> = 1 only when <i>k</i>′<i>a</i> = <i>n</i>π. A packet contains a range of energies, so the simulation gives <i>T</i> averaged over its energy distribution. The model is one-dimensional and non-relativistic.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Alpha decay: Gamow (1928) explained the enormous spread of half-lives by tunnelling of the α particle through the Coulomb barrier.</li>
+        <li>The scanning tunnelling microscope (STM) exploits the exponential dependence of current on gap width and resolves single atoms.</li>
+        <li>Flash memory stores data by pushing electrons through a thin oxide; tunnel diodes and resonant tunnelling diodes work on the double-barrier principle.</li>
+        <li>Fusion in the Sun happens at temperatures too low to overcome proton repulsion classically; tunnelling makes it possible.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>"The electron loses energy in the barrier."</strong> The barrier is static, so the electron emerges with the same energy <i>E</i>; only the wave amplitude, and hence the probability, is reduced.</li>
+        <li><strong>"Part of the electron gets through, part reflects."</strong> A detector finds the whole electron on one side; <i>R</i> and <i>T</i> are probabilities.</li>
+        <li><strong>"For <i>E</i> &gt; <i>V</i><sub>0</sub> everything passes."</strong> The jump in wave number at the edge causes partial reflection; the same happens above a well.</li>
+        <li><strong>"Two barriers always transmit less than one."</strong> At resonance the wave bouncing between them interferes constructively and the plane-wave <i>T</i> reaches 1.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>An electron with <i>E</i> = 3 eV meets a <i>V</i><sub>0</sub> = 5 eV barrier. What is the penetration depth 1/<i>κ</i>?</summary><p><i>κ</i> = √(26.25 × 2) nm<sup>−1</sup> ≈ 7.2 nm<sup>−1</sup>, so 1/<i>κ</i> ≈ 0.14 nm. With <i>a</i> = 0.3 nm, <i>κa</i> ≈ 2.2 and <i>T</i> ≈ 5%.</p></details>
+    <details class="th-q"><summary>Why is <i>R</i> = 1 for a step with <i>E</i> &lt; <i>V</i><sub>0</sub>, even though the wave penetrates the step?</summary><p>The step extends forever, so the decaying wave never emerges anywhere. An evanescent wave carries no probability current.</p></details>
+    <details class="th-q"><summary>How does the simulated result change if you make <i>σ</i> smaller?</summary><p>A narrower packet has a wider energy spread, so its <i>T</i> averages <i>T</i>(<i>E</i>) over a wider range; sharp resonance peaks get smeared out more.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 38 (Photons and Matter Waves), the section on tunnelling through a potential barrier. Ch. 39 (More About Matter Waves) covers potential wells. Further reading: D. J. Griffiths, <em>Introduction to Quantum Mechanics</em>, ch. 2 (potential barriers and steps).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>
