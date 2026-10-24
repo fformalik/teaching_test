@@ -2179,4 +2179,141 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Zmienny strumień pola magnetycznego przez obwód wytwarza w nim siłę elektromotoryczną: to zjawisko indukcji elektromagnetycznej, odkryte przez Faradaya w 1831 roku. Prąd indukowany zawsze przeciwdziała zmianie, która go wywołała, dlatego energia elektryczna musi pochodzić z pracy wykonanej nad magnesem, prętem lub ramką.</p>
+  <div class="th-grid">
+    <article>
+      <h3>Co tu widzisz</h3>
+      <p>Trzy sceny pokazują trzy sposoby zmiany strumienia <i>Φ</i>:</p>
+      <ul>
+        <li><strong>„Magnes i cewka”</strong>: zmienia się pole <strong>B</strong> przechodzące przez zwoje. Na wykresie „Φ i ε” SEM jest równa −<i>N</i> razy nachylenie krzywej <i>Φ</i>(<i>t</i>), więc ma dwa impulsy o przeciwnych znakach. W trybie „Spadek” porównaj tor z linią „bez hamowania”.</li>
+        <li><strong>„Pręt na szynach”</strong>: zmienia się pole powierzchni obwodu. Pręt hamuje wykładniczo; presety „Silne pole”, „Ciężki pręt” i „Duży opór” zmieniają stałą czasową τ.</li>
+        <li><strong>„Prądnica”</strong>: zmienia się kąt między <strong>B</strong> a normalną ramki. Przełącznik „Komutator” zamienia prąd przemienny na wyprostowany.</li>
+      </ul>
+      <p>Przełącznik „Reguła Lenza” opisuje na bieżąco kierunek prądu i siły hamującej. Odznacz „Obwód zamknięty”: SEM wciąż się indukuje, ale hamowanie znika.</p>
+    </article>
+    <article>
+      <h3>Teoria</h3>
+      <p>Strumień magnetyczny przez zwój o polu <i>A</i> i prawo Faradaya dla cewki o <i>N</i> zwojach:</p>
+      <div class="th-eq"><i>Φ</i> = ∫<strong>B</strong> · d<strong>A</strong>,&nbsp;&nbsp; <i>ε</i> = −<i>N</i> <span class="th-fr"><span>d<i>Φ</i></span><span>d<i>t</i></span></span></div>
+      <p>Minus to <strong>reguła Lenza</strong>, która wynika z zasady zachowania energii: gdyby prąd wzmacniał zmianę strumienia, ruch magnesu przyspieszałby sam z siebie. Dla pręta o długości <i>ℓ</i> poruszającego się z prędkością <i>v</i> strumień <i>Φ</i> = <i>Bℓx</i>, więc <i>ε</i> = <i>Bℓv</i>. Prąd <i>I</i> = <i>ε</i>/<i>R</i> daje siłę <i>F</i> = <i>BIℓ</i> przeciwną do ruchu, a z drugiej zasady dynamiki</p>
+      <div class="th-eq"><i>m</i> <span class="th-fr"><span>d<i>v</i></span><span>d<i>t</i></span></span> = −<span class="th-fr"><span><i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup></span><span><i>R</i></span></span> <i>v</i>&nbsp;&nbsp; ⇒&nbsp;&nbsp; <i>v</i> = <i>v</i><sub>0</sub>e<sup>−<i>t</i>/τ</sup>,&nbsp;&nbsp; τ = <span class="th-fr"><span><i>mR</i></span><span><i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup></span></span></div>
+      <p>Moc siły hamującej <i>Fv</i> = <i>ε</i><sup>2</sup>/<i>R</i> jest dokładnie mocą cieplną w oporniku, więc cała energia kinetyczna pręta zamienia się w ciepło. W prądnicy <i>Φ</i> = <i>BA</i> cos <i>ωt</i>, skąd</p>
+      <div class="th-eq"><i>ε</i> = <i>NBAω</i> sin <i>ωt</i>,&nbsp;&nbsp; <i>ε</i><sub>sk</sub> = <span class="th-fr"><span><i>ε</i><sub>max</sub></span><span>√2</span></span></div>
+      <p>Model zakłada, że samoindukcja obwodu jest zaniedbywalna (prąd nadąża za SEM), a ruch jest wolny w porównaniu z prędkością światła.</p>
+    </article>
+    <article>
+      <h3>Dlaczego to ważne</h3>
+      <ul>
+        <li><strong>Elektrownie</strong>: prawie cała energia elektryczna pochodzi z prądnic, w których turbina obraca ramkę (lub magnes) w polu magnetycznym.</li>
+        <li><strong>Hamulce wiroprądowe</strong> w pociągach i kolejkach górskich: przewodnik w polu hamuje bez tarcia, a siła maleje wraz z prędkością, jak dla pręta.</li>
+        <li><strong>Transformatory i ładowarki indukcyjne</strong> przenoszą energię przez zmienny strumień bez połączenia elektrycznego.</li>
+        <li><strong>Czujniki</strong>: mikrofony dynamiczne, przetworniki gitary elektrycznej, czujniki ABS i czytniki kart działają na tej samej zasadzie.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„SEM zależy od wartości strumienia”.</strong> Liczy się szybkość zmiany: gdy magnes stoi w środku cewki, <i>Φ</i> jest maksymalny, a <i>ε</i> = 0.</li>
+        <li><strong>„Prąd indukowany zawsze ma pole przeciwne do pola magnesu”.</strong> Przeciwdziała <em>zmianie</em>: gdy strumień maleje, pole indukowane jest zgodne z polem magnesu.</li>
+        <li><strong>„W obwodzie otwartym nie ma indukcji”.</strong> SEM powstaje; nie płynie tylko prąd, więc nie ma siły hamującej.</li>
+        <li><strong>„Więcej zwojów to zawsze silniejsze hamowanie”.</strong> Siła zależy od <i>N</i><sup>2</sup>/<i>R</i>, a dłuższy drut ma też większy opór.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Dla presetu „Domyślne” (<i>B</i> = 0,8 T, <i>ℓ</i> = 0,5 m, <i>m</i> = 0,2 kg, <i>R</i> = 0,5 Ω) oblicz τ i drogę hamowania przy <i>v</i><sub>0</sub> = 2 m/s.</summary><p>τ = <i>mR</i>/(<i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup>) = 0,1/0,16 = 0,625 s; droga <i>v</i><sub>0</sub>τ = 1,25 m.</p></details>
+    <details class="th-q"><summary>Jak zmieni się SEM szczytowa prądnicy, gdy podwoisz <i>ω</i>? A moc średnia na stałym oporze?</summary><p><i>ε</i><sub>max</sub> = <i>NBAω</i> wzrośnie dwukrotnie, a moc średnia <i>ε</i><sub>max</sub><sup>2</sup>/(2<i>R</i>) czterokrotnie; tyle samo więcej pracy musisz włożyć w obracanie ramki.</p></details>
+    <details class="th-q"><summary>Dlaczego impulsy SEM przy wlocie i wylocie magnesu z cewki mają przeciwne znaki?</summary><p>Przy wlocie strumień rośnie (d<i>Φ</i>/d<i>t</i> > 0), przy wylocie maleje (d<i>Φ</i>/d<i>t</i> &lt; 0).</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 30 (Indukcja i indukcyjność). Prądnica i wartości skuteczne: rozdz. 31 (Drgania elektromagnetyczne i prąd zmienny).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A changing magnetic flux through a circuit induces an electromotive force in it: this is electromagnetic induction, discovered by Faraday in 1831. The induced current always opposes the change that caused it, so the electrical energy must come from work done on the magnet, the rod or the loop.</p>
+  <div class="th-grid">
+    <article>
+      <h3>What you see</h3>
+      <p>Three scenes show three ways to change the flux <i>Φ</i>:</p>
+      <ul>
+        <li><strong>“Magnet and coil”</strong>: the field <strong>B</strong> through the turns changes. On the “Φ and ε” chart the EMF is −<i>N</i> times the slope of <i>Φ</i>(<i>t</i>), so it has two pulses of opposite sign. In “Drop” mode compare the motion with the “no braking” ghost.</li>
+        <li><strong>“Rod on rails”</strong>: the area of the circuit changes. The rod slows down exponentially; the “Strong field”, “Heavy rod” and “High resistance” presets change the time constant τ.</li>
+        <li><strong>“Generator”</strong>: the angle between <strong>B</strong> and the loop normal changes. The “Commutator” switch turns alternating current into rectified current.</li>
+      </ul>
+      <p>The “Lenz’s law” switch describes the direction of the current and of the braking force as you go. Untick “Circuit closed”: an EMF is still induced, but the braking disappears.</p>
+    </article>
+    <article>
+      <h3>Theory</h3>
+      <p>The magnetic flux through a turn of area <i>A</i>, and Faraday’s law for a coil of <i>N</i> turns:</p>
+      <div class="th-eq"><i>Φ</i> = ∫<strong>B</strong> · d<strong>A</strong>,&nbsp;&nbsp; <i>ε</i> = −<i>N</i> <span class="th-fr"><span>d<i>Φ</i></span><span>d<i>t</i></span></span></div>
+      <p>The minus sign is <strong>Lenz’s law</strong>, and it follows from energy conservation: if the current reinforced the change in flux, the magnet would speed up by itself. For a rod of length <i>ℓ</i> moving at speed <i>v</i> the flux is <i>Φ</i> = <i>Bℓx</i>, so <i>ε</i> = <i>Bℓv</i>. The current <i>I</i> = <i>ε</i>/<i>R</i> gives a force <i>F</i> = <i>BIℓ</i> against the motion, and Newton’s second law gives</p>
+      <div class="th-eq"><i>m</i> <span class="th-fr"><span>d<i>v</i></span><span>d<i>t</i></span></span> = −<span class="th-fr"><span><i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup></span><span><i>R</i></span></span> <i>v</i>&nbsp;&nbsp; ⇒&nbsp;&nbsp; <i>v</i> = <i>v</i><sub>0</sub>e<sup>−<i>t</i>/τ</sup>,&nbsp;&nbsp; τ = <span class="th-fr"><span><i>mR</i></span><span><i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup></span></span></div>
+      <p>The power of the braking force <i>Fv</i> = <i>ε</i><sup>2</sup>/<i>R</i> is exactly the heating power in the resistor, so all of the rod’s kinetic energy ends up as heat. In the generator <i>Φ</i> = <i>BA</i> cos <i>ωt</i>, hence</p>
+      <div class="th-eq"><i>ε</i> = <i>NBAω</i> sin <i>ωt</i>,&nbsp;&nbsp; <i>ε</i><sub>rms</sub> = <span class="th-fr"><span><i>ε</i><sub>max</sub></span><span>√2</span></span></div>
+      <p>The model assumes the circuit’s self-inductance is negligible (the current follows the EMF instantly) and that all motion is slow compared with the speed of light.</p>
+    </article>
+    <article>
+      <h3>Why it matters</h3>
+      <ul>
+        <li><strong>Power stations</strong>: almost all electrical energy comes from generators in which a turbine spins a coil (or a magnet) in a magnetic field.</li>
+        <li><strong>Eddy-current brakes</strong> on trains and roller coasters: a conductor moving through a field brakes without friction, and the force falls with speed, just as for the rod.</li>
+        <li><strong>Transformers and wireless chargers</strong> transfer energy through a changing flux with no electrical contact.</li>
+        <li><strong>Sensors</strong>: dynamic microphones, electric guitar pickups, ABS wheel sensors and card readers all work on the same principle.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>“The EMF depends on how large the flux is.”</strong> What counts is the rate of change: with the magnet at rest in the middle of the coil <i>Φ</i> is at its maximum and <i>ε</i> = 0.</li>
+        <li><strong>“The induced field always points against the magnet’s field.”</strong> It opposes the <em>change</em>: when the flux is falling, the induced field points along the magnet’s field.</li>
+        <li><strong>“An open circuit has no induction.”</strong> The EMF is there; only the current is missing, so there is no braking force.</li>
+        <li><strong>“More turns always means stronger braking.”</strong> The force scales as <i>N</i><sup>2</sup>/<i>R</i>, and a longer wire also has a larger resistance.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>For the “Default” preset (<i>B</i> = 0.8 T, <i>ℓ</i> = 0.5 m, <i>m</i> = 0.2 kg, <i>R</i> = 0.5 Ω) find τ and the stopping distance for <i>v</i><sub>0</sub> = 2 m/s.</summary><p>τ = <i>mR</i>/(<i>B</i><sup>2</sup><i>ℓ</i><sup>2</sup>) = 0.1/0.16 = 0.625 s; distance <i>v</i><sub>0</sub>τ = 1.25 m.</p></details>
+    <details class="th-q"><summary>How does the generator’s peak EMF change if you double <i>ω</i>? And the mean power into a fixed resistance?</summary><p><i>ε</i><sub>max</sub> = <i>NBAω</i> doubles, and the mean power <i>ε</i><sub>max</sub><sup>2</sup>/(2<i>R</i>) quadruples; you have to put in four times as much work turning the loop.</p></details>
+    <details class="th-q"><summary>Why do the EMF pulses as the magnet enters and leaves the coil have opposite signs?</summary><p>On entry the flux is rising (d<i>Φ</i>/d<i>t</i> > 0), on exit it is falling (d<i>Φ</i>/d<i>t</i> &lt; 0).</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 30 (Induction and Inductance). Generators and RMS values: ch. 31 (Electromagnetic Oscillations and Alternating Current).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

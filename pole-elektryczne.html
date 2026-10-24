@@ -2117,4 +2117,141 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Ładunki elektryczne wytwarzają w otaczającej przestrzeni pole, które działa siłą na każdy inny ładunek. Pole elektrostatyczne można opisać wektorem natężenia <strong>E</strong> albo skalarnym potencjałem <i>V</i>; oba opisy są równoważne, a linie pola i powierzchnie ekwipotencjalne to ich dwa obrazy.</p>
+  <div class="th-grid">
+    <article>
+      <h3>Co tu widzisz</h3>
+      <p>Na planszy leżą ładunki punktowe, a warstwy „Linie pola”, „Ekwipotencjalne”, „Mapa potencjału” i „Wektory E” pokazują to samo pole na cztery sposoby. Sonda odczytuje <strong>E</strong> i <i>V</i> w dowolnym punkcie.</p>
+      <ul>
+        <li>„Dipol” i „Jednoimienne”: linie biegną od ładunku dodatniego do ujemnego albo rozchodzą się, a między ładunkami jednoimiennymi pojawia się punkt, w którym <strong>E</strong> = 0.</li>
+        <li>„Kondensator”: między okładkami pole jest prawie jednorodne, a cząstka porusza się po paraboli.</li>
+        <li>„Przewodnik”: uziemiona płaszczyzna zastąpiona ładunkiem obrazowym; linie pola dochodzą do niej prostopadle.</li>
+        <li>„Tylko pole B”: cząstka zatacza okrąg (cyklotron), a jej prędkość się nie zmienia.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Teoria</h3>
+      <p>Ładunek punktowy <i>q</i> wytwarza pole o wartości</p>
+      <div class="th-eq"><i>E</i> = <span class="th-fr"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="th-fr"><span>|<i>q</i>|</span><span><i>r</i><sup>2</sup></span></span>,&nbsp;&nbsp; <i>V</i> = <span class="th-fr"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="th-fr"><span><i>q</i></span><span><i>r</i></span></span></div>
+      <p>Dla wielu ładunków obowiązuje <strong>zasada superpozycji</strong>: wektory <strong>E</strong> dodajemy składowymi, a potencjały jako liczby ze znakiem. Pole elektrostatyczne jest zachowawcze, więc praca przy przeniesieniu ładunku nie zależy od drogi i</p>
+      <div class="th-eq"><strong>E</strong> = −∇<i>V</i>,&nbsp;&nbsp; <i>W</i><sub>AB</sub> = <i>q</i>(<i>V</i><sub>A</sub> − <i>V</i><sub>B</sub>) = −Δ<i>U</i></div>
+      <p>Z tego wynika, że linie pola są zawsze prostopadłe do ekwipotencjalnych i wskazują kierunek najszybszego spadku <i>V</i>; tam, gdzie ekwipotencjalne leżą gęsto, pole jest silne. Na cząstkę w polach <strong>E</strong> i <strong>B</strong> działa siła Lorentza:</p>
+      <div class="th-eq"><strong>F</strong> = <i>q</i>(<strong>E</strong> + <strong>v</strong> × <strong>B</strong>),&nbsp;&nbsp; <i>r</i> = <span class="th-fr"><span><i>mv</i></span><span>|<i>q</i>|<i>B</i></span></span>,&nbsp;&nbsp; <i>T</i> = <span class="th-fr"><span>2π<i>m</i></span><span>|<i>q</i>|<i>B</i></span></span></div>
+      <p>Część magnetyczna jest prostopadła do <strong>v</strong>, więc nie wykonuje pracy: zmienia kierunek, ale nie wartość prędkości. Okres nie zależy od prędkości, na czym opiera się cyklotron. Wzory obowiązują dla ładunków spoczywających (elektrostatyka) i dla <i>v</i> ≪ <i>c</i>.</p>
+    </article>
+    <article>
+      <h3>Dlaczego to ważne</h3>
+      <ul>
+        <li><strong>Kondensatory</strong> w każdym układzie elektronicznym magazynują energię w jednorodnym polu między okładkami.</li>
+        <li><strong>Lampy oscyloskopowe, spektrometry masowe</strong> i akceleratory sterują cząstkami polami <strong>E</strong> i <strong>B</strong>; promień <i>r</i> = <i>mv</i>/(|<i>q</i>|<i>B</i>) pozwala rozdzielać jony według masy.</li>
+        <li><strong>Ekranowanie i uziemienie</strong>: wewnątrz przewodnika <strong>E</strong> = 0, stąd klatka Faradaya i bezpieczeństwo w samochodzie podczas burzy.</li>
+        <li><strong>Chemia i biologia</strong>: dipole i kwadrupole cząsteczek (np. H<sub>2</sub>O, CO<sub>2</sub>) decydują o oddziaływaniach i adsorpcji.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„Cząstka porusza się wzdłuż linii pola”.</strong> Linia pola wyznacza kierunek siły, czyli przyspieszenia, a nie prędkości. Uruchom cząstkę w „Dipolu”, a tor odejdzie od linii.</li>
+        <li><strong>„Gdzie <i>V</i> = 0, tam <i>E</i> = 0”.</strong> W środku dipola <i>V</i> = 0, ale pole jest silne; z kolei między ładunkami jednoimiennymi <strong>E</strong> = 0, choć <i>V</i> ≠ 0.</li>
+        <li><strong>„Potencjały dodajemy jak wektory”.</strong> Potencjał to skalar; dodajemy liczby ze znakiem.</li>
+        <li><strong>„Pole magnetyczne przyspiesza cząstkę”.</strong> Siła <i>q</i><strong>v</strong> × <strong>B</strong> nie zmienia energii kinetycznej; wykres „Prędkość” w samym polu B jest płaski.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Jak zmieni się natężenie pola, gdy odsuniesz sondę od pojedynczego ładunku dwa razy dalej? A potencjał?</summary><p><i>E</i> zmaleje czterokrotnie (∝ 1/<i>r</i><sup>2</sup>), a <i>V</i> dwukrotnie (∝ 1/<i>r</i>).</p></details>
+    <details class="th-q"><summary>Proton ma <i>v</i> = 10<sup>5</sup> m/s w polu <i>B</i> = 0,01 T. Jaki jest promień toru?</summary><p><i>r</i> = <i>mv</i>/(<i>eB</i>) = (1,67·10<sup>−27</sup> · 10<sup>5</sup>)/(1,6·10<sup>−19</sup> · 0,01) ≈ 0,10 m.</p></details>
+    <details class="th-q"><summary>Dlaczego ładunek przy uziemionej płaszczyźnie jest do niej przyciągany?</summary><p>Indukowane w przewodniku ładunki przeciwnego znaku działają tak samo jak ładunek obrazowy −<i>q</i> w odległości 2<i>d</i>, więc siła ma wartość <i>q</i><sup>2</sup>/(4πε<sub>0</sub>(2<i>d</i>)<sup>2</sup>).</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 22 (Pole elektryczne) oraz rozdz. 24 (Potencjał elektryczny). Ruch w polu magnetycznym: rozdz. 28 (Pole magnetyczne).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">Electric charges set up a field in the surrounding space, and that field exerts a force on any other charge. The electrostatic field can be described by the field vector <strong>E</strong> or by the scalar potential <i>V</i>; the two descriptions are equivalent, and field lines and equipotential surfaces are their two pictures.</p>
+  <div class="th-grid">
+    <article>
+      <h3>What you see</h3>
+      <p>The board holds point charges, and the “Field lines”, “Equipotentials”, “Potential map” and “E vectors” layers show the same field in four ways. The probe reads <strong>E</strong> and <i>V</i> at any point.</p>
+      <ul>
+        <li>“Dipole” and “Like charges”: lines run from the positive to the negative charge or spread apart, and between like charges there is a point where <strong>E</strong> = 0.</li>
+        <li>“Capacitor”: between the plates the field is nearly uniform and the particle follows a parabola.</li>
+        <li>“Conductor”: a grounded plane replaced by an image charge; field lines meet it at right angles.</li>
+        <li>“B field only”: the particle moves on a circle (cyclotron) and its speed does not change.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Theory</h3>
+      <p>A point charge <i>q</i> produces a field of magnitude</p>
+      <div class="th-eq"><i>E</i> = <span class="th-fr"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="th-fr"><span>|<i>q</i>|</span><span><i>r</i><sup>2</sup></span></span>,&nbsp;&nbsp; <i>V</i> = <span class="th-fr"><span>1</span><span>4πε<sub>0</sub></span></span> <span class="th-fr"><span><i>q</i></span><span><i>r</i></span></span></div>
+      <p>For many charges the <strong>superposition principle</strong> holds: <strong>E</strong> vectors add component by component, potentials add as signed numbers. The electrostatic field is conservative, so the work done moving a charge is independent of the path, and</p>
+      <div class="th-eq"><strong>E</strong> = −∇<i>V</i>,&nbsp;&nbsp; <i>W</i><sub>AB</sub> = <i>q</i>(<i>V</i><sub>A</sub> − <i>V</i><sub>B</sub>) = −Δ<i>U</i></div>
+      <p>It follows that field lines always cross equipotentials at right angles and point the way <i>V</i> falls fastest; where equipotentials crowd together the field is strong. A particle in <strong>E</strong> and <strong>B</strong> fields feels the Lorentz force:</p>
+      <div class="th-eq"><strong>F</strong> = <i>q</i>(<strong>E</strong> + <strong>v</strong> × <strong>B</strong>),&nbsp;&nbsp; <i>r</i> = <span class="th-fr"><span><i>mv</i></span><span>|<i>q</i>|<i>B</i></span></span>,&nbsp;&nbsp; <i>T</i> = <span class="th-fr"><span>2π<i>m</i></span><span>|<i>q</i>|<i>B</i></span></span></div>
+      <p>The magnetic part is perpendicular to <strong>v</strong>, so it does no work: it turns the velocity but does not change the speed. The period does not depend on speed, which is the principle of the cyclotron. These results assume charges at rest (electrostatics) and <i>v</i> ≪ <i>c</i>.</p>
+    </article>
+    <article>
+      <h3>Why it matters</h3>
+      <ul>
+        <li><strong>Capacitors</strong> in every electronic circuit store energy in the uniform field between their plates.</li>
+        <li><strong>Cathode-ray tubes, mass spectrometers</strong> and accelerators steer particles with <strong>E</strong> and <strong>B</strong>; the radius <i>r</i> = <i>mv</i>/(|<i>q</i>|<i>B</i>) separates ions by mass.</li>
+        <li><strong>Shielding and grounding</strong>: inside a conductor <strong>E</strong> = 0, hence the Faraday cage and the safety of a car in a thunderstorm.</li>
+        <li><strong>Chemistry and biology</strong>: the dipole and quadrupole moments of molecules (e.g. H<sub>2</sub>O, CO<sub>2</sub>) govern how they interact and adsorb.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>“A particle moves along a field line.”</strong> A field line gives the direction of the force, i.e. the acceleration, not the velocity. Launch a particle in “Dipole” and its path leaves the line.</li>
+        <li><strong>“Where <i>V</i> = 0, <i>E</i> = 0.”</strong> At the centre of a dipole <i>V</i> = 0 but the field is strong; between like charges <strong>E</strong> = 0 while <i>V</i> ≠ 0.</li>
+        <li><strong>“Potentials add like vectors.”</strong> Potential is a scalar; add signed numbers.</li>
+        <li><strong>“A magnetic field speeds the particle up.”</strong> The force <i>q</i><strong>v</strong> × <strong>B</strong> does not change the kinetic energy; the “Speed” chart in a pure B field is flat.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>How does the field change when you move the probe twice as far from a single charge? And the potential?</summary><p><i>E</i> drops by a factor of four (∝ 1/<i>r</i><sup>2</sup>), <i>V</i> by a factor of two (∝ 1/<i>r</i>).</p></details>
+    <details class="th-q"><summary>A proton moves at <i>v</i> = 10<sup>5</sup> m/s in <i>B</i> = 0.01 T. What is the radius of its path?</summary><p><i>r</i> = <i>mv</i>/(<i>eB</i>) = (1.67×10<sup>−27</sup> × 10<sup>5</sup>)/(1.6×10<sup>−19</sup> × 0.01) ≈ 0.10 m.</p></details>
+    <details class="th-q"><summary>Why is a charge near a grounded plane attracted to it?</summary><p>The opposite charges induced in the conductor act exactly like an image charge −<i>q</i> at distance 2<i>d</i>, so the force has magnitude <i>q</i><sup>2</sup>/(4πε<sub>0</sub>(2<i>d</i>)<sup>2</sup>).</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 22 (Electric Fields) and ch. 24 (Electric Potential). Motion in a magnetic field: ch. 28 (Magnetic Fields).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>

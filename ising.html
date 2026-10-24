@@ -1125,4 +1125,143 @@ requestAnimationFrame((t) => { lastT = t; frame(t); });
 })();
 </script>
 
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px;font-weight:600;list-style:none;display:flex;gap:10px;align-items:baseline}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A);flex:none;width:1ch}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Model Isinga to najprostszy model ferromagnetyka: spiny <i>s</i> = ±1 na siatce oddziałują tylko z najbliższymi sąsiadami. Mimo tej prostoty w dwóch wymiarach wykazuje prawdziwe przejście fazowe, w którym z nieuporządkowanego stanu spontanicznie wyłania się namagnesowanie. To podręcznikowy przykład rywalizacji energii z entropią.</p>
+  <div class="th-grid">
+    <article>
+      <h3>Co tu widzisz</h3>
+      <p>Każdy piksel to spin w górę albo w dół. Algorytm Metropolisa lub Wolffa losuje konfiguracje z wagą Boltzmanna, a wykres pokazuje namagnesowanie na spin <i>m</i> i energię na spin <i>e</i> w funkcji czasu mierzonego w MCS.</p>
+      <ul>
+        <li>Scenariusz „Gaszenie” (<i>T</i> = 1,5) pokazuje <strong>wzrost domen</strong>: ścianki skracają się, a <i>e</i> dąży do −2.</li>
+        <li>„Punkt krytyczny” ustawia <i>T</i> = <i>T</i><sub>c</sub>: klastry mają wszystkie rozmiary, co dobrze widać po włączeniu „Klastry”.</li>
+        <li>„Gorąco” (<i>T</i> = 4) to faza paramagnetyczna: drobny szum i <i>m</i> ≈ 0.</li>
+        <li>„Histereza” i przełącznik „Pętla <i>h</i>” rysują pętlę <i>m</i>(<i>h</i>) poniżej <i>T</i><sub>c</sub>.</li>
+      </ul>
+      <p>„Mapa energii” podświetla spiny o wielu niezgodnych sąsiadach, czyli ścianki domen, w których mieści się większość nadwyżki energii ponad stan podstawowy.</p>
+    </article>
+    <article>
+      <h3>Teoria</h3>
+      <p>Energia konfiguracji (z polem zewnętrznym <i>h</i>):</p>
+      <div class="th-eq"><i>E</i> = −<i>J</i> Σ<sub>⟨<i>ij</i>⟩</sub> <i>s</i><sub><i>i</i></sub><i>s</i><sub><i>j</i></sub> − <i>h</i> Σ<sub><i>i</i></sub> <i>s</i><sub><i>i</i></sub></div>
+      <p>W równowadze termicznej konfiguracja pojawia się z prawdopodobieństwem Boltzmanna <i>P</i> ∝ e<sup>−<i>E</i>/<i>kT</i></sup>. Nie da się zsumować wszystkich 2<sup><i>N</i></sup> stanów, więc Metropolis proponuje odwrócenie jednego spinu i przyjmuje je z prawdopodobieństwem</p>
+      <div class="th-eq"><i>P</i><sub>akc</sub> = min(1, e<sup>−Δ<i>E</i>/<i>kT</i></sup>),&nbsp;&nbsp; Δ<i>E</i> = 2<i>s</i><sub><i>i</i></sub>(<i>J</i> Σ<sub><i>j</i></sub> <i>s</i><sub><i>j</i></sub> + <i>h</i>)</div>
+      <p>Ta reguła spełnia warunek równowagi szczegółowej, więc po dostatecznie długim czasie układ odwiedza stany z właściwymi wagami. Kierunek przemiany wyznacza minimum energii swobodnej <i>F</i> = <i>E</i> − <i>TS</i>: w niskiej <i>T</i> wygrywa energia (porządek), w wysokiej entropia (nieporządek). Onsager pokazał, że dla nieskończonej siatki kwadratowej przy <i>h</i> = 0</p>
+      <div class="th-eq"><i>kT</i><sub>c</sub>/<i>J</i> = 2/ln(1 + √2) ≈ 2,269,&nbsp;&nbsp; <i>m</i><sub>0</sub> = [1 − sinh<sup>−4</sup>(2<i>J</i>/<i>kT</i>)]<sup>1/8</sup></div>
+      <p>Wykładnik 1/8 jest wykładnikiem krytycznym <i>β</i>; teoria pola średniego daje 1/2 i myli się właśnie dlatego, że pomija fluktuacje. Ostre przejście istnieje tylko dla <i>L</i> → ∞; w jednym wymiarze model Isinga nie ma przejścia fazowego w żadnej skończonej temperaturze.</p>
+    </article>
+    <article>
+      <h3>Dlaczego to ważne</h3>
+      <ul>
+        <li><strong>Ferromagnetyzm</strong>: <i>T</i><sub>c</sub> odpowiada temperaturze Curie, a domeny i histereza to zjawiska znane z żelaza i magnesów trwałych.</li>
+        <li><strong>Uniwersalność</strong>: ten sam wykładnik <i>β</i> = 1/8 opisuje każde przejście 2D z symetrią „góra/dół”, np. przejście ciecz/gaz w adsorpcji na powierzchni (gaz sieciowy).</li>
+        <li><strong>Stopy podwójne</strong>: porządkowanie atomów A i B w stopach (np. mosiądz β) to model Isinga z <i>J</i> opisującym preferencję par AB.</li>
+        <li><strong>Metody Monte Carlo</strong>: algorytm Metropolisa (1953) stał się podstawowym narzędziem fizyki obliczeniowej, chemii i statystyki.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Typowe pułapki</h3>
+      <ul>
+        <li><strong>„W wysokiej temperaturze spiny się nie poruszają, bo <i>m</i> = 0”.</strong> Przeciwnie: spiny odwracają się bez przerwy, tylko średnio się znoszą.</li>
+        <li><strong>„Średnie <i>m</i> na skończonej siatce mierzy porządek”.</strong> Bez pola stany +<i>m</i> i −<i>m</i> są równoważne, dlatego mierzy się ⟨|<i>m</i>|⟩.</li>
+        <li><strong>„Po gaszeniu układ od razu jest w równowadze”.</strong> Wzrost domen jest powolny, a układ może utknąć w długo żyjących pasach domen.</li>
+        <li><strong>„Histereza oznacza, że wynik zależy od algorytmu”.</strong> Histereza to metastabilność: odwrócenie domeny wymaga zarodka, którego powstanie jest rzadkim zdarzeniem.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Ile wynosi względna waga odwrócenia samotnego spinu w domenie przy <i>T</i> = 1,5?</summary><p>Δ<i>E</i> = 8<i>J</i>, więc e<sup>−8/1,5</sup> ≈ 0,005. Takie „wyspy” pojawiają się rzadko i szybko znikają.</p></details>
+    <details class="th-q"><summary>Dlaczego przy <i>T</i><sub>c</sub> Metropolis zwalnia, a Wolff nie?</summary><p>Przy <i>T</i><sub>c</sub> klastry są ogromne, a pojedyncze odwrócenia przesuwają je bardzo wolno (spowolnienie krytyczne). Wolff odwraca od razu cały klaster, więc dekorelacja następuje w kilku krokach.</p></details>
+    <details class="th-q"><summary>Jakiego ⟨|<i>m</i>|⟩ spodziewasz się przy <i>T</i> = 1,8 i <i>h</i> = 0?</summary><p>Ze wzoru Onsagera <i>m</i><sub>0</sub> ≈ 0,96; dla dużej siatki punkt zapisany na wykresie <i>m</i>(<i>T</i>) powinien leżeć blisko tej wartości.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: model Isinga wykracza poza zakres podręcznika Halliday, Resnick, Walker, <em>Podstawy fizyki</em>; najbliższe są rozdz. 32 (Równania Maxwella; magnetyzm materii, ferromagnetyzm i domeny) oraz rozdz. 20 (Entropia i druga zasada termodynamiki). Dalej: D. V. Schroeder, <em>An Introduction to Thermal Physics</em>, rozdz. 8 (Systems of Interacting Particles).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">The Ising model is the simplest model of a ferromagnet: spins <i>s</i> = ±1 on a lattice interact only with their nearest neighbours. Despite this simplicity, in two dimensions it has a genuine phase transition in which a magnetization emerges spontaneously from disorder. It is the textbook example of energy competing with entropy.</p>
+  <div class="th-grid">
+    <article>
+      <h3>What you see</h3>
+      <p>Each pixel is a spin pointing up or down. The Metropolis or Wolff algorithm samples configurations with Boltzmann weight, and the plot shows the magnetization per spin <i>m</i> and the energy per spin <i>e</i> against time measured in MCS.</p>
+      <ul>
+        <li>The “Quench” scenario (<i>T</i> = 1.5) shows <strong>domain coarsening</strong>: walls shorten and <i>e</i> approaches −2.</li>
+        <li>“Critical point” sets <i>T</i> = <i>T</i><sub>c</sub>: clusters of every size appear, best seen with “Clusters” turned on.</li>
+        <li>“Hot” (<i>T</i> = 4) is the paramagnetic phase: fine-grained noise and <i>m</i> ≈ 0.</li>
+        <li>“Hysteresis” together with the “<i>h</i> loop” switch traces the <i>m</i>(<i>h</i>) loop below <i>T</i><sub>c</sub>.</li>
+      </ul>
+      <p>The “Energy map” highlights spins with many unlike neighbours, that is the domain walls, which carry most of the energy above the ground state.</p>
+    </article>
+    <article>
+      <h3>Theory</h3>
+      <p>The energy of a configuration (with an external field <i>h</i>) is</p>
+      <div class="th-eq"><i>E</i> = −<i>J</i> Σ<sub>⟨<i>ij</i>⟩</sub> <i>s</i><sub><i>i</i></sub><i>s</i><sub><i>j</i></sub> − <i>h</i> Σ<sub><i>i</i></sub> <i>s</i><sub><i>i</i></sub></div>
+      <p>In thermal equilibrium a configuration occurs with Boltzmann probability <i>P</i> ∝ e<sup>−<i>E</i>/<i>kT</i></sup>. Summing all 2<sup><i>N</i></sup> states is impossible, so Metropolis proposes flipping one spin and accepts it with probability</p>
+      <div class="th-eq"><i>P</i><sub>acc</sub> = min(1, e<sup>−Δ<i>E</i>/<i>kT</i></sup>),&nbsp;&nbsp; Δ<i>E</i> = 2<i>s</i><sub><i>i</i></sub>(<i>J</i> Σ<sub><i>j</i></sub> <i>s</i><sub><i>j</i></sub> + <i>h</i>)</div>
+      <p>This rule satisfies detailed balance, so after long enough the system visits states with the correct weights. Which phase wins is set by the minimum of the free energy <i>F</i> = <i>E</i> − <i>TS</i>: at low <i>T</i> energy wins (order), at high <i>T</i> entropy wins (disorder). Onsager showed that for the infinite square lattice at <i>h</i> = 0</p>
+      <div class="th-eq"><i>kT</i><sub>c</sub>/<i>J</i> = 2/ln(1 + √2) ≈ 2.269,&nbsp;&nbsp; <i>m</i><sub>0</sub> = [1 − sinh<sup>−4</sup>(2<i>J</i>/<i>kT</i>)]<sup>1/8</sup></div>
+      <p>The exponent 1/8 is the critical exponent <i>β</i>; mean-field theory gives 1/2 and fails precisely because it neglects fluctuations. A sharp transition exists only for <i>L</i> → ∞, and in one dimension the Ising model has no phase transition at any finite temperature.</p>
+    </article>
+    <article>
+      <h3>Why it matters</h3>
+      <ul>
+        <li><strong>Ferromagnetism</strong>: <i>T</i><sub>c</sub> plays the role of the Curie temperature, and domains and hysteresis are familiar from iron and permanent magnets.</li>
+        <li><strong>Universality</strong>: the same exponent <i>β</i> = 1/8 describes every 2D transition with an up/down symmetry, such as condensation of molecules adsorbed on a surface (the lattice gas).</li>
+        <li><strong>Binary alloys</strong>: ordering of A and B atoms in an alloy (e.g. β-brass) is an Ising model, with <i>J</i> encoding the preference for AB pairs.</li>
+        <li><strong>Monte Carlo methods</strong>: the Metropolis algorithm (1953) became a core tool of computational physics, chemistry and statistics.</li>
+      </ul>
+    </article>
+    <article>
+      <h3>Common pitfalls</h3>
+      <ul>
+        <li><strong>“At high temperature the spins are frozen, because <i>m</i> = 0.”</strong> The opposite: spins flip constantly, they just cancel on average.</li>
+        <li><strong>“The plain average of <i>m</i> on a finite lattice measures order.”</strong> Without a field +<i>m</i> and −<i>m</i> are equivalent, which is why ⟨|<i>m</i>|⟩ is measured.</li>
+        <li><strong>“After a quench the system is immediately in equilibrium.”</strong> Coarsening is slow, and the lattice can get stuck in long-lived striped domains.</li>
+        <li><strong>“Hysteresis means the answer depends on the algorithm.”</strong> Hysteresis is metastability: reversing a domain needs a nucleus, and forming one is a rare event.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>What is the relative weight of flipping a lone spin inside a domain at <i>T</i> = 1.5?</summary><p>Δ<i>E</i> = 8<i>J</i>, so e<sup>−8/1.5</sup> ≈ 0.005. Such “islands” appear rarely and vanish quickly.</p></details>
+    <details class="th-q"><summary>Why does Metropolis slow down at <i>T</i><sub>c</sub> while Wolff does not?</summary><p>At <i>T</i><sub>c</sub> the clusters are huge and single flips move them very slowly (critical slowing down). Wolff flips a whole cluster at once, so the lattice decorrelates within a few steps.</p></details>
+    <details class="th-q"><summary>What ⟨|<i>m</i>|⟩ do you expect at <i>T</i> = 1.8 and <i>h</i> = 0?</summary><p>Onsager’s formula gives <i>m</i><sub>0</sub> ≈ 0.96; on a large lattice the point saved on the <i>m</i>(<i>T</i>) plot should sit close to it.</p></details>
+  </div>
+  <p class="th-book">In the textbook: the Ising model goes beyond Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>; the nearest chapters are ch. 32 (Maxwell’s Equations; Magnetism of Matter, on ferromagnetism and domains) and ch. 20 (Entropy and the Second Law of Thermodynamics). Further reading: D. V. Schroeder, <em>An Introduction to Thermal Physics</em>, ch. 8 (Systems of Interacting Particles).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
 </body></html>
