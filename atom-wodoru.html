@@ -1,0 +1,1571 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Atom wodoru i widmo</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: spectroscopy bench. Energy level diagram (hero) with a spectrometer strip glued underneath,
+   control panel on the right, live formulas, try-this prompts and the orbital viewer below. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E7ECF1; --grid-major:#D3DCE4;
+  --acc:#B8287F; --blue:#2F7FE0; --amber:#C77A2A; --uv:#6A5CFF; --ir:#B0473A;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#122030; --grid-major:#1B2C40;
+    --acc:#E35BB0; --blue:#3F8EF0; --amber:#BD7A2A; --uv:#8A7FFF; --ir:#D46A5A;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#122030; --grid-major:#1B2C40;
+  --acc:#E35BB0; --blue:#3F8EF0; --amber:#BD7A2A; --uv:#8A7FFF; --ir:#D46A5A;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px));}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(34px, 5vw, 56px); line-height:.95; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:.95em; height:.62em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:64ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden; background:var(--surface)}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3)}
+.hud dt sub{font-size:11px}
+.hud dt.w{font-family:var(--f-body); font-style:normal; font-size:12px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.5ch; color:var(--ink)}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 12px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.lname{display:inline-flex; align-items:center; gap:7px; font-family:var(--f-mono); font-size:12.5px; color:var(--ink)}
+.lname i{width:12px; height:12px; border-radius:3px; display:inline-block; box-shadow:0 0 8px currentColor}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--amber); color:var(--amber)}
+.canvas-box{position:relative; height:clamp(360px, 54vh, 540px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block; touch-action:none}
+.hint-pill{position:absolute; bottom:22%; right:12px; pointer-events:none; font-size:12px; color:var(--ink-2); background:var(--surface); border:1px solid var(--line); border-radius:999px; padding:4px 11px; box-shadow:var(--shadow); transition:opacity .4s}
+.hint-pill.gone{opacity:0}
+.spec-box{position:relative; height:150px; background:#04060B; border-top:1px solid var(--line)}
+.spec-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.stage:fullscreen{border-radius:0}
+.stage:fullscreen .canvas-box{height:auto; flex:1}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.8; border:1px solid rgba(255,255,255,.5); border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 10px; border-radius:999px; font-size:12.5px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.toggles{display:flex; gap:6px; flex-wrap:wrap}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.bar .spacer{flex:1}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:calc(env(safe-area-inset-top, 0px) + 12px)}
+.grp{border:0; margin:0; padding:14px 0 6px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:4px}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label, .ctl .lab{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .ctl .lab i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink)}
+.hint{font-size:11.5px; color:var(--ink-3); line-height:1.45}
+.hint i{font-family:var(--f-math); font-size:13px}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%; --c:var(--acc)}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.chips{display:flex; flex-wrap:wrap; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:5px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:inline-flex; flex-direction:column; align-items:flex-start; line-height:1.2}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.nchips{display:grid; grid-template-columns:repeat(8, minmax(0,1fr)); gap:4px}
+.nchips .chip{align-items:center; padding:5px 0; font-family:var(--f-mono); font-size:13px; border-radius:7px}
+.nchips .chip[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.pills{display:grid; grid-template-columns:repeat(3, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+/* Lower */
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.lower{display:grid; grid-template-columns:minmax(0,1.3fr) minmax(0,1fr); gap:20px; align-items:start}
+.lcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.tag.lc{text-transform:none; letter-spacing:0; font-size:11px}
+.tag{display:inline-block; font-family:var(--f-mono); font-size:10.5px; letter-spacing:.06em; text-transform:uppercase; border:1px solid var(--line); border-radius:999px; padding:0 7px; margin-left:6px; color:var(--ink-3); vertical-align:1px}
+
+.tries{padding:16px 18px 18px; display:flex; flex-direction:column; gap:10px; min-width:0}
+.trylist{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:8px}
+.try{display:grid; grid-template-columns:auto minmax(0,1fr); gap:4px 12px; padding:11px 12px; border:1px solid var(--line); border-radius:10px; background:var(--paper); text-align:left; cursor:pointer; color:var(--ink); transition:border-color .12s}
+.try:hover{border-color:var(--acc)}
+.try .n{grid-row:span 2; width:26px; height:26px; border-radius:50%; background:var(--sunk); display:inline-flex; align-items:center; justify-content:center; font-family:var(--f-mono); font-size:12.5px; color:var(--acc); font-weight:500}
+.try b{font-family:var(--f-display); font-weight:700; font-size:15.5px}
+.try span{font-size:13px; color:var(--ink-2); line-height:1.45}
+
+.orbitals{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.orb-box{position:relative; width:100%; max-width:460px; aspect-ratio:1; margin:0 auto; border-radius:10px; overflow:hidden; background:#05070C}
+.orb-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.ochips .chip{font-family:var(--f-math); font-size:16px; padding:3px 11px; align-items:center}
+.ochips .chip sub{font-size:.68em}
+.chart-box{position:relative; height:200px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+.orbitals .pills{grid-template-columns:repeat(3, minmax(0,1fr))}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:4 / 4.4; max-width:100%}
+  .spec-box{height:132px}
+  .fgrid, .trylist{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.6ch; font-size:12.5px}
+  .bar .spacer{display:none}
+  .hint-pill{font-size:11px; right:8px}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire, .try, .hint-pill{transition:none}
+}
+</style>
+
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang','magnes-lang','falaem-lang','browna-lang','foto-lang','wodor-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka kwantowa · poziomy energii</span>
+      <h1>
+        <svg viewBox="0 0 60 38" aria-hidden="true"><rect x="1" y="4" width="58" height="30" rx="4" fill="#05070C"/><rect x="12" y="7" width="3" height="24" fill="#8F3BFF"/><rect x="17" y="7" width="3" height="24" fill="#4A3BFF"/><rect x="27" y="7" width="3" height="24" fill="#00D2FF"/><rect x="48" y="7" width="3.5" height="24" fill="#FF2020"/></svg>
+        <span data-i18n="title">Atom wodoru i widmo</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Kliknij poziom energii albo przeciągnij strzałkę między poziomami. Elektron przeskakuje, a foton o ściśle określonej długości fali dopisuje linię do widma.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud">
+            <div><dt class="w" data-i18n="hTrans">przejście</dt><dd id="hud-tr">3 → 2</dd></div>
+            <div><dt>ΔE</dt><dd id="hud-e">0</dd></div>
+            <div><dt>λ</dt><dd id="hud-l">0</dd></div>
+            <div><dt>f</dt><dd id="hud-f">0</dd></div>
+            <div><dt class="w" data-i18n="hType">proces</dt><dd id="hud-k">—</dd></div>
+          </dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="lv-box">
+          <canvas id="lv" data-i18n-aria="ariaLv" aria-label="Diagram poziomów energii"></canvas>
+          <div class="hint-pill" id="hintpill" data-i18n="cvHint">Kliknij poziom lub przeciągnij strzałkę</div>
+        </div>
+        <div class="spec-box" id="sp-box"><canvas id="sp" data-i18n-aria="ariaSp" aria-label="Widmo"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="run">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="run-ic"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="run-lbl" data-i18n="start">Start wyładowania</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="clear">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="clear">Wyczyść widmo</span>
+          </button>
+          <div class="seg" role="group" id="mode">
+            <span class="lbl" data-i18n="spec">Widmo</span>
+            <button type="button" data-mode="em" aria-pressed="true" data-i18n="emis">emisyjne</button>
+            <button type="button" data-mode="ab" aria-pressed="false" data-i18n="absn">absorpcyjne</button>
+          </div>
+          <div class="toggles">
+            <button type="button" class="tg" id="tg-bohr" aria-pressed="false" data-i18n="bohr">Model Bohra</button>
+            <button type="button" class="tg" id="tg-names" aria-pressed="false" data-i18n="names">Nazwy serii</button>
+          </div>
+          <span class="spacer"></span>
+          <button type="button" class="btn" id="fs">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7.5V3h4.5M12.5 3H17v4.5M17 12.5V17h-4.5M7.5 17H3v-4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="fullscreen">Pełny ekran</span>
+          </button>
+        </div>
+      </section>
+    </div>
+
+    <aside class="card panel" data-i18n-aria="ariaPanel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gTrans">Przejście</h3>
+        <div class="ctl">
+          <span class="lab" data-i18n-html="lni">Poziom początkowy <i>n</i><sub>i</sub></span>
+          <div class="chips nchips" id="ni-chips"></div>
+        </div>
+        <div class="ctl">
+          <span class="lab" data-i18n-html="lnf">Poziom końcowy <i>n</i><sub>f</sub></span>
+          <div class="chips nchips" id="nf-chips"></div>
+          <span class="hint" data-i18n="transHint">Wybór poziomu od razu wykonuje przejście.</span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pSeries">seria</small><span id="pill-ser">—</span></div>
+          <div class="pill"><small data-i18n="pRange">zakres</small><span id="pill-rng">—</span></div>
+          <div class="pill"><small data-i18n="pLine">linia</small><span id="pill-line">—</span></div>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gPresets">Presety</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-pre="balmer" aria-pressed="false"><span data-i18n="prBalmer">Seria Balmera</span><small data-i18n="prBalmerS">widzialne</small></button>
+          <button type="button" class="chip" data-pre="lyman" aria-pressed="false"><span data-i18n="prLyman">Seria Lymana</span><small>UV</small></button>
+          <button type="button" class="chip" data-pre="paschen" aria-pressed="false"><span data-i18n="prPaschen">Seria Paschena</span><small>IR</small></button>
+          <button type="button" class="chip" data-pre="ion" aria-pressed="false"><span data-i18n="prIon">Jonizacja z n = 1</span><small id="pre-ion-s">13,6 eV</small></button>
+        </div>
+      </fieldset>
+
+      <fieldset class="grp">
+        <h3 data-i18n="gDis">Wyładowanie w gazie</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="rate" data-i18n="lrate">Tempo wzbudzeń</label><output id="rate-out" for="rate"></output></div>
+          <input type="range" id="rate" min="0" max="1000" step="1" value="500">
+          <span class="hint" id="dis-hint"></span>
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pPhot">fotony</small><span id="pill-ph">0</span></div>
+          <div class="pill"><small data-i18n="pBright">najsilniejsza</small><span id="pill-br">—</span></div>
+          <div class="pill"><small data-i18n="pVis">widzialne</small><span id="pill-vis">—</span></div>
+        </div>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <div class="lcol">
+      <section class="card formulas">
+        <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby dla bieżącego przejścia, podstawiane na żywo.</p></div>
+        <div class="fgrid" id="fgrid"></div>
+      </section>
+      <section class="card tries">
+        <div class="sec-h"><h2 data-i18n="tries">Spróbuj</h2></div>
+        <div class="trylist" id="trylist"></div>
+      </section>
+    </div>
+    <section class="card orbitals" id="orbitals">
+      <div class="sec-h"><h2 data-i18n="orbs">Orbitale</h2><p data-i18n-html="orbsSub">Przekrój gęstości prawdopodobieństwa |<i>ψ</i><sub>nlm</sub>|² w płaszczyźnie <i>xz</i>.</p></div>
+      <div class="chips ochips" id="orb-chips"></div>
+      <div class="orb-box" id="orb-box"><canvas id="orb" data-i18n-aria="ariaOrb" aria-label="Orbital"></canvas></div>
+      <div class="pills">
+        <div class="pill"><small data-i18n="oQ">liczby kwantowe</small><span id="o-q">—</span></div>
+        <div class="pill"><small data-i18n="oE">energia</small><span id="o-e">—</span></div>
+        <div class="pill"><small data-i18n="oNodes">węzły rad. / kąt.</small><span id="o-nodes">—</span></div>
+        <div class="pill"><small>⟨<i>r</i>⟩</small><span id="o-rm">—</span></div>
+        <div class="pill"><small data-i18n="oRmp">najbardziej prawd. r</small><span id="o-rmp">—</span></div>
+        <div class="pill"><small data-i18n="oBohr">Bohr: n²a₀</small><span id="o-rb">—</span></div>
+      </div>
+      <div class="toggles"><button type="button" class="tg" id="tg-pr" aria-pressed="false" data-i18n="prTg">Rozkład radialny P(r)</button></div>
+      <div id="pr-wrap" hidden>
+        <div class="chart-box" id="pr-box"><canvas id="pr"></canvas></div>
+        <p class="cnote" id="pr-note"></p>
+      </div>
+      <p class="cnote" data-i18n-html="orbNote">Funkcje radialne <i>R</i><sub>nl</sub> są dokładne, części kątowe rzeczywiste (<i>p<sub>z</sub></i>, <i>d<sub>z²</sub></i>, <i>d<sub>xz</sub></i>). Jasność ∝ (|<i>ψ</i>|²)<sup>0,4</sup>, żeby było widać słabe zewnętrzne pierścienie.</p>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- constants ---------- */
+const HC = 1239.84198;          // eV·nm
+const RH = 1.09678e7;           // m^-1, Rydberg constant with hydrogen reduced mass
+const RHnm = RH * 1e-9;         // nm^-1
+const RY = HC * RHnm;           // 13.598 eV
+const A0 = 0.0529177;           // nm
+const CL = 2.99792458e8, H_EV = 4.135667696e-15;
+const INF = Infinity;
+const LEVELS = [1, 2, 3, 4, 5, 6, 7, INF];
+// n-averaged Einstein A coefficients for hydrogen, s^-1 (statistically populated sublevels)
+const AE = {
+  2: { 1: 4.699e8 },
+  3: { 1: 5.575e7, 2: 4.410e7 },
+  4: { 1: 1.278e7, 2: 8.419e6, 3: 8.986e6 },
+  5: { 1: 4.125e6, 2: 2.530e6, 3: 2.201e6, 4: 2.699e6 },
+  6: { 1: 1.644e6, 2: 9.732e5, 3: 7.783e5, 4: 7.711e5, 5: 1.025e6 },
+  7: { 1: 7.568e5, 2: 4.389e5, 3: 3.358e5, 4: 3.041e5, 5: 3.253e5, 6: 4.561e5 }
+};
+const En = (n) => (n === INF ? 0 : -RY / (n * n));
+const inv2 = (n) => (n === INF ? 0 : 1 / (n * n));
+const lamVac = (a, b) => 1 / (RHnm * Math.abs(inv2(a) - inv2(b)));
+function lamAir(l) {
+  if (l < 200) return l;
+  const s2 = Math.pow(1000 / l, 2);
+  return l / (1 + 1e-8 * (8342.54 + 2406147 / (130 - s2) + 15998 / (38.9 - s2)));
+}
+const lamShow = (l) => lamAir(l);
+const region = (l) => (l < 380 ? 'uv' : l <= 750 ? 'vis' : 'ir');
+const ns = (n) => (n === INF ? '∞' : String(n));
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow: 'Fizyka kwantowa · poziomy energii', title: 'Atom wodoru i widmo',
+    lede: 'Kliknij poziom energii albo przeciągnij strzałkę między poziomami. Elektron przeskakuje, a foton o ściśle określonej długości fali dopisuje linię do widma.',
+    hTrans: 'przejście', hType: 'proces',
+    tEm: 'emisja', tAb: 'absorpcja', tIon: 'jonizacja', tRec: 'rekombinacja',
+    sReady: 'gotowy', sRun: 'wyładowanie', sPause: 'pauza',
+    start: 'Start wyładowania', pause: 'Pauza', resume: 'Wznów', kbd: 'spacja', clear: 'Wyczyść widmo',
+    spec: 'Widmo', emis: 'emisyjne', absn: 'absorpcyjne', bohr: 'Model Bohra', names: 'Nazwy serii', fullscreen: 'Pełny ekran',
+    cvHint: 'Kliknij poziom lub przeciągnij strzałkę',
+    ariaLv: 'Diagram poziomów energii atomu wodoru', ariaSp: 'Widmo od 90 do 2000 nm', ariaPanel: 'Ustawienia', ariaOrb: 'Przekrój orbitalu wodoru',
+    cont: 'kontinuum E > 0: proton + wolny elektron', axisNote: 'oś energii nieliniowa (y ∝ |E|^0,35), wartości przy poziomach',
+    uv: 'UV', vis: 'widzialne', ir: 'podczerwień', offscale: 'poza skalą',
+    gTrans: 'Przejście', lni: 'Poziom początkowy <i>n</i><sub>i</sub>', lnf: 'Poziom końcowy <i>n</i><sub>f</sub>',
+    transHint: 'Wybór poziomu od razu wykonuje przejście. ∞ oznacza kontinuum (jonizacja lub rekombinacja).',
+    pSeries: 'seria', pRange: 'zakres', pLine: 'linia', rUV: 'UV', rVis: 'widzialne', rIR: 'IR',
+    gPresets: 'Presety', prBalmer: 'Seria Balmera', prBalmerS: 'widzialne', prLyman: 'Seria Lymana', prPaschen: 'Seria Paschena', prIon: 'Jonizacja z n = 1',
+    gDis: 'Wyładowanie w gazie', lrate: 'Tempo wzbudzeń', perS: '/s',
+    disHintEm: 'Model uproszczony: wzbudzenie z n = 1 do n z wagą ∝ 1/n³, potem kaskada w dół z prawdopodobieństwami z uśrednionych współczynników Einsteina A.',
+    disHintAb: 'Absorpcja: światło białe przechodzi przez gorący gaz (60 % atomów w n = 1, 30 % w n = 2, 10 % w n = 3, model uproszczony). Zimny gaz pochłania tylko serię Lymana.',
+    pPhot: 'fotony', pBright: 'najsilniejsza', pVis: 'widzialne',
+    series: ['Lymana', 'Balmera', 'Paschena', 'Bracketta', 'Pfunda', 'Humphreysa'], seriesShort: ['Lyman', 'Balmer', 'Paschen', 'Brackett', 'Pfund', 'Humphreys'],
+    limit: 'granica',
+    formulas: 'Wzory', formulasSub: 'Liczby dla bieżącego przejścia, podstawiane na żywo.',
+    fLevels: 'Poziomy energii', fPhoton: 'Energia fotonu', fRyd: 'Wzór Rydberga', fHc: 'Skrót hc ≈ 1240 eV·nm', fBohr: 'Promień orbity', fIon: 'Jonizacja i granica serii',
+    model: 'model',
+    nLevels: 'Dokładnie 13,598 eV (z masą zredukowaną). Energia ujemna oznacza stan związany, E = 0 to próg jonizacji.',
+    nEm: 'Elektron spada niżej: atom emituje foton o energii równej różnicy poziomów.',
+    nAb: 'Elektron idzie wyżej: atom pochłania foton, ale tylko taki, którego energia pasuje do różnicy poziomów.',
+    nRyd: 'R = R<sub>∞</sub>/(1 + m<sub>e</sub>/m<sub>p</sub>) = 1,0968·10⁷ m⁻¹ to stała Rydberga z masą zredukowaną wodoru. Wynik to długość fali w próżni; tablicowe linie widzialne podaje się w powietrzu (n ≈ 1,0003).',
+    vacuum: 'próżnia', air: 'powietrze',
+    nHc: 'Wygodne przybliżenie: energia w eV, długość fali w nm.',
+    nBohr: 'Model Bohra (1913) jest półklasyczny: daje dobre energie, ale elektron nie krąży po orbicie. Mechanika kwantowa zastępuje orbity orbitalami, dla 1s najbardziej prawdopodobne r to właśnie a₀.',
+    nIon: 'Przejście z kontinuum (n = ∞) wyznacza krótkofalową granicę serii; linie zagęszczają się przy niej.',
+    tries: 'Spróbuj',
+    t1h: 'Czerwona linia Hα', t1b: 'Elektron z n = 3 na n = 2. Foton ma 1,89 eV i 656,3 nm: ta linia nadaje świecącemu wodorowi różowy odcień.',
+    t2h: 'Granica serii', t2b: 'Seria Balmera i rekombinacja ∞ → 2. Linie zagęszczają się przy 364,6 nm, dalej jest już tylko kontinuum.',
+    t3h: 'Lampa wodorowa', t3b: 'Uruchom wyładowanie. Najwięcej fotonów niesie Lyα w UV, a spośród linii widzialnych wygrywa Hα.',
+    t4h: 'Węzły orbitalu 3s', t4b: 'Orbital 3s ma dwie sfery węzłowe, gdzie |ψ|² = 0. Włącz P(r) i porównaj z 1s, którego maksimum leży w a₀.',
+    orbs: 'Orbitale', orbsSub: 'Przekrój gęstości prawdopodobieństwa |<i>ψ</i><sub>nlm</sub>|² w płaszczyźnie <i>xz</i>.',
+    oQ: 'liczby kwantowe', oE: 'energia', oNodes: 'węzły rad. / kąt.', oRmp: 'najbardziej prawd. r', oBohr: 'Bohr: r = n²a₀',
+    prTg: 'Rozkład radialny P(r)',
+    orbNote: 'Funkcje radialne <i>R</i><sub>nl</sub> są dokładne, części kątowe rzeczywiste (<i>p<sub>z</sub></i>, <i>d<sub>z²</sub></i>, <i>d<sub>xz</sub></i>). Jasność ∝ (|<i>ψ</i>|²)<sup>0,4</sup>, żeby było widać słabe zewnętrzne pierścienie.',
+    prNote: '<i>P</i>(<i>r</i>) = <i>r</i>²|<i>R</i><sub>nl</sub>|² to gęstość prawdopodobieństwa znalezienia elektronu w odległości <i>r</i> od jądra.',
+    prNote1s: ' Dla 1s maksimum wypada dokładnie w <i>r</i> = <i>a</i><sub>0</sub>, tam gdzie Bohr umieścił orbitę, ale ⟨<i>r</i>⟩ = 1,5 <i>a</i><sub>0</sub>.',
+    lbA0: 'a₀', lbMean: '⟨r⟩', lbMp: 'r max', bohrTitle: 'model Bohra: rₙ = n²a₀', bohrOut: 'poza kadrem', m01: '±1 (rzecz.)'
+  },
+  en: {
+    eyebrow: 'Quantum physics · energy levels', title: 'Hydrogen atom and spectrum',
+    lede: 'Click an energy level or drag an arrow between two levels. The electron jumps, and a photon with one exact wavelength writes a new line into the spectrum.',
+    hTrans: 'transition', hType: 'process',
+    tEm: 'emission', tAb: 'absorption', tIon: 'ionization', tRec: 'recombination',
+    sReady: 'ready', sRun: 'discharge', sPause: 'paused',
+    start: 'Start discharge', pause: 'Pause', resume: 'Resume', kbd: 'space', clear: 'Clear spectrum',
+    spec: 'Spectrum', emis: 'emission', absn: 'absorption', bohr: 'Bohr model', names: 'Series names', fullscreen: 'Full screen',
+    cvHint: 'Click a level or drag an arrow',
+    ariaLv: 'Hydrogen energy level diagram', ariaSp: 'Spectrum from 90 to 2000 nm', ariaPanel: 'Settings', ariaOrb: 'Hydrogen orbital cross section',
+    cont: 'continuum E > 0: proton + free electron', axisNote: 'energy axis nonlinear (y ∝ |E|^0.35), values at the levels',
+    uv: 'UV', vis: 'visible', ir: 'infrared', offscale: 'off scale',
+    gTrans: 'Transition', lni: 'Initial level <i>n</i><sub>i</sub>', lnf: 'Final level <i>n</i><sub>f</sub>',
+    transHint: 'Picking a level performs the transition right away. ∞ is the continuum (ionization or recombination).',
+    pSeries: 'series', pRange: 'range', pLine: 'line', rUV: 'UV', rVis: 'visible', rIR: 'IR',
+    gPresets: 'Presets', prBalmer: 'Balmer series', prBalmerS: 'visible', prLyman: 'Lyman series', prPaschen: 'Paschen series', prIon: 'Ionization from n = 1',
+    gDis: 'Gas discharge', lrate: 'Excitation rate', perS: '/s',
+    disHintEm: 'Simplified model: excitation from n = 1 to n with weight ∝ 1/n³, then a cascade down with branching ratios from averaged Einstein A coefficients.',
+    disHintAb: 'Absorption: white light passes through a hot gas (60 % of atoms in n = 1, 30 % in n = 2, 10 % in n = 3, simplified model). A cold gas absorbs only the Lyman series.',
+    pPhot: 'photons', pBright: 'strongest', pVis: 'visible',
+    series: ['Lyman', 'Balmer', 'Paschen', 'Brackett', 'Pfund', 'Humphreys'], seriesShort: ['Lyman', 'Balmer', 'Paschen', 'Brackett', 'Pfund', 'Humphreys'],
+    limit: 'limit',
+    formulas: 'Formulas', formulasSub: 'Numbers for the current transition, filled in live.',
+    fLevels: 'Energy levels', fPhoton: 'Photon energy', fRyd: 'Rydberg formula', fHc: 'Shortcut hc ≈ 1240 eV·nm', fBohr: 'Orbit radius', fIon: 'Ionization and series limit',
+    model: 'model',
+    nLevels: 'More precisely 13.598 eV (with the reduced mass). Negative energy means a bound state; E = 0 is the ionization threshold.',
+    nEm: 'The electron drops lower: the atom emits a photon whose energy equals the level spacing.',
+    nAb: 'The electron moves up: the atom absorbs a photon, but only one whose energy matches the level spacing.',
+    nRyd: 'R = R<sub>∞</sub>/(1 + m<sub>e</sub>/m<sub>p</sub>) = 1.0968·10⁷ m⁻¹ is the Rydberg constant with the hydrogen reduced mass. The result is the vacuum wavelength; tabulated visible lines are given in air (n ≈ 1.0003).',
+    vacuum: 'vacuum', air: 'air',
+    nHc: 'Handy shortcut: energy in eV, wavelength in nm.',
+    nBohr: 'The Bohr model (1913) is semiclassical: it gets the energies right, but the electron does not circle on an orbit. Quantum mechanics replaces orbits with orbitals; for 1s the most probable r is exactly a₀.',
+    nIon: 'A transition from the continuum (n = ∞) sets the short-wavelength limit of a series; the lines crowd towards it.',
+    tries: 'Try this',
+    t1h: 'The red Hα line', t1b: 'Electron from n = 3 to n = 2. The photon has 1.89 eV and 656.3 nm: this line gives glowing hydrogen its pink tint.',
+    t2h: 'Series limit', t2b: 'The Balmer series plus recombination ∞ → 2. Lines crowd at 364.6 nm; beyond it there is only the continuum.',
+    t3h: 'Hydrogen lamp', t3b: 'Start the discharge. Lyα in the UV carries the most photons, and among the visible lines Hα wins.',
+    t4h: 'Nodes of the 3s orbital', t4b: 'The 3s orbital has two nodal spheres where |ψ|² = 0. Turn on P(r) and compare with 1s, which peaks at a₀.',
+    orbs: 'Orbitals', orbsSub: 'Cross section of the probability density |<i>ψ</i><sub>nlm</sub>|² in the <i>xz</i> plane.',
+    oQ: 'quantum numbers', oE: 'energy', oNodes: 'radial / angular nodes', oRmp: 'most probable r', oBohr: 'Bohr: r = n²a₀',
+    prTg: 'Radial distribution P(r)',
+    orbNote: 'Radial functions <i>R</i><sub>nl</sub> are exact, angular parts are real (<i>p<sub>z</sub></i>, <i>d<sub>z²</sub></i>, <i>d<sub>xz</sub></i>). Brightness ∝ (|<i>ψ</i>|²)<sup>0.4</sup> so the faint outer shells stay visible.',
+    prNote: '<i>P</i>(<i>r</i>) = <i>r</i>²|<i>R</i><sub>nl</sub>|² is the probability density of finding the electron at distance <i>r</i> from the nucleus.',
+    prNote1s: ' For 1s the maximum sits exactly at <i>r</i> = <i>a</i><sub>0</sub>, where Bohr put his orbit, yet ⟨<i>r</i>⟩ = 1.5 <i>a</i><sub>0</sub>.',
+    lbA0: 'a₀', lbMean: '⟨r⟩', lbMp: 'r max', bohrTitle: 'Bohr model: rₙ = n²a₀', bohrOut: 'out of frame', m01: '±1 (real)'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('wodor-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+const SUP = '⁰¹²³⁴⁵⁶⁷⁸⁹';
+function fsci(x, d = 3) {
+  if (!isFinite(x) || x === 0) return fmt(x, 0);
+  let e = Math.floor(Math.log10(Math.abs(x))), m = x / Math.pow(10, e);
+  if (Math.abs(+m.toFixed(d)) >= 10) { m /= 10; e += 1; }
+  return `${fmt(m, d)}·10${String(e).split('').map(c => (c === '-' ? '⁻' : SUP[+c])).join('')}`;
+}
+function fFreq(f) { return f >= 1e15 ? `${fmt(f / 1e15, 3)} <span>PHz</span>` : `${fmt(f / 1e12, 1)} <span>THz</span>`; }
+const fLam = (l) => (l >= 10000 ? `${fmt(l / 1000, 2)} μm` : `${fmt(l, 1)} nm`);
+
+/* ---------- names ---------- */
+const PREFIX = ['Ly', 'H', 'Pa', 'Br', 'Pf', 'Hu'];
+const GREEK = 'αβγδεζηθ';
+function lineName(lo, hi) {
+  if (lo > 6) return '';
+  if (hi === INF) return `${PREFIX[lo - 1]}∞`;
+  return PREFIX[lo - 1] + GREEK[hi - lo - 1];
+}
+const seriesName = (lo) => (lo <= 6 ? tr('series')[lo - 1] : '');
+
+/* ---------- colour ---------- */
+function wl2rgb(l) {
+  let r = 0, g = 0, b = 0;
+  if (l >= 380 && l < 440) { r = -(l - 440) / 60; b = 1; }
+  else if (l >= 440 && l < 490) { g = (l - 440) / 50; b = 1; }
+  else if (l >= 490 && l < 510) { g = 1; b = -(l - 510) / 20; }
+  else if (l >= 510 && l < 580) { r = (l - 510) / 70; g = 1; }
+  else if (l >= 580 && l < 645) { r = 1; g = -(l - 645) / 65; }
+  else if (l >= 645 && l <= 780) { r = 1; }
+  let f = 1;
+  if (l < 420) f = 0.3 + 0.7 * (l - 380) / 40; else if (l > 700) f = 0.3 + 0.7 * (780 - l) / 80;
+  const c = (v) => Math.round(255 * Math.pow(Math.max(0, v * f), 0.8));
+  return [c(r), c(g), c(b)];
+}
+const UVC = [178, 160, 255], IRC = [255, 128, 104];
+function specRGB(l) { return l < 380 ? UVC : l > 750 ? IRC : wl2rgb(l); }
+function lineCol(l) { // colour for the level diagram, adapted to the theme
+  if (l < 380) return col.uv;
+  if (l > 750) return col.ir;
+  let [r, g, b] = wl2rgb(l);
+  if (!isDark) { const k = 0.78; r = Math.round(r * k); g = Math.round(g * k); b = Math.round(b * k); }
+  else { const m = Math.max(r, g, b) || 1, k = Math.min(1.35, 235 / m); r = Math.min(255, Math.round(r * k + 25)); g = Math.min(255, Math.round(g * k + 25)); b = Math.min(255, Math.round(b * k + 25)); }
+  return `rgb(${r},${g},${b})`;
+}
+const rgbStr = (c, a = 1) => `rgba(${c[0]},${c[1]},${c[2]},${a})`;
+
+/* ---------- state ---------- */
+const S = {
+  run: false, started: false, rate: 30, mode: 'em', bohr: false, names: false,
+  trans: { ni: 3, nf: 2 }, elec: 2,
+  marks: [], flashes: [], anim: null, photons: [], queue: [], acc: 0,
+  lines: { em: new Map(), ab: new Map() }, flash: null,
+  stats: { ph: 0, vis: 0 }, drag: null, hover: null, interacted: false,
+  orb: '1s', pr: false, preset: null
+};
+const keyOf = (lo, hi) => `${lo}-${hi === INF ? 'i' : hi}`;
+function addLine(map, lo, hi, k = 1) {
+  const key = keyOf(lo, hi);
+  let o = map.get(key);
+  if (!o) { o = { lo, hi, lam: lamVac(lo, hi), c: 0 }; map.set(key, o); }
+  o.c += k;
+  return o;
+}
+
+/* ---------- canvases ---------- */
+const lv = $('#lv'), lx = lv.getContext('2d'), lvBox = $('#lv-box');
+const sp = $('#sp'), sx = sp.getContext('2d'), spBox = $('#sp-box');
+let LW = 800, LH = 450, SW = 800, SH = 150, dpr = 1;
+let dirtyLv = true, dirtySp = true;
+let col = {}, isDark = false;
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+const FONT_MATH = '"STIX Two Text", "Cambria Math", "Times New Roman", serif';
+const FONT_BODY = '"Instrument Sans", system-ui, sans-serif';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'blue', 'amber', 'uv', 'ir'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  const h = col.paper.replace('#', ''), n = parseInt(h, 16);
+  isDark = (((n >> 16) & 255) * 0.3 + ((n >> 8) & 255) * 0.59 + (n & 255) * 0.11) < 100;
+  dirtyLv = dirtySp = true; prDirty = true;
+  updateLegend(); updateFormulas();
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  LW = lvBox.clientWidth; LH = lvBox.clientHeight; lv.width = Math.round(LW * dpr); lv.height = Math.round(LH * dpr);
+  SW = spBox.clientWidth; SH = spBox.clientHeight; sp.width = Math.round(SW * dpr); sp.height = Math.round(SH * dpr);
+  dirtyLv = dirtySp = true;
+}
+new ResizeObserver(resize).observe(lvBox);
+new ResizeObserver(resize).observe(spBox);
+
+function halo(c, text, x, y, color, font, align = 'left', base = 'middle', bg = col.paper) {
+  c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = bg; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+function arrow(c, x1, y1, x2, y2, color, w = 2, head = 9, dash = null) {
+  const a = Math.atan2(y2 - y1, x2 - x1), L = Math.hypot(x2 - x1, y2 - y1);
+  if (L < 2) return;
+  head = Math.min(head, L * 0.6);
+  c.save(); c.strokeStyle = color; c.fillStyle = color; c.lineWidth = w; c.lineCap = 'round';
+  if (dash) c.setLineDash(dash);
+  c.beginPath(); c.moveTo(x1, y1); c.lineTo(x2 - Math.cos(a) * head * 0.7, y2 - Math.sin(a) * head * 0.7); c.stroke();
+  c.setLineDash([]);
+  c.beginPath(); c.moveTo(x2, y2);
+  c.lineTo(x2 - Math.cos(a - 0.42) * head, y2 - Math.sin(a - 0.42) * head);
+  c.lineTo(x2 - Math.cos(a + 0.42) * head, y2 - Math.sin(a + 0.42) * head);
+  c.closePath(); c.fill(); c.restore();
+}
+
+/* ---------- level diagram geometry ---------- */
+const G = {};
+function geom() {
+  const narrow = LW < 560;
+  G.pt = 8; G.y0 = Math.round(LH * 0.15); G.y1 = LH - 30;
+  G.xl = narrow ? 40 : 58;            // level lines start
+  G.xr = LW - 8;
+  G.cl = narrow ? 50 : 76;            // arrow columns region
+  G.cr = LW - (narrow ? 66 : 92);
+  if (S.bohr) G.cr = Math.min(G.cr, LW - Math.min(LW * 0.34, 240));
+  G.colW = (G.cr - G.cl) / 6;
+  G.narrow = narrow;
+}
+const yOf = (n) => (n === INF ? G.y0 : G.y0 + (G.y1 - G.y0) * Math.pow(n, -0.7));
+function colX(lo, hi) {
+  const slot = hi === INF ? 6 : hi - lo - 1;
+  return G.cl + G.colW * (lo - 1) + G.colW * 0.14 + slot * (G.colW * 0.72 / 6);
+}
+function hitLevel(y) {
+  if (y < G.y0 + 5) return INF;
+  let best = null, bd = 1e9;
+  for (let n = 1; n <= 7; n++) { const d = Math.abs(yOf(n) - y); if (d < bd) { bd = d; best = n; } }
+  const tol = best >= 5 ? 7 : 16;
+  if (best === 7 && y < yOf(7) - 6) return y < (yOf(7) + G.y0) / 2 ? INF : 7;
+  return bd <= Math.max(tol, 6) ? best : (bd < 26 && best <= 3 ? best : null);
+}
+
+/* ---------- transitions ---------- */
+function procKind(ni, nf) {
+  if (ni === INF) return 'tRec';
+  if (nf === INF) return 'tIon';
+  return nf < ni ? 'tEm' : 'tAb';
+}
+function doTransition(ni, nf, animate = true) {
+  if (ni === nf) return;
+  S.trans = { ni, nf }; S.elec = nf; S.preset = null;
+  const lo = Math.min(ni, nf), hi = Math.max(ni, nf);
+  addLine(S.lines.em, lo, hi); addLine(S.lines.ab, lo, hi);
+  S.marks = S.marks.filter(m => !(m.lo === lo && m.hi === hi));
+  S.marks.push({ lo, hi });
+  if (S.marks.length > 8) S.marks.shift();
+  const lam = lamVac(lo, hi);
+  S.flash = { key: keyOf(lo, hi), life: 1 };
+  if (animate && !reduceMotion) {
+    S.anim = { ni, nf, t: 0, dur: 0.45 };
+    geom();
+    const x = colX(lo, hi), ym = (yOf(ni) + yOf(nf)) / 2;
+    const emit = !(nf > ni);
+    S.photons.push({ x0: x, y: ym, lam, t: 0, dir: emit ? 1 : -1, life: emit ? 1.1 : 0.45 });
+  }
+  hideHint();
+  syncAll();
+}
+function setPreset(name) {
+  stopRun();
+  const sets = { balmer: 2, lyman: 1, paschen: 3 };
+  S.lines.em.clear(); S.lines.ab.clear(); S.marks = []; S.flashes = []; S.queue = []; S.photons = []; S.anim = null;
+  S.stats = { ph: 0, vis: 0 };
+  if (name === 'ion') {
+    S.marks = [{ lo: 1, hi: INF }];
+    addLine(S.lines.em, 1, INF); addLine(S.lines.ab, 1, INF);
+    S.trans = { ni: 1, nf: INF }; S.elec = INF;
+    setMode('ab');
+  } else {
+    const lo = sets[name];
+    for (let hi = lo + 1; hi <= 7; hi++) { S.marks.push({ lo, hi }); addLine(S.lines.em, lo, hi); addLine(S.lines.ab, lo, hi); }
+    S.marks.push({ lo, hi: INF }); addLine(S.lines.em, lo, INF, 0.6); addLine(S.lines.ab, lo, INF, 0.6);
+    S.trans = { ni: lo + 1, nf: lo }; S.elec = lo;
+  }
+  S.preset = name; S.flash = null;
+  syncAll();
+}
+
+/* ---------- discharge model ---------- */
+function pickW(entries) {
+  let s = 0; for (const [, w] of entries) s += w;
+  let r = Math.random() * s;
+  for (const [k, w] of entries) { r -= w; if (r <= 0) return k; }
+  return entries[entries.length - 1][0];
+}
+const EXC = [2, 3, 4, 5, 6, 7].map(n => [n, Math.pow(n, -3)]);
+const ABS_LOW = [[1, 0.6], [2, 0.3], [3, 0.1]];
+function fWeights(lo) { // relative absorption oscillator strengths, f ∝ (g_u/g_l) A λ²
+  const out = [];
+  for (let hi = lo + 1; hi <= 7; hi++) { const l = lamVac(lo, hi); out.push([hi, (hi * hi) / (lo * lo) * AE[hi][lo] * l * l]); }
+  return out;
+}
+const FW = { 1: fWeights(1), 2: fWeights(2), 3: fWeights(3) };
+function excite() {
+  if (S.mode === 'em') {
+    let cur = pickW(EXC), d = 0;
+    while (cur > 1) {
+      const nf = pickW(Object.entries(AE[cur]).map(([k, v]) => [+k, v]));
+      S.queue.push({ t: d, ni: cur, nf }); cur = nf; d += 0.08;
+    }
+  } else {
+    const lo = pickW(ABS_LOW), hi = pickW(FW[lo]);
+    S.queue.push({ t: 0, ni: lo, nf: hi });
+  }
+}
+function registerEvent(ni, nf) {
+  const lo = Math.min(ni, nf), hi = Math.max(ni, nf);
+  const o = addLine(S.lines[S.mode], lo, hi);
+  S.stats.ph++; if (region(o.lam) === 'vis') S.stats.vis++;
+  S.flashes.push({ lo, hi, life: 1, up: nf > ni });
+  if (S.flashes.length > 90) S.flashes.splice(0, S.flashes.length - 90);
+}
+const rateFromSlider = (v) => Math.round(Math.pow(10, 0.3 + v / 1000 * 2.3));   // 2 .. 400 /s
+function startRun() { S.run = true; S.started = true; hideHint(); syncRun(); }
+function stopRun() { S.run = false; syncRun(); }
+function toggleRun() { S.run ? stopRun() : startRun(); }
+const ICON_PLAY = '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+const ICON_PAUSE = '<path d="M6 4v12M14 4v12" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>';
+function syncRun() {
+  $('#run-ic').innerHTML = S.run ? ICON_PAUSE : ICON_PLAY;
+  $('#run-lbl').textContent = S.run ? tr('pause') : (S.started ? tr('resume') : tr('start'));
+  updateLegend(); dirtyLv = true;
+}
+function setMode(m) {
+  S.mode = m;
+  $$('#mode button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === m)));
+  $('#dis-hint').textContent = tr(m === 'em' ? 'disHintEm' : 'disHintAb');
+  S.queue = [];
+  dirtySp = true; updateDisPills();
+}
+
+/* ---------- drawing: level diagram ---------- */
+function drawLv(now) {
+  const c = lx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  geom();
+  c.fillStyle = col.paper; c.fillRect(0, 0, LW, LH);
+  // graph paper
+  c.lineWidth = 1; c.strokeStyle = col.grid; c.beginPath();
+  for (let x = 0.5; x < LW; x += 20) { c.moveTo(x, 0); c.lineTo(x, LH); }
+  for (let y = 0.5; y < LH; y += 20) { c.moveTo(0, y); c.lineTo(LW, y); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let x = 0.5; x < LW; x += 100) { c.moveTo(x, 0); c.lineTo(x, LH); }
+  for (let y = 0.5; y < LH; y += 100) { c.moveTo(0, y); c.lineTo(LW, y); }
+  c.stroke();
+
+  // continuum
+  const grd = c.createLinearGradient(0, 0, 0, G.y0);
+  grd.addColorStop(0, withA(col.acc, 0.16)); grd.addColorStop(1, withA(col.acc, 0.04));
+  c.fillStyle = grd; c.fillRect(0, 0, LW, G.y0);
+  c.save(); c.beginPath(); c.rect(0, 0, LW, G.y0); c.clip();
+  c.strokeStyle = withA(col.acc, 0.18); c.lineWidth = 1; c.beginPath();
+  for (let x = -G.y0; x < LW + G.y0; x += 9) { c.moveTo(x, G.y0); c.lineTo(x + G.y0, 0); }
+  c.stroke(); c.restore();
+  const hovInf = (S.hover === INF) || (S.drag && S.drag.to === INF);
+  c.strokeStyle = hovInf ? col.acc : col.ink2; c.lineWidth = hovInf ? 2 : 1.2; c.setLineDash([5, 4]);
+  c.beginPath(); c.moveTo(G.xl, G.y0 + 0.5); c.lineTo(G.xr, G.y0 + 0.5); c.stroke(); c.setLineDash([]);
+  halo(c, G.narrow ? tr('cont').split(':')[0] : tr('cont'), G.xl + 4, Math.max(12, G.y0 * 0.42), col.ink2, `500 ${G.narrow ? 10.5 : 12}px ${FONT_BODY}`, 'left', 'middle', withA(col.paper, 0.0001));
+  halo(c, 'n = ∞', 8, G.y0, hovInf ? col.acc : col.ink2, `500 ${G.narrow ? 10 : 11.5}px ${FONT_MONO}`, 'left');
+  halo(c, 'E = 0', G.xr, G.y0 - 9, col.ink3, `500 10.5px ${FONT_MONO}`, 'right');
+
+  // dense high levels n = 8..40
+  c.strokeStyle = withA(col.ink3, 0.35); c.lineWidth = 0.8; c.beginPath();
+  for (let n = 8; n <= 24; n++) { const y = Math.round(yOf(n)) + 0.5; c.moveTo(G.xl, y); c.lineTo(G.xr, y); }
+  c.stroke();
+
+  // series headings (toggle)
+  if (S.names) {
+    const nm = tr('seriesShort');
+    for (let lo = 1; lo <= 6; lo++) {
+      const x = G.cl + G.colW * (lo - 0.5);
+      const reg = lo === 1 ? col.uv : lo === 2 ? col.acc : col.ir;
+      c.save(); c.translate(x, G.y0 + 6);
+      halo(c, G.colW < 52 ? nm[lo - 1].slice(0, 4) + '.' : nm[lo - 1], 0, 6, reg, `600 ${G.narrow ? 9.5 : 11}px ${FONT_MONO}`, 'center', 'top');
+      c.restore();
+    }
+  }
+
+  // levels
+  const fsz = G.narrow ? 10 : 11.5;
+  for (let n = 1; n <= 7; n++) {
+    const y = Math.round(yOf(n)) + 0.5;
+    const involved = n === S.trans.ni || n === S.trans.nf;
+    const hov = S.hover === n || (S.drag && (S.drag.to === n || S.drag.from === n));
+    c.strokeStyle = hov ? col.acc : (n === S.elec ? col.ink : col.ink2);
+    c.lineWidth = hov ? 2.6 : (n === S.elec ? 2.4 : 1.6);
+    c.beginPath(); c.moveTo(G.xl, y); c.lineTo(G.xr, y); c.stroke();
+    const lab = n <= 4 || !G.narrow ? `n = ${n}` : String(n);
+    halo(c, lab, 8, y, hov ? col.acc : (involved ? col.ink : col.ink2), `${involved ? 600 : 500} ${n >= 5 ? fsz - 1 : fsz}px ${FONT_MONO}`, 'left');
+    if (n <= 4 || involved || hov) {
+      const off = n <= 4 ? 9 : 0;
+      halo(c, `${fmt(En(n), n === 1 ? 2 : n <= 3 ? 2 : 3)} eV`, G.xr, y - off, involved || hov ? col.ink : col.ink3, `500 ${G.narrow ? 9.5 : 10.5}px ${FONT_MONO}`, 'right');
+    }
+  }
+  halo(c, tr('axisNote'), G.xr, LH - 10, col.ink3, `400 ${G.narrow ? 9.5 : 10.5}px ${FONT_BODY}`, 'right');
+
+  // static marks
+  const latestKey = keyOf(Math.min(S.trans.ni, S.trans.nf), Math.max(S.trans.ni, S.trans.nf));
+  for (const m of S.marks) {
+    const k = keyOf(m.lo, m.hi);
+    const isCur = k === latestKey;
+    if (isCur && S.anim) continue;
+    const x = colX(m.lo, m.hi), lam = lamVac(m.lo, m.hi), cc = lineCol(lam);
+    let ya, yb;
+    if (isCur) { ya = yOf(S.trans.ni); yb = yOf(S.trans.nf); }
+    else { ya = yOf(m.hi); yb = yOf(m.lo); if (S.preset === 'ion') { ya = yOf(m.lo); yb = yOf(m.hi); } }
+    c.save(); c.globalAlpha = isCur ? 1 : (S.preset ? 0.9 : 0.4);
+    arrow(c, x, ya, x, yb, cc, isCur ? 2.6 : 2, isCur ? 10 : 8);
+    c.restore();
+    if (isCur) labelArrow(c, x, (ya + yb) / 2, lam, cc, true);
+  }
+  // discharge flashes
+  for (const f of S.flashes) {
+    const x = colX(f.lo, f.hi), lam = lamVac(f.lo, f.hi);
+    c.save(); c.globalAlpha = Math.max(0, f.life) * 0.9;
+    const ya = f.up ? yOf(f.lo) : yOf(f.hi), yb = f.up ? yOf(f.hi) : yOf(f.lo);
+    arrow(c, x, ya, x, yb, lineCol(lam), 2, 7);
+    c.restore();
+  }
+  // animated current transition
+  let ex, ey;
+  {
+    const lo = Math.min(S.trans.ni, S.trans.nf), hi = Math.max(S.trans.ni, S.trans.nf);
+    ex = colX(lo, hi); ey = yOf(S.elec);
+    if (S.anim) {
+      const u = Math.min(1, S.anim.t / S.anim.dur), e = 1 - Math.pow(1 - u, 3);
+      const ya = yOf(S.anim.ni), yb = yOf(S.anim.nf), yc = ya + (yb - ya) * e;
+      const lam = lamVac(lo, hi), cc = lineCol(lam);
+      arrow(c, ex, ya, ex, yc, cc, 2.6, 10);
+      ey = yc;
+      if (u >= 1) labelArrow(c, ex, (ya + yb) / 2, lam, cc, true);
+    }
+  }
+  // drag preview
+  if (S.drag && S.drag.to != null && S.drag.to !== S.drag.from) {
+    const a = S.drag.from, b = S.drag.to, lam = lamVac(a, b), cc = lineCol(lam);
+    const x = Math.max(G.cl, Math.min(G.cr, S.drag.x));
+    arrow(c, x, yOf(a), x, yOf(b), cc, 2.2, 10, [6, 5]);
+    halo(c, `${ns(a)} → ${ns(b)}: ${fLam(lamShow(lam))}`, x + 10, (yOf(a) + yOf(b)) / 2, col.ink, `600 12px ${FONT_MONO}`, 'left');
+  }
+  // photons
+  for (const p of S.photons) drawPhoton(c, p);
+  // electron
+  if (S.elec === INF && !S.anim) { ex = Math.min(G.cr, ex + 14); ey = G.y0 * 0.7; }
+  c.save(); c.shadowColor = col.acc; c.shadowBlur = 12; c.fillStyle = col.acc;
+  c.beginPath(); c.arc(ex, ey, 6, 0, Math.PI * 2); c.fill(); c.restore();
+  c.fillStyle = 'rgba(255,255,255,.8)'; c.beginPath(); c.arc(ex - 1.8, ey - 1.8, 1.8, 0, Math.PI * 2); c.fill();
+  halo(c, 'e⁻', ex + 9, ey - 9, col.acc, `600 11px ${FONT_MONO}`, 'left');
+
+  if (S.bohr) drawBohr(c);
+}
+function labelArrow(c, x, y, lam, cc, strong) {
+  const lo = Math.min(S.trans.ni, S.trans.nf), hi = Math.max(S.trans.ni, S.trans.nf);
+  const name = strong ? lineName(lo, hi) : '';
+  const txt = `${name ? name + ' ' : ''}${fLam(lamShow(lam))}`;
+  const crowded = S.marks.some(m => m.lo === lo && colX(m.lo, m.hi) > x + 1) || S.flashes.length > 0;
+  let right = (x + 10 + txt.length * 7 < G.xr - 60 || x < LW / 2) && !crowded;
+  if (crowded) x = colX(lo, lo + 1);
+  if (!right && x - 10 - txt.length * 7 < 4) right = true;
+  halo(c, txt, right ? x + 9 : x - 9, y, strong ? col.ink : col.ink2, `${strong ? 600 : 500} ${G.narrow ? 10.5 : 12}px ${FONT_MONO}`, right ? 'left' : 'right');
+}
+function drawPhoton(c, p) {
+  const lam = p.lam, cc = lineCol(lam);
+  const wl = 6 + 20 * Math.log(lam / 90) / Math.log(2000 / 90);
+  const L = 70, speed = 520;
+  let head;
+  if (p.dir > 0) head = p.x0 + 8 + speed * p.t;
+  else head = p.x0 - 6 - Math.max(0, (p.life - p.t)) * speed;
+  const tail = head - p.dir * L;
+  c.save(); c.strokeStyle = cc; c.lineWidth = 2; c.lineCap = 'round';
+  c.globalAlpha = Math.min(1, (p.life - p.t) * 4, 1);
+  c.beginPath();
+  const n = 60;
+  for (let i = 0; i <= n; i++) {
+    const s = i / n, x = tail + (head - tail) * s;
+    const env = Math.sin(Math.PI * s);
+    const y = p.y + Math.sin((x - p.x0) / wl * 2 * Math.PI) * 6 * env;
+    i ? c.lineTo(x, y) : c.moveTo(x, y);
+  }
+  c.stroke();
+  arrow(c, head - p.dir * 2, p.y, head + p.dir * 6, p.y, cc, 2, 7);
+  if (region(lam) !== 'vis') halo(c, region(lam) === 'uv' ? 'UV' : 'IR', (head + tail) / 2, p.y - 14, cc, `600 10px ${FONT_MONO}`, 'center');
+  c.restore();
+}
+function drawBohr(c) {
+  const y2 = yOf(2), y1 = yOf(1);
+  const size = Math.min(LW - G.cr - 18, y1 - y2 - 44, 230);
+  if (size < 70) return;
+  const cx = LW - 10 - size / 2, cy = (y2 + y1) / 2;
+  const R = size / 2;
+  c.save();
+  c.fillStyle = withA(col.surface, 0.94); c.strokeStyle = col.line; c.lineWidth = 1;
+  roundRect(c, cx - R, cy - R - 12, size, size + 12, 10); c.fill(); c.stroke();
+  const fin = (n) => (n === INF ? 8 : n);
+  let nE = fin(S.elec);
+  if (S.anim) { const u = Math.min(1, S.anim.t / S.anim.dur); nE = Math.sqrt(fin(S.anim.ni) ** 2 + (fin(S.anim.nf) ** 2 - fin(S.anim.ni) ** 2) * u); }
+  const nMax = Math.max(3, Math.min(7, Math.ceil(Math.max(fin(S.trans.ni) === 8 ? 3 : fin(S.trans.ni), fin(S.trans.nf) === 8 ? 3 : fin(S.trans.nf)))));
+  const k = (R - 16) / (nMax * nMax);
+  const oy = cy + 6;
+  for (let n = 1; n <= nMax; n++) {
+    const r = k * n * n;
+    c.strokeStyle = (n === S.trans.ni || n === S.trans.nf) ? col.ink2 : withA(col.ink3, 0.6);
+    c.lineWidth = (n === S.trans.ni || n === S.trans.nf) ? 1.4 : 1; c.setLineDash(n === S.elec ? [] : [3, 3]);
+    c.beginPath(); c.arc(cx, oy, r, 0, Math.PI * 2); c.stroke();
+    if (r > 14) halo(c, String(n), cx + r * 0.71 + 3, oy - r * 0.71 - 3, col.ink3, `500 9.5px ${FONT_MONO}`, 'left', 'middle', col.surface);
+  }
+  c.setLineDash([]);
+  c.fillStyle = col.ink; c.beginPath(); c.arc(cx, oy, 2.6, 0, Math.PI * 2); c.fill();
+  const ang = -0.9;
+  let re = k * nE * nE;
+  if (nE > nMax + 0.01 || S.elec === INF && !S.anim) re = Math.min(re, R - 6);
+  c.save(); c.shadowColor = col.acc; c.shadowBlur = 10; c.fillStyle = col.acc;
+  c.beginPath(); c.arc(cx + Math.cos(ang) * re, oy + Math.sin(ang) * re, 4.5, 0, Math.PI * 2); c.fill(); c.restore();
+  halo(c, tr('bohrTitle'), cx, cy - R - 3, col.ink2, `500 ${size < 200 ? 8.5 : 10}px ${FONT_MONO}`, 'center', 'middle', col.surface);
+  if (S.elec !== INF && S.elec > nMax) halo(c, `n = ${S.elec}: ${tr('bohrOut')}`, cx, cy + R - 6, col.ink3, `500 9.5px ${FONT_MONO}`, 'center', 'middle', col.surface);
+  c.restore();
+}
+function roundRect(c, x, y, w, h, r) {
+  c.beginPath(); c.moveTo(x + r, y); c.arcTo(x + w, y, x + w, y + h, r); c.arcTo(x + w, y + h, x, y + h, r);
+  c.arcTo(x, y + h, x, y, r); c.arcTo(x, y, x + w, y, r); c.closePath();
+}
+function withA(hex, a) {
+  if (!hex || hex[0] !== '#') return hex;
+  const h = hex.replace('#', ''); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16);
+  return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`;
+}
+
+/* ---------- drawing: spectrum strip ---------- */
+const SEG = [{ a: 90, b: 380, f: 0.24 }, { a: 380, b: 750, f: 0.46 }, { a: 750, b: 2000, f: 0.30 }];
+const SP = { l: 10, r: 10 };
+function specX(l) {
+  const W = SW - SP.l - SP.r;
+  let cum = 0;
+  for (const s of SEG) {
+    if (l <= s.b || s === SEG[SEG.length - 1]) {
+      const u = Math.log(Math.max(l, s.a) / s.a) / Math.log(s.b / s.a);
+      return SP.l + W * (cum + s.f * u);
+    }
+    cum += s.f;
+  }
+  return SP.l + W;
+}
+const SPEC_TXT = '#AEB9C6', SPEC_DIM = '#6F7C8B';
+function drawSp() {
+  const c = sx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = '#04060B'; c.fillRect(0, 0, SW, SH);
+  const narrow = SW < 560;
+  const bt = 26, bb = SH - 30, bh = bb - bt;
+  const xa = specX(90), xv0 = specX(380), xv1 = specX(750), xb = specX(2000);
+  const ab = S.mode === 'ab';
+  // background band
+  if (ab) {
+    let g = c.createLinearGradient(xa, 0, xv0, 0); g.addColorStop(0, '#3A3460'); g.addColorStop(1, '#8C82C8');
+    c.fillStyle = g; c.fillRect(xa, bt, xv0 - xa, bh);
+    for (let x = Math.floor(xv0); x < xv1; x++) {
+      const l = invSpecX(x + 0.5), [r, gg, b] = wl2rgb(l);
+      c.fillStyle = `rgb(${r},${gg},${b})`; c.fillRect(x, bt, 1.2, bh);
+    }
+    g = c.createLinearGradient(xv1, 0, xb, 0); g.addColorStop(0, '#9A4A3E'); g.addColorStop(1, '#3E2220');
+    c.fillStyle = g; c.fillRect(xv1, bt, xb - xv1, bh);
+  } else {
+    c.fillStyle = '#0B0A16'; c.fillRect(xa, bt, xv0 - xa, bh);
+    for (let x = Math.floor(xv0); x < xv1; x++) {
+      const l = invSpecX(x + 0.5), [r, gg, b] = wl2rgb(l);
+      c.fillStyle = `rgba(${r},${gg},${b},0.09)`; c.fillRect(x, bt, 1.2, bh);
+    }
+    c.fillStyle = '#130A0A'; c.fillRect(xv1, bt, xb - xv1, bh);
+  }
+  // series-limit continua
+  const map = S.lines[S.mode];
+  for (const o of map.values()) {
+    if (o.hi !== INF) continue;
+    const x = specX(o.lam), w = Math.min(70, x - xa);
+    const g = c.createLinearGradient(x - w, 0, x, 0);
+    if (ab) { g.addColorStop(0, 'rgba(0,0,0,0.15)'); g.addColorStop(1, 'rgba(0,0,0,0.7)'); }
+    else { const q = specRGB(o.lam); g.addColorStop(0, rgbStr(q, 0)); g.addColorStop(1, rgbStr(q, 0.32)); }
+    c.fillStyle = g; c.fillRect(x - w, bt, w, bh);
+  }
+  // lines
+  let maxc = 0; for (const o of map.values()) if (o.hi !== INF) maxc = Math.max(maxc, o.c);
+  const curKey = keyOf(Math.min(S.trans.ni, S.trans.nf), Math.max(S.trans.ni, S.trans.nf));
+  for (const o of map.values()) {
+    if (o.lam > 2000) continue;
+    const x = specX(o.lam), q = specRGB(o.lam);
+    const fl = S.flash && S.flash.key === keyOf(o.lo, o.hi) ? S.flash.life : 0;
+    const b = o.hi === INF ? 0.9 : Math.min(1, 0.28 + 0.72 * Math.sqrt(o.c / (maxc || 1)));
+    if (ab) {
+      c.fillStyle = `rgba(0,0,0,${Math.min(0.95, 0.35 + 0.6 * b)})`;
+      c.fillRect(x - 1.4, bt, 2.8, bh);
+    } else {
+      c.save(); c.shadowColor = rgbStr(q, 1); c.shadowBlur = 6 + 10 * b + 18 * fl;
+      c.fillStyle = rgbStr(q, Math.min(1, b + fl)); c.fillRect(x - 1.1, bt, 2.2, bh);
+      c.restore();
+      if (fl > 0) { c.fillStyle = `rgba(255,255,255,${0.7 * fl})`; c.fillRect(x - 0.6, bt, 1.2, bh); }
+    }
+  }
+  // region dividers and labels
+  c.strokeStyle = 'rgba(255,255,255,.22)'; c.lineWidth = 1; c.setLineDash([3, 3]);
+  c.beginPath(); c.moveTo(Math.round(xv0) + 0.5, bt - 6); c.lineTo(Math.round(xv0) + 0.5, bb); c.moveTo(Math.round(xv1) + 0.5, bt - 6); c.lineTo(Math.round(xv1) + 0.5, bb); c.stroke(); c.setLineDash([]);
+  c.font = `500 ${narrow ? 9.5 : 10.5}px ${FONT_MONO}`; c.textBaseline = 'middle'; c.fillStyle = SPEC_TXT;
+  const curL = curLabelRect();
+  const reg = (t, x, al) => {
+    const w = c.measureText(t).width, x0 = al === 'left' ? x : al === 'right' ? x - w : x - w / 2;
+    if (curL && x0 < curL[1] + 6 && x0 + w > curL[0] - 6) return;
+    c.textAlign = al; c.fillText(t, x, 11);
+  };
+  reg(tr('uv').toUpperCase(), xa + 4, 'left');
+  reg(tr('vis').toUpperCase(), (xv0 + xv1) / 2, 'center');
+  reg(tr('ir').toUpperCase(), xb - 4, 'right');
+  // ticks
+  const ticks = narrow ? [100, 200, 300, 400, 500, 600, 700, 1000, 1500, 2000] : [100, 150, 200, 300, 400, 450, 500, 550, 600, 650, 700, 800, 1000, 1500, 2000];
+  c.strokeStyle = 'rgba(255,255,255,.35)'; c.fillStyle = SPEC_DIM; c.font = `500 ${narrow ? 9 : 10}px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'top';
+  c.beginPath();
+  for (const t of ticks) { const x = Math.round(specX(t)) + 0.5; c.moveTo(x, bb); c.lineTo(x, bb + 4); }
+  c.stroke();
+  for (const t of ticks) { const x = specX(t); c.fillText(String(t), Math.min(SW - 12, Math.max(12, x)), bb + 6); }
+  c.textAlign = 'right'; c.fillText('λ [nm]', SW - 6, bb + 17);
+  // line names (toggle)
+  if (S.names) {
+    const arr = [...map.values()].filter(o => o.hi !== INF && o.lam <= 2000).sort((a, b) => a.lam - b.lam);
+    let lastX = -1e9;
+    c.font = `500 ${narrow ? 9 : 10}px ${FONT_MONO}`; c.textAlign = 'center'; c.textBaseline = 'middle';
+    for (const o of arr) {
+      const x = specX(o.lam); const nm = lineName(o.lo, o.hi);
+      const w = c.measureText(nm).width;
+      if (x - w / 2 < lastX + 3) continue;
+      c.fillStyle = ab ? '#FFFFFF' : rgbStr(specRGB(o.lam), 1);
+      c.save(); c.shadowColor = 'rgba(0,0,0,.9)'; c.shadowBlur = 3; c.fillText(nm, x, bt + 9); c.restore();
+      lastX = x + w / 2;
+    }
+  }
+  // current line marker
+  const cur = curLine();
+  if (cur) {
+    const lamS = lamShow(cur.lam);
+    const name = lineName(cur.lo, cur.hi);
+    const txt = `${name ? name + ' ' : ''}${fLam(lamS)}`;
+    c.font = `600 ${narrow ? 10 : 11}px ${FONT_MONO}`;
+    if (cur.lam <= 2000) {
+      const x = specX(cur.lam);
+      c.fillStyle = '#FFFFFF';
+      c.beginPath(); c.moveTo(x, bt - 2); c.lineTo(x - 4.5, bt - 9); c.lineTo(x + 4.5, bt - 9); c.closePath(); c.fill();
+      const [x0] = curL;
+      c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; c.textBaseline = 'middle'; c.fillText(txt, x0, 11);
+    } else {
+      const t2 = `${txt} → ${tr('offscale')}`;
+      const w = c.measureText(t2).width;
+      c.fillStyle = '#04060B'; c.fillRect(xb - w - 22, bt + bh / 2 - 9, w + 18, 18);
+      c.fillStyle = rgbStr(IRC, 1); c.textAlign = 'right'; c.textBaseline = 'middle'; c.fillText(t2, xb - 8, bt + bh / 2);
+    }
+  }
+}
+function curLine() {
+  const key = keyOf(Math.min(S.trans.ni, S.trans.nf), Math.max(S.trans.ni, S.trans.nf));
+  return S.lines[S.mode].get(key) || S.lines.em.get(key);
+}
+function curLabelRect() {
+  const cur = curLine(); if (!cur || cur.lam > 2000) return null;
+  const c = sx, narrow = SW < 560, name = lineName(cur.lo, cur.hi);
+  const txt = `${name ? name + ' ' : ''}${fLam(lamShow(cur.lam))}`;
+  c.save(); c.font = `600 ${narrow ? 10 : 11}px ${FONT_MONO}`; const w = c.measureText(txt).width; c.restore();
+  const x = specX(cur.lam);
+  let x0 = x + 9; if (x0 + w > SW - 6) x0 = x - 9 - w;
+  x0 = Math.max(4, x0);
+  return [x0, x0 + w];
+}
+function invSpecX(x) {
+  const W = SW - SP.l - SP.r; let u = (x - SP.l) / W, cum = 0;
+  for (const s of SEG) { if (u <= cum + s.f || s === SEG[SEG.length - 1]) { const v = (u - cum) / s.f; return s.a * Math.pow(s.b / s.a, v); } cum += s.f; }
+  return 2000;
+}
+
+/* ---------- orbitals ---------- */
+const Y00 = () => 1 / Math.sqrt(4 * Math.PI);
+const ORB = {
+  '1s': { n: 1, l: 0, m: '0', lab: '1s', R: r => 2 * Math.exp(-r), Y: Y00 },
+  '2s': { n: 2, l: 0, m: '0', lab: '2s', R: r => (2 - r) * Math.exp(-r / 2) / (2 * Math.SQRT2), Y: Y00 },
+  '2p': { n: 2, l: 1, m: '0', lab: '2p<sub>z</sub>', R: r => r * Math.exp(-r / 2) / (2 * Math.sqrt(6)), Y: (x, z, r) => (r ? Math.sqrt(3 / (4 * Math.PI)) * z / r : 0) },
+  '3s': { n: 3, l: 0, m: '0', lab: '3s', R: r => 2 / (81 * Math.sqrt(3)) * (27 - 18 * r + 2 * r * r) * Math.exp(-r / 3), Y: Y00 },
+  '3p': { n: 3, l: 1, m: '0', lab: '3p<sub>z</sub>', R: r => 4 / (81 * Math.sqrt(6)) * (6 * r - r * r) * Math.exp(-r / 3), Y: (x, z, r) => (r ? Math.sqrt(3 / (4 * Math.PI)) * z / r : 0) },
+  '3dz2': { n: 3, l: 2, m: '0', lab: '3d<sub>z²</sub>', R: r => 4 / (81 * Math.sqrt(30)) * r * r * Math.exp(-r / 3), Y: (x, z, r) => (r ? Math.sqrt(5 / (16 * Math.PI)) * (3 * z * z / (r * r) - 1) : 0) },
+  '3dxz': { n: 3, l: 2, m: '±1', lab: '3d<sub>xz</sub>', R: r => 4 / (81 * Math.sqrt(30)) * r * r * Math.exp(-r / 3), Y: (x, z, r) => (r ? Math.sqrt(15 / (4 * Math.PI)) * x * z / (r * r) : 0) }
+};
+for (const o of Object.values(ORB)) {
+  o.mean = (3 * o.n * o.n - o.l * (o.l + 1)) / 2;
+  o.L = Math.max(4.6, 1.9 * o.mean + 2);
+  let best = 0, bv = -1;
+  for (let i = 1; i <= 6000; i++) { const r = i * o.L / 6000 * 1.3; const v = r * r * o.R(r) ** 2; if (v > bv) { bv = v; best = r; } }
+  o.rmp = best; o.pmax = bv;
+}
+const STOPS = [[0, [5, 7, 12]], [0.18, [40, 12, 70]], [0.42, [140, 30, 110]], [0.66, [228, 85, 70]], [0.86, [250, 196, 90]], [1, [255, 248, 225]]];
+const LUT = (() => {
+  const out = new Uint8ClampedArray(256 * 3);
+  for (let i = 0; i < 256; i++) {
+    const u = i / 255; let k = 0; while (k < STOPS.length - 2 && u > STOPS[k + 1][0]) k++;
+    const [u0, c0] = STOPS[k], [u1, c1] = STOPS[k + 1], f = (u - u0) / (u1 - u0);
+    for (let j = 0; j < 3; j++) out[i * 3 + j] = c0[j] + (c1[j] - c0[j]) * f;
+  }
+  return out;
+})();
+const orbCv = $('#orb'), ox = orbCv.getContext('2d'), orbBox = $('#orb-box');
+const off = document.createElement('canvas'); const NG = 260; off.width = NG; off.height = NG;
+let OW = 400, orbDirty = true;
+function computeOrb() {
+  const o = ORB[S.orb], L = o.L, oc = off.getContext('2d'), img = oc.createImageData(NG, NG);
+  const vals = new Float32Array(NG * NG); let mx = 0;
+  for (let j = 0; j < NG; j++) {
+    const z = L * (1 - 2 * (j + 0.5) / NG);
+    for (let i = 0; i < NG; i++) {
+      const x = L * (2 * (i + 0.5) / NG - 1), r = Math.hypot(x, z);
+      const psi = o.R(r) * o.Y(x, z, r), v = psi * psi;
+      vals[j * NG + i] = v; if (v > mx) mx = v;
+    }
+  }
+  for (let k = 0; k < NG * NG; k++) {
+    const u = Math.pow(vals[k] / mx, 0.4), idx = Math.min(255, Math.round(u * 255)) * 3;
+    img.data[k * 4] = LUT[idx]; img.data[k * 4 + 1] = LUT[idx + 1]; img.data[k * 4 + 2] = LUT[idx + 2]; img.data[k * 4 + 3] = 255;
+  }
+  oc.putImageData(img, 0, 0);
+  orbDirty = true;
+}
+function niceLen(x) { const p = Math.pow(10, Math.floor(Math.log10(x))), f = x / p; return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p; }
+function drawOrb() {
+  const c = ox, W = OW, o = ORB[S.orb], L = o.L;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.imageSmoothingEnabled = true; c.imageSmoothingQuality = 'high';
+  c.drawImage(off, 0, 0, W, W);
+  const px = W / (2 * L), cx = W / 2;
+  c.strokeStyle = 'rgba(255,255,255,.16)'; c.lineWidth = 1; c.beginPath();
+  c.moveTo(0, cx + 0.5); c.lineTo(W, cx + 0.5); c.moveTo(cx + 0.5, 0); c.lineTo(cx + 0.5, W); c.stroke();
+  c.font = `italic 15px ${FONT_MATH}`; c.fillStyle = 'rgba(255,255,255,.7)'; c.textBaseline = 'middle';
+  c.textAlign = 'right'; c.fillText('x', W - 8, cx - 10);
+  c.textAlign = 'left'; c.fillText('z', cx + 8, 12);
+  c.fillStyle = '#FFFFFF'; c.beginPath(); c.arc(cx, cx, 2, 0, Math.PI * 2); c.fill();
+  if (S.pr) {
+    c.setLineDash([4, 4]); c.lineWidth = 1.3;
+    c.strokeStyle = 'rgba(255,255,255,.75)'; c.beginPath(); c.arc(cx, cx, px * 1, 0, Math.PI * 2); c.stroke();
+    c.strokeStyle = '#7FD8FF'; c.beginPath(); c.arc(cx, cx, px * o.mean, 0, Math.PI * 2); c.stroke();
+    c.setLineDash([]);
+    c.font = `500 11px ${FONT_MONO}`; c.textAlign = 'left';
+    c.fillStyle = '#FFFFFF'; c.fillText('a₀', cx + px * 0.72 + 3, cx - px * 0.72 - 6);
+    c.fillStyle = '#7FD8FF'; c.fillText('⟨r⟩', cx + px * o.mean * 0.72 + 3, cx + px * o.mean * 0.72 + 8);
+  }
+  // scale bar
+  const len = niceLen(L * 0.45), bw = len * px;
+  c.fillStyle = 'rgba(4,6,11,.6)'; roundRect(c, 8, W - 34, bw + 16, 26, 6); c.fill();
+  c.strokeStyle = '#FFFFFF'; c.lineWidth = 2; c.beginPath(); c.moveTo(16, W - 14); c.lineTo(16 + bw, W - 14); c.moveTo(16, W - 18); c.lineTo(16, W - 10); c.moveTo(16 + bw, W - 18); c.lineTo(16 + bw, W - 10); c.stroke();
+  c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = '#FFFFFF'; c.textAlign = 'left'; c.textBaseline = 'bottom';
+  const lbl = `${fmt(len, 0)} a₀ = ${fmt(len * A0, len * A0 < 0.1 ? 3 : 2)} nm`;
+  const tw = c.measureText(lbl).width;
+  if (tw > bw + 4) { c.fillStyle = 'rgba(4,6,11,.6)'; roundRect(c, 8, W - 34, tw + 16, 26, 6); c.fill(); c.fillStyle = '#FFFFFF'; }
+  c.fillText(lbl, 16, W - 18);
+  c.font = `500 14px ${FONT_MATH}`; c.textAlign = 'right'; c.textBaseline = 'top'; c.fillStyle = 'rgba(255,255,255,.85)';
+  c.fillText(o.lab.replace(/<\/?sub>/g, ''), W - 10, 10);
+}
+const prCv = $('#pr'), px2 = prCv.getContext('2d'), prBox = $('#pr-box');
+let PW = 400, PH = 200, prDirty = true;
+function drawPr() {
+  const c = px2, W = PW, H = PH, o = ORB[S.orb];
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, W, H);
+  const rmax = o.L * 1.25, ymax = o.pmax * 1.18;
+  const L = 44, R = 12, T = 26, B = 26, pw = W - L - R, ph = H - T - B;
+  const X = r => L + r / rmax * pw, Y = v => T + (1 - v / ymax) * ph;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.font = `500 10.5px ${FONT_MONO}`; c.fillStyle = col.ink2;
+  const ys = niceLen(ymax / 3);
+  c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let v = 0; v <= ymax + 1e-9; v += ys) { const y = Math.round(Y(v)) + 0.5; c.beginPath(); c.moveTo(L, y); c.lineTo(W - R, y); c.stroke(); c.fillText(fmt(v, ys < 0.1 ? 2 : 1), L - 6, y); }
+  const xs = niceLen(rmax / 6);
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let r = 0; r <= rmax + 1e-9; r += xs) c.fillText(fmt(r, 0), X(r), H - B + 6);
+  c.textAlign = 'right'; c.fillStyle = col.ink3; c.fillText('r [a₀]', W - R, H - 12 > H - B + 6 ? H - B + 6 : H - 12);
+  c.textAlign = 'left'; c.fillText('P(r) [1/a₀]', 4, 4);
+  // curve
+  c.beginPath(); c.moveTo(X(0), Y(0));
+  for (let i = 0; i <= 400; i++) { const r = i / 400 * rmax; c.lineTo(X(r), Y(r * r * o.R(r) ** 2)); }
+  c.lineTo(X(rmax), Y(0)); c.closePath(); c.fillStyle = withA(col.acc, 0.14); c.fill();
+  c.beginPath();
+  for (let i = 0; i <= 400; i++) { const r = i / 400 * rmax; const y = Y(r * r * o.R(r) ** 2); i ? c.lineTo(X(r), y) : c.moveTo(X(r), y); }
+  c.strokeStyle = col.acc; c.lineWidth = 2.2; c.stroke();
+  // markers
+  const marks = [[1, tr('lbA0'), col.ink2], [o.mean, tr('lbMean'), col.blue], [o.rmp, tr('lbMp'), col.acc]];
+  let used = [];
+  c.font = `600 10.5px ${FONT_MONO}`;
+  for (const [r, lab, cc] of marks) {
+    const x = Math.round(X(r)) + 0.5;
+    c.strokeStyle = cc; c.lineWidth = 1.2; c.setLineDash([3, 3]); c.beginPath(); c.moveTo(x, T - 4); c.lineTo(x, T + ph); c.stroke(); c.setLineDash([]);
+    let row = 0; while (used.some(u => u.row === row && Math.abs(u.x - x) < 46)) row++;
+    used.push({ x, row });
+    c.fillStyle = cc; c.textAlign = x > W - 60 ? 'right' : 'left'; c.textBaseline = 'middle';
+    c.fillText(lab, x + (x > W - 60 ? -4 : 4), T + 4 + row * 13);
+  }
+}
+
+/* ---------- UI sync ---------- */
+function buildChips() {
+  const mk = (host, which) => {
+    $(host).innerHTML = LEVELS.map(n => `<button type="button" class="chip" data-n="${n === INF ? 'inf' : n}" data-which="${which}" aria-pressed="false">${ns(n)}</button>`).join('');
+  };
+  mk('#ni-chips', 'ni'); mk('#nf-chips', 'nf');
+  $$('.nchips .chip').forEach(b => b.addEventListener('click', () => {
+    const n = b.dataset.n === 'inf' ? INF : +b.dataset.n;
+    let { ni, nf } = S.trans;
+    if (b.dataset.which === 'ni') { ni = n; if (nf === ni) nf = ni === 1 ? 2 : ni === INF ? 2 : ni - 1; }
+    else { nf = n; if (nf === ni) ni = nf === 1 ? 2 : nf === INF ? 2 : nf + 1; }
+    doTransition(ni, nf);
+  }));
+  $('#orb-chips').innerHTML = Object.entries(ORB).map(([k, o]) => `<button type="button" class="chip" data-orb="${k}" aria-pressed="${k === S.orb}">${o.lab}</button>`).join('');
+  $$('#orb-chips .chip').forEach(b => b.addEventListener('click', () => setOrb(b.dataset.orb)));
+}
+function setOrb(k) {
+  S.orb = k;
+  $$('#orb-chips .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.orb === k)));
+  computeOrb(); prDirty = true; updateOrbPills();
+}
+function updateOrbPills() {
+  const o = ORB[S.orb];
+  $('#o-q').textContent = `n=${o.n}, l=${o.l}, m=${o.m === '±1' ? tr('m01') : o.m}`;
+  $('#o-e').textContent = `${fmt(En(o.n), 2)} eV`;
+  $('#o-nodes').textContent = `${o.n - o.l - 1} / ${o.l}`;
+  $('#o-rm').textContent = `${fmt(o.mean, 1)} a₀`;
+  $('#o-rmp').textContent = `${fmt(o.rmp, 2)} a₀`;
+  $('#o-rb').textContent = `${o.n * o.n} a₀`;
+  $('#pr-note').innerHTML = tr('prNote') + (S.orb === '1s' ? tr('prNote1s') : '');
+}
+function syncAll() {
+  const { ni, nf } = S.trans, lo = Math.min(ni, nf), hi = Math.max(ni, nf);
+  $$('.nchips .chip').forEach(b => {
+    const n = b.dataset.n === 'inf' ? INF : +b.dataset.n;
+    b.setAttribute('aria-pressed', String(b.dataset.which === 'ni' ? n === ni : n === nf));
+  });
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.pre === S.preset)));
+  const lam = lamVac(lo, hi), Eph = Math.abs(En(ni) - En(nf));
+  $('#hud-tr').textContent = `${ns(ni)} → ${ns(nf)}`;
+  $('#hud-e').innerHTML = `${fmt(Eph, 3)} <span>eV</span>`;
+  $('#hud-l').innerHTML = `${fmt(lam >= 10000 ? lamShow(lam) / 1000 : lamShow(lam), lam >= 10000 ? 2 : 1)} <span>${lam >= 10000 ? 'μm' : 'nm'}</span>`;
+  $('#hud-f').innerHTML = fFreq(CL / (lam * 1e-9));
+  $('#hud-k').textContent = tr(procKind(ni, nf));
+  $('#pill-ser').textContent = seriesName(lo) || '—';
+  $('#pill-rng').textContent = tr(region(lam) === 'uv' ? 'rUV' : region(lam) === 'vis' ? 'rVis' : 'rIR');
+  $('#pill-line').textContent = hi === INF ? tr('limit') : (lineName(lo, hi) || '—');
+  updateLegend(); updateFormulas(); updateDisPills();
+  dirtyLv = dirtySp = true;
+}
+function updateLegend() {
+  if (!col.ink) return;
+  const { ni, nf } = S.trans, lo = Math.min(ni, nf), hi = Math.max(ni, nf), lam = lamVac(lo, hi);
+  const q = specRGB(lam);
+  const name = hi === INF ? `${seriesName(lo)}: ${tr('limit')}` : lineName(lo, hi);
+  const st = S.run ? 'run' : (S.started ? 'pause' : 'ready');
+  const lbl = { run: 'sRun', pause: 'sPause', ready: 'sReady' }[st];
+  $('#legend').innerHTML = `<span class="lname" style="color:${rgbStr(q, 1)}"><i style="background:${rgbStr(q, 1)}"></i><span style="color:var(--ink)">${name}</span></span><span class="state" data-s="${st}">${tr(lbl)}</span>`;
+}
+let disPillT = 0;
+function updateDisPills() {
+  $('#pill-ph').textContent = String(S.stats.ph);
+  const map = S.lines[S.mode];
+  let best = null; for (const o of map.values()) if (o.hi !== INF && (!best || o.c > best.c)) best = o;
+  $('#pill-br').textContent = best ? lineName(best.lo, best.hi) : '—';
+  $('#pill-vis').textContent = S.stats.ph ? `${fmt(S.stats.vis / S.stats.ph * 100, 0)} %` : '—';
+  const r = S.rate; $('#rate-out').textContent = `${r} ${tr('perS')}`;
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const EQ = ' = ';
+function updateFormulas() {
+  if (!col.ink) return;
+  const { ni, nf } = S.trans, lo = Math.min(ni, nf), hi = Math.max(ni, nf);
+  const Ei = En(ni), Ef = En(nf), Eph = Math.abs(Ei - Ef), lam = lamVac(lo, hi), la = lamAir(lam);
+  const f = CL / (lam * 1e-9), invl = 1 / (lam * 1e-9);
+  const r = (s) => `<span class="r">${s}</span>`;
+  const En1 = (n) => n === INF ? `${V('E', '∞')}${EQ}0` : `${V('E', n)}${EQ}${FR('−13,6 eV'.replace(',', lang === 'pl' ? ',' : '.'), `${n}<sup>2</sup>`)}${EQ}${r(`${fmt(En(n), 3)} eV`)}`;
+  const inv = (n) => n === INF ? '0' : FR('1', `${n}<sup>2</sup>`);
+  const cards = [];
+  cards.push(`<div class="fcard"><h4>${tr('fLevels')}</h4>
+    <div class="eq">${V('E', 'n')}${EQ}−${FR('13,6 eV'.replace(',', lang === 'pl' ? ',' : '.'), `${V('n')}<sup>2</sup>`)}</div>
+    <div class="eq num">${En1(ni)}</div><div class="eq num">${En1(nf)}</div>
+    <p class="fnote">${tr('nLevels')}</p></div>`);
+  const cPhoton = (`<div class="fcard wide"><h4>${tr('fPhoton')}</h4>
+    <div class="eq">Δ${V('E')}${EQ}|${V('E', 'i')} − ${V('E', 'f')}|${EQ}${V('h')}${V('f')}${EQ}${FR(`${V('h')}${V('c')}`, V('λ'))}</div>
+    <div class="eq num">Δ${V('E')}${EQ}|${fmt(Ei, 3)} − (${fmt(Ef, 3)})| eV${EQ}${r(`${fmt(Eph, 3)} eV`)}</div>
+    <div class="eq num">${V('f')}${EQ}${FR(`Δ${V('E')}`, V('h'))}${EQ}${FR(`${fmt(Eph, 3)} eV`, `4,136·10⁻¹⁵ eV·s`.replace(',', lang === 'pl' ? ',' : '.'))}${EQ}${r(`${fsci(f, 3)} Hz`)}</div>
+    <p class="fnote">${tr(nf < ni || ni === INF ? 'nEm' : 'nAb')}</p></div>`);
+  const air = lam >= 200 ? `<div class="eq num">${V('λ', tr('air'))}${EQ}${FR(V('λ', tr('vacuum')), V('n', tr('air')))}${EQ}${r(fLam(la))}</div>` : '';
+  const cRyd = (`<div class="fcard wide"><h4>${tr('fRyd')}</h4>
+    <div class="eq">${FR('1', V('λ'))}${EQ}${V('R')}(${FR('1', `${V('n')}<sub>f</sub><sup>2</sup>`)} − ${FR('1', `${V('n')}<sub>i</sub><sup>2</sup>`)})<span class="tag lc">${lang === 'pl' ? 'emisja' : 'emission'}: ${V('n')}<sub>i</sub> &gt; ${V('n')}<sub>f</sub></span></div>
+    <div class="eq num">${FR('1', V('λ'))}${EQ}${fsci(RH, 4)} m⁻¹ · (${inv(lo)} − ${inv(hi)})${EQ}${r(`${fsci(invl, 4)} m⁻¹`)}</div>
+    <div class="eq num">${V('λ', tr('vacuum'))}${EQ}${r(fLam(lam))}</div>${air}
+    <p class="fnote">${tr('nRyd')}</p></div>`);
+  const cHc = (`<div class="fcard"><h4>${tr('fHc')}</h4>
+    <div class="eq">${V('λ')}${EQ}${FR(`${V('h')}${V('c')}`, `Δ${V('E')}`)} ≈ ${FR('1240 eV·nm', `Δ${V('E')}`)}</div>
+    <div class="eq num">${V('λ')} ≈ ${FR('1240', fmt(Eph, 3))} nm${EQ}${r(fLam(1240 / Eph))}</div>
+    <p class="fnote">${tr('nHc')}</p></div>`);
+  const rb = (n) => n === INF ? `${V('r', '∞')}${EQ}∞` : `${V('r', n)}${EQ}${n}<sup>2</sup> · ${fmt(A0, 4)} nm${EQ}${r(`${fmt(n * n * A0, 3)} nm`)}`;
+  cards.push(`<div class="fcard"><h4>${tr('fBohr')}<span class="tag">${tr('model')}</span></h4>
+    <div class="eq">${V('r', 'n')}${EQ}${V('n')}<sup>2</sup>${V('a', '0')}, &nbsp;${V('a', '0')}${EQ}0${lang === 'pl' ? ',' : '.'}0529 nm</div>
+    <div class="eq num">${rb(ni)}</div><div class="eq num">${rb(nf)}</div>
+    <p class="fnote">${tr('nBohr')}</p></div>`);
+  const nl = lo === INF ? 1 : lo;
+  const lim = nl * nl / RHnm;
+  cards.push(`<div class="fcard"><h4>${tr('fIon')}</h4>
+    <div class="eq">${V('E', 'jon')}${EQ}${FR('13,6 eV'.replace(',', lang === 'pl' ? ',' : '.'), `${V('n')}<sup>2</sup>`)}, &nbsp;${V('λ', '∞')}${EQ}${FR(`${V('n')}<sup>2</sup>`, V('R'))}</div>
+    <div class="eq num">${V('n')}${EQ}${nl}: &nbsp;${V('E', 'jon')}${EQ}${r(`${fmt(RY / (nl * nl), 3)} eV`)}, &nbsp;${V('λ', '∞')}${EQ}${r(fLam(lamShow(lim)))}</div>
+    <p class="fnote">${tr('nIon')}</p></div>`);
+  cards.splice(2, 0, cPhoton, cRyd, cHc);
+  let html = cards.join('');
+  if (lang === 'en') html = html.replace(/E<\/i><sub>jon/g, 'E</i><sub>ion');
+  $('#fgrid').innerHTML = html;
+}
+
+/* ---------- tries ---------- */
+const TRIES = [
+  { h: 't1h', b: 't1b', go: () => { if (S.elec !== 3) { S.elec = 3; } doTransition(3, 2); } },
+  { h: 't2h', b: 't2b', go: () => { setPreset('balmer'); doTransition(INF, 2); } },
+  { h: 't3h', b: 't3b', go: () => { setMode('em'); clearSpec(); startRun(); $('#stage').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); } },
+  { h: 't4h', b: 't4b', go: () => { setOrb('3s'); setPr(true); $('#orbitals').scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' }); } }
+];
+function buildTries() {
+  $('#trylist').innerHTML = TRIES.map((t, i) => `<button type="button" class="try" data-try="${i}"><span class="n">${i + 1}</span><b>${tr(t.h)}</b><span>${tr(t.b)}</span></button>`).join('');
+  $$('#trylist .try').forEach(b => b.addEventListener('click', () => TRIES[+b.dataset.try].go()));
+}
+function clearSpec() {
+  S.lines.em.clear(); S.lines.ab.clear(); S.flashes = []; S.queue = []; S.stats = { ph: 0, vis: 0 }; S.marks = []; S.preset = null; S.flash = null;
+  syncAll();
+}
+function setPr(on) {
+  S.pr = on; $('#tg-pr').setAttribute('aria-pressed', String(on)); $('#pr-wrap').hidden = !on;
+  prDirty = true; orbDirty = true;
+  if (on) requestAnimationFrame(() => { resizeOrb(); });
+}
+function hideHint() { if (!S.interacted) { S.interacted = true; $('#hintpill').classList.add('gone'); } }
+
+/* ---------- pointer on level diagram ---------- */
+function ptr(e) { const r = lv.getBoundingClientRect(); return { x: e.clientX - r.left, y: e.clientY - r.top }; }
+lv.addEventListener('pointerdown', (e) => {
+  geom(); const p = ptr(e), n = hitLevel(p.y);
+  if (n == null) return;
+  S.drag = { from: n, to: n, x: p.x, y0: p.y, moved: false };
+  lv.setPointerCapture(e.pointerId); dirtyLv = true;
+});
+lv.addEventListener('pointermove', (e) => {
+  geom(); const p = ptr(e), n = hitLevel(p.y);
+  if (S.drag) {
+    if (Math.abs(p.y - S.drag.y0) > 6) S.drag.moved = true;
+    S.drag.to = n; S.drag.x = p.x; dirtyLv = true;
+  } else if (n !== S.hover) { S.hover = n; dirtyLv = true; }
+  lv.style.cursor = n != null ? 'pointer' : 'default';
+});
+lv.addEventListener('pointerup', (e) => {
+  if (!S.drag) return;
+  const d = S.drag; S.drag = null;
+  try { lv.releasePointerCapture(e.pointerId); } catch (_) {}
+  if (d.moved && d.to != null && d.to !== d.from) doTransition(d.from, d.to);
+  else if (!d.moved && d.from !== S.elec) doTransition(S.elec, d.from);
+  dirtyLv = true;
+});
+lv.addEventListener('pointercancel', () => { S.drag = null; dirtyLv = true; });
+lv.addEventListener('pointerleave', () => { if (!S.drag && S.hover != null) { S.hover = null; dirtyLv = true; } });
+
+/* ---------- main loop ---------- */
+let lastT = performance.now(), disAcc = 0;
+function frame(now) {
+  const dt = Math.min(0.05, (now - lastT) / 1000); lastT = now;
+  if (S.run) {
+    S.acc += S.rate * dt;
+    let k = 0; while (S.acc >= 1 && k < 40) { S.acc -= 1; excite(); k++; }
+    if (S.acc > 40) S.acc = 0;
+    for (let i = S.queue.length - 1; i >= 0; i--) {
+      const q = S.queue[i]; q.t -= dt;
+      if (q.t <= 0) { registerEvent(q.ni, q.nf); S.queue.splice(i, 1); }
+    }
+    dirtySp = true; dirtyLv = true;
+    disAcc += dt; if (disAcc > 0.2) { disAcc = 0; updateDisPills(); }
+  }
+  if (S.flashes.length) {
+    for (let i = S.flashes.length - 1; i >= 0; i--) { S.flashes[i].life -= dt * 2.2; if (S.flashes[i].life <= 0) S.flashes.splice(i, 1); }
+    dirtyLv = true;
+  }
+  if (S.anim) { S.anim.t += dt; if (S.anim.t >= S.anim.dur) S.anim = null; dirtyLv = true; }
+  if (S.photons.length) {
+    for (let i = S.photons.length - 1; i >= 0; i--) { const p = S.photons[i]; p.t += dt; if (p.t >= p.life) S.photons.splice(i, 1); }
+    dirtyLv = true;
+  }
+  if (S.flash && S.flash.life > 0) { S.flash.life = Math.max(0, S.flash.life - dt * 1.4); dirtySp = true; }
+  if (dirtyLv) { drawLv(now); dirtyLv = false; }
+  if (dirtySp) { drawSp(); dirtySp = false; }
+  if (orbDirty) { drawOrb(); orbDirty = false; }
+  if (prDirty && S.pr) { drawPr(); prDirty = false; }
+  requestAnimationFrame(frame);
+}
+function resizeOrb() {
+  OW = orbBox.clientWidth; orbCv.width = Math.round(OW * dpr); orbCv.height = Math.round(OW * dpr); orbDirty = true;
+  PW = prBox.clientWidth; PH = prBox.clientHeight; prCv.width = Math.round(PW * dpr); prCv.height = Math.round(PH * dpr); prDirty = true;
+}
+new ResizeObserver(resizeOrb).observe(orbBox);
+new ResizeObserver(resizeOrb).observe(prBox);
+document.addEventListener('visibilitychange', () => { lastT = performance.now(); });
+
+/* ---------- wiring ---------- */
+$('#run').addEventListener('click', toggleRun);
+$('#clear').addEventListener('click', clearSpec);
+$$('#mode button').forEach(b => b.addEventListener('click', () => setMode(b.dataset.mode)));
+$('#tg-bohr').addEventListener('click', (e) => { S.bohr = !S.bohr; e.currentTarget.setAttribute('aria-pressed', String(S.bohr)); dirtyLv = true; });
+$('#tg-names').addEventListener('click', (e) => { S.names = !S.names; e.currentTarget.setAttribute('aria-pressed', String(S.names)); dirtyLv = dirtySp = true; });
+$('#tg-pr').addEventListener('click', () => setPr(!S.pr));
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => setPreset(b.dataset.pre)));
+const rateEl = $('#rate');
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+rateEl.addEventListener('input', () => { S.rate = rateFromSlider(+rateEl.value); setFill(rateEl); updateDisPills(); });
+const fsBtn = $('#fs');
+if (!document.fullscreenEnabled) fsBtn.hidden = true;
+fsBtn.addEventListener('click', () => {
+  const st = $('#stage');
+  if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
+  else if (st.requestFullscreen) st.requestFullscreen().catch(() => {});
+});
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); toggleRun(); }
+});
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#pre-ion-s').textContent = `${fmt(13.6, 1)} eV`;
+  $('#dis-hint').textContent = tr(S.mode === 'em' ? 'disHintEm' : 'disHintAb');
+  buildTries(); syncRun(); syncAll(); updateOrbPills();
+  dirtyLv = dirtySp = true; prDirty = true; orbDirty = true;
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('wodor-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', readTokens);
+new MutationObserver(readTokens).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => { dirtyLv = dirtySp = true; orbDirty = true; prDirty = true; });
+
+/* ---------- init: calm, paused, Hα already drawn ---------- */
+S.rate = rateFromSlider(+rateEl.value); setFill(rateEl);
+buildChips();
+readTokens();
+resize(); resizeOrb();
+addLine(S.lines.em, 2, 3); addLine(S.lines.ab, 2, 3);
+S.marks = [{ lo: 2, hi: 3 }];
+computeOrb();
+applyLang();
+requestAnimationFrame((t) => { lastT = t; frame(t); });
+})();
+</script>
+
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Elektron w atomie wodoru może mieć tylko ściśle określone energie <i>E<sub>n</sub></i> = −13,6 eV/<i>n</i>². Przeskakując między poziomami, atom emituje albo pochłania foton o energii równej dokładnie różnicy poziomów, dlatego jego widmo składa się z ostrych linii, a nie z ciągłej tęczy.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>Diagram poziomów pokazuje stany <i>n</i> = 1…7 i kontinuum powyżej <i>E</i> = 0. Kliknięcie poziomu lub przeciągnięcie strzałki wykonuje przejście, a pasek widma pod spodem (od 90 do 2000 nm, z zaznaczonym UV, zakresem widzialnym i podczerwienią) dopisuje linię o obliczonej długości fali. Presety «Seria Balmera», «Seria Lymana», «Seria Paschena» i «Jonizacja z n = 1» rysują całe serie naraz.</p>
+      <p>Przycisk «Start wyładowania» uruchamia model lampy: atomy są wzbudzane losowo i kaskadowo wracają w dół, więc widmo emisyjne rośnie samo. Przełącznik «absorpcyjne» pokazuje ciemne linie na ciągłym tle. Sekcja «Orbitale» rysuje przekroje |<i>ψ</i><sub>nlm</sub>|² dla <i>n</i> ≤ 3, a przełącznik «Rozkład radialny P(r)» dodaje wykres z zaznaczonym <i>a</i><sub>0</sub> i ⟨<i>r</i>⟩.</p>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Rozwiązanie równania Schrödingera dla elektronu w polu kulombowskim protonu daje energie zależne tylko od głównej liczby kwantowej <i>n</i>:</p>
+      <div class="th-eq"><i>E<sub>n</sub></i> = −<span class="th-fr"><span><i>m</i><i>e</i><sup>4</sup></span><span>8<i>ε</i><sub>0</sub><sup>2</sup><i>h</i><sup>2</sup><i>n</i><sup>2</sup></span></span> ≈ −<span class="th-fr"><span>13,6 eV</span><span><i>n</i><sup>2</sup></span></span></div>
+      <p>Foton unosi różnicę energii, Δ<i>E</i> = <i>hf</i> = <i>hc</i>/<i>λ</i>. Dzieląc przez <i>hc</i>, dostajemy wzór Rydberga:</p>
+      <div class="th-eq"><span class="th-fr"><span>1</span><span><i>λ</i></span></span> = <i>R</i>(<span class="th-fr"><span>1</span><span><i>n</i><sub>f</sub><sup>2</sup></span></span> − <span class="th-fr"><span>1</span><span><i>n</i><sub>i</sub><sup>2</sup></span></span>), &nbsp; <i>R</i> = 1,0968·10<sup>7</sup> m<sup>−1</sup></div>
+      <p>Wartość <i>R</i> uwzględnia masę zredukowaną układu elektron proton, stąd 13,598 eV zamiast 13,606 eV. Linie o wspólnym <i>n</i><sub>f</sub> tworzą serię: Lymana (<i>n</i><sub>f</sub> = 1, UV), Balmera (<i>n</i><sub>f</sub> = 2, głównie widzialna), Paschena (<i>n</i><sub>f</sub> = 3, IR). Gdy <i>n</i><sub>i</sub> → ∞, linie zagęszczają się przy granicy serii <i>λ</i><sub>∞</sub> = <i>n</i><sub>f</sub><sup>2</sup>/<i>R</i>, np. 364,6 nm dla Balmera. Powyżej <i>E</i> = 0 elektron jest wolny i może mieć dowolną energię, dlatego jonizacja daje widmo ciągłe za granicą serii.</p>
+      <p>Model Bohra (<i>r<sub>n</sub></i> = <i>n</i><sup>2</sup><i>a</i><sub>0</sub>) przypadkiem daje poprawne energie, ale w mechanice kwantowej elektron opisuje funkcja falowa <i>ψ</i><sub>nlm</sub>. Gęstość radialna <i>P</i>(<i>r</i>) = <i>r</i><sup>2</sup>|<i>R<sub>nl</sub></i>|<sup>2</sup> dla stanu 1s ma maksimum dokładnie w <i>a</i><sub>0</sub> = 0,0529 nm, choć średnia odległość wynosi 1,5 <i>a</i><sub>0</sub>. Orbital ma <i>n</i> − <i>l</i> − 1 węzłów radialnych i <i>l</i> powierzchni węzłowych kątowych.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Astronomia: linia Hα (656,3 nm) nadaje mgławicom emisyjnym czerwonoróżową barwę, a przesunięcie linii wodoru mierzy prędkości gwiazd i galaktyk.</li>
+        <li>Ciemne linie Balmera w widmie Słońca i gwiazd (linie Fraunhofera) pozwalają wyznaczyć temperaturę atmosfer gwiazdowych.</li>
+        <li>Wzór Balmera (1885) i model Bohra (1913) były kluczowymi krokami do mechaniki kwantowej.</li>
+        <li>Lampy wodorowe i deuterowe służą jako wzorce długości fali i źródła UV w spektrometrach.</li>
+        <li>Te same pojęcia (poziomy, przejścia, serie) opisują lasery, diody LED i spektroskopię atomową w chemii analitycznej.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„Elektron krąży po orbicie.” Nie: orbity Bohra to model historyczny. Orbital opisuje rozkład prawdopodobieństwa, a nie tor ruchu.</li>
+        <li>„Większy skok to dłuższa fala.” Odwrotnie: większe Δ<i>E</i> daje krótszą falę, bo <i>λ</i> = <i>hc</i>/Δ<i>E</i>. Dlatego seria Lymana leży w UV.</li>
+        <li>„Atom pochłonie każdy foton o energii większej od różnicy poziomów.” Przejście między stanami związanymi wymaga dokładnego dopasowania energii; dowolną nadwyżkę przyjmie tylko jonizacja.</li>
+        <li>„Wszystkie linie Balmera są widzialne.” Tylko Hα, Hβ, Hγ i Hδ są wyraźnie widzialne; wyższe linie i granica serii leżą w bliskim UV.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Jaką długość fali ma linia Hβ (przejście 4 → 2)?</summary><p>1/<i>λ</i> = <i>R</i>(1/4 − 1/16) = 3<i>R</i>/16, więc <i>λ</i> ≈ 486 nm (486,1 nm w powietrzu), linia niebieskozielona. Δ<i>E</i> = 3,40 − 0,85 = 2,55 eV.</p></details>
+    <details class="th-q"><summary>Dlaczego zimny wodór w trybie absorpcji nie pochłania światła widzialnego?</summary><p>W niskiej temperaturze niemal wszystkie atomy są w stanie <i>n</i> = 1, a przejścia z niego (seria Lymana) leżą w UV. Linie Balmera wymagają atomów w <i>n</i> = 2, czyli gorącego gazu, jak w atmosferach gwiazd.</p></details>
+    <details class="th-q"><summary>Ile energii trzeba, żeby zjonizować atom ze stanu <i>n</i> = 2, i jakiej fali to odpowiada?</summary><p><i>E</i> = 13,6 eV/4 = 3,40 eV, a <i>λ</i> = 1240 eV·nm / 3,40 eV ≈ 365 nm, czyli granica serii Balmera.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, rozdz. 39 (Jeszcze o falach materii), część o atomie wodoru. Fotony i związek <i>E</i> = <i>hf</i> omawia rozdz. 38 (Fotony i fale materii).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">The electron in a hydrogen atom can only have certain energies, <i>E<sub>n</sub></i> = −13.6 eV/<i>n</i>². When it jumps between levels the atom emits or absorbs a photon whose energy equals exactly the level spacing, so its spectrum is a set of sharp lines, not a continuous rainbow.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>The level diagram shows states <i>n</i> = 1…7 and the continuum above <i>E</i> = 0. Clicking a level or dragging an arrow performs a transition, and the spectrum strip below (90 to 2000 nm, with UV, visible and infrared marked) adds a line at the computed wavelength. The presets «Balmer series», «Lyman series», «Paschen series» and «Ionization from n = 1» draw whole series at once.</p>
+      <p>The «Start discharge» button runs a lamp model: atoms are excited at random and cascade back down, so the emission spectrum builds up by itself. The «absorption» switch shows dark lines on a continuous background. The «Orbitals» section draws cross sections of |<i>ψ</i><sub>nlm</sub>|² for <i>n</i> ≤ 3, and the «Radial distribution P(r)» toggle adds a plot with <i>a</i><sub>0</sub> and ⟨<i>r</i>⟩ marked.</p>
+    </article>
+    <article><h3>Theory</h3>
+      <p>Solving the Schrödinger equation for an electron in the Coulomb field of a proton gives energies that depend only on the principal quantum number <i>n</i>:</p>
+      <div class="th-eq"><i>E<sub>n</sub></i> = −<span class="th-fr"><span><i>m</i><i>e</i><sup>4</sup></span><span>8<i>ε</i><sub>0</sub><sup>2</sup><i>h</i><sup>2</sup><i>n</i><sup>2</sup></span></span> ≈ −<span class="th-fr"><span>13.6 eV</span><span><i>n</i><sup>2</sup></span></span></div>
+      <p>The photon carries away the energy difference, Δ<i>E</i> = <i>hf</i> = <i>hc</i>/<i>λ</i>. Dividing by <i>hc</i> gives the Rydberg formula:</p>
+      <div class="th-eq"><span class="th-fr"><span>1</span><span><i>λ</i></span></span> = <i>R</i>(<span class="th-fr"><span>1</span><span><i>n</i><sub>f</sub><sup>2</sup></span></span> − <span class="th-fr"><span>1</span><span><i>n</i><sub>i</sub><sup>2</sup></span></span>), &nbsp; <i>R</i> = 1.0968·10<sup>7</sup> m<sup>−1</sup></div>
+      <p>This value of <i>R</i> includes the reduced mass of the electron and proton, hence 13.598 eV rather than 13.606 eV. Lines sharing the same <i>n</i><sub>f</sub> form a series: Lyman (<i>n</i><sub>f</sub> = 1, UV), Balmer (<i>n</i><sub>f</sub> = 2, mostly visible), Paschen (<i>n</i><sub>f</sub> = 3, IR). As <i>n</i><sub>i</sub> → ∞ the lines crowd towards the series limit <i>λ</i><sub>∞</sub> = <i>n</i><sub>f</sub><sup>2</sup>/<i>R</i>, e.g. 364.6 nm for Balmer. Above <i>E</i> = 0 the electron is free and may have any energy, so ionization gives a continuous spectrum beyond the series limit.</p>
+      <p>The Bohr model (<i>r<sub>n</sub></i> = <i>n</i><sup>2</sup><i>a</i><sub>0</sub>) happens to give the right energies, but in quantum mechanics the electron is described by a wave function <i>ψ</i><sub>nlm</sub>. The radial density <i>P</i>(<i>r</i>) = <i>r</i><sup>2</sup>|<i>R<sub>nl</sub></i>|<sup>2</sup> of the 1s state peaks exactly at <i>a</i><sub>0</sub> = 0.0529 nm, although the mean distance is 1.5 <i>a</i><sub>0</sub>. An orbital has <i>n</i> − <i>l</i> − 1 radial nodes and <i>l</i> angular nodal surfaces.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>Astronomy: the Hα line (656.3 nm) gives emission nebulae their reddish pink glow, and Doppler shifts of hydrogen lines measure the velocities of stars and galaxies.</li>
+        <li>Dark Balmer lines in the spectra of the Sun and stars (Fraunhofer lines) reveal the temperature of stellar atmospheres.</li>
+        <li>Balmer's formula (1885) and Bohr's model (1913) were key steps towards quantum mechanics.</li>
+        <li>Hydrogen and deuterium lamps serve as wavelength standards and UV sources in spectrometers.</li>
+        <li>The same ideas (levels, transitions, series) describe lasers, LEDs and atomic spectroscopy in analytical chemistry.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>"The electron circles on an orbit." No: Bohr orbits are a historical model. An orbital describes a probability distribution, not a path.</li>
+        <li>"A bigger jump gives a longer wavelength." The opposite: a larger Δ<i>E</i> gives a shorter wave, since <i>λ</i> = <i>hc</i>/Δ<i>E</i>. That is why the Lyman series is in the UV.</li>
+        <li>"An atom absorbs any photon with more energy than the level spacing." A transition between bound states needs an exact energy match; only ionization accepts any surplus.</li>
+        <li>"All Balmer lines are visible." Only Hα, Hβ, Hγ and Hδ are clearly visible; higher lines and the series limit lie in the near UV.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>What is the wavelength of the Hβ line (transition 4 → 2)?</summary><p>1/<i>λ</i> = <i>R</i>(1/4 − 1/16) = 3<i>R</i>/16, so <i>λ</i> ≈ 486 nm (486.1 nm in air), a blue green line. Δ<i>E</i> = 3.40 − 0.85 = 2.55 eV.</p></details>
+    <details class="th-q"><summary>Why does cold hydrogen in absorption mode not absorb visible light?</summary><p>At low temperature almost all atoms are in <i>n</i> = 1, and transitions from it (the Lyman series) lie in the UV. Balmer lines need atoms in <i>n</i> = 2, that is a hot gas, as in stellar atmospheres.</p></details>
+    <details class="th-q"><summary>How much energy ionizes an atom from <i>n</i> = 2, and what wavelength is that?</summary><p><i>E</i> = 13.6 eV/4 = 3.40 eV, and <i>λ</i> = 1240 eV·nm / 3.40 eV ≈ 365 nm, the Balmer series limit.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, ch. 39 (More About Matter Waves), sections on the hydrogen atom. Photons and <i>E</i> = <i>hf</i> are covered in ch. 38 (Photons and Matter Waves).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
+</body></html>
