@@ -1,0 +1,1336 @@
+<!doctype html><html><head><meta charset=utf8><meta name="robots" content="noindex,nofollow"><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Ruchy Browna i dyfuzja</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=STIX+Two+Text:ital,wght@0,400;1,400;1,500&display=swap">
+<style>
+/* Layout: lab bench. Graph-paper stage with HUD strip and transport bar, control panel on the right,
+   MSD chart under the stage, live formulas and prompts underneath. Accent: pollen ochre. */
+:root{
+  --bg:#E6EBF0; --surface:#F7F9FB; --paper:#FBFCFD; --sunk:#EDF1F5;
+  --ink:#12202C; --ink-2:#465768; --ink-3:#7C8B9A; --line:#CCD5DE;
+  --grid:#E1E7ED; --grid-major:#C3D0DB;
+  --acc:#B8740E; --acc-2:#E9A93A; --acc-soft:#F6E3BE; --blue:#2F7FE0; --violet:#6A4DDB; --teal:#11897F;
+  --on-accent:#FFFFFF; --shadow:0 1px 0 rgba(18,32,44,.04), 0 8px 24px -12px rgba(18,32,44,.18);
+  --f-display:"Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  --f-math:"STIX Two Text", "Cambria Math", Cambria, "Times New Roman", serif;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+    --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+    --grid:#142231; --grid-major:#20334A;
+    --acc:#E9A23A; --acc-2:#F6C46A; --acc-soft:#3A2A10; --blue:#4D9AF5; --violet:#9B86FF; --teal:#2EC4B6;
+    --on-accent:#1A1206;
+    --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#08101A; --surface:#0F1A26; --paper:#0D1722; --sunk:#132131;
+  --ink:#E4ECF3; --ink-2:#A3B2C1; --ink-3:#6C7E90; --line:#223243;
+  --grid:#142231; --grid-major:#20334A;
+  --acc:#E9A23A; --acc-2:#F6C46A; --acc-soft:#3A2A10; --blue:#4D9AF5; --violet:#9B86FF; --teal:#2EC4B6;
+  --on-accent:#1A1206;
+  --shadow:0 1px 0 rgba(0,0,0,.2), 0 10px 30px -14px rgba(0,0,0,.7);
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{background:var(--bg)}
+body{margin:0; background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.5;
+  padding-left:max(16px, env(safe-area-inset-left, 0px)); padding-right:max(16px, env(safe-area-inset-right, 0px)); overflow-x:hidden}
+.app{max-width:1440px; margin:0 auto; padding-block:20px 48px; display:flex; flex-direction:column; gap:20px}
+button{font:inherit; color:inherit}
+:focus-visible{outline:2px solid var(--blue); outline-offset:2px}
+
+/* Header */
+.top{display:flex; align-items:flex-end; justify-content:space-between; gap:16px; flex-wrap:wrap}
+.brand{display:flex; flex-direction:column; gap:4px; min-width:0}
+.eyebrow{font-family:var(--f-mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.brand h1{margin:0; font-family:var(--f-display); font-weight:800; font-size:clamp(32px, 5vw, 56px); line-height:.98; letter-spacing:-.025em; text-wrap:balance; display:flex; align-items:center; gap:.25em}
+.brand h1 svg{width:1em; height:.7em; flex:none}
+.lede{margin:6px 0 0; color:var(--ink-2); max-width:66ch}
+.lang{display:inline-flex; border:1px solid var(--line); border-radius:999px; padding:3px; background:var(--surface)}
+.lang button{border:0; background:none; padding:4px 12px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.lang button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+
+/* Main grid */
+.main{display:grid; grid-template-columns:minmax(0,1fr) 340px; gap:20px; align-items:start}
+.leftcol{display:flex; flex-direction:column; gap:20px; min-width:0}
+.card{background:var(--surface); border:1px solid var(--line); border-radius:var(--r); box-shadow:var(--shadow)}
+
+/* Stage */
+.stage{display:flex; flex-direction:column; overflow:hidden}
+.strip{display:flex; justify-content:space-between; align-items:center; gap:10px 20px; flex-wrap:wrap; padding:10px 14px; border-bottom:1px solid var(--line)}
+.hud{display:flex; gap:4px 18px; flex-wrap:wrap; margin:0; font-family:var(--f-mono); font-variant-numeric:tabular-nums}
+.hud div{display:flex; align-items:baseline; gap:6px}
+.hud dt{font-family:var(--f-math); font-style:italic; font-size:16px; color:var(--ink-3); white-space:nowrap}
+.hud dt sub{font-size:11px}
+.hud dt small{font-family:var(--f-body); font-style:normal; font-size:11.5px}
+.hud dd{margin:0; font-size:13.5px; min-width:6.5ch; color:var(--ink); white-space:nowrap}
+.hud dd span{color:var(--ink-3); font-size:11.5px}
+.legend{display:flex; gap:6px 14px; flex-wrap:wrap; align-items:center; font-size:12.5px; color:var(--ink-2)}
+.legend span{display:inline-flex; align-items:center; gap:6px; white-space:nowrap}
+.sw-line{display:inline-block; width:22px; height:0; border-top:2.5px solid var(--acc)}
+.sw-dot{display:inline-block; width:9px; height:9px; border-radius:50%; background:var(--acc)}
+.state{font-family:var(--f-mono); font-size:11px; letter-spacing:.08em; text-transform:uppercase; padding:3px 9px; border-radius:999px; border:1px solid var(--line); color:var(--ink-2)}
+.state[data-s="run"]{border-color:var(--acc); color:var(--acc)}
+.state[data-s="pause"]{border-color:var(--ink-3); color:var(--ink-2)}
+.canvas-box{position:relative; height:clamp(340px, 58vh, 620px); background:var(--paper)}
+.canvas-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+
+.bar{display:flex; align-items:center; gap:10px 14px; flex-wrap:wrap; padding:10px 14px; border-top:1px solid var(--line)}
+.fire{display:inline-flex; align-items:center; gap:10px; border:0; background:var(--acc); color:var(--on-accent); padding:10px 20px 10px 16px; border-radius:999px; font-family:var(--f-display); font-weight:700; font-size:17px; letter-spacing:.01em; cursor:pointer; box-shadow:0 6px 18px -8px var(--acc); transition:transform .12s ease; min-width:9.5em; justify-content:center}
+.fire:hover{transform:translateY(-1px)}
+.fire:active{transform:translateY(1px) scale(.98)}
+.fire svg{width:18px; height:18px}
+.fire kbd{font-family:var(--f-mono); font-size:10.5px; font-weight:500; opacity:.85; border:1px solid currentColor; border-radius:4px; padding:0 5px}
+.btn{display:inline-flex; align-items:center; gap:6px; border:1px solid var(--line); background:var(--paper); padding:7px 12px; border-radius:999px; cursor:pointer; font-size:13.5px; color:var(--ink)}
+.btn:hover{border-color:var(--ink-3)}
+.btn svg{width:15px; height:15px}
+.seg{display:inline-flex; align-items:center; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.seg .lbl{font-size:12px; color:var(--ink-3); padding:0 6px 0 8px}
+.seg button{border:0; background:none; padding:4px 9px; border-radius:999px; font-family:var(--f-mono); font-size:12px; cursor:pointer; color:var(--ink-2)}
+.seg button[aria-pressed="true"]{background:var(--ink); color:var(--paper)}
+.tg{border:1px solid var(--line); background:transparent; padding:5px 11px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tg[aria-pressed="true"]{background:var(--sunk); color:var(--ink); border-color:var(--ink-3)}
+.tg[aria-pressed="true"]::before{content:""; display:inline-block; width:6px; height:6px; border-radius:50%; background:var(--acc); margin-right:7px; vertical-align:middle; transform:translateY(-1px)}
+.tg:disabled{opacity:.4; cursor:not-allowed}
+
+/* Chart card */
+.charts{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.sec-h{display:flex; align-items:baseline; justify-content:space-between; gap:8px 12px; flex-wrap:wrap}
+.sec-h h2{margin:0; font-family:var(--f-display); font-weight:700; font-size:21px; letter-spacing:-.01em}
+.sec-h p{margin:0; color:var(--ink-3); font-size:13px; max-width:70ch}
+.tabs{display:inline-flex; gap:2px; border:1px solid var(--line); border-radius:999px; padding:2px; background:var(--paper)}
+.tabs button{border:0; background:none; padding:5px 12px; border-radius:999px; font-size:13px; cursor:pointer; color:var(--ink-2)}
+.tabs button[aria-selected="true"]{background:var(--ink); color:var(--paper)}
+.tabs button:disabled{opacity:.4; cursor:not-allowed}
+.clegend{display:flex; gap:6px 14px; flex-wrap:wrap; font-size:12.5px; color:var(--ink-2)}
+.clegend span{display:inline-flex; align-items:center; gap:6px}
+.clegend .band{display:inline-block; width:16px; height:10px; border-radius:2px; background:var(--acc-soft); border:1px solid var(--acc)}
+.chart-box{position:relative; height:260px}
+.chart-box canvas{position:absolute; inset:0; width:100%; height:100%; display:block}
+.cnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.cnote i{font-family:var(--f-math); font-size:14px}
+.dbox{display:flex; gap:8px 18px; flex-wrap:wrap; align-items:center; padding:10px 12px; border-radius:10px; background:var(--sunk); font-size:13px}
+.dbox .drow{display:flex; gap:6px 18px; flex-wrap:wrap; align-items:center; width:100%}
+.dbox b small{font-family:var(--f-body); font-weight:500; font-size:12px; color:var(--ink-3)}
+.dbox b{font-family:var(--f-display); font-weight:700; font-size:15px}
+.dbox .val{font-family:var(--f-mono); font-size:13.5px; display:inline-flex; align-items:baseline; gap:6px; white-space:nowrap}
+.dbox .val small{font-family:var(--f-body); color:var(--ink-3); font-size:12px}
+.dbox .val.a{color:var(--acc)}
+.dbox .val.b{color:var(--blue)}
+
+/* Panel */
+.panel{padding:6px 16px 16px; display:flex; flex-direction:column; position:sticky; top:12px}
+.grp{border:0; margin:0; padding:14px 0 8px; border-top:1px solid var(--line); display:flex; flex-direction:column; gap:12px; min-width:0}
+.grp:first-child{border-top:0}
+.grp h3{margin:0; font-family:var(--f-mono); font-weight:500; font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3)}
+.ctl{display:flex; flex-direction:column; gap:2px; --c:var(--acc)}
+.ctl-head{display:flex; justify-content:space-between; align-items:baseline; gap:8px}
+.ctl label{font-size:13.5px; color:var(--ink-2)}
+.ctl label i, .switch i{font-family:var(--f-math); font-size:16px; color:var(--ink)}
+.ctl output{font-family:var(--f-mono); font-size:13.5px; font-variant-numeric:tabular-nums; color:var(--ink); white-space:nowrap}
+.ctl .hint{font-size:11.5px; color:var(--ink-3)}
+.ctl .hint b{font-weight:600; color:var(--blue)}
+input[type=range]{-webkit-appearance:none; appearance:none; width:100%; height:24px; background:transparent; margin:0; cursor:pointer; --p:50%}
+input[type=range]::-webkit-slider-runnable-track{height:4px; border-radius:2px; background:linear-gradient(to right, var(--c, var(--ink)) var(--p), var(--line) var(--p))}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none; width:18px; height:18px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink)); margin-top:-7px; box-shadow:0 1px 3px rgba(0,0,0,.2)}
+input[type=range]::-moz-range-track{height:4px; border-radius:2px; background:var(--line)}
+input[type=range]::-moz-range-progress{height:4px; border-radius:2px; background:var(--c, var(--ink))}
+input[type=range]::-moz-range-thumb{width:13px; height:13px; border-radius:50%; background:var(--paper); border:2.5px solid var(--c, var(--ink))}
+.modes{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.chips{display:grid; grid-template-columns:1fr 1fr; gap:6px}
+.chip{border:1px solid var(--line); background:var(--paper); border-radius:8px; padding:6px 10px; font-size:13px; cursor:pointer; color:var(--ink-2); display:flex; flex-direction:column; align-items:flex-start; line-height:1.25; text-align:left; min-width:0}
+.chip small{font-family:var(--f-mono); font-size:10.5px; color:var(--ink-3)}
+.chip[aria-pressed="true"]{border-color:var(--ink); color:var(--ink); box-shadow:inset 0 0 0 1px var(--ink)}
+.pills{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px}
+.pill{background:var(--sunk); border-radius:8px; padding:6px 8px; display:flex; flex-direction:column; gap:1px; min-width:0}
+.pill small{font-size:10.5px; color:var(--ink-3); line-height:1.25}
+.pill span{font-family:var(--f-mono); font-size:12.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.unitnote{margin:0; font-size:11.5px; color:var(--ink-3)}
+.cmpnote{font-size:12.5px; color:var(--ink-2); background:var(--sunk); border-radius:8px; padding:8px 10px; margin:0; display:flex; gap:8px; align-items:flex-start; justify-content:space-between}
+.cmpnote button{border:1px solid var(--line); background:var(--paper); border-radius:999px; padding:1px 9px; font-size:12px; cursor:pointer; flex:none}
+
+/* Lower */
+.lower{display:grid; grid-template-columns:minmax(0,1.6fr) minmax(0,1fr); gap:20px; align-items:start}
+.formulas{padding:16px 18px 18px; display:flex; flex-direction:column; gap:14px; min-width:0}
+.fgrid{display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:10px}
+.fcard{background:var(--paper); border:1px solid var(--line); border-radius:10px; padding:12px 14px; display:flex; flex-direction:column; gap:8px; min-width:0}
+.fcard.wide{grid-column:1 / -1}
+.fcard h4{margin:0; font-size:12px; font-weight:600; letter-spacing:.06em; text-transform:uppercase; color:var(--ink-3)}
+.eq{font-family:var(--f-math); font-size:18px; line-height:1.9; overflow-x:auto; overflow-y:hidden; white-space:nowrap; padding-bottom:2px; color:var(--ink)}
+.eq.num{font-size:16px; color:var(--ink-2)}
+.eq i{font-style:italic}
+.eq sub{font-size:.68em; font-style:normal}
+.eq sup{font-size:.68em}
+.eq .r{color:var(--acc); font-family:var(--f-mono); font-size:15px; font-weight:500; font-style:normal}
+.eq .r.b{color:var(--blue)}
+.eq .r.v{color:var(--violet)}
+.fr{display:inline-flex; flex-direction:column; vertical-align:middle; text-align:center; margin:0 .12em; line-height:1.25}
+.fr > span:first-child{padding:0 .3em .08em; border-bottom:1px solid currentColor}
+.fr > span:last-child{padding:.08em .3em 0}
+.rt{display:inline-flex; align-items:flex-start}
+.rt > span:first-child{font-size:1.05em; line-height:1.3}
+.rt > span:last-child{border-top:1px solid currentColor; padding:0 .15em; line-height:1.3; margin-top:.1em}
+.fnote{font-size:12.5px; color:var(--ink-3); margin:0}
+.fnote i{font-family:var(--f-math); font-size:14px}
+.fnote.warn{color:var(--acc)}
+
+.tips{padding:16px 18px 18px; display:flex; flex-direction:column; gap:12px; min-width:0}
+.tips ol{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:10px; counter-reset:t}
+.tips li{counter-increment:t; position:relative; padding-left:36px; font-size:14px; color:var(--ink-2); min-height:24px}
+.tips li::before{content:counter(t); position:absolute; left:0; top:0; font-family:var(--f-mono); font-size:12px; width:24px; height:24px; border-radius:50%; background:var(--acc-soft); color:var(--acc); display:flex; align-items:center; justify-content:center; font-weight:500}
+.tips li b{color:var(--ink); font-weight:600}
+.tips li i{font-family:var(--f-math); font-size:15.5px}
+
+@media (max-width: 1080px){
+  .main{grid-template-columns:minmax(0,1fr)}
+  .panel{position:static; display:grid; grid-template-columns:repeat(auto-fit, minmax(280px, 1fr)); column-gap:24px; padding:6px 16px 12px}
+  .grp:first-child{border-top:1px solid var(--line)}
+  .lower{grid-template-columns:minmax(0,1fr)}
+}
+@media (max-width: 640px){
+  .canvas-box{height:auto; aspect-ratio:16 / 12}
+  .fgrid{grid-template-columns:minmax(0,1fr)}
+  .hud{gap:2px 12px}
+  .hud dd{min-width:5.5ch; font-size:12.5px}
+  .fire{min-width:0}
+  .chart-box{height:230px}
+}
+@media (prefers-reduced-motion: reduce){
+  .fire{transition:none}
+}
+</style>
+</head><body>
+<div class="app"><a class="home-link" href="./" data-pl="← Strona główna" data-en="← Home">← Strona główna</a>
+<style>.home-link{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:var(--f-mono,ui-monospace,monospace);font-size:12.5px;letter-spacing:.04em;color:var(--ink-2,#465768);text-decoration:none;border:1px solid var(--line,#CCD5DE);background:var(--surface,#F7F9FB);border-radius:999px;padding:5px 13px;margin-bottom:-8px;transition:border-color .15s,color .15s}.home-link:hover{color:var(--ink,#12202C);border-color:var(--ink-3,#7C8B9A)}.home-link:focus-visible{outline:2px solid var(--vac,#2F7FE0);outline-offset:2px}</style>
+<script>(function(){var K=['teaching-lang','rzut-lang','bryla-lang','orbity-lang','rezonans-lang','doppler-lang','gaz-lang','pole-lang','lawa-lang','szczeliny-lang','sr-lang','wahadlo-lang','rozpad-lang','indukcja-lang','struna-lang','zderzenia-lang','tecza-lang','tunel-lang','maxwell-lang','ising-lang','magnes-lang','falaem-lang','browna-lang'];
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){var a=document.querySelector('.home-link');if(a)a.textContent=a.getAttribute('data-'+cur());}
+document.addEventListener('DOMContentLoaded',function(){upd();
+document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(function(){upd();var l=cur();try{K.forEach(function(k){localStorage.setItem(k,l);});}catch(e){}},0);});});
+var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});});})();</script>
+  <header class="top">
+    <div class="brand">
+      <span class="eyebrow" data-i18n="eyebrow">Fizyka statystyczna · błądzenie losowe</span>
+      <h1>
+        <svg viewBox="0 0 64 44" aria-hidden="true"><path d="M5 30 l6 -9 l5 6 l3 -12 l7 8 l4 -6 l6 10 l5 -15 l6 7 l4 -4" fill="none" stroke="var(--acc)" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/><circle cx="55" cy="15" r="6.5" fill="var(--acc)"/></svg>
+        <span data-i18n="title">Ruchy Browna i dyfuzja</span>
+      </h1>
+      <p class="lede" data-i18n="lede">Duża cząstka zanurzona w gazie drobnych, szybkich cząsteczek drga i błądzi. Zmierz średnie przemieszczenie kwadratowe, wyznacz współczynnik dyfuzji i sprawdź relację Einsteina.</p>
+    </div>
+    <div class="lang" role="group" aria-label="Language"><button data-lang="pl" aria-pressed="true">PL</button><button data-lang="en" aria-pressed="false">EN</button></div>
+  </header>
+
+  <div class="main">
+    <div class="leftcol">
+      <section class="card stage" id="stage">
+        <div class="strip">
+          <dl class="hud" id="hud"></dl>
+          <div class="legend" id="legend"></div>
+        </div>
+        <div class="canvas-box" id="canvas-box"><canvas id="scene" data-i18n-aria="aScene" aria-label="Animacja ruchów Browna"></canvas></div>
+        <div class="bar">
+          <button type="button" class="fire" id="play">
+            <svg viewBox="0 0 20 20" aria-hidden="true" id="play-ic"><path d="M5 3.5v13l11-6.5z" fill="currentColor"/></svg>
+            <span id="play-lbl" data-i18n="start">Start</span><kbd data-i18n="kbd">spacja</kbd>
+          </button>
+          <button type="button" class="btn" id="reset">
+            <svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10a6 6 0 1 0 2-4.5M4 3v3.5h3.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <span data-i18n="reset">Od nowa</span>
+          </button>
+          <div class="seg" role="group" id="speed" data-i18n-aria="speed" aria-label="Tempo">
+            <span class="lbl" data-i18n="speed">Tempo</span>
+            <button type="button" data-sp="0.1" aria-pressed="false">0,1×</button>
+            <button type="button" data-sp="0.5" aria-pressed="false">½×</button>
+            <button type="button" data-sp="1" aria-pressed="true">1×</button>
+            <button type="button" data-sp="3" aria-pressed="false">3×</button>
+          </div>
+          <button type="button" class="tg" id="tg-mol" aria-pressed="false" data-i18n="showMol">Pokaż cząsteczki</button>
+        </div>
+      </section>
+
+      <section class="card charts">
+        <div class="sec-h">
+          <h2 data-i18n="chartsH">Pomiar dyfuzji</h2>
+          <div class="tabs" role="tablist" id="tabs">
+            <button type="button" role="tab" data-tab="msd" aria-selected="true">⟨r²⟩(t)</button>
+            <button type="button" role="tab" data-tab="prof" aria-selected="false" data-i18n="tabProf">Profil radialny</button>
+          </div>
+        </div>
+        <div class="clegend" id="clegend"></div>
+        <div class="chart-box" id="chart-box"><canvas id="chart"></canvas></div>
+        <div class="dbox" id="dbox"></div>
+        <p class="cnote" id="cnote"></p>
+      </section>
+    </div>
+
+    <aside class="card panel" id="panel" data-i18n-aria="aPanel" aria-label="Ustawienia">
+      <fieldset class="grp">
+        <h3 data-i18n="gMode">Tryb</h3>
+        <div class="modes" role="group" id="modes">
+          <button type="button" class="chip" data-mode="single" aria-pressed="true"><span data-i18n="mSingle">Jedna cząstka</span><small data-i18n="mSingleS">zderzenia z gazem</small></button>
+          <button type="button" class="chip" data-mode="walk" aria-pressed="false"><span data-i18n="mWalk">Wiele cząstek</span><small data-i18n="mWalkS">model Langevina</small></button>
+        </div>
+        <p class="cmpnote" id="cmpnote" hidden><span id="cmptext"></span><button type="button" id="cmpoff" data-i18n="cmpOff">zakończ</button></p>
+      </fieldset>
+      <fieldset class="grp">
+        <h3 data-i18n="gPreset">Scenariusze</h3>
+        <div class="chips" id="presets">
+          <button type="button" class="chip" data-preset="pollen" aria-pressed="true"><span data-i18n="pPollen">Pyłek w wodzie</span><small data-i18n="pPollenS">klasyka</small></button>
+          <button type="button" class="chip" data-preset="hotcold" aria-pressed="false"><span data-i18n="pHot">Gorąco i zimno</span><small>80 K / 500 K</small></button>
+          <button type="button" class="chip" data-preset="heavy" aria-pressed="false"><span data-i18n="pHeavy">Ciężka i lekka</span><small>150 u / 2000 u</small></button>
+          <button type="button" class="chip" data-preset="ink" aria-pressed="false"><span data-i18n="pInk">Kropla atramentu</span><small data-i18n="pInkS">2000 cząstek</small></button>
+        </div>
+      </fieldset>
+      <fieldset class="grp">
+        <h3 data-i18n="gGas">Gaz i cząstka</h3>
+        <div class="ctl">
+          <div class="ctl-head"><label for="T" data-i18n-html="lT">Temperatura <i>T</i></label><output id="T-out" for="T"></output></div>
+          <input type="range" id="T" min="50" max="600" step="10" value="300">
+          <span class="hint" id="T-hint"></span>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="M" data-i18n-html="lM">Masa cząstki <i>M</i></label><output id="M-out" for="M"></output></div>
+          <input type="range" id="M" min="0" max="1000" step="1" value="463">
+          <span class="hint" id="M-hint"></span>
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="R" data-i18n-html="lR">Promień cząstki <i>R</i></label><output id="R-out" for="R"></output></div>
+          <input type="range" id="R" min="1.5" max="5" step="0.1" value="3">
+        </div>
+        <div class="ctl">
+          <div class="ctl-head"><label for="N" data-i18n-html="lN">Liczba cząsteczek gazu <i>N</i></label><output id="N-out" for="N"></output></div>
+          <input type="range" id="N" min="200" max="900" step="10" value="500">
+        </div>
+        <div class="pills">
+          <div class="pill"><small data-i18n="pillGam">tarcie γ</small><span id="pill-g">—</span></div>
+          <div class="pill"><small data-i18n="pillTau">czas pamięci τ = M/γ</small><span id="pill-tau">—</span></div>
+          <div class="pill"><small data-i18n="pillD">D z teorii</small><span id="pill-d">—</span></div>
+          <div class="pill"><small data-i18n="pillV">prędkość cząsteczki gazu</small><span id="pill-v">—</span></div>
+        </div>
+        <p class="unitnote" data-i18n="units">Jednostki modelu: nm, ps, u (masa cząsteczki gazu 18 u, jak woda).</p>
+      </fieldset>
+    </aside>
+  </div>
+
+  <div class="lower">
+    <section class="card formulas">
+      <div class="sec-h"><h2 data-i18n="formulas">Wzory</h2><p data-i18n="formulasSub">Liczby podstawiane na żywo z bieżących ustawień i pomiaru.</p></div>
+      <div class="fgrid" id="fgrid"></div>
+    </section>
+    <section class="card tips">
+      <div class="sec-h"><h2 data-i18n="tipsH">Spróbuj</h2></div>
+      <ol>
+        <li data-i18n-html="tip1"></li>
+        <li data-i18n-html="tip2"></li>
+        <li data-i18n-html="tip3"></li>
+        <li data-i18n-html="tip4"></li>
+      </ol>
+    </section>
+  </div>
+</div>
+
+<script>
+(() => {
+'use strict';
+const $ = (s) => document.querySelector(s);
+const $$ = (s) => [...document.querySelectorAll(s)];
+
+/* ---------- i18n ---------- */
+const I18N = {
+  pl: {
+    eyebrow:'Fizyka statystyczna · błądzenie losowe', title:'Ruchy Browna i dyfuzja',
+    lede:'Duża cząstka zanurzona w gazie drobnych, szybkich cząsteczek drga i błądzi. Zmierz średnie przemieszczenie kwadratowe, wyznacz współczynnik dyfuzji i sprawdź relację Einsteina.',
+    aScene:'Animacja ruchów Browna', aPanel:'Ustawienia',
+    start:'Start', pause:'Pauza', resume:'Wznów', kbd:'spacja', reset:'Od nowa', speed:'Tempo', showMol:'Pokaż cząsteczki',
+    sReady:'gotowy', sRun:'w ruchu', sPause:'pauza',
+    gMode:'Tryb', mSingle:'Jedna cząstka', mSingleS:'zderzenia z gazem', mWalk:'Wiele cząstek', mWalkS:'model Langevina',
+    gPreset:'Scenariusze', pPollen:'Pyłek w wodzie', pPollenS:'klasyka', pHot:'Gorąco i zimno', pHeavy:'Ciężka i lekka', pInk:'Kropla atramentu', pInkS:'2000 cząstek',
+    gGas:'Gaz i cząstka', lT:'Temperatura <i>T</i>', lM:'Masa cząstki <i>M</i>', lR:'Promień cząstki <i>R</i>', lN:'Liczba cząsteczek gazu <i>N</i>',
+    pillGam:'tarcie γ', pillTau:'czas pamięci τ = M/γ', pillD:'D z teorii', pillV:'prędkość cząsteczki gazu',
+    units:'Jednostki modelu: nm, ps, u (masa cząsteczki gazu 18 u, jak woda). 1 nm²/ps = 10⁻⁶ m²/s.',
+    cmpT:'Porównanie: lewe pudełko ma <b>T</b> z suwaka, prawe stałe <b>500 K</b>.', cmpM:'Porównanie: lewe pudełko ma <b>M</b> z suwaka, prawe stałe <b>2000 u</b>.', cmpOff:'zakończ',
+    hintB:'prawe pudełko:',
+    hT:'czas', hDisp:'|Δr|', hKick:'uderzeń/ps', hDfit:'pomiar', hDth:'teoria', hRrms:'r<sub>rms</sub>', hNw:'cząstek',
+    lgTrail:'tor cząstki', lgHit:'cząsteczka tuż po uderzeniu', lgMol:'cząsteczki gazu', lgWalk:'cząstki', lgRm:'r<sub>rms</sub> zmierzone', lgRt:'√(4Dt) teoria', lgA:'lewe', lgB:'prawe',
+    chartsH:'Pomiar dyfuzji', tabProf:'Profil radialny',
+    cMeas:'⟨r²⟩ zmierzone', cFit:'dopasowanie', cTh:'4Dt (teoria)', cBand:'zakres dopasowania', cHist:'histogram odległości', cGauss:'rozkład Gaussa',
+    noteMsd:'Średnia po wszystkich początkach czasu wzdłuż jednej trajektorii. Na początku ⟨<i>r</i>²⟩ rośnie jak <i>t</i>² (ruch balistyczny, <i>t</i> ≲ τ), potem liniowo. Przy długich czasach krzywa się wypłaszcza, bo cząstkę zatrzymują ścianki pudełka. Jedna trajektoria daje <i>D</i> z błędem statystycznym, który maleje jak 1/√<i>t</i>.',
+    noteMsdW:'Średnia po wszystkich cząstkach chmury, liczona od chwili uwolnienia. W modelu przetłumionym ⟨<i>r</i>²⟩ = 4<i>Dt</i> od samego początku.',
+    noteProf:'Gęstość prawdopodobieństwa odległości od środka. Teoria: <i>p</i>(<i>r</i>) = (<i>r</i>/2<i>Dt</i>)·exp(−<i>r</i>²/4<i>Dt</i>). Szerokość rośnie jak √<i>t</i>.',
+    noteProfOff:'Profil radialny jest dostępny w trybie «Wiele cząstek».',
+    noteProfWait:'Uruchom symulację, żeby chmura zaczęła się rozpływać.',
+    dMeas:'D zmierzone', dErr:'niepewność ok.', dTh:'D = kT/γ', dRatio:'stosunek', dWait:'zbieram dane…', dTooShort:'za mało danych',
+    formulas:'Wzory', formulasSub:'Liczby podstawiane na żywo z bieżących ustawień i pomiaru.',
+    fMsd:'Średnie przemieszczenie kwadratowe (2D)', fEin:'Relacja Einsteina', fTau:'Pamięć prędkości i ekwipartycja', fWalk:'Błądzenie losowe', fSE:'Stokes i Einstein (kula w cieczy, 3D)', fProf:'Profil gęstości chmury',
+    nMsd:'Nachylenie prostej dopasowanej do ⟨<i>r</i>²⟩(<i>t</i>) to 4<i>D</i>. W 3D byłoby 6<i>D</i>, w 1D 2<i>D</i>.',
+    nEin:'γ to współczynnik tarcia: siła oporu −γ<i>V</i>. Dla dwuwymiarowego gazu doskonałego γ wynika z pędu przekazywanego w zderzeniach. Masa <i>M</i> nie występuje w <i>D</i>.',
+    nEinT:'W gazie γ ∝ √<i>T</i>, więc tutaj <i>D</i> ∝ √<i>T</i>. W cieczy (Stokes) γ nie zależy od <i>T</i> wprost.',
+    nTau:'Dla <i>t</i> ≪ τ cząstka leci prosto: ⟨<i>r</i>²⟩ ≈ ⟨<i>V</i>²⟩<i>t</i>². Dla <i>t</i> ≫ τ zapomina kierunek i dyfunduje.',
+    nTauW:'Uwaga: τ jest długie w porównaniu z czasem przejścia pudełka, więc reżim dyfuzyjny jest krótki. Zmniejsz <i>M</i> lub zwiększ <i>N</i>.',
+    nWalk:'Każdy krok trwa Δ<i>t</i> i ma losowy kierunek. Kroki są niezależne, więc kwadraty długości się sumują, a nie same długości.',
+    nWalkM:'zmierzone w chmurze:',
+    nSE:'Woda (η = 1,0 mPa·s), ziarenko o promieniu <i>a</i> = 0,5 µm. W ciągu 1 s przesunie się średnio o',
+    nProf:'Dyfuzja zamienia punkt w rozmywający się dzwon Gaussa; σ to odchylenie standardowe w każdym kierunku.',
+    nProfOff:'Włącz tryb «Wiele cząstek», żeby zobaczyć chmurę.',
+    mSlope:'nachylenie', mStep:'krok', mSteps:'liczba kroków',
+    tipsH:'Spróbuj',
+    tip1:'Włącz <b>«Pokaż cząsteczki»</b> i ustaw tempo <b>0,1×</b>. Każde szarpnięcie dużej cząstki to uderzenie konkretnej cząsteczki gazu: podświetlają się te, które właśnie odbiły się od niej.',
+    tip2:'Scenariusz <b>«Gorąco i zimno»</b>: uruchom i odczekaj kilka sekund. Gorąca cząstka zakreśla szerszy obszar, a jej prosta ⟨<i>r</i>²⟩ jest bardziej stroma. W tym gazie <i>D</i> rośnie jak √<i>T</i>.',
+    tip3:'<b>«Ciężka i lekka»</b>: lekka cząstka drga nerwowo, ciężka sunie płynnie. Po czasie kilku τ oba nachylenia ⟨<i>r</i>²⟩ są jednak takie same, bo <i>D</i> = <i>kT</i>/γ nie zależy od masy.',
+    tip4:'<b>«Kropla atramentu»</b>: promień chmury rośnie jak √<i>t</i>. Żeby podwoić zasięg, trzeba czekać cztery razy dłużej. Porównaj histogram w zakładce «Profil radialny» z krzywą Gaussa.',
+    hint0:'Naciśnij Start lub spację',
+    lblA:'lewe', lblB:'prawe'
+  },
+  en: {
+    eyebrow:'Statistical physics · random walk', title:'Brownian motion and diffusion',
+    lede:'A large particle immersed in a gas of small, fast molecules jitters and wanders. Measure the mean squared displacement, extract the diffusion coefficient and test the Einstein relation.',
+    aScene:'Brownian motion animation', aPanel:'Settings',
+    start:'Start', pause:'Pause', resume:'Resume', kbd:'space', reset:'Reset', speed:'Speed', showMol:'Show molecules',
+    sReady:'ready', sRun:'running', sPause:'paused',
+    gMode:'Mode', mSingle:'One particle', mSingleS:'collisions with gas', mWalk:'Many particles', mWalkS:'Langevin model',
+    gPreset:'Scenarios', pPollen:'Pollen in water', pPollenS:'classic', pHot:'Hot vs cold', pHeavy:'Heavy vs light', pInk:'Ink drop', pInkS:'2000 particles',
+    gGas:'Gas and particle', lT:'Temperature <i>T</i>', lM:'Particle mass <i>M</i>', lR:'Particle radius <i>R</i>', lN:'Number of gas molecules <i>N</i>',
+    pillGam:'friction γ', pillTau:'memory time τ = M/γ', pillD:'D from theory', pillV:'gas molecule speed',
+    units:'Model units: nm, ps, u (gas molecule mass 18 u, like water). 1 nm²/ps = 10⁻⁶ m²/s.',
+    cmpT:'Comparison: the left box takes <b>T</b> from the slider, the right one is fixed at <b>500 K</b>.', cmpM:'Comparison: the left box takes <b>M</b> from the slider, the right one is fixed at <b>2000 u</b>.', cmpOff:'end',
+    hintB:'right box:',
+    hT:'time', hDisp:'|Δr|', hKick:'kicks/ps', hDfit:'measured', hDth:'theory', hRrms:'r<sub>rms</sub>', hNw:'particles',
+    lgTrail:'particle path', lgHit:'molecule just after a kick', lgMol:'gas molecules', lgWalk:'particles', lgRm:'measured r<sub>rms</sub>', lgRt:'√(4Dt) theory', lgA:'left', lgB:'right',
+    chartsH:'Measuring diffusion', tabProf:'Radial profile',
+    cMeas:'measured ⟨r²⟩', cFit:'fit', cTh:'4Dt (theory)', cBand:'fit window', cHist:'distance histogram', cGauss:'Gaussian',
+    noteMsd:'Averaged over all time origins along one trajectory. At first ⟨<i>r</i>²⟩ grows like <i>t</i>² (ballistic motion, <i>t</i> ≲ τ), then linearly. At long times the curve levels off because the box walls stop the particle. A single trajectory gives <i>D</i> with a statistical error that shrinks like 1/√<i>t</i>.',
+    noteMsdW:'Averaged over all particles in the cloud, counted from the moment of release. In the overdamped model ⟨<i>r</i>²⟩ = 4<i>Dt</i> from the very start.',
+    noteProf:'Probability density of the distance from the centre. Theory: <i>p</i>(<i>r</i>) = (<i>r</i>/2<i>Dt</i>)·exp(−<i>r</i>²/4<i>Dt</i>). The width grows like √<i>t</i>.',
+    noteProfOff:'The radial profile is available in «Many particles» mode.',
+    noteProfWait:'Start the simulation to let the cloud spread.',
+    dMeas:'measured D', dErr:'uncertainty approx.', dTh:'D = kT/γ', dRatio:'ratio', dWait:'collecting data…', dTooShort:'not enough data',
+    formulas:'Formulas', formulasSub:'Numbers are filled in live from the current settings and measurement.',
+    fMsd:'Mean squared displacement (2D)', fEin:'Einstein relation', fTau:'Velocity memory and equipartition', fWalk:'Random walk', fSE:'Stokes and Einstein (sphere in a liquid, 3D)', fProf:'Density profile of the cloud',
+    nMsd:'The slope of the line fitted to ⟨<i>r</i>²⟩(<i>t</i>) is 4<i>D</i>. In 3D it would be 6<i>D</i>, in 1D 2<i>D</i>.',
+    nEin:'γ is the friction coefficient: drag force −γ<i>V</i>. For a two dimensional ideal gas, γ follows from the momentum delivered in collisions. The mass <i>M</i> does not appear in <i>D</i>.',
+    nEinT:'In a gas γ ∝ √<i>T</i>, so here <i>D</i> ∝ √<i>T</i>. In a liquid (Stokes) γ does not depend on <i>T</i> directly.',
+    nTau:'For <i>t</i> ≪ τ the particle flies straight: ⟨<i>r</i>²⟩ ≈ ⟨<i>V</i>²⟩<i>t</i>². For <i>t</i> ≫ τ it forgets its direction and diffuses.',
+    nTauW:'Note: τ is long compared with the time to cross the box, so the diffusive regime is short. Lower <i>M</i> or raise <i>N</i>.',
+    nWalk:'Each step lasts Δ<i>t</i> and has a random direction. Steps are independent, so the squared lengths add up, not the lengths themselves.',
+    nWalkM:'measured in the cloud:',
+    nSE:'Water (η = 1.0 mPa·s), a grain of radius <i>a</i> = 0.5 µm. In 1 s it moves on average by',
+    nProf:'Diffusion turns a point into a spreading Gaussian bell; σ is the standard deviation along each direction.',
+    nProfOff:'Switch on «Many particles» mode to see the cloud.',
+    mSlope:'slope', mStep:'step', mSteps:'number of steps',
+    tipsH:'Try this',
+    tip1:'Turn on <b>«Show molecules»</b> and set the speed to <b>0.1×</b>. Every jolt of the big particle is a kick from a specific gas molecule: the ones that have just bounced off it light up.',
+    tip2:'Scenario <b>«Hot vs cold»</b>: start it and wait a few seconds. The hot particle covers a wider area and its ⟨<i>r</i>²⟩ line is steeper. In this gas <i>D</i> grows like √<i>T</i>.',
+    tip3:'<b>«Heavy vs light»</b>: the light particle jitters nervously, the heavy one glides smoothly. Yet after a few τ both ⟨<i>r</i>²⟩ slopes are the same, because <i>D</i> = <i>kT</i>/γ does not depend on mass.',
+    tip4:'<b>«Ink drop»</b>: the cloud radius grows like √<i>t</i>. To double the reach you must wait four times longer. Compare the histogram in the «Radial profile» tab with the Gaussian curve.',
+    hint0:'Press Start or space',
+    lblA:'left', lblB:'right'
+  }
+};
+let lang = 'pl';
+try { const s = localStorage.getItem('browna-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
+const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
+
+const nfCache = {};
+function fmt(x, dec = 2) {
+  if (!isFinite(x)) return '∞';
+  if (Math.abs(x) < 0.5 * Math.pow(10, -dec)) x = 0;
+  const key = lang + dec;
+  if (!nfCache[key]) nfCache[key] = new Intl.NumberFormat(lang === 'pl' ? 'pl-PL' : 'en-US', { minimumFractionDigits: dec, maximumFractionDigits: dec, useGrouping: false });
+  return nfCache[key].format(x).replace('-', '−');
+}
+function sig(x, n = 3) { // n significant digits
+  if (!isFinite(x)) return '∞';
+  if (x === 0) return fmt(0, n - 1);
+  const d = Math.max(0, n - 1 - Math.floor(Math.log10(Math.abs(x))));
+  return fmt(x, Math.min(d, 6));
+}
+const SUP = (e) => String(e).split('').map(c => '⁰¹²³⁴⁵⁶⁷⁸⁹'['0123456789'.indexOf(c)] ?? '⁻').join('');
+function fsci(x, d = 2) {
+  if (!isFinite(x) || x === 0) return '—';
+  const e = Math.floor(Math.log10(Math.abs(x))), m = x / Math.pow(10, e);
+  return `${fmt(m, d)}·10${SUP(e)}`;
+}
+
+/* ---------- physics: 2D hard-disk gas + one big disk ---------- */
+const KB_U = 0.00831446;    // Boltzmann constant in u·nm²/(ps²·K)
+const KB_SI = 1.380649e-23;
+const M_GAS = 18, R_GAS = 0.15; // gas molecule: 18 u, radius 0.15 nm
+const LX = 40, LY = 25;         // box, nm
+function gaussRng() { let u = 0; while (!u) u = Math.random(); return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * Math.random()); }
+// Friction of a disk (contact radius Rc) in a 2D ideal gas with specular collisions: γ = 2√(2π) n Rc √(m kT)
+function theory(p) {
+  const Rc = p.R + R_GAS, area = LX * LY - Math.PI * Rc * Rc, n = p.N / area, kT = KB_U * p.T;
+  const gam = 2 * Math.sqrt(2 * Math.PI) * n * Rc * Math.sqrt(M_GAS * kT);
+  const D = kT / gam, tau = p.M / gam;
+  const Lf = Math.min(LX, LY) - 2 * p.R;
+  const tFit = Math.max(0.07 * Lf * Lf / (4 * D), 5 * tau);   // end of fit window, before walls dominate
+  return { Rc, n, kT, gam, D, tau, Lf, tFit, sep: 2 * tau < 0.5 * 0.07 * Lf * Lf / (4 * D), vgas: Math.sqrt(2 * kT / M_GAS) };
+}
+
+class GasSim {
+  constructor(p) {
+    this.p = { ...p }; const { N } = p; this.N = N; this.M = p.M; this.R = p.R;
+    this.th = theory(p);
+    this.x = new Float64Array(N); this.y = new Float64Array(N); this.vx = new Float64Array(N); this.vy = new Float64Array(N);
+    this.hit = new Float64Array(N).fill(-1e9);
+    const kT = this.th.kT, s = Math.sqrt(kT / M_GAS), S = Math.sqrt(kT / p.M), Rc = this.th.Rc;
+    this.X = LX / 2; this.Y = LY / 2; this.X0 = this.X; this.Y0 = this.Y;
+    this.VX = gaussRng() * S; this.VY = gaussRng() * S;
+    for (let i = 0; i < N; i++) {
+      let a, b, ok;
+      do {
+        a = R_GAS + Math.random() * (LX - 2 * R_GAS); b = R_GAS + Math.random() * (LY - 2 * R_GAS);
+        ok = (a - this.X) ** 2 + (b - this.Y) ** 2 > (Rc + 0.2) ** 2;
+      } while (!ok);
+      this.x[i] = a; this.y[i] = b; this.vx[i] = gaussRng() * s; this.vy[i] = gaussRng() * s;
+    }
+    let ke = 0; for (let i = 0; i < N; i++) ke += 0.5 * M_GAS * (this.vx[i] ** 2 + this.vy[i] ** 2);
+    const f = Math.sqrt(N * kT / ke); for (let i = 0; i < N; i++) { this.vx[i] *= f; this.vy[i] *= f; }
+    this.ncx = Math.floor(LX / 0.5); this.ncy = Math.floor(LY / 0.5); this.csx = LX / this.ncx; this.csy = LY / this.ncy;
+    this.head = new Int32Array(this.ncx * this.ncy); this.next = new Int32Array(N);
+    this.dt = Math.min(0.1, 0.03 / s);
+    this.t = 0; this.kicks = 0; this.v2sum = 0; this.v2n = 0;
+    // MSD with time-origin averaging: ring buffer of samples
+    this.SAMP = Math.max(0.5, this.th.tFit / 60);
+    this.K = Math.min(400, Math.ceil(2 * this.th.tFit / this.SAMP));
+    this.ring = new Float64Array(2 * (this.K + 1)); this.nS = 0;
+    this.sum = new Float64Array(this.K + 1); this.cnt = new Float64Array(this.K + 1); this.nextSamp = 0;
+    this.trail = []; this.nextTrail = 0;
+    this.sample(); this.pushTrail();
+  }
+  pushTrail() { this.trail.push(this.X, this.Y, this.t); this.nextTrail += 0.5; if (this.trail.length > 3 * 3000) this.trail.splice(0, 3 * 600); }
+  sample() {
+    const K = this.K, ring = this.ring, j = this.nS, L = K + 1;
+    ring[2 * (j % L)] = this.X; ring[2 * (j % L) + 1] = this.Y;
+    const kmax = Math.min(K, j);
+    for (let k = 1; k <= kmax; k++) {
+      const a = 2 * ((j - k) % L), dx = this.X - ring[a], dy = this.Y - ring[a + 1];
+      this.sum[k] += dx * dx + dy * dy; this.cnt[k]++;
+    }
+    this.nS++; this.nextSamp += this.SAMP;
+    this.v2sum += this.VX * this.VX + this.VY * this.VY; this.v2n++;
+  }
+  step() {
+    const dt = this.dt, N = this.N, x = this.x, y = this.y, vx = this.vx, vy = this.vy, M = this.M, R = this.R;
+    const Rc = this.th.Rc, Rc2 = Rc * Rc, rg = R_GAS;
+    this.X += this.VX * dt; this.Y += this.VY * dt;
+    if (this.X < R) { this.X = 2 * R - this.X; this.VX = -this.VX; } else if (this.X > LX - R) { this.X = 2 * (LX - R) - this.X; this.VX = -this.VX; }
+    if (this.Y < R) { this.Y = 2 * R - this.Y; this.VY = -this.VY; } else if (this.Y > LY - R) { this.Y = 2 * (LY - R) - this.Y; this.VY = -this.VY; }
+    const X = this.X, Y = this.Y, head = this.head, next = this.next, ncx = this.ncx, ncy = this.ncy, csx = this.csx, csy = this.csy;
+    head.fill(-1);
+    const mu2 = 2 * M_GAS * M / (M_GAS + M);
+    for (let i = 0; i < N; i++) {
+      let xi = x[i] + vx[i] * dt, yi = y[i] + vy[i] * dt;
+      if (xi < rg) { xi = 2 * rg - xi; vx[i] = -vx[i]; } else if (xi > LX - rg) { xi = 2 * (LX - rg) - xi; vx[i] = -vx[i]; }
+      if (yi < rg) { yi = 2 * rg - yi; vy[i] = -vy[i]; } else if (yi > LY - rg) { yi = 2 * (LY - rg) - yi; vy[i] = -vy[i]; }
+      const dx = xi - X, dy = yi - Y, d2 = dx * dx + dy * dy;
+      if (d2 < Rc2) {   // elastic collision with the big disk (momentum and energy conserved)
+        const d = Math.sqrt(d2) || 1e-9, nx = dx / d, ny = dy / d, vr = (vx[i] - this.VX) * nx + (vy[i] - this.VY) * ny;
+        if (vr < 0) {
+          const J = mu2 * vr;
+          vx[i] -= J / M_GAS * nx; vy[i] -= J / M_GAS * ny; this.VX += J / M * nx; this.VY += J / M * ny;
+          this.kicks++; this.hit[i] = this.t;
+        }
+        xi = X + nx * Rc * 1.0001; yi = Y + ny * Rc * 1.0001;
+        xi = Math.min(LX - 1e-6, Math.max(1e-6, xi)); yi = Math.min(LY - 1e-6, Math.max(1e-6, yi));
+      }
+      x[i] = xi; y[i] = yi;
+      let cx = (xi / csx) | 0, cy = (yi / csy) | 0; if (cx >= ncx) cx = ncx - 1; if (cy >= ncy) cy = ncy - 1;
+      const c = cy * ncx + cx; next[i] = head[c]; head[c] = i;
+    }
+    // gas-gas hard-disk collisions (cell list)
+    const d02 = 4 * rg * rg;
+    for (let cy = 0; cy < ncy; cy++) for (let cx = 0; cx < ncx; cx++) {
+      for (let i = head[cy * ncx + cx]; i >= 0; i = next[i]) {
+        for (let oy = -1; oy <= 1; oy++) {
+          const ny_ = cy + oy; if (ny_ < 0 || ny_ >= ncy) continue;
+          for (let ox = -1; ox <= 1; ox++) {
+            const nx_ = cx + ox; if (nx_ < 0 || nx_ >= ncx) continue;
+            for (let j = head[ny_ * ncx + nx_]; j >= 0; j = next[j]) {
+              if (j <= i) continue;
+              const dx = x[j] - x[i], dy = y[j] - y[i], d2 = dx * dx + dy * dy;
+              if (d2 < d02 && d2 > 0) {
+                const dot = (vx[j] - vx[i]) * dx + (vy[j] - vy[i]) * dy;
+                if (dot < 0) { const f = dot / d2; vx[i] += f * dx; vy[i] += f * dy; vx[j] -= f * dx; vy[j] -= f * dy; }
+              }
+            }
+          }
+        }
+      }
+    }
+    this.t += dt;
+    if (this.t >= this.nextSamp) this.sample();
+    if (this.t >= this.nextTrail) this.pushTrail();
+  }
+  msd(k) { return this.cnt[k] > 0 ? this.sum[k] / this.cnt[k] : NaN; }
+  fit() {
+    const S = this.SAMP, k0 = Math.max(2, Math.ceil(2 * this.th.tau / S));
+    const k1 = Math.min(this.K, Math.floor(this.th.tFit / S));
+    if (k1 - k0 < 5 || this.cnt[k1] < 12) return null;
+    let Sx = 0, Sy = 0, Sxx = 0, Sxy = 0, n = 0;
+    for (let k = k0; k <= k1; k++) { const t = k * S, v = this.sum[k] / this.cnt[k]; Sx += t; Sy += v; Sxx += t * t; Sxy += t * v; n++; }
+    const b = (n * Sxy - Sx * Sy) / (n * Sxx - Sx * Sx), a = (Sy - b * Sx) / n;
+    return { D: b / 4, slope: b, a, t0: k0 * S, t1: k1 * S };
+  }
+}
+
+/* ---------- many walkers: overdamped Langevin ---------- */
+const NW = 2000, DT_W = 1; // ps
+class Walkers {
+  constructor(p) {
+    this.th = theory(p); this.D = this.th.D;
+    this.x = new Float64Array(NW); this.y = new Float64Array(NW); this.t = 0; this.steps = 0;
+    this.hist = [[0, 0]];
+  }
+  step() {
+    const s = Math.sqrt(2 * this.D * DT_W), x = this.x, y = this.y;
+    for (let i = 0; i < NW; i++) { x[i] += s * gaussRng(); y[i] += s * gaussRng(); }
+    this.t += DT_W; this.steps++;
+  }
+  r2() { let s = 0; for (let i = 0; i < NW; i++) s += this.x[i] ** 2 + this.y[i] ** 2; return s / NW; }
+  record() {
+    this.hist.push([this.t, this.r2()]);
+    if (this.hist.length > 800) this.hist = this.hist.filter((_, i) => i % 2 === 0);
+  }
+  fit() {
+    if (this.hist.length < 4) return null;
+    let a = 0, b = 0; for (const [t, m] of this.hist) { a += t * m; b += t * t; }
+    return b > 0 ? { D: a / b / 4, slope: a / b } : null;
+  }
+}
+
+/* ---------- state ---------- */
+const S = { mode: 'single', running: false, started: false, speed: 1, showMol: false, tab: 'msd', compare: null, preset: 'pollen' };
+const P = {};
+let sims = [], walk = null;
+const mFromSlider = (v) => 100 * Math.pow(20, v / 1000);          // 100 u .. 2000 u (log)
+const sliderFromM = (m) => Math.round(Math.log(m / 100) / Math.log(20) * 1000);
+function readParams() { P.T = +$('#T').value; P.M = mFromSlider(+$('#M').value); P.R = +$('#R').value; P.N = +$('#N').value; }
+function paramsB() {
+  if (!S.compare) return null;
+  const b = { ...P }; b[S.compare.key] = S.compare.b; return b;
+}
+function rebuild() {
+  readParams();
+  if (S.mode === 'walk') { sims = []; walk = new Walkers(P); }
+  else { walk = null; sims = [new GasSim(P)]; const b = paramsB(); if (b) sims.push(new GasSim(b)); }
+  S.started = false;
+  kickWin = sims.map(() => []);
+  updateOutputs(); updateFormulas(); updateLegend(); updateHud(true); updateDbox(); updatePlay();
+  dirty = true; chartDirty = true;
+}
+
+/* ---------- UI outputs ---------- */
+function setFill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+function updateOutputs() {
+  $('#T-out').textContent = `${fmt(P.T, 0)} K`;
+  $('#M-out').textContent = `${fmt(P.M, 0)} u`;
+  $('#R-out').textContent = `${fmt(P.R, 1)} nm`;
+  $('#N-out').textContent = `${fmt(P.N, 0)}`;
+  $$('input[type=range]').forEach(setFill);
+  const th = theory(P);
+  $('#pill-g').textContent = `${sig(th.gam, 3)} u/ps`;
+  $('#pill-tau').textContent = `${sig(th.tau, 3)} ps`;
+  $('#pill-d').textContent = `${sig(th.D, 3)} nm²/ps`;
+  $('#pill-v').textContent = `${sig(th.vgas * 1000, 3)} m/s`;
+  const c = S.compare;
+  $('#T-hint').innerHTML = c && c.key === 'T' ? `${tr('hintB')} <b>${fmt(c.b, 0)} K</b>` : '';
+  $('#M-hint').innerHTML = c && c.key === 'M' ? `${tr('hintB')} <b>${fmt(c.b, 0)} u</b>` : '';
+  $('#T-hint').hidden = !(c && c.key === 'T'); $('#M-hint').hidden = !(c && c.key === 'M');
+  $('#cmpnote').hidden = !c;
+  if (c) $('#cmptext').innerHTML = tr(c.key === 'T' ? 'cmpT' : 'cmpM');
+  $$('#modes .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === S.mode)));
+  $$('#presets .chip').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.preset === S.preset)));
+  $('#tg-mol').disabled = S.mode === 'walk';
+  $$('#tabs button').forEach(b => {
+    if (b.dataset.tab === 'prof') b.disabled = S.mode !== 'walk';
+    b.setAttribute('aria-selected', String(b.dataset.tab === S.tab));
+  });
+}
+
+function updatePlay() {
+  const lbl = S.running ? tr('pause') : (S.started ? tr('resume') : tr('start'));
+  $('#play-lbl').textContent = lbl;
+  $('#play-ic').innerHTML = S.running ? '<path d="M6 3.5v13M14 3.5v13" stroke="currentColor" stroke-width="3" stroke-linecap="round"/>' : '<path d="M5 3.5v13l11-6.5z" fill="currentColor"/>';
+  const st = $('#state');
+  if (st) { const s = S.running ? 'run' : (S.started ? 'pause' : 'ready'); st.dataset.s = s; st.textContent = tr(s === 'run' ? 'sRun' : s === 'pause' ? 'sPause' : 'sReady'); }
+}
+
+function updateLegend() {
+  let h = '';
+  if (S.mode === 'walk') {
+    h += `<span><i class="sw-dot" style="background:var(--violet)"></i>${tr('lgWalk')}</span>`;
+    h += `<span><i class="sw-line" style="border-top-color:var(--violet)"></i>${tr('lgRm')}</span>`;
+    h += `<span><i class="sw-line" style="border-top:2px dashed var(--ink-2)"></i>${tr('lgRt')}</span>`;
+  } else {
+    h += `<span><i class="sw-line"></i>${tr('lgTrail')}${sims.length > 1 ? ` (${tr('lgA')})` : ''}</span>`;
+    if (sims.length > 1) h += `<span><i class="sw-line" style="border-top-color:var(--blue)"></i>${tr('lgTrail')} (${tr('lgB')})</span>`;
+    if (S.showMol) {
+      h += `<span><i class="sw-dot" style="background:var(--ink-3)"></i>${tr('lgMol')}</span>`;
+      h += `<span><i class="sw-dot" style="background:var(--teal)"></i>${tr('lgHit')}</span>`;
+    }
+  }
+  const s = S.running ? 'run' : (S.started ? 'pause' : 'ready');
+  h += `<span class="state" id="state" data-s="${s}">${tr(s === 'run' ? 'sRun' : s === 'pause' ? 'sPause' : 'sReady')}</span>`;
+  $('#legend').innerHTML = h;
+}
+
+let kickWin = [];
+let hudLast = 0;
+function updateHud(force) {
+  const now = performance.now();
+  if (!force && now - hudLast < 120) return; hudLast = now;
+  const item = (dt, dd) => `<div><dt>${dt}</dt><dd>${dd}</dd></div>`;
+  let h = '';
+  if (S.mode === 'walk') {
+    const w = walk, f = w.fit();
+    h += item('t', `${fmt(w.t, 0)} <span>ps</span>`);
+    h += item(tr('hRrms'), `${sig(Math.sqrt(w.hist[w.hist.length - 1][1]), 3)} <span>nm</span>`);
+    h += item(`D<sub><small>${tr('hDfit')}</small></sub>`, f && w.t > 5 ? `${sig(f.D, 3)} <span>nm²/ps</span>` : '— <span>nm²/ps</span>');
+    h += item(`D<sub><small>${tr('hDth')}</small></sub>`, `${sig(w.D, 3)} <span>nm²/ps</span>`);
+    h += item('<small>' + tr('hNw') + '</small>', `${NW}`);
+  } else {
+    const s = sims[0], f = s.fit();
+    h += item('t', `${fmt(s.t, 0)} <span>ps</span>`);
+    h += item(tr('hDisp'), `${fmt(Math.hypot(s.X - s.X0, s.Y - s.Y0), 2)} <span>nm</span>`);
+    h += item(`D<sub><small>${tr('hDfit')}</small></sub>`, f ? `${sig(f.D, 3)} <span>nm²/ps</span>` : '— <span>nm²/ps</span>');
+    h += item(`D<sub><small>${tr('hDth')}</small></sub>`, `${sig(s.th.D, 3)} <span>nm²/ps</span>`);
+    h += item(`<small>${tr('hKick')}</small>`, `${s.t > 0 ? fmt(s.kicks / s.t, 2) : '—'}`);
+  }
+  $('#hud').innerHTML = h;
+}
+
+function updateDbox() {
+  let h = '';
+  if (S.mode === 'walk') {
+    const f = walk.fit();
+    h += `<b>${tr('dMeas')}</b><span class="val" style="color:var(--violet)">${f && walk.t > 5 ? `${sig(f.D, 3)} nm²/ps` : tr('dWait')}</span>`;
+    h += `<span class="val"><small>${tr('dTh')}</small>${sig(walk.D, 3)} nm²/ps</span>`;
+    if (f && walk.t > 5) h += `<span class="val"><small>${tr('dRatio')}</small>${fmt(f.D / walk.D, 2)}</span>`;
+  } else {
+    sims.forEach((s, i) => {
+      const f = s.fit(), lab = sims.length > 1 ? ` <small>(${tr(i ? 'lblB' : 'lblA')})</small>` : '';
+      h += `<div class="drow"><b>${tr('dMeas')}${lab}</b>`;
+      h += `<span class="val ${i ? 'b' : 'a'}">${f ? `${sig(f.D, 3)} nm²/ps` : (s.t > 0 ? tr('dWait') : '—')}</span>`;
+      h += `<span class="val"><small>${tr('dTh')}</small>${sig(s.th.D, 3)}</span>`;
+      if (f) h += `<span class="val"><small>${tr('dRatio')}</small>${fmt(f.D / s.th.D, 2)}</span><span class="val"><small>${tr('dErr')}</small>± ${fmt(Math.min(99, 100 * Math.sqrt(1.5 * s.th.tFit / s.t)), 0)} %</span>`;
+      h += '</div>';
+    });
+  }
+  $('#dbox').innerHTML = h;
+}
+
+/* ---------- formulas ---------- */
+const V = (b, s) => `<i>${b}</i>${s != null ? `<sub>${s}</sub>` : ''}`;
+const FR = (n, d) => `<span class="fr"><span>${n}</span><span>${d}</span></span>`;
+const RT = (x) => `<span class="rt"><span>√</span><span>${x}</span></span>`;
+const EQ = ' = ';
+let formLast = 0;
+function updateFormulas(force = true) {
+  const now = performance.now();
+  if (!force && now - formLast < 400) return; formLast = now;
+  const cards = [];
+  const walkMode = S.mode === 'walk';
+  const src = walkMode ? walk : sims[0];
+  const th = src.th, f = src.fit();
+  const r = (x, cls = '') => `<span class="r ${cls}">${x}</span>`;
+  // 1. MSD
+  {
+    let body = `<div class="eq">⟨${V('r')}<sup>2</sup>(${V('t')})⟩${EQ}4${V('D')}${V('t')}</div>`;
+    if (f) {
+      body += `<div class="eq num">${tr('mSlope')}${EQ}${sig(f.slope, 3)} nm²/ps</div>`;
+      body += `<div class="eq num">${V('D')}${EQ}${FR(sig(f.slope, 3), '4')}${EQ}${r(`${sig(f.D, 3)} nm²/ps`, walkMode ? 'v' : '')}${EQ}${fsci(f.D * 1e-6)} m²/s</div>`;
+    } else body += `<div class="eq num">${V('D')}${EQ}${r(tr('dWait'))}</div>`;
+    body += `<p class="fnote">${tr('nMsd')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fMsd')}</h4>${body}</div>`);
+  }
+  // 2. Einstein
+  {
+    let body = `<div class="eq">${V('D')}${EQ}${FR(`${V('k')}${V('T')}`, V('γ'))}, &nbsp; ${V('γ')}${EQ}2${RT('2π')} ${V('n')}${V('a')}${RT(`${V('m')}${V('k')}${V('T')}`)}</div>`;
+    body += `<div class="eq num">${V('γ')}${EQ}5,013 · ${sig(th.n, 3)} nm⁻² · ${fmt(th.Rc, 2)} nm · ${RT(`18 · ${sig(th.kT, 3)}`)}${EQ}${r(`${sig(th.gam, 3)} u/ps`)}</div>`.replace('5,013', fmt(2 * Math.sqrt(2 * Math.PI), 3));
+    body += `<div class="eq num">${V('D')}${EQ}${FR(sig(th.kT, 3) + ' u·nm²/ps²', sig(th.gam, 3) + ' u/ps')}${EQ}${r(`${sig(th.D, 3)} nm²/ps`)}</div>`;
+    body += `<p class="fnote">${V('k')}${V('T')} = ${fsci(KB_SI * P.T)} J; ${V('a')} = ${V('R')} + ${V('r')}<sub>gaz</sub>. ${tr('nEin')} ${tr('nEinT')}</p>`.replace('<sub>gaz</sub>', lang === 'pl' ? '<sub>gaz</sub>' : '<sub>gas</sub>');
+    cards.push(`<div class="fcard"><h4>${tr('fEin')}</h4>${body}</div>`);
+  }
+  // 3. tau & equipartition (single) or random walk (walk)
+  if (!walkMode) {
+    const s = sims[0], v2 = s.v2n ? s.v2sum / s.v2n : NaN;
+    let body = `<div class="eq">${V('τ')}${EQ}${FR(V('M'), V('γ'))}${EQ}${FR(`${fmt(s.M, 0)} u`, `${sig(th.gam, 3)} u/ps`)}${EQ}${r(`${sig(th.tau, 3)} ps`)}</div>`;
+    body += `<div class="eq">${FR('1', '2')}${V('M')}⟨${V('V')}<sup>2</sup>⟩${EQ}${V('k')}${V('T')}</div>`;
+    body += `<div class="eq num">⟨${V('V')}<sup>2</sup>⟩${EQ}${FR(`2${V('k')}${V('T')}`, V('M'))}${EQ}${sig(2 * th.kT / s.M, 3)} nm²/ps²</div>`;
+    body += `<div class="eq num">${lang === 'pl' ? 'pomiar' : 'measured'}: ⟨${V('V')}<sup>2</sup>⟩${EQ}${r(s.v2n > 20 ? `${sig(v2, 3)} nm²/ps²` : '—')}</div>`;
+    body += `<p class="fnote ${th.sep ? '' : 'warn'}">${tr('nTau')}${th.sep ? '' : ' ' + tr('nTauW')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fTau')}</h4>${body}</div>`);
+  }
+  {
+    const D = th.D, l = Math.sqrt(4 * D * DT_W), tNow = src.t, Ns = Math.max(0, Math.round(tNow / DT_W));
+    let body = `<div class="eq">${V('r')}<sub>rms</sub>${EQ}ℓ${RT(V('N'))}, &nbsp; ℓ${EQ}${RT(`4${V('D')}Δ${V('t')}`)} &nbsp;⇒&nbsp; ${V('r')}<sub>rms</sub>${EQ}${RT(`4${V('D')}${V('t')}`)}</div>`;
+    body += `<div class="eq num">ℓ${EQ}${RT(`4 · ${sig(D, 3)} · ${fmt(DT_W, 0)}`)}${EQ}${sig(l, 3)} nm, &nbsp; ${V('N')}${EQ}${Ns}</div>`;
+    body += `<div class="eq num">${V('r')}<sub>rms</sub>${EQ}${sig(l, 3)} · ${RT(String(Ns))}${EQ}${r(`${sig(l * Math.sqrt(Ns), 3)} nm`, walkMode ? 'v' : '')}</div>`;
+    if (walkMode && walk.t > 0) body += `<p class="fnote">${tr('nWalkM')} ${V('r')}<sub>rms</sub> = ${sig(Math.sqrt(walk.hist[walk.hist.length - 1][1]), 3)} nm.</p>`;
+    body += `<p class="fnote">${tr('nWalk')}</p>`;
+    cards.push(`<div class="fcard"><h4>${tr('fWalk')}</h4>${body}</div>`);
+  }
+  // Stokes-Einstein
+  {
+    const eta = 1.0e-3, a = 0.5e-6, D = KB_SI * P.T / (6 * Math.PI * eta * a), r1 = Math.sqrt(6 * D * 1) * 1e6;
+    let body = `<div class="eq">${V('D')}${EQ}${FR(`${V('k')}${V('T')}`, `6π${V('η')}${V('a')}`)}</div>`;
+    body += `<div class="eq num">${V('D')}${EQ}${FR(`${fsci(KB_SI * P.T)} J`, `6π · ${fsci(eta, 1)} Pa·s · ${fsci(a, 1)} m`)}${EQ}${r(`${fsci(D)} m²/s`)}</div>`;
+    body += `<p class="fnote">${tr('nSE')} √(6<i>D</i>·1 s) = ${fmt(r1, 2)} µm.</p>`;
+    cards.push(`<div class="fcard${walkMode ? '' : ' wide'}"><h4>${tr('fSE')}</h4>${body}</div>`);
+  }
+  // profile
+  if (walkMode) {
+    const t = walk.t, D = walk.D, sg = Math.sqrt(2 * D * t);
+    let body = `<div class="eq">${V('P')}(${V('r')}, ${V('t')})${EQ}${FR('1', `4π${V('D')}${V('t')}`)} exp(−${FR(`${V('r')}<sup>2</sup>`, `4${V('D')}${V('t')}`)}), &nbsp; ${V('σ')}${EQ}${RT(`2${V('D')}${V('t')}`)}</div>`;
+    body += `<div class="eq num">${V('σ')}${EQ}${RT(`2 · ${sig(D, 3)} · ${fmt(t, 0)}`)}${EQ}${r(`${sig(sg, 3)} nm`, 'v')}</div>`;
+    body += `<p class="fnote">${tr('nProf')}</p>`;
+    cards.push(`<div class="fcard wide"><h4>${tr('fProf')}</h4>${body}</div>`);
+  }
+  $('#fgrid').innerHTML = cards.join('');
+}
+
+/* ---------- canvas: scene ---------- */
+const cv = $('#scene'), ctx = cv.getContext('2d'), box = $('#canvas-box');
+let cw = 800, ch = 450, dpr = 1, dirty = true, chartDirty = true;
+const col = {};
+const FONT_MONO = '"JetBrains Mono", ui-monospace, Menlo, monospace';
+function readTokens() {
+  const cs = getComputedStyle(document.documentElement);
+  for (const k of ['paper', 'surface', 'sunk', 'ink', 'ink-2', 'ink-3', 'line', 'grid', 'grid-major', 'acc', 'acc-2', 'acc-soft', 'blue', 'violet', 'teal'])
+    col[k.replace('-', '')] = cs.getPropertyValue('--' + k).trim();
+  dirty = true; chartDirty = true;
+}
+function resize() {
+  dpr = Math.min(window.devicePixelRatio || 1, 2.5);
+  cw = box.clientWidth; ch = box.clientHeight;
+  cv.width = Math.round(cw * dpr); cv.height = Math.round(ch * dpr);
+  dirty = true;
+}
+function withAlpha(c, a) {
+  if (c.startsWith('#')) { const h = c.slice(1); const n = parseInt(h.length === 3 ? h.split('').map(x => x + x).join('') : h, 16); return `rgba(${(n >> 16) & 255},${(n >> 8) & 255},${n & 255},${a})`; }
+  return c;
+}
+function halo(text, x, y, color, font, align = 'left', base = 'middle') {
+  const c = ctx; c.font = font; c.textAlign = align; c.textBaseline = base;
+  c.lineWidth = 4; c.strokeStyle = col.paper; c.lineJoin = 'round'; c.strokeText(text, x, y);
+  c.fillStyle = color; c.fillText(text, x, y);
+}
+
+function layoutBoxes(n) {
+  const m = 14, top = n > 1 ? 30 : 14;
+  if (n === 1) {
+    const s = Math.min((cw - 2 * m) / LX, (ch - top - 34) / LY);
+    const w = LX * s, h = LY * s;
+    return [{ x: (cw - w) / 2, y: top + (ch - top - 34 - h) / 2, s }];
+  }
+  const side = cw / ch > 1.15;
+  if (side) {
+    const g = 22, s = Math.min((cw - 2 * m - g) / (2 * LX), (ch - top - 34) / LY);
+    const w = LX * s, h = LY * s, x0 = (cw - 2 * w - g) / 2, y0 = top + (ch - top - 34 - h) / 2;
+    return [{ x: x0, y: y0, s }, { x: x0 + w + g, y: y0, s }];
+  }
+  const g = 34, s = Math.min((cw - 2 * m) / LX, (ch - top - g - 30) / (2 * LY));
+  const w = LX * s, h = LY * s, x0 = (cw - w) / 2, y0 = top + (ch - top - g - 30 - 2 * h) / 2;
+  return [{ x: x0, y: y0, s }, { x: x0, y: y0 + h + g, s }];
+}
+
+function drawGrid(x0, y0, w, h, s, step) {
+  const c = ctx;
+  c.lineWidth = 1;
+  c.strokeStyle = col.grid; c.beginPath();
+  for (let u = step; u < w / s - 1e-6; u += step) { const X = Math.round(x0 + u * s) + 0.5; c.moveTo(X, y0); c.lineTo(X, y0 + h); }
+  for (let v = step; v < h / s - 1e-6; v += step) { const Y = Math.round(y0 + v * s) + 0.5; c.moveTo(x0, Y); c.lineTo(x0 + w, Y); }
+  c.stroke();
+  c.strokeStyle = col.gridmajor; c.beginPath();
+  for (let u = 5 * step; u < w / s - 1e-6; u += 5 * step) { const X = Math.round(x0 + u * s) + 0.5; c.moveTo(X, y0); c.lineTo(X, y0 + h); }
+  for (let v = 5 * step; v < h / s - 1e-6; v += 5 * step) { const Y = Math.round(y0 + v * s) + 0.5; c.moveTo(x0, Y); c.lineTo(x0 + w, Y); }
+  c.stroke();
+}
+
+function pollen(X, Y, r, color, light) {
+  const c = ctx, n = 16;
+  c.save();
+  c.shadowColor = withAlpha(color, 0.45); c.shadowBlur = Math.max(6, r * 0.5);
+  const g = c.createRadialGradient(X - r * 0.35, Y - r * 0.35, r * 0.1, X, Y, r * 1.05);
+  g.addColorStop(0, light); g.addColorStop(1, color);
+  c.fillStyle = g; c.beginPath();
+  for (let i = 0; i <= 96; i++) {
+    const a = i / 96 * Math.PI * 2, rr = r * (1 + 0.055 * Math.cos(n * a));
+    i ? c.lineTo(X + rr * Math.cos(a), Y + rr * Math.sin(a)) : c.moveTo(X + rr * Math.cos(a), Y + rr * Math.sin(a));
+  }
+  c.closePath(); c.fill(); c.shadowBlur = 0;
+  c.globalAlpha = 0.35; c.fillStyle = '#fff';
+  for (let i = 0; i < 7; i++) { const a = i * 2.4 + 0.6, d = r * (0.25 + 0.4 * ((i * 37) % 10) / 10); c.beginPath(); c.arc(X + d * Math.cos(a), Y + d * Math.sin(a), Math.max(0.8, r * 0.07), 0, Math.PI * 2); c.fill(); }
+  c.restore();
+}
+
+function drawSim(sim, b, color, light, label) {
+  const c = ctx, s = b.s, w = LX * s, h = LY * s, x0 = b.x, y0 = b.y;
+  c.fillStyle = col.paper; c.fillRect(x0, y0, w, h);
+  drawGrid(x0, y0, w, h, s, 1);
+  // trail
+  const tr_ = sim.trail, n = tr_.length / 3;
+  if (n > 1) {
+    const tNow = sim.t, span = 1200;
+    c.save(); c.lineJoin = 'round'; c.lineCap = 'round'; c.strokeStyle = color; c.lineWidth = Math.max(1.3, Math.min(2.2, s * 0.09));
+    const chunks = 16;
+    let start = 0; while (start < n - 1 && tNow - tr_[3 * start + 2] > span) start++;
+    const len = n - start;
+    for (let k = 0; k < chunks; k++) {
+      const a = start + Math.floor(len * k / chunks), e = Math.min(n - 1, start + Math.floor(len * (k + 1) / chunks));
+      if (e <= a) continue;
+      const age = tNow - tr_[3 * e + 2];
+      c.globalAlpha = Math.max(0.04, 0.9 * (1 - age / span));
+      c.beginPath(); c.moveTo(x0 + tr_[3 * a] * s, y0 + tr_[3 * a + 1] * s);
+      for (let i = a + 1; i <= e; i++) c.lineTo(x0 + tr_[3 * i] * s, y0 + tr_[3 * i + 1] * s);
+      if (k === chunks - 1) c.lineTo(x0 + sim.X * s, y0 + sim.Y * s);
+      c.stroke();
+    }
+    c.restore();
+  }
+  // start marker
+  c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.2;
+  const sx0 = x0 + sim.X0 * s, sy0 = y0 + sim.Y0 * s;
+  c.beginPath(); c.moveTo(sx0 - 5, sy0); c.lineTo(sx0 + 5, sy0); c.moveTo(sx0, sy0 - 5); c.lineTo(sx0, sy0 + 5); c.stroke(); c.restore();
+  // molecules
+  if (S.showMol) {
+    const rr = Math.max(1.1, R_GAS * s), tNow = sim.t;
+    c.fillStyle = withAlpha(col.ink3, 0.6); c.beginPath();
+    for (let i = 0; i < sim.N; i++) { const X = x0 + sim.x[i] * s, Y = y0 + sim.y[i] * s; c.moveTo(X + rr, Y); c.arc(X, Y, rr, 0, Math.PI * 2); }
+    c.fill();
+    const fade = 3.0;
+    for (let i = 0; i < sim.N; i++) {
+      const age = tNow - sim.hit[i]; if (age > fade) continue;
+      const X = x0 + sim.x[i] * s, Y = y0 + sim.y[i] * s, a = 1 - age / fade;
+      c.globalAlpha = a; c.fillStyle = col.teal;
+      c.beginPath(); c.arc(X, Y, rr * 1.9, 0, Math.PI * 2); c.fill();
+      c.globalAlpha = a * 0.6; c.strokeStyle = col.teal; c.lineWidth = 1;
+      c.beginPath(); c.moveTo(X, Y); c.lineTo(X - sim.vx[i] * s * 1.6, Y - sim.vy[i] * s * 1.6); c.stroke();
+    }
+    c.globalAlpha = 1;
+  }
+  // big particle
+  pollen(x0 + sim.X * s, y0 + sim.Y * s, sim.R * s, color, light);
+  // walls
+  c.save(); c.strokeStyle = col.ink; c.lineWidth = 2; c.strokeRect(x0 - 1, y0 - 1, w + 2, h + 2); c.restore();
+  if (label) {
+    c.font = `600 12px ${FONT_MONO}`; c.textAlign = 'left'; c.textBaseline = 'bottom';
+    c.fillStyle = color; c.beginPath(); c.arc(x0 + 6, y0 - 11, 4, 0, Math.PI * 2); c.fill();
+    halo(label, x0 + 15, y0 - 4, col.ink, `600 12px ${FONT_MONO}`, 'left', 'bottom');
+  }
+}
+
+function scaleBar(x, y, s, len) {
+  const c = ctx, L = len * s;
+  c.save(); c.strokeStyle = col.ink2; c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(x, y - 4); c.lineTo(x, y + 4); c.moveTo(x, y); c.lineTo(x + L, y); c.moveTo(x + L, y - 4); c.lineTo(x + L, y + 4); c.stroke(); c.restore();
+  halo(`${fmt(len, 0)} nm`, x + L + 8, y, col.ink2, `500 11px ${FONT_MONO}`, 'left');
+}
+
+function drawWalk() {
+  const c = ctx, w = walk;
+  const half = Math.max(30, 2.6 * Math.sqrt(4 * w.D * w.t)), s = Math.min(cw, ch - 30) / (2 * half), cx = cw / 2, cy = (ch - 30) / 2 + 4;
+  const gs = s >= 9 ? 1 : s >= 4 ? 2 : 5;
+  drawGrid(cx - Math.ceil(cx / s / (5 * gs)) * 5 * gs * s, cy - Math.ceil(cy / s / (5 * gs)) * 5 * gs * s, cw + 20 * gs * s, ch + 20 * gs * s, s, gs);
+  // dots
+  c.fillStyle = withAlpha(col.violet, 0.55);
+  const rr = 1.5; c.beginPath();
+  for (let i = 0; i < NW; i++) { const X = cx + w.x[i] * s, Y = cy + w.y[i] * s; if (X < -2 || Y < -2 || X > cw + 2 || Y > ch + 2) continue; c.moveTo(X + rr, Y); c.arc(X, Y, rr, 0, Math.PI * 2); }
+  c.fill();
+  // circles
+  const rt = Math.sqrt(4 * w.D * w.t), rm = Math.sqrt(w.hist[w.hist.length - 1][1]);
+  if (w.t > 0) {
+    c.save(); c.lineWidth = 2; c.strokeStyle = col.ink2; c.setLineDash([6, 5]);
+    c.beginPath(); c.arc(cx, cy, rt * s, 0, Math.PI * 2); c.stroke(); c.setLineDash([]);
+    c.strokeStyle = col.violet; c.lineWidth = 2.2; c.beginPath(); c.arc(cx, cy, rm * s, 0, Math.PI * 2); c.stroke();
+    c.restore();
+    const ly = cy - rm * s - 10;
+    if (ly > 16) halo(`rms = ${sig(rm, 3)} nm`, cx, ly, col.violet, `600 12px ${FONT_MONO}`, 'center', 'bottom');
+  } else {
+    c.save(); c.fillStyle = col.violet; c.shadowColor = col.violet; c.shadowBlur = 14; c.beginPath(); c.arc(cx, cy, 6, 0, Math.PI * 2); c.fill(); c.restore();
+  }
+  c.save(); c.strokeStyle = col.ink3; c.lineWidth = 1.2; c.beginPath(); c.moveTo(cx - 7, cy); c.lineTo(cx + 7, cy); c.moveTo(cx, cy - 7); c.lineTo(cx, cy + 7); c.stroke(); c.restore();
+  return s;
+}
+
+function drawScene() {
+  const c = ctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0);
+  c.fillStyle = col.sunk; c.fillRect(0, 0, cw, ch);
+  let sBar;
+  if (S.mode === 'walk') {
+    c.fillStyle = col.paper; c.fillRect(0, 0, cw, ch);
+    sBar = drawWalk();
+  } else {
+    const L = layoutBoxes(sims.length);
+    sims.forEach((sim, i) => {
+      let label = null;
+      if (sims.length > 1) {
+        const k = S.compare.key;
+        label = `${tr(i ? 'lblB' : 'lblA')}: ${k === 'T' ? `T = ${fmt(sim.p.T, 0)} K` : `M = ${fmt(sim.p.M, 0)} u`}`;
+      }
+      drawSim(sim, L[i], i ? col.blue : col.acc, i ? '#cfe3ff' : '#ffe6b0', label);
+    });
+    sBar = L[0].s;
+  }
+  scaleBar(16, ch - 16, sBar, 5);
+  if (!S.started) {
+    const t = tr('hint0');
+    c.font = `500 13px ${FONT_MONO}`; const tw = c.measureText(t).width;
+    const X = cw - 16 - tw / 2, Y = ch - 16;
+    c.fillStyle = withAlpha(col.ink, 0.82); c.beginPath(); c.roundRect ? c.roundRect(X - tw / 2 - 12, Y - 13, tw + 24, 26, 13) : c.rect(X - tw / 2 - 12, Y - 13, tw + 24, 26); c.fill();
+    c.fillStyle = col.paper; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t, X, Y + 0.5);
+  }
+}
+
+/* ---------- chart ---------- */
+const ccv = $('#chart'), cctx = ccv.getContext('2d'), cbox = $('#chart-box');
+let ccw = 600, cch = 260;
+function niceStep(range, target) {
+  const raw = range / target, p = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / p;
+  return (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * p;
+}
+function decFor(step) { return step >= 1 ? 0 : Math.min(3, Math.ceil(-Math.log10(step) - 1e-9)); }
+function axes(xmax, ymax, xlab, ylab) {
+  const c = cctx, W = ccw, H = cch;
+  const ys = niceStep(ymax, 4), xs = niceStep(xmax, 6), yd = decFor(ys), xd = decFor(xs);
+  ymax = Math.ceil(ymax / ys - 1e-9) * ys;
+  c.font = `500 11px ${FONT_MONO}`;
+  let lw = 0; for (let y = 0; y <= ymax + 1e-9; y += ys) lw = Math.max(lw, c.measureText(fmt(y, yd)).width);
+  const L = lw + 14, R = 14, T = 20, B = 30, pw = W - L - R, ph = H - T - B;
+  const X = (t) => L + t / xmax * pw, Y = (v) => T + (1 - v / ymax) * ph;
+  c.strokeStyle = col.grid; c.lineWidth = 1; c.fillStyle = col.ink2; c.textAlign = 'right'; c.textBaseline = 'middle';
+  for (let y = 0; y <= ymax + 1e-9; y += ys) { const yy = Math.round(Y(y)) + 0.5; c.beginPath(); c.moveTo(L, yy); c.lineTo(W - R, yy); c.stroke(); c.fillText(fmt(y, yd), L - 8, yy); }
+  c.textAlign = 'center'; c.textBaseline = 'top';
+  for (let x = 0; x <= xmax + 1e-9; x += xs) { const xx = X(x); if (xx > W - R - 28) continue; c.fillText(fmt(x, xd), xx, H - B + 8); }
+  c.strokeStyle = col.ink3; c.beginPath(); c.moveTo(L, Y(0) + 0.5); c.lineTo(W - R, Y(0) + 0.5); c.moveTo(L + 0.5, T); c.lineTo(L + 0.5, Y(0)); c.stroke();
+  c.fillStyle = col.ink3; c.textAlign = 'left'; c.textBaseline = 'top'; c.fillText(ylab, 2, 2);
+  c.textAlign = 'right'; c.fillText(xlab, W - R, H - B + 8);
+  return { X, Y, L, T, pw, ph, xmax, ymax };
+}
+function line(pts, g, color, w = 2, dash = null, alpha = 1) {
+  const c = cctx; if (pts.length < 2) return;
+  c.save(); c.globalAlpha = alpha; c.strokeStyle = color; c.lineWidth = w; c.lineJoin = 'round'; if (dash) c.setLineDash(dash);
+  c.beginPath(); c.rect(g.L, g.T - 2, g.pw, g.ph + 2); c.clip();
+  c.beginPath(); pts.forEach(([x, y], i) => (i ? c.lineTo(g.X(x), g.Y(y)) : c.moveTo(g.X(x), g.Y(y)))); c.stroke(); c.restore();
+}
+function drawChart() {
+  const c = cctx;
+  c.setTransform(dpr, 0, 0, dpr, 0, 0); c.clearRect(0, 0, ccw, cch);
+  let leg = '', note = '';
+  const sw = (color, dash, w = 2.5) => `<i class="sw-line" style="border-top:${w}px ${dash ? 'dashed' : 'solid'} ${color}"></i>`;
+  if (S.tab === 'prof') {
+    if (S.mode !== 'walk') { note = tr('noteProfOff'); }
+    else {
+      const w = walk, t = w.t;
+      leg = `<span><i class="sw-dot" style="background:${withAlpha(col.violet, 0.5)};border-radius:2px"></i>${tr('cHist')}</span><span>${sw(col.ink, false)}${tr('cGauss')}</span>`;
+      note = t > 0 ? tr('noteProf') : tr('noteProfWait');
+      const rmax = Math.max(4, 3.2 * Math.sqrt(4 * w.D * Math.max(t, 1)));
+      const nb = 32, db = rmax / nb, hist = new Float64Array(nb);
+      if (t > 0) for (let i = 0; i < NW; i++) { const r = Math.hypot(w.x[i], w.y[i]); const k = Math.floor(r / db); if (k < nb) hist[k]++; }
+      for (let k = 0; k < nb; k++) hist[k] /= NW * db;
+      const pth = (r) => t > 0 ? r / (2 * w.D * t) * Math.exp(-r * r / (4 * w.D * t)) : 0;
+      const pmax = t > 0 ? 1 / Math.sqrt(2 * w.D * t) * Math.exp(-0.5) : 1;
+      const g = axes(rmax, Math.max(pmax, ...hist) * 1.15, 'r [nm]', 'p(r) [1/nm]');
+      if (t > 0) {
+        c.fillStyle = withAlpha(col.violet, 0.35); c.strokeStyle = col.violet; c.lineWidth = 1;
+        for (let k = 0; k < nb; k++) { const x0 = g.X(k * db) + 1, x1 = g.X((k + 1) * db) - 1, y = g.Y(hist[k]); c.fillRect(x0, y, x1 - x0, g.Y(0) - y); }
+        const pts = []; for (let i = 0; i <= 200; i++) { const r = rmax * i / 200; pts.push([r, pth(r)]); }
+        line(pts, g, col.ink, 2.2);
+      }
+    }
+  } else if (S.mode === 'walk') {
+    const w = walk, tmax = Math.max(50, w.t * 1.05), f = w.fit();
+    const g = axes(tmax, Math.max(4 * w.D * tmax, ...w.hist.map(h => h[1])) * 1.08, 't [ps]', '⟨r²⟩ [nm²]');
+    line([[0, 0], [tmax, 4 * w.D * tmax]], g, col.ink2, 1.8, [6, 5]);
+    line(w.hist, g, col.violet, 2.4);
+    if (f && w.t > 5) line([[0, 0], [tmax, f.slope * tmax]], g, col.violet, 1.2, [2, 4], 0.9);
+    leg = `<span>${sw(col.violet, false)}${tr('cMeas')}</span><span>${sw(col.ink2, true, 2)}${tr('cTh')}</span>`;
+    note = tr('noteMsdW');
+  } else {
+    const xmax = Math.max(...sims.map(s => s.K * s.SAMP));
+    let ymax = 0;
+    for (const s of sims) {
+      ymax = Math.max(ymax, 4 * s.th.D * s.th.tFit * 1.25);
+      for (let k = 1; k <= s.K; k++) { const v = s.msd(k); if (k * s.SAMP <= s.t / 3 && v > ymax) ymax = v; }
+    }
+    ymax = Math.min(ymax * 1.05, Math.max(...sims.map(s => 4 * s.th.D * xmax)) * 1.05);
+    const g = axes(xmax, ymax, 't [ps]', '⟨r²⟩ [nm²]');
+    sims.forEach((s, i) => {
+      const color = i ? col.blue : col.acc, f = s.fit();
+      // fit window band
+      if (i === 0) {
+        const a = g.X(Math.max(2, Math.ceil(2 * s.th.tau / s.SAMP)) * s.SAMP), b = g.X(Math.min(s.K * s.SAMP, s.th.tFit));
+        c.save(); c.fillStyle = withAlpha(col.acc, 0.08); c.fillRect(a, g.T, b - a, g.ph); c.restore();
+      }
+      line([[0, 0], [xmax, 4 * s.th.D * xmax]], g, color, 1.6, [6, 5], 0.75);
+      const pts = [[0, 0]]; for (let k = 1; k <= s.K; k++) { const v = s.msd(k); if (isFinite(v) && k * s.SAMP <= Math.max(s.t / 3, 3 * s.SAMP)) pts.push([k * s.SAMP, v]); }
+      line(pts, g, color, 2.4);
+      if (f) line([[f.t0 * 0.5, f.a + f.slope * f.t0 * 0.5], [Math.min(xmax, f.t1 * 1.35), f.a + f.slope * Math.min(xmax, f.t1 * 1.35)]], g, col.ink, 1.3, [2, 3]);
+    });
+    leg = `<span>${sw(col.acc, false)}${tr('cMeas')}${sims.length > 1 ? ` (${tr('lgA')})` : ''}</span>`;
+    if (sims.length > 1) leg += `<span>${sw(col.blue, false)}${tr('cMeas')} (${tr('lgB')})</span>`;
+    leg += `<span>${sw(col.ink3, true, 2)}${tr('cTh')}</span><span>${sw(col.ink, true, 1.5)}${tr('cFit')}</span><span><i class="band"></i>${tr('cBand')}</span>`;
+    note = tr('noteMsd');
+  }
+  $('#clegend').innerHTML = leg;
+  $('#cnote').innerHTML = note;
+}
+
+/* ---------- loop ---------- */
+let rafId = null;
+function advance() {
+  const budget = 11, t0 = performance.now();
+  if (S.mode === 'walk') {
+    const n = Math.max(1, Math.round(4 * S.speed));
+    if (S.speed < 1) { walkAcc += 4 * S.speed; while (walkAcc >= 1) { walk.step(); walkAcc--; } }
+    else for (let i = 0; i < n; i++) walk.step();
+    walk.record();
+    return;
+  }
+  const target = 8 * S.speed; // ps of model time per frame
+  const tEnd = sims[0].t + target;
+  // advance all boxes in lockstep so that a comparison stays fair even when the frame budget runs out
+  for (let i = 0; ; i++) {
+    let busy = false;
+    for (const s of sims) if (s.t < tEnd) { s.step(); busy = true; }
+    if (!busy) break;
+    if ((i & 7) === 7 && performance.now() - t0 > budget) break;
+  }
+}
+let walkAcc = 0;
+function frame() {
+  rafId = null;
+  if (S.running) {
+    advance();
+    dirty = true; chartDirty = true;
+    updateHud(false); updateFormulas(false);
+    if (performance.now() - dboxLast > 250) { updateDbox(); dboxLast = performance.now(); }
+  }
+  if (dirty) { drawScene(); dirty = false; }
+  if (chartDirty && performance.now() - chartLast > (S.running ? 100 : 0)) { drawChart(); chartDirty = false; chartLast = performance.now(); }
+  if (S.running || dirty || chartDirty) schedule();
+}
+let dboxLast = 0, chartLast = 0;
+function schedule() { if (rafId == null && !document.hidden) rafId = requestAnimationFrame(frame); }
+function invalidate() { dirty = true; chartDirty = true; schedule(); }
+
+/* ---------- actions ---------- */
+function setRunning(on) {
+  S.running = on; if (on) S.started = true;
+  updatePlay(); invalidate();
+  if (!on) { updateHud(true); updateDbox(); updateFormulas(true); }
+}
+function togglePlay() { setRunning(!S.running); }
+function reset() { S.running = false; rebuild(); invalidate(); }
+
+const PRESETS = {
+  pollen: { mode: 'single', T: 300, M: 400, R: 3, N: 500, compare: null },
+  hotcold: { mode: 'single', T: 80, M: 400, R: 3, N: 500, compare: { key: 'T', b: 500 } },
+  heavy: { mode: 'single', T: 300, M: 150, R: 3, N: 500, compare: { key: 'M', b: 2000 } },
+  ink: { mode: 'walk', T: 300, M: 400, R: 3, N: 500, compare: null }
+};
+function applyPreset(k) {
+  const p = PRESETS[k];
+  S.preset = k; S.mode = p.mode; S.compare = p.compare ? { ...p.compare } : null;
+  $('#T').value = p.T; $('#M').value = sliderFromM(p.M); $('#R').value = p.R; $('#N').value = p.N;
+  if (S.mode === 'walk' && S.tab === 'msd') S.tab = 'msd';
+  if (S.mode !== 'walk') S.tab = 'msd';
+  S.running = false;
+  rebuild(); updateLegend(); invalidate();
+}
+
+['T', 'M', 'R', 'N'].forEach(id => $('#' + id).addEventListener('input', () => {
+  S.preset = null; rebuild(); updateLegend(); invalidate();
+}));
+$$('#modes .chip').forEach(b => b.addEventListener('click', () => {
+  if (S.mode === b.dataset.mode) return;
+  S.mode = b.dataset.mode; S.compare = null; S.preset = null; S.running = false;
+  if (S.mode !== 'walk') S.tab = 'msd';
+  rebuild(); updateLegend(); invalidate();
+}));
+$('#cmpoff').addEventListener('click', () => { S.compare = null; S.preset = null; const run = S.running; rebuild(); S.running = run; if (run) S.started = true; updatePlay(); updateLegend(); invalidate(); });
+$$('#presets .chip').forEach(b => b.addEventListener('click', () => applyPreset(b.dataset.preset)));
+$('#play').addEventListener('click', togglePlay);
+$('#reset').addEventListener('click', reset);
+$$('#speed button').forEach(b => b.addEventListener('click', () => {
+  S.speed = +b.dataset.sp; $$('#speed button').forEach(x => x.setAttribute('aria-pressed', String(x === b)));
+}));
+$('#tg-mol').addEventListener('click', (e) => {
+  S.showMol = !S.showMol; e.currentTarget.setAttribute('aria-pressed', String(S.showMol)); updateLegend(); invalidate();
+});
+$$('#tabs button').forEach(b => b.addEventListener('click', () => {
+  if (b.disabled) return; S.tab = b.dataset.tab; updateOutputs(); invalidate();
+}));
+document.addEventListener('keydown', (e) => {
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (e.metaKey || e.ctrlKey || e.altKey) return;
+  if (e.code === 'Space' && tag !== 'button' && tag !== 'input') { e.preventDefault(); togglePlay(); return; }
+  if (tag === 'input') return;
+  if (e.key === 'r' || e.key === 'R') reset();
+});
+document.addEventListener('visibilitychange', () => { if (!document.hidden) schedule(); });
+
+function applyLang() {
+  document.documentElement.lang = lang;
+  document.title = tr('title');
+  $$('[data-i18n]').forEach(el => { el.textContent = tr(el.dataset.i18n); });
+  $$('[data-i18n-html]').forEach(el => { el.innerHTML = tr(el.dataset.i18nHtml); });
+  $$('[data-i18n-aria]').forEach(el => { el.setAttribute('aria-label', tr(el.dataset.i18nAria)); });
+  $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  $('#speed button[data-sp="0.1"]').textContent = lang === 'pl' ? '0,1×' : '0.1×';
+  updateOutputs(); updatePlay(); updateLegend(); updateHud(true); updateDbox(); updateFormulas(true); invalidate();
+}
+$$('.lang button').forEach(b => b.addEventListener('click', () => {
+  lang = b.dataset.lang; try { localStorage.setItem('browna-lang', lang); } catch (e) {}
+  applyLang();
+}));
+
+new ResizeObserver(() => { resize(); invalidate(); }).observe(box);
+new ResizeObserver(() => { ccw = cbox.clientWidth; cch = cbox.clientHeight; ccv.width = Math.round(ccw * dpr); ccv.height = Math.round(cch * dpr); invalidate(); }).observe(cbox);
+matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => { readTokens(); invalidate(); });
+new MutationObserver(() => { readTokens(); invalidate(); }).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(invalidate);
+
+readTokens();
+resize();
+readParams();
+rebuild();
+applyLang();
+})();
+</script>
+<!--theory-card:start--><style>
+.theory{background:var(--surface,#F7F9FB);border:1px solid var(--line,#CCD5DE);border-radius:var(--r,12px);box-shadow:var(--shadow,none);padding:22px 24px 24px;color:var(--ink,#12202C);font-family:var(--f-body,system-ui,sans-serif);font-size:15.5px;line-height:1.62;min-width:0}
+.theory [data-l]{display:none}
+.theory[data-cur="pl"] [data-l="pl"],.theory[data-cur="en"] [data-l="en"]{display:block}
+.theory .th-head{display:flex;align-items:baseline;justify-content:space-between;gap:8px 16px;flex-wrap:wrap;border-bottom:1px solid var(--line,#CCD5DE);padding-bottom:12px;margin-bottom:16px}
+.theory .th-head h2{margin:0;font-family:var(--f-display,system-ui,sans-serif);font-weight:800;font-size:clamp(22px,3vw,28px);letter-spacing:-.015em;line-height:1.1}
+.theory .th-head>span{font-family:var(--f-mono,ui-monospace,monospace);font-size:11.5px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#7C8B9A)}
+.theory .th-head span[data-l],.theory .th-head h2 [data-l]{display:none}
+.theory[data-cur="pl"] .th-head [data-l="pl"],.theory[data-cur="en"] .th-head [data-l="en"]{display:inline}
+.theory .th-lead{margin:0 0 18px;font-size:17px;color:var(--ink-2,#465768);max-width:78ch}
+.theory .th-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+@media (max-width:820px){.theory .th-grid{grid-template-columns:1fr}.theory{padding:18px 16px 20px}}
+.theory article{background:var(--paper,#FBFCFD);border:1px solid var(--line,#CCD5DE);border-radius:10px;padding:14px 16px 6px;min-width:0}
+.theory h3{margin:0 0 8px;font-family:var(--f-display,system-ui,sans-serif);font-weight:700;font-size:17.5px;letter-spacing:-.005em}
+.theory article p,.theory article li{color:var(--ink-2,#465768)}
+.theory p{margin:0 0 10px}
+.theory ul,.theory ol{margin:0 0 10px;padding-left:20px}
+.theory li{margin:0 0 6px}
+.theory strong{color:var(--ink,#12202C);font-weight:600}
+.theory i{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:1.08em}
+.theory .th-eq{font-family:var(--f-math,"STIX Two Text","Cambria Math",serif);font-size:19px;text-align:center;margin:6px 0 12px;padding:10px 12px;background:var(--sunk,#EDF1F5);border-radius:8px;overflow-x:auto;white-space:nowrap;color:var(--ink,#12202C);line-height:1.8}
+.theory .th-eq i{font-size:1em}
+.theory .th-fr{display:inline-flex;flex-direction:column;vertical-align:middle;text-align:center;margin:0 .15em;line-height:1.25}
+.theory .th-fr>span:first-child{padding:0 .3em .06em;border-bottom:1px solid currentColor}
+.theory .th-fr>span:last-child{padding:.06em .3em 0}
+.theory .th-qs{margin-top:18px}
+.theory .th-q{border:1px solid var(--line,#CCD5DE);border-radius:10px;background:var(--paper,#FBFCFD);margin:0 0 8px;overflow:hidden}
+.theory .th-q summary{cursor:pointer;padding:10px 14px 10px 34px;font-weight:600;list-style:none;display:block;position:relative}
+.theory .th-q summary::-webkit-details-marker{display:none}
+.theory .th-q summary::before{content:"+";position:absolute;left:14px;top:10px;font-family:var(--f-mono,ui-monospace,monospace);color:var(--ink-3,#7C8B9A)}
+.theory .th-q[open] summary::before{content:"−"}
+.theory .th-q p{padding:0 14px 4px 34px;color:var(--ink-2,#465768)}
+.theory .th-q summary:focus-visible{outline:2px solid var(--ink-3,#7C8B9A);outline-offset:-2px;border-radius:10px}
+.theory .th-book{margin:16px 0 0;padding-top:12px;border-top:1px dashed var(--line,#CCD5DE);font-size:14px;color:var(--ink-3,#7C8B9A)}
+</style><section class="theory" id="theory-card" data-cur="pl" aria-labelledby="theory-h"><div class="th-head"><h2 id="theory-h"><span data-l="pl">Teoria i kontekst</span><span data-l="en">Theory and context</span></h2><span data-l="pl">Do przeczytania po eksperymentach</span><span data-l="en">Read after experimenting</span></div><div data-l="pl">
+  <p class="th-lead">Drobina zawieszona w cieczy lub gazie nigdy nie stoi w miejscu: drga i błądzi, bo bez przerwy uderzają w nią cząsteczki otoczenia. Ruchy Browna to widoczny gołym okiem (pod mikroskopem) ślad ruchu cieplnego cząsteczek, a ich ilościowy opis, czyli dyfuzja z ⟨<i>r</i>²⟩ rosnącym liniowo w czasie, był jednym z rozstrzygających dowodów istnienia atomów.</p>
+  <div class="th-grid">
+    <article><h3>Co tu widzisz</h3>
+      <p>W trybie «Jedna cząstka» duży krążek zderza się sprężyście z setkami małych, szybkich cząsteczek dwuwymiarowego gazu w zamkniętym pudełku. Zostawia zanikający ślad, a wykres pokazuje średnie przemieszczenie kwadratowe ⟨<i>r</i>²⟩(<i>t</i>) uśrednione po wszystkich początkach czasu, z dopasowaną prostą.</p>
+      <ul>
+        <li>Przełącznik «Pokaż cząsteczki» odsłania gaz; cząsteczki, które przed chwilą odbiły się od krążka, są podświetlone. Każde szarpnięcie ma konkretnego sprawcę.</li>
+        <li>«Gorąco i zimno» oraz «Ciężka i lekka» uruchamiają dwa pudełka obok siebie, żeby porównać nachylenia ⟨<i>r</i>²⟩.</li>
+        <li>«Wiele cząstek» («Kropla atramentu») wypuszcza ze środka 2000 niezależnych cząstek opisanych modelem Langevina; zakładka «Profil radialny» porównuje histogram odległości z rozkładem Gaussa.</li>
+      </ul>
+    </article>
+    <article><h3>Teoria</h3>
+      <p>Pojedyncze uderzenie zmienia prędkość ciężkiej cząstki nieznacznie, ale uderzeń jest bardzo dużo i mają losowe kierunki. Średnio działają jak tarcie −γ<i>V</i>, a ich fluktuacje jak losowa siła. Prędkość „pamięta” swój kierunek przez czas τ = <i>M</i>/γ. Dla <i>t</i> ≪ τ ruch jest balistyczny (⟨<i>r</i>²⟩ ≈ ⟨<i>V</i>²⟩<i>t</i>²), dla <i>t</i> ≫ τ przemieszczenie jest sumą wielu niezależnych kroków. Dla <i>N</i> kroków o długości ℓ i losowych kierunkach wyrazy mieszane znoszą się w średniej, więc sumują się kwadraty:</p>
+      <div class="th-eq">⟨<i>r</i><sup>2</sup>⟩ = <i>N</i>ℓ<sup>2</sup>, &nbsp; <i>r</i><sub>rms</sub> = ℓ√<i>N</i> &nbsp; ⇒ &nbsp; ⟨<i>r</i><sup>2</sup>⟩ = 2<i>d</i>·<i>D</i><i>t</i> &nbsp;(w 2D: 4<i>D</i><i>t</i>)</div>
+      <p>Einstein (1905) połączył współczynnik dyfuzji z tarciem. W równowadze strumień dyfuzyjny musi równoważyć dryf w polu zewnętrznym, a rozkład gęstości musi być boltzmannowski; stąd</p>
+      <div class="th-eq"><i>D</i> = <span class="th-fr"><span><i>k</i><i>T</i></span><span>γ</span></span>, &nbsp; dla kuli w cieczy (Stokes, 3D): <i>D</i> = <span class="th-fr"><span><i>k</i><i>T</i></span><span>6π<i>η</i><i>a</i></span></span></div>
+      <p>Masa nie występuje w <i>D</i>: decyduje o τ i o średniej energii kinetycznej (ekwipartycja: ½<i>M</i>⟨<i>V</i>²⟩ = <i>kT</i> w 2D), ale nie o tempie dyfuzji. W symulowanym gazie γ = 2√(2π) <i>n</i><i>a</i>√(<i>mkT</i>) rośnie jak √<i>T</i>, więc <i>D</i> ∝ √<i>T</i>. Chmurę wielu cząstek opisuje równanie dyfuzji; startując z punktu daje ono gaussowski profil o szerokości σ = √(2<i>Dt</i>) w każdym kierunku. Model Langevina w trybie przetłumionym pomija bezwładność (τ → 0), co jest dobrym przybliżeniem dla ziarenek w wodzie, gdzie τ to mikrosekundy lub mniej.</p>
+    </article>
+    <article><h3>Dlaczego to ważne</h3>
+      <ul>
+        <li>Historia: Robert Brown (1827) opisał nieustanny ruch drobin z ziaren pyłku; Einstein (1905) i niezależnie Smoluchowski (1906) podali teorię; Jean Perrin (1908 i później) zmierzył ⟨<i>r</i>²⟩ ziarenek emulsji i z <i>D</i> = <i>RT</i>/(<i>N</i><sub>A</sub>·6π<i>ηa</i>) wyznaczył liczbę Avogadra bliską 6·10<sup>23</sup> mol<sup>−1</sup> (Nagroda Nobla 1926).</li>
+        <li>Biologia: transport tlenu, jonów i białek w komórce na małych odległościach to dyfuzja; czas rośnie jak kwadrat odległości, dlatego komórki są małe.</li>
+        <li>Pomiary: dynamiczne rozpraszanie światła (DLS) i śledzenie cząstek wyznaczają rozmiar nanocząstek ze wzoru Stokesa i Einsteina.</li>
+        <li>Inżynieria materiałowa: domieszkowanie półprzewodników, dyfuzja gazów w porowatych sorbentach i membranach, mieszanie bez mieszadła.</li>
+        <li>Matematyka i finanse: proces Wienera, błądzenie losowe i równanie dyfuzji są wspólnym językiem fizyki statystycznej i modeli cen.</li>
+      </ul>
+    </article>
+    <article><h3>Typowe pułapki</h3>
+      <ul>
+        <li>„Cząstka dyfundująca przesuwa się o odległość proporcjonalną do czasu.” Nie: <i>r</i><sub>rms</sub> ∝ √<i>t</i>. Średnie przemieszczenie wektorowe ⟨<b>r</b>⟩ wynosi zero; rośnie tylko ⟨<i>r</i>²⟩.</li>
+        <li>„Cięższa cząstka dyfunduje wolniej.” Przy tym samym tarciu γ ma ten sam <i>D</i>; jest tylko mniej nerwowa na krótkich czasach. Wolniej dyfundują cząstki <em>większe</em>, bo mają większe γ.</li>
+        <li>„Z prędkości chwilowej da się policzyć <i>D</i>.” Dla <i>t</i> ≲ τ ruch jest balistyczny i nachylenie ⟨<i>r</i>²⟩ nie ma związku z <i>D</i>; dopasowanie trzeba robić dopiero dla <i>t</i> ≫ τ. Pod mikroskopem prędkości chwilowej w ogóle nie widać.</li>
+        <li>„Brown widział drgania całych ziaren pyłku.” Obserwował znacznie mniejsze drobiny uwolnione z ziaren; same ziarna są zbyt duże, by ich ruch był wyraźny.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Sprawdź się</h3>
+    <details class="th-q"><summary>Po 100 ps chmura w trybie «Wiele cząstek» ma <i>r</i><sub>rms</sub> = 4 nm. Jaki będzie <i>r</i><sub>rms</sub> po 400 ps?</summary><p>Około 8 nm. Czas wzrósł czterokrotnie, a <i>r</i><sub>rms</sub> ∝ √<i>t</i>, więc promień się podwaja.</p></details>
+    <details class="th-q"><summary>W scenariuszu «Ciężka i lekka» masy różnią się kilkanaście razy. Dlaczego zmierzone <i>D</i> są (w granicach niepewności) takie same?</summary><p>Obie cząstki mają ten sam promień i siedzą w tym samym gazie, więc mają to samo γ, a <i>D</i> = <i>kT</i>/γ. Masa zmienia tylko czas pamięci τ = <i>M</i>/γ: ciężka cząstka dłużej porusza się prostoliniowo, ale wolniej.</p></details>
+    <details class="th-q"><summary>Przy <i>D</i> = 0,0457 nm²/ps (preset «Pyłek w wodzie») po jakim czasie cząstka oddali się średnio na 10 nm?</summary><p>Z ⟨<i>r</i>²⟩ = 4<i>Dt</i>: <i>t</i> = (10 nm)² / (4 · 0,0457 nm²/ps) ≈ 550 ps.</p></details>
+  </div>
+  <p class="th-book">W podręczniku: Halliday, Resnick, Walker, <em>Podstawy fizyki</em>, nie ma osobnego rozdziału o ruchach Browna; najbliższy jest rozdz. 19 (Kinetyczna teoria gazów), z ruchem cieplnym, ekwipartycją energii i średnią drogą swobodną. Dalej: P. Nelson, <em>Biological Physics</em>, rozdz. 4 (Random walks, friction, and diffusion).</p>
+</div>
+<div data-l="en">
+  <p class="th-lead">A small grain suspended in a liquid or gas never stays still: it jitters and wanders because the surrounding molecules hit it all the time. Brownian motion is the visible (under a microscope) trace of molecular thermal motion, and its quantitative description, diffusion with ⟨<i>r</i>²⟩ growing linearly in time, was one of the decisive proofs that atoms exist.</p>
+  <div class="th-grid">
+    <article><h3>What you see</h3>
+      <p>In «One particle» mode a large disk collides elastically with hundreds of small, fast molecules of a two dimensional gas in a closed box. It leaves a fading trail, and the chart shows the mean squared displacement ⟨<i>r</i>²⟩(<i>t</i>) averaged over all time origins, with a fitted line.</p>
+      <ul>
+        <li>The «Show molecules» toggle reveals the gas; molecules that have just bounced off the disk light up. Every jolt has a specific culprit.</li>
+        <li>«Hot vs cold» and «Heavy vs light» run two boxes side by side so you can compare the ⟨<i>r</i>²⟩ slopes.</li>
+        <li>«Many particles» («Ink drop») releases 2000 independent particles from the centre, described by the Langevin model; the «Radial profile» tab compares the distance histogram with the Gaussian.</li>
+      </ul>
+    </article>
+    <article><h3>Theory</h3>
+      <p>A single kick barely changes the velocity of a heavy particle, but there are very many kicks in random directions. On average they act as friction −γ<i>V</i>, and their fluctuations as a random force. The velocity “remembers” its direction for a time τ = <i>M</i>/γ. For <i>t</i> ≪ τ the motion is ballistic (⟨<i>r</i>²⟩ ≈ ⟨<i>V</i>²⟩<i>t</i>²); for <i>t</i> ≫ τ the displacement is a sum of many independent steps. For <i>N</i> steps of length ℓ in random directions the cross terms average to zero, so the squares add:</p>
+      <div class="th-eq">⟨<i>r</i><sup>2</sup>⟩ = <i>N</i>ℓ<sup>2</sup>, &nbsp; <i>r</i><sub>rms</sub> = ℓ√<i>N</i> &nbsp; ⇒ &nbsp; ⟨<i>r</i><sup>2</sup>⟩ = 2<i>d</i>·<i>D</i><i>t</i> &nbsp;(in 2D: 4<i>D</i><i>t</i>)</div>
+      <p>Einstein (1905) linked the diffusion coefficient to friction. In equilibrium the diffusive flux must balance the drift in an external field, and the density must follow the Boltzmann distribution; hence</p>
+      <div class="th-eq"><i>D</i> = <span class="th-fr"><span><i>k</i><i>T</i></span><span>γ</span></span>, &nbsp; for a sphere in a liquid (Stokes, 3D): <i>D</i> = <span class="th-fr"><span><i>k</i><i>T</i></span><span>6π<i>η</i><i>a</i></span></span></div>
+      <p>Mass does not appear in <i>D</i>: it sets τ and the mean kinetic energy (equipartition: ½<i>M</i>⟨<i>V</i>²⟩ = <i>kT</i> in 2D), but not the rate of diffusion. In the simulated gas γ = 2√(2π) <i>n</i><i>a</i>√(<i>mkT</i>) grows like √<i>T</i>, so <i>D</i> ∝ √<i>T</i>. A cloud of many particles obeys the diffusion equation; starting from a point it gives a Gaussian profile of width σ = √(2<i>Dt</i>) along each direction. The overdamped Langevin model drops inertia (τ → 0), a good approximation for grains in water, where τ is a microsecond or less.</p>
+    </article>
+    <article><h3>Why it matters</h3>
+      <ul>
+        <li>History: Robert Brown (1827) described the ceaseless motion of tiny particles from pollen grains; Einstein (1905) and independently Smoluchowski (1906) gave the theory; Jean Perrin (from 1908) measured ⟨<i>r</i>²⟩ of emulsion grains and from <i>D</i> = <i>RT</i>/(<i>N</i><sub>A</sub>·6π<i>ηa</i>) obtained Avogadro’s number close to 6·10<sup>23</sup> mol<sup>−1</sup> (Nobel Prize 1926).</li>
+        <li>Biology: transport of oxygen, ions and proteins over short distances in a cell is diffusion; the time grows as the distance squared, which is why cells are small.</li>
+        <li>Measurement: dynamic light scattering (DLS) and particle tracking determine nanoparticle sizes from the Stokes and Einstein formula.</li>
+        <li>Materials engineering: doping of semiconductors, gas diffusion in porous sorbents and membranes, mixing without stirring.</li>
+        <li>Mathematics and finance: the Wiener process, random walks and the diffusion equation are a shared language of statistical physics and price models.</li>
+      </ul>
+    </article>
+    <article><h3>Common pitfalls</h3>
+      <ul>
+        <li>“A diffusing particle moves a distance proportional to time.” No: <i>r</i><sub>rms</sub> ∝ √<i>t</i>. The mean vector displacement ⟨<b>r</b>⟩ is zero; only ⟨<i>r</i>²⟩ grows.</li>
+        <li>“A heavier particle diffuses more slowly.” With the same friction γ it has the same <i>D</i>; it is only less jittery at short times. <em>Larger</em> particles diffuse more slowly, because their γ is larger.</li>
+        <li>“You can get <i>D</i> from the instantaneous velocity.” For <i>t</i> ≲ τ the motion is ballistic and the slope of ⟨<i>r</i>²⟩ has nothing to do with <i>D</i>; the fit must use <i>t</i> ≫ τ. Under a microscope the instantaneous velocity is not even visible.</li>
+        <li>“Brown saw whole pollen grains jiggling.” He watched much smaller particles released from the grains; the grains themselves are too large for their motion to be obvious.</li>
+      </ul>
+    </article>
+  </div>
+  <div class="th-qs">
+    <h3>Check yourself</h3>
+    <details class="th-q"><summary>After 100 ps the cloud in «Many particles» mode has <i>r</i><sub>rms</sub> = 4 nm. What will <i>r</i><sub>rms</sub> be after 400 ps?</summary><p>About 8 nm. Time grew fourfold and <i>r</i><sub>rms</sub> ∝ √<i>t</i>, so the radius doubles.</p></details>
+    <details class="th-q"><summary>In «Heavy vs light» the masses differ more than tenfold. Why are the measured <i>D</i> values the same (within uncertainty)?</summary><p>Both particles have the same radius and sit in the same gas, so they have the same γ, and <i>D</i> = <i>kT</i>/γ. Mass only changes the memory time τ = <i>M</i>/γ: the heavy particle keeps moving in a straight line for longer, but more slowly.</p></details>
+    <details class="th-q"><summary>With <i>D</i> = 0.0457 nm²/ps («Pollen in water» preset), after what time is the particle on average 10 nm away?</summary><p>From ⟨<i>r</i>²⟩ = 4<i>Dt</i>: <i>t</i> = (10 nm)² / (4 · 0.0457 nm²/ps) ≈ 550 ps.</p></details>
+  </div>
+  <p class="th-book">In the textbook: Halliday, Resnick, Walker, <em>Fundamentals of Physics</em>, has no separate chapter on Brownian motion; the nearest is ch. 19 (The Kinetic Theory of Gases), covering thermal motion, equipartition of energy and the mean free path. Further reading: P. Nelson, <em>Biological Physics</em>, ch. 4 (Random walks, friction, and diffusion).</p>
+</div></section><script>(function(){var t=document.getElementById('theory-card');if(!t)return;var app=document.querySelector('.app');if(app)app.appendChild(t);
+function cur(){var b=document.querySelector('.lang button[aria-pressed="true"]');return b&&b.dataset.lang==='en'?'en':'pl';}
+function upd(){t.setAttribute('data-cur',cur());}upd();
+document.addEventListener('DOMContentLoaded',function(){upd();var g=document.querySelector('.lang');if(g&&window.MutationObserver)new MutationObserver(upd).observe(g,{subtree:true,attributes:true,attributeFilter:['aria-pressed']});document.querySelectorAll('.lang button').forEach(function(b){b.addEventListener('click',function(){setTimeout(upd,0);});});});})();</script><!--theory-card:end-->
+</body></html>
