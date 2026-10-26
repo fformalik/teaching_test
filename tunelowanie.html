@@ -589,7 +589,7 @@ const I18N = {
     eAxis:'E [eV]', xAxis:'x [nm]', absorbed:'absorbed', none:'—'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('tunel-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const $ = (s) => document.querySelector(s);

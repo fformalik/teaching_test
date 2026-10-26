@@ -566,7 +566,7 @@ const I18N = {
     years:'years', yearsAxis:'t [years]', ageAxis:'age [years]', ly:'ly', none:'—'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('sr-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');

@@ -626,7 +626,7 @@ const I18N = {
     u_s:'s', u_min:'min', u_h:'h', u_d:'d', u_y:'y', u_Myr:'Myr', u_Gyr:'Gyr', none:'—', at:'at'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('rozpad-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const loc = (s) => (lang === 'pl' ? s.replace(/(\d)\.(\d)/g, '$1,$2') : s);

@@ -646,7 +646,7 @@ const I18N = {
     boom:'BOOM!', lamF:'λ ahead', lamB:'λ behind', barrier:'fronts pile up: sound barrier', src:'source'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('doppler-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k, vars) => {
   let s = I18N[lang][k] ?? I18N.pl[k] ?? k;

@@ -869,7 +869,7 @@ const I18N = {
     dropN:'gas or N changed', none:'—'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('gaz-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 

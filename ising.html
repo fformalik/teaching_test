@@ -488,7 +488,7 @@ const I18N = {
     t4h:'Build the Onsager curve', t4:'<i>L</i> = 64, Wolff. Start, then every few seconds lower or raise <i>T</i>. Each point lands on the <i>m</i>(<i>T</i>) plot next to the exact result.'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('ising-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 

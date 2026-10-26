@@ -473,7 +473,7 @@ const I18N = {
     t4h:'Measure Planck’s constant', t4b:'Two stopping voltages on sodium, at 300 nm and 450 nm. The slope of the line through them gives <i>h</i> ≈ 6.6·10⁻³⁴ J·s.'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('foto-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const SUB = () => (lang === 'pl' ? 'h' : 'stop');

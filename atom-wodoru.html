@@ -473,7 +473,7 @@ const I18N = {
     lbA0: 'a₀', lbMean: '⟨r⟩', lbMp: 'r max', bohrTitle: 'Bohr model: rₙ = n²a₀', bohrOut: 'out of frame', m01: '±1 (real)'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('wodor-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 

@@ -518,7 +518,7 @@ const I18N = {
     yLab:'I / Imax', countLab:'N', rLab:'r', none:'—'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('szczeliny-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const trf = (k, o) => tr(k).replace(/\{(\w+)\}/g, (_, n) => (o[n] ?? ''));

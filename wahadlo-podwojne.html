@@ -693,7 +693,7 @@ const I18N = {
     keys:'Shortcuts: <kbd>space</kbd> pause · <kbd>R</kbd> release again · <kbd>←</kbd> <kbd>→</kbd> step · <kbd>↑</kbd> <kbd>↓</kbd> δ ×10 / ÷10 · <kbd>1</kbd>–<kbd>6</kbd> initial conditions · <kbd>T</kbd> trails · <kbd>L</kbd> linear approximation · <kbd>F</kbd> full screen'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('wahadlo-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 

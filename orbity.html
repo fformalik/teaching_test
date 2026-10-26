@@ -795,7 +795,7 @@ const I18N = {
     apo:{ earth:'apogee', moon:'apolune', mars:'apoareion', sun:'aphelion', custom:'apoapsis' }
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('orbity-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 const fill = (s, o) => s.replace(/\{(\w+)\}/g, (_, k) => o[k] ?? '');

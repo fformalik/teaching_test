@@ -475,7 +475,7 @@ const I18N = {
     t4:'Unpolarized light: the first polarizer gives <i>I</i><sub>0</sub>/2 at any angle. Only the second polarizer “sees” an angle, and Malus\'s law kicks in.'
   }
 };
-let lang = 'pl';
+let lang = 'en';
 try { const s = localStorage.getItem('falaem-lang'); if (s === 'pl' || s === 'en') lang = s; } catch (e) {}
 const tr = (k) => (I18N[lang][k] ?? I18N.pl[k] ?? k);
 
